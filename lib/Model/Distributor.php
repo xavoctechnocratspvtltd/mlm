@@ -24,10 +24,11 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 		$dist_j = $this->join('mlm_distributor.customer_id');
 
-		$dist_j->hasOne('xavoc\mlm\Sponsor','sponsor_id');
-		$dist_j->hasOne('xavoc\mlm\Introducer','introducer_id');
+		$dist_j->hasOne('xavoc\mlm\Sponsor','sponsor_id')->display(['form'=>'xepan\base\DropDownNormal']);
+		$dist_j->hasOne('xavoc\mlm\Introducer','introducer_id')->display(['form'=>'xepan\base\DropDownNormal']);
 
 		$dist_j->addField('path')->type('text');
+		$dist_j->addField('side')->enum(['A','B']);
 		// $dist_j->hasOne('xavoc\mlm\Pin','pin_id');
 		
 	}

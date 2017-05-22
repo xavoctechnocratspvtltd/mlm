@@ -16,9 +16,9 @@ class Tool_Register extends \xepan\cms\View_Tool{
 		parent::init();
 
 		$form = $this->add('Form');
-		$form->addField('name');
-		$form->addField('xepan\base\DropDownNormal','sponsor')->setModel('xavoc\mlm\Distributor');
-		$form->addField('xepan\base\DropDownNormal','introducer')->setModel('xavoc\mlm\Distributor');
+		$form->setModel('xavoc\mlm\Distributor',['first_name','last_name','sponsor_id','side','introducer_id']);
+		// $form->addField('xepan\base\DropDownNormal','sponsor')->setModel('xavoc\mlm\Distributor');
+		// $form->addField('xepan\base\DropDownNormal','introducer')->setModel('xavoc\mlm\Distributor');
 		$form->addSubmit('Register');
 		
 		if($form->isSubmitted()){

@@ -1,24 +1,22 @@
 /*
- Navicat Premium Data Transfer
+Navicat MySQL Data Transfer
 
- Source Server         : localhost
- Source Server Type    : MariaDB
- Source Server Version : 100118
- Source Host           : localhost
- Source Database       : dsmarketing
+Source Server         : localhost
+Source Server Version : 50505
+Source Host           : localhost:3306
+Source Database       : ds
 
- Target Server Type    : MariaDB
- Target Server Version : 100118
- File Encoding         : utf-8
+Target Server Type    : MYSQL
+Target Server Version : 50505
+File Encoding         : 65001
 
- Date: 05/22/2017 13:05:02 PM
+Date: 2017-05-22 18:23:08
 */
 
-SET NAMES utf8;
-SET FOREIGN_KEY_CHECKS = 0;
+SET FOREIGN_KEY_CHECKS=0;
 
 -- ----------------------------
---  Table structure for `mlm_distributor`
+-- Table structure for `mlm_distributor`
 -- ----------------------------
 DROP TABLE IF EXISTS `mlm_distributor`;
 CREATE TABLE `mlm_distributor` (
@@ -28,7 +26,10 @@ CREATE TABLE `mlm_distributor` (
   `introducer_id` int(11) DEFAULT NULL,
   `pin_id` int(11) DEFAULT NULL,
   `path` text,
+  `side` varchar(2) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-SET FOREIGN_KEY_CHECKS = 1;
+-- ----------------------------
+-- Records of mlm_distributor
+-- ----------------------------
