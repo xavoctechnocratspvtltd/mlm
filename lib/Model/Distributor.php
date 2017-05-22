@@ -8,10 +8,10 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 	// public $table = "isp_user";
 	public $status = ['Active','InActive'];
 	public $actions = [
-				'Active'=>['view','edit','delete','AddTopups','CurrentConditions'],
+				'Active'=>['view','edit','delete'],
 				'InActive'=>['view','edit','delete','active']
 				];
-	public $acl_type= "ispmanager_user";
+	public $acl_type= "ispmanager_distributor";
 
 	function init(){
 		parent::init();

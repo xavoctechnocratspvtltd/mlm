@@ -33,6 +33,15 @@ class Initiator extends \Controller_Addon {
         ->setBaseURL('./shared/apps/xavoc/mlm/');
 
         $this->app->exportFrontEndTool('xavoc\mlm\Tool_Register','MLM');
+      
+        $this->app->exportFrontEndTool('xavoc\mlm\Tool_DashBoard','MLM');
+        $this->app->exportFrontEndTool('xavoc\mlm\Tool_Distributor','MLM');
+        $this->app->exportFrontEndTool('xavoc\mlm\Tool_WareHouse','MLM');
+        $this->app->exportFrontEndTool('xavoc\mlm\Tool_Genology','MLM');
+        $this->app->exportFrontEndTool('xavoc\mlm\Tool_Wallet','MLM');
+        $this->app->exportFrontEndTool('xavoc\mlm\Tool_ClosingAndPayouts','MLM');
+        $this->app->exportFrontEndTool('xavoc\mlm\Tool_MyAccount','MLM');
+
         return $this;
     }
 

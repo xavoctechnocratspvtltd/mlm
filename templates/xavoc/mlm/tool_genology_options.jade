@@ -1,0 +1,41 @@
+.xepan-tool-options(id='{$_name}' style="display:none" for-xepan-component='xavoc/mlm/Tool_Genology')
+	.xepan-cms-group-panel.clearfix
+		h3.collapsed(data-toggle='collapse', data-target='#collapse-carousel', aria-expanded='false')
+			span Genology
+		#collapse-carousel.xepan-cms-tools-bar-panel.row-fluid.collapse.in
+			.panel-body
+				table.table.table-condensed.table-hover
+					tr
+						td Depth Of Tree
+							select#xavoc-mlm-show-current-genology-depth-of-tree-status(data-attr="genology-depth-of-tree")
+								option(value = 1 ) 1
+								option(value = 2 ) 2
+								option(value = 3 ) 3
+								option(value = 4 ) 4
+								option(value = 5 ) 5
+								option(value = 6 ) 6
+								option(value = 7 ) 7
+								option(value = 8 ) 8
+								option(value = 9 ) 9
+								option(value = 10 ) 10
+					tr
+						td Show Info On
+							select#xavoc-mlm-show-genology-show-info-on(data-attr="genology-show-info-on")
+									option(value = "hover") Hover
+									option(value = "frame-url") Frame URL
+									option(value = "full-page") Full Page
+
+
+								//- option(value='1') Yes
+								//- option(value='0') No
+
+      
+script(type='text/javascript').
+	$('\\#{$_name} [data-attr]').on('change',function(){
+		$(current_selected_component).attr($(this).data('attr'),$(this).val());
+	});
+	$('\\#{$_name}').on('show',function(event){
+		$('\\#{$_name} [data-attr]').each(function(index,value){
+			$(this).val($(current_selected_component).attr($(this).data('attr')));
+		});
+	});

@@ -1,0 +1,47 @@
+
+<div id="{$_name}" style="display:none" for-xepan-component="xavoc/mlm/Tool_Genology" class="xepan-tool-options">
+  <div class="xepan-cms-group-panel clearfix">
+    <h3 data-toggle="collapse" data-target="#collapse-carousel" aria-expanded="false" class="collapsed"><span>Genology</span></h3>
+    <div id="collapse-carousel" class="xepan-cms-tools-bar-panel row-fluid collapse in">
+      <div class="panel-body">
+        <table class="table table-condensed table-hover">
+          <tr>
+            <td>Depth Of Tree
+              <select id="xavoc-mlm-show-current-genology-depth-of-tree-status" data-attr="genology-depth-of-tree">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td>Show Info On
+              <select id="xavoc-mlm-show-genology-show-info-on" data-attr="genology-show-info-on">
+                <option value="hover">Hover</option>
+                <option value="frame-url">Frame URL</option>
+                <option value="full-page">Full Page</option>
+              </select>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+  $('\#{$_name} [data-attr]').on('change',function(){
+  	$(current_selected_component).attr($(this).data('attr'),$(this).val());
+  });
+  $('\#{$_name}').on('show',function(event){
+  	$('\#{$_name} [data-attr]').each(function(index,value){
+  		$(this).val($(current_selected_component).attr($(this).data('attr')));
+  	});
+  });
+</script>
