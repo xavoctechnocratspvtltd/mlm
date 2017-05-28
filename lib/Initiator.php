@@ -13,7 +13,7 @@ class Initiator extends \Controller_Addon {
 
         $m = $this->app->top_menu->addMenu('Direct Marketing');
         $m->addItem(['Pin Management','icon'=>'fa fa-check-square-o'],'xavoc_dm_distributors');
-        $m->addItem(['Kit Management','icon'=>'fa fa-check-square-o'],'xavoc_dm_distributors');
+        $m->addItem(['Kit Management','icon'=>'fa fa-check-square-o'],'xavoc_dm_kits');
         $m->addItem(['Distributors','icon'=>'fa fa-check-square-o'],'xavoc_dm_distributors');
         $m->addItem(['Closings','icon'=>'fa fa-check-square-o'],'xavoc_dm_distributors');
 

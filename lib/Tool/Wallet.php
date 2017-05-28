@@ -11,7 +11,7 @@ class Tool_Wallet extends \xepan\cms\View_Tool{
 	function init(){
 		parent::init();
 
-		$this->add('View_Info')->set('Genology Tool');
+		$this->add('View_Info')->set('My Wallet Tool');
 	
 	}
 

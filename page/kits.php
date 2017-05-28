@@ -9,6 +9,9 @@ class page_kits extends \xepan\base\Page {
 	function init(){
 		parent::init();
 		
+		$crud = $this->add('CRUD');
+		$model= $this->add('xavoc\mlm\Model_Item');
+		$crud->setModel($model);
 	}
 
 }
