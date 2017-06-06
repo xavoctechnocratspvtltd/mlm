@@ -60,6 +60,7 @@ class Tool_Genology extends \xepan\cms\View_Tool{
 	}
 
 	function renderModel($model,$level){
+
 		$output="";
 		$reload_js = $this->js()->reload(array('start_id'=>$model->id));
 		$t=$this->template->cloneRegion('Node');
@@ -114,9 +115,9 @@ class Tool_Genology extends \xepan\cms\View_Tool{
 		}else{
 			$t->trySet('sponsor_id',$model->id);
 			if($model['left_id'])
-				$t->trySetHTML('leftnode','<i class="icon-down-circled2 atk-size-mega"></i>');
+				$t->setHTML('leftnode','<i class="icon-down-circled2 atk-size-mega"></i>');
 			else
-				$t->trySetHTML('leftnode','<i class="fa fa-user atk-size-mega"></i>');
+				$t->setHTML('leftnode','<i class="fa fa-user atk-size-mega"></i>');
 			// $t->tryDel('leftnode');
 		}
 
@@ -125,9 +126,9 @@ class Tool_Genology extends \xepan\cms\View_Tool{
 		}else{
 			$t->trySet('sponsor_id',$model->id);
 			if($model['right_id'])
-				$t->trySetHTML('rightnode','<i class="fa fa-down-circled atk-size-mega"></i>');
+				$t->setHTML('rightnode','<i class="fa fa-down-circled atk-size-mega"></i>');
 			else
-				$t->trySetHTML('rightnode','<i class="fa fa-user atk-size-mega"></i>');
+				$t->setHTML('rightnode','<i class="fa fa-user atk-size-mega"></i>');
 			// $t->tryDel('rightnode');
 		}
 
@@ -138,6 +139,8 @@ class Tool_Genology extends \xepan\cms\View_Tool{
 	function render(){
 
 		if($this->start_id){
+
+			$this->js()->_load('xtooltip');
 
 			$reload_parent_js = $this->js()->reload(array('start_id'=>$this->start_distributor['sponsor_id']));
 			$distributor_tree_js = $this->js()->reload(array('start_id'=>$this->distributor->id));
