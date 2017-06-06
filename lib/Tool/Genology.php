@@ -15,7 +15,7 @@ class Tool_Genology extends \xepan\cms\View_Tool{
 	public $distributor = null ;
 	public $start_distributor = null ;
 	public $start_id = null ;
-	public $level = 2 ;
+	public $level = 5 ;
 
 	function init(){
 		parent::init();
@@ -115,9 +115,9 @@ class Tool_Genology extends \xepan\cms\View_Tool{
 		}else{
 			$t->trySet('sponsor_id',$model->id);
 			if($model['left_id'])
-				$t->setHTML('leftnode','<i class="icon-down-circled2 atk-size-mega"></i>');
+				$t->setHTML('leftnode','<i class="fa fa-user fa-2x"></i>');
 			else
-				$t->setHTML('leftnode','<i class="fa fa-user atk-size-mega"></i>');
+				$t->setHTML('leftnode','<i class="fa fa-cog fa-2x"></i>');
 			// $t->tryDel('leftnode');
 		}
 
@@ -126,9 +126,9 @@ class Tool_Genology extends \xepan\cms\View_Tool{
 		}else{
 			$t->trySet('sponsor_id',$model->id);
 			if($model['right_id'])
-				$t->setHTML('rightnode','<i class="fa fa-down-circled atk-size-mega"></i>');
+				$t->setHTML('rightnode','<i class="fa fa-user fa-2x"></i>');
 			else
-				$t->setHTML('rightnode','<i class="fa fa-user atk-size-mega"></i>');
+				$t->setHTML('rightnode','<i class="fa fa-cog fa-2x"></i>');
 			// $t->tryDel('rightnode');
 		}
 
