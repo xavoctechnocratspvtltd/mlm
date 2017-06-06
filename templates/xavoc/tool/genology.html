@@ -1,0 +1,31 @@
+<div id="{$_name}">
+{$Content}
+{Tree}
+{/Tree}
+{Parent}
+<div class="atk-section atk-move-center">
+	<div class='text-center atk-swatch-blue atk-box-small atk-move-left'><a href="#xepan" onclick="{$MyURL}">My Tree</a></div>
+	<div class='text-center atk-swatch-blue atk-box-small atk-move-right'><a href="#xepan" onclick="{$ParentURL}">Go Up</a></div>
+</div>
+{/Parent}
+</div>
+{Node}
+	<div class="main_div text-center atk-size-giga {$class}" title="{$title}"><i class="icon icon-user"></i> {username}Username Here{/username}</div>
+	<div><hr/></div>
+	<div class="atk-row">
+		<div class="atk-col-6 atk-align-left">
+			{leftnode}
+				<a href='#join' onclick='$.univ().frameURL("New Joining","index.php?page=xMLM_page_owner_xmlm_newjoining&sponsor_id={$sponsor_id}&Leg=A");'>
+				Join Here
+				</a>
+			{/leftnode}
+		</div>
+		<div class="atk-col-6 atk-align-right">
+			{rightnode}
+				<a href='#join' onclick='$.univ().frameURL("New Joining","index.php?page=xMLM_page_owner_xmlm_newjoining&sponsor_id={$sponsor_id}&Leg=B");'>
+				Join Here
+				</a>
+			{/rightnode}
+		</div>
+	</div>
+{/Node}
