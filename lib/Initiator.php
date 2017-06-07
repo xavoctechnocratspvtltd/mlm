@@ -43,6 +43,7 @@ class Initiator extends \Controller_Addon {
         $this->app->exportFrontEndTool('xavoc\mlm\Tool_MyAccount','MLM');
         $this->app->exportFrontEndTool('xavoc\mlm\Tool_Register','MLM');
         $this->app->exportFrontEndTool('xavoc\mlm\Tool_Kit','MLM');
+        $this->app->exportFrontEndTool('xavoc\mlm\Tool_Profile','MLM');
 
         return $this;
     }

@@ -17,7 +17,7 @@ class Tool_Kit extends \xepan\cms\View_Tool{
 		parent::init();
 
 		$kit_model = $this->add('xavoc\mlm\Model_Kit');
-		$kit_model->addCondition('status','Published');
+		// $kit_model->addCondition('status','Published');
 
 		$layout_template = "kitlist";
 		$this->complete_lister = $cl = $this->add('CompleteLister',null,null,['xavoc/tool/'.$layout_template]);
