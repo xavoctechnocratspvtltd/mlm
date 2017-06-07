@@ -11,11 +11,20 @@
  Target Server Version : 100118
  File Encoding         : utf-8
 
- Date: 06/06/2017 19:12:54 PM
+ Date: 06/07/2017 17:15:38 PM
 */
 
 SET NAMES utf8;
 SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+--  Table structure for `mlm_closing`
+-- ----------------------------
+DROP TABLE IF EXISTS `mlm_closing`;
+CREATE TABLE `mlm_closing` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `mlm_distributor`
@@ -56,7 +65,7 @@ CREATE TABLE `mlm_distributor` (
   `greened_on` datetime DEFAULT NULL,
   `ansestors_updated` tinyint(4) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=138 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `mlm_generation_business`
@@ -69,6 +78,35 @@ CREATE TABLE `mlm_generation_business` (
   `introduced_path` text,
   `bv_sum` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+--  Table structure for `mlm_kit`
+-- ----------------------------
+DROP TABLE IF EXISTS `mlm_kit`;
+CREATE TABLE `mlm_kit` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  `pv` int(11) DEFAULT NULL,
+  `bv` int(11) DEFAULT NULL,
+  `sv` int(11) DEFAULT NULL,
+  `capping` int(11) DEFAULT NULL,
+  `introducer_income` int(11) DEFAULT NULL,
+  `code` varchar(255) DEFAULT NULL,
+  `display_sequence` varchar(255) DEFAULT NULL,
+  `description` text,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
+-- ----------------------------
+--  Table structure for `mlm_kit_item_asso`
+-- ----------------------------
+DROP TABLE IF EXISTS `mlm_kit_item_asso`;
+CREATE TABLE `mlm_kit_item_asso` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `mlm_kit_id` int(11) DEFAULT NULL,
+  `mlm_item_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 SET FOREIGN_KEY_CHECKS = 1;

@@ -106,6 +106,11 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 			if(!($dist OR $this->api->auth->model->isSuperUser())){
 				throw $this->exception('You do not have rights to add distributor');
 			}
+			if($introducer = $this->introducer()){
+				$this['introduced_path'] = $introducer->path() . $this['side'];
+			}
+
+			$this['sponsor_id'] = $this->findSponsor($introducer, $this['side'])->get('id');
 
 			if($sponsor = $this->sponsor()){
 				if($sponsor[($this['side']=='A'?'left':'right').'_id']){
@@ -115,10 +120,19 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 				$this->memorize('leg',$this['side']);
 				$this->memorize('raw_password',$this['password']);
 			}
-			if($introducer = $this->introducer()){
-				$this['introduced_path'] = $introducer->path() . $this['side'];
-			}
 		}
+	}
+
+	function findSponsor($introducer, $side){
+		$intro_path_length = strlen($introducer['path']);
+		$sponsor = $this->add('xavoc\mlm\Model_Distributor');
+		$sponsor->addExpression('next_path')->set($sponsor->dsql()->expr("RIGHT(path,LENGTH(path)-$intro_path_length)"));
+		$sponsor->addExpression('path_length')->set('LENGTH(path)');
+		$sponsor->addCondition('path','like',$introducer['path'].'%');
+		$sponsor->addCondition('next_path','not like',"%".($side=='A'?'B':'A')."%");
+		$sponsor->_dsql()->order('path_length desc');
+		$sponsor->tryLoadAny();
+		return $sponsor;
 	}
 
 	function afterSaveDistributor(){

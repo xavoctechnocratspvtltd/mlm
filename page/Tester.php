@@ -73,12 +73,12 @@ class page_Tester extends \xepan\base\Page_Tester{
 					$dist = $this->add('xavoc\mlm\Model_Distributor');
 					$data = [
 								'first_name'=>$key,
-								'sponsor_id'=>$distributor_id_mapping[$value['sponsor']],
 								'introducer'=>$distributor_id_mapping[$value['introducer']],
-								'created_at'=>$value['on']
+								'created_at'=>$value['on'],
+								'side'=>$value['side']
 							];
 					$dist->register($data);
-					
+
 					if(isset($value['kit'])) $dist->purchaseKit($this->add('xavoc\mlm\Model_Kit')->tryLoadBy('name',$value['kit']));
 					$distributor_id_mapping[$key]= $dist->id;
 					break;
@@ -142,8 +142,8 @@ class page_Tester extends \xepan\base\Page_Tester{
 				'rightDP'=>$r['monthly_right_dp_mrp_diff'],
 				'totalPairs'=>$r['total_pairs'],
 				'carriedAmount'=>$r['carried_amount'],
-				'joinedOn'=>$r['created_at'],
-				'greenedOn'=>$r['greened_on'],
+				'joinedOn'=>date('Y-m-d',strtotime($r['created_at'])),
+				'greenedOn'=>date('Y-m-d',strtotime($r['greened_on'])),
 				];
 		}
 		return $array;
