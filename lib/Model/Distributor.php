@@ -163,9 +163,11 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 	function beforeDeleteDistributor(){
 		$user_id = $this['user_id'];
-		$this->addHook('afterDelete',function($m)use($user_id){
-			$this->add('xepan\base\Model_User')->tryLoad($user_id)->delete();
-		});
+		if($user_id){
+			$this->addHook('afterDelete',function($m)use($user_id){
+				$this->add('xepan\base\Model_User')->tryLoad($user_id)->tryDelete();
+			});
+		}
 
 		$this->ref('xavoc\mlm\GenerationBusiness')->deleteAll();
 
@@ -173,6 +175,21 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 	function afterInsert($obj){
 		
+	}
+
+	function purchaseKit($kit){
+		$this['kit_id']= $kit->id;
+		$this->save();
+	}
+
+	function markGreen($on_date=null){
+		if(!$on_date) $on_date =  $this->app->now;
+		$this['greened_on'] = $on_date;
+		$this->save();
+	}
+
+	function repurchase($bv){
+
 	}
 
 	function updateAnsestorsSV($sv_points){
@@ -270,7 +287,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		return $this->loadBy('path','0');	
 	}
 
-	function nitifyViaEmail($subject, $email_body){
+	function notifyViaEmail($subject, $email_body){
 		$email = $this['email'];
 		if(!$email) return;
 		$tm=$this->add( 'TMail_Transport_PHPMailer' );	
@@ -290,17 +307,32 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 			$this[$field] = $value;
 		}
 
+		$user = $this->add('xepan\base\Model_User');
+
+		$this->add('BasicAuth')
+				->usePasswordEncryption('md5')
+				->addEncryptionHook($user);
+		
+		$user->addCondition('username',(isset($data['username'])?$data['username']:$data['first_name']).'@dummy.com');
+		$user->tryLoadAny();
+		$user['password']='123456';
+		$user->save();
+
+		$this['user_id'] = $user->id;
+
 		$this->save();
 	}
 
 	function setupCompany(){
 
-		$this->app->auth->logout();
+		// $this->app->auth->logout();
 
-		$this->app->auth->login($this->add('xepan\base\Model_User_Active')->tryLoadBy('username','management@xavoc.com'));
+		// $this->app->auth->login($this->add('xepan\base\Model_User_Active')->tryLoadBy('username','management@xavoc.com'));
 
 		// remove all ids
-		$this->add('xavoc\mlm\Model_Distributor')->each(function($m){
+		$this->add('xavoc\mlm\Model_Distributor')
+		->addCondition('type','Customer')
+		->each(function($m){
 			$m->delete();
 		});
 
