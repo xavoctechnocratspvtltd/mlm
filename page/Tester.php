@@ -1,7 +1,7 @@
 <?php
 
 
-namespace xavoc\ispmanager;
+namespace xavoc\mlm;
 
 
 class page_Tester extends \xepan\base\Page_Tester{
@@ -44,7 +44,8 @@ class page_Tester extends \xepan\base\Page_Tester{
 	]
 	*/
 
-	function process($data){
+	function process($data,$result='dist'){
+		$this->resetData();
 		$root_id = $this->add('xavoc\mlm\Model_Distributor')->loadRoot()->get('id');
 		
 		$distributor_id_mapping=['0'=>$root_id,'company'=>$root_id];
@@ -52,13 +53,13 @@ class page_Tester extends \xepan\base\Page_Tester{
 		foreach ($data as $key => $value) {
 			if(strpos($key, 'kit')===0){
 				$action = 'kitpurchase';
-				$dist_id=explode($key, '-')[1];
+				$dist_id=(explode('-',$key))[1];
 			}elseif(strpos($key, 'green')===0){
 				$action = 'green';
-				$dist_id=explode($key, '-')[1];
+				$dist_id=(explode('-', $key))[1];
 			}elseif(strpos($key, 'repurchase')===0){
 				$action = 'repurchase';
-				$dist_id=explode($key, '-')[1];
+				$dist_id=explode('-',$key)[1];
 			}elseif(strpos($key, 'closing')===0){
 				$action = 'closing';
 				$dist_id=null;
@@ -66,22 +67,35 @@ class page_Tester extends \xepan\base\Page_Tester{
 				$action = 'joining';
 				$dist_id = null;
 			}
+
 			switch ($action) {
 				case 'joining':
 					$dist = $this->add('xavoc\mlm\Model_Distributor');
-					$dist('')
+					$data = [
+								'first_name'=>$key,
+								'sponsor_id'=>$distributor_id_mapping[$value['sponsor']],
+								'introducer'=>$distributor_id_mapping[$value['introducer']],
+								'created_at'=>$value['on']
+							];
+					$dist->register($data);
+					
+					if(isset($value['kit'])) $dist->purchaseKit($this->add('xavoc\mlm\Model_Kit')->tryLoadBy('name',$value['kit']));
+					$distributor_id_mapping[$key]= $dist->id;
 					break;
 				case 'kitpurchase':
-					# code...
+					$dist = $this->add('xavoc\mlm\Model_Distributor')->load($distributor_id_mapping[$dist_id]);
+					$dist->purchaseKit($this->add('xavoc\mlm\Model_Kit')->tryLoadBy('name',$value));
 					break;
 				case 'green':
-					# code...
+					$dist = $this->add('xavoc\mlm\Model_Distributor')->load($distributor_id_mapping[$dist_id]);
+					$dist->markGreen($value);
 					break;
 				case 'repurchase':
-					# code...
+					$dist = $this->add('xavoc\mlm\Model_Distributor')->load($distributor_id_mapping[$dist_id]);
+					$dist->repurchase($value);
 					break;
 				case 'closing':
-					# code...
+					$this->add('xavoc\mlm\Model_Closing')->doClosing($value);
 					break;
 				
 				default:
@@ -90,10 +104,58 @@ class page_Tester extends \xepan\base\Page_Tester{
 			}
 		}
 
+
+
+		$result = strtolower(substr($result, 0,4));
+		if($result == 'dist'){
+			$r= $this->add('xavoc\mlm\Model_Distributor')->addCondition('id',$distributor_id_mapping);
+			return $this->resultDistributor($r,$distributor_id_mapping);
+		}
+		else
+			return $this->resultClosing($r,$distributor_id_mapping);
+
 	}
 
-	function result($r){
-		return ['data_limit_row'=>$r['result']['data_limit_row'],'bw_limit_row'=>$r['result']['bw_limit_row'],'dl'=>$r['result']['dl_limit'],'ul'=>$r['result']['ul_limit'],'data_consumed'=>$r['result']['data_consumed'],'access'=>$r['access'],'coa'=>$r['result']['coa'],'time_limit'=>$r['result']['time_limit'],'time_consumed'=>$r['result']['time_consumed']];
+	// function result($r,$table='dist'){
+	// 	$table = strtolower(substr($table, 0,4));
+	// 	if($table == 'dist')
+	// 		return $this->resultDistributor($r);
+	// 	else
+	// 		return $this->resultClosing($r);
+
+	// 	return ['data_limit_row'=>$r['result']['data_limit_row'],'bw_limit_row'=>$r['result']['bw_limit_row'],'dl'=>$r['result']['dl_limit'],'ul'=>$r['result']['ul_limit'],'data_consumed'=>$r['result']['data_consumed'],'access'=>$r['access'],'coa'=>$r['result']['coa'],'time_limit'=>$r['result']['time_limit'],'time_consumed'=>$r['result']['time_consumed']];
+	// }
+
+	function resultDistributor($r,$distributor_id_mapping){
+		$array=[];
+		foreach ($r as $row) {
+			$array[]=[
+				'name'=>$r['first_name'],
+				'path'=>$r['path'],
+				'sponsor'=> array_search($r['sponsor_id'],$distributor_id_mapping),
+				'introducer'=> array_search($r['introducer_id'],$distributor_id_mapping),
+				'kit'=>$r['kit_item'],
+				'introAmount'=>$r['weekly_intros_amount'],
+				'leftSv' => $r['weekly_left_sv'],
+				'rightSv' => $r['weekly_right_sv'],
+				'leftDP'=>$r['monthly_left_dp_mrp_diff'],
+				'rightDP'=>$r['monthly_right_dp_mrp_diff'],
+				'totalPairs'=>$r['total_pairs'],
+				'carriedAmount'=>$r['carried_amount'],
+				'joinedOn'=>$r['created_at'],
+				'greenedOn'=>$r['greened_on'],
+				];
+		}
+		return $array;
+	}
+
+	function resultClosing($r){
+
+	}
+
+	function resetData(){
+		$this->add('xavoc\mlm\Model_Closing')->deleteAll();
+		$this->add('xavoc\mlm\Model_Distributor')->setupCompany();
 	}
 	
 
