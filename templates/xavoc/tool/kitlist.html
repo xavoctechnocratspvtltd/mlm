@@ -1,0 +1,53 @@
+
+<div id="{$_name}" style="{$style}" class="{$class} row">{item_count_wrapper}
+  <div class="row item-count-container">
+    <div class="col-md-9 col-sm-9 category-name">
+      <p>{$category_name}{$designer_name}</p>
+    </div>
+    <div class="col-md-3 col-sm-3 item-count text-right">
+      <p>{$item_count}</p>
+    </div>
+  </div>{/}
+  {rows}{row}
+  {$micro_data}
+  <ul data-xsnb-item-id="{$id}" onclick="javascript:void(0);" class="xepan-commerce-item col-lg-3 col-md-3 col-sm-6 list-group">{image_wrapper}
+    <li class="list-group-item xepan-commerce-image-wrapper"><a href="{$item_detail_page_url_via_image}" class="xepan-commerce-image-anchor"><img src="{first_image}abc{/}" class="xepan-commerce-item-img"/></a></li>{/image_wrapper}
+    {name_wrapper}
+    <li class="list-group-item xepan-commerce-item-name-wrapper"><a href="{item_detail_page_url_via_name}{/}" class="xepan-commerce-item-name">
+        <h2>{$name}</h2></a></li>{/}
+    {sale_price_wrapper}
+    <li class="xepan-commerce-tool-item-sale-price list-group-item">
+      <div class="row">
+        <div class="col-md- col-sm-4">Price</div>
+        <div class="col-md-8 col-sm-8 text-right">{$sale_price}</div>
+      </div>
+    </li>{/}
+    {original_price_wrapper}
+    <li class="xepan-commerce-tool-item-original-price list-group-item">{$original_price}</li>{/}
+    {shipping_charge_wrapper}
+    <li class="xepan-commerce-tool-item-shipping-charge list-group-item">
+      <div class="row">
+        <div class="col-md-4 col-sm-4">Shipping </div>
+        <div class="col-md-8 col-sm-8 text-right">{shipping_charge}0{/}</div>
+      </div>
+    </li>{/}
+    {description_wrapper}
+    <li onclick="javascript:void(0)" class="xepan-commerce-item-short-description list-group-item">{$description}</li>{/}
+    {specification_wrapper}
+    <li class="xepan-commerce-tool-item-specification list-group-item">
+      {specification}
+      {rows}{row}
+      <div class="row">
+        <div class="col-md-6 col-sm-6 col-xs-12">{$name}</div>
+        <div class="col-md-6 col-sm-6 col-xs-12">{$value}</div>
+      </div>{/}{/}
+      {/specification}
+    </li>{/}
+    {purchase_btn_wrapper}
+    <li class="list-group-item">{$purchase_btn}</li>{/}
+  </ul>{/}{/}
+  {not_found}
+  <div role="alert" class="full-width alert alert-warning"><strong class="glyphicon glyphicon-warning-sign">&nbsp;Warning!<span>&nbsp;{$not_found_message}</span></strong></div>{/}
+  {paginator_wrapper}
+  <div style="float:none; clear:both" class="xepan-commerce-item-paginator">{$Paginator}</div>{/}
+</div>
