@@ -11,7 +11,7 @@
  Target Server Version : 100118
  File Encoding         : utf-8
 
- Date: 06/07/2017 21:39:55 PM
+ Date: 06/07/2017 22:13:59 PM
 */
 
 SET NAMES utf8;
@@ -34,6 +34,9 @@ CREATE TABLE `mlm_distributor` (
   `side` varchar(2) DEFAULT NULL,
   `kit_item_id` int(11) DEFAULT NULL,
   `capping` int(11) DEFAULT NULL,
+  `pv` int(11) DEFAULT NULL,
+  `bv` int(11) DEFAULT NULL,
+  `sv` int(11) DEFAULT NULL,
   `IFCS_Code` varchar(255) DEFAULT NULL,
   `branch_name` varchar(255) DEFAULT NULL,
   `kyc_no` int(11) DEFAULT NULL,
@@ -59,7 +62,7 @@ CREATE TABLE `mlm_distributor` (
   `ansestors_updated` tinyint(4) DEFAULT NULL,
   `temp` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=144 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=180 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `mlm_generation_business`
@@ -72,7 +75,7 @@ CREATE TABLE `mlm_generation_business` (
   `introduced_path` text,
   `bv_sum` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=47 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `mlm_kyc`

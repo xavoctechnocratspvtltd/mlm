@@ -30,6 +30,9 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 		$dist_j->hasOne('xavoc\mlm\Kit','kit_item_id')->defaultValue(null)->caption('Startup Package');
 		$dist_j->addField('capping')->type('int')->system(true);
+		$dist_j->addField('pv')->type('int')->system(true);
+		$dist_j->addField('bv')->type('int')->system(true);
+		$dist_j->addField('sv')->type('int')->system(true);
 
 		$dist_j->addField('IFCS_Code')->mandatory("IFSC Code is required")->display(array('form'=>'xavoc\mlm\AlphaNumeric'))->caption('IFSC Code');
 		$dist_j->addField('branch_name')->caption('Branch')->mandatory("Branch name is required")->display(array('form'=>'\xavoc\mlm\Alpha'));//->system(true);
@@ -202,8 +205,18 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 	function markGreen($on_date=null){
 		if(!$on_date) $on_date =  $this->app->now;
+		
 		$this['greened_on'] = $on_date;
+
+		$kit = $this->kit();
+		if(!$kit) throw new \Exception("Cannot mark green without kit", 1);
+		
+		$this['pv'] = $kit['PV'];
+		$this['bv'] = $kit['BV'];
+		$this['sv'] = $kit['SV'];
+
 		$this->save();
+		$this->updateAnsestorsSV($this['sv']);
 	}
 
 	function repurchase($bv){
@@ -338,38 +351,6 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 		$this['user_id'] = $user->id;
 
-		$this->save();
-	}
-
-	function setupCompany(){
-
-		// $this->app->auth->logout();
-
-		// $this->app->auth->login($this->add('xepan\base\Model_User_Active')->tryLoadBy('username','management@xavoc.com'));
-
-		// remove all ids
-		$this->add('xavoc\mlm\Model_Distributor')
-		->addCondition('type','Customer')
-		->each(function($m){
-			$m->delete();
-		});
-
-		// Add first id
-		$user = $this->add('xepan\base\Model_User');
-
-		$this->add('BasicAuth')
-				->usePasswordEncryption('md5')
-				->addEncryptionHook($user);
-		
-		$user->addCondition('username','admin@company.com');
-		$user->tryLoadAny();
-		$user['password']='admin';
-		$user->save();
-
-		$this->addCondition('path',0);
-		$this->tryLoadAny();
-		$this['first_name']="Company";
-		$this['user_id']=$user->id;
 		$this->save();
 	}
 } 
