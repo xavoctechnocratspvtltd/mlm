@@ -10,14 +10,17 @@ class Controller_Setup extends \AbstractController {
 		// contact, employee, customer, distributor, kit item, specification etc tables
 		// add new default employee
 		
-		$this->add('xavoc\mlm\Model_Distributor')->deleteAll();
-		
-		$item =$this->add('xepan\commerce\Model_Item');
-		
-		foreach ($item as $m) {
+
+		$this->add('xavoc\mlm\Model_Distributor')->each(function($m){
 			$m->delete();
-		}
-		$this->add('xepan\commerce\Model_Item_Specification')->deleteAll();
+		});
+		
+		$item =$this->add('xepan\commerce\Model_Item')->each(function($m){
+			$m->delete();
+		});
+		$this->add('xepan\commerce\Model_Item_Specification')->each(function($m){
+			$m->delete();
+		});
 
 		// add default specifications
 
