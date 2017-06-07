@@ -1,7 +1,21 @@
 div(id="{$_name}" class="{$class}" style="{$style}")
-	div.project-box-content
-		span.chart(data-percent="86" data-bar-color="#2ecc71")
-			span.percent 86
-				span.lbl completed
-					canvas(height="130" width="130")
+	div.progress.progress-striped
+		//- {kit_percentage_wrapper}
+		//- div.progress-bar.progress-bar-danger(style="width: {$kit_percentage};")
+		//- 	span.sr-only Junk Files ({$kit_percentage})
+		//- {/}
+		//- {kyc_percentage_wrapper}
+		//- div.progress-bar.progress-bar-warning(style="width: {$kyc_percentage};")
+		//- 	span.sr-only Residual Files ({$kyc_percentage})
+		//- {/}
+		{profile_percentage_wrapper}
+		div.progress-bar.progress-bar-success(style="width: {$profile_percentage};" aria-valuenow="{$profile_percentage}" aria-valuemin="0" aria-valuemax="100")
+			{$profile_percentage}
+		{/}
+	{not_found}
+	div.alert.alert-danger(role="alert")
+		span.glyphicon.glyphicon-exclamation-sign(aria-hidden="true")
+		span.sr-only Error:&nbsp;
+		| &nbsp;update your profile, 0% completed
+	{/}
 	{$Content}
