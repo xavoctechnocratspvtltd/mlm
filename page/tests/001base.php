@@ -27,13 +27,13 @@ class page_tests_001base extends page_Tester {
 
     function test_company_record(){
         $data = [
-        'ram'=>['introducer'=>'company','side'=>'A','on'=>'2017-05-07'],
-        'shyam'=>['introducer'=>'company','side'=>'A','on'=>'2017-05-07'],
-        'ghanshyam'=>['introducer'=>'company','side'=>'A','on'=>'2017-05-07'],
-        'gowrav'=>['introducer'=>'company','side'=>'B','on'=>'2017-05-07'],
-        'rakesh'=>['introducer'=>'ram','side'=>'A','on'=>'2017-05-07'],
-        'kit-gowrav'=>'kit 1',
-        'green-gowrav'=>'2017-05-08',
+        'Ram'=>['introducer'=>'company','side'=>'A','on'=>'2017-05-07','kit'=>'kit 1', 'green'=>'yes'],
+        'Shyam'=>['introducer'=>'company','side'=>'A','on'=>'2017-05-07'],
+        'Ghanshyam'=>['introducer'=>'company','side'=>'A','on'=>'2017-05-07'],
+        'Gowrav'=>['introducer'=>'company','side'=>'B','on'=>'2017-05-07'],
+        'Rakesh'=>['introducer'=>'ram','side'=>'A','on'=>'2017-05-07'],
+        'kit-Gowrav'=>'kit 1',
+        'green-Gowrav'=>'2017-05-08',
         // 'repurchase-0a'=>'total bv',
         'closing-daily'=>'2017-05-08'
         ];

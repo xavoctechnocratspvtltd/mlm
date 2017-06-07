@@ -36,7 +36,7 @@ class page_Tester extends \xepan\base\Page_Tester{
 
 	/*
 	$data = [
-		'0a/ram/unique_key'=>['sponsor'=>'company/unique_key','introducer'=>'company/unique_key','on'=>'date','kit'=>'kit name (optional)'],
+		'0a/ram/unique_key'=>['sponsor'=>'company/unique_key','introducer'=>'company/unique_key','on'=>'date','kit'=>'kit name (optional)','green'=>'green_date'],
 		'kit-0a'=>'kit name',
 		'green-0a'=>'date',
 		'repurchase-0a'=>'total bv',
@@ -79,8 +79,9 @@ class page_Tester extends \xepan\base\Page_Tester{
 							];
 					$dist->register($data);
 
-					if(isset($value['kit'])) $dist->purchaseKit($this->add('xavoc\mlm\Model_Kit')->tryLoadBy('name',$value['kit']));
+					if(isset($value['kit'])) $dist->purchaseKit($this->add('xavoc\mlm\Model_Kit')->loadBy('name',$value['kit']));
 					$distributor_id_mapping[$key]= $dist->id;
+					if(isset($value['green'])) $dist->markGreen($value['on']);
 					break;
 				case 'kitpurchase':
 					$dist = $this->add('xavoc\mlm\Model_Distributor')->load($distributor_id_mapping[$dist_id]);
