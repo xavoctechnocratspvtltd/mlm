@@ -20,6 +20,10 @@ class Tool_Genology extends \xepan\cms\View_Tool{
 	function init(){
 		parent::init();
 
+		if($this->app->auth->model->isSuperUser()){
+			return "please login with distributor id";
+		}
+
 		$this->distributor = $distributor = $this->add('xavoc\mlm\Model_Distributor');
 		$distributor->loadLoggedIn();
 
@@ -64,12 +68,17 @@ class Tool_Genology extends \xepan\cms\View_Tool{
 		$output="";
 		$reload_js = $this->js()->reload(array('start_id'=>$model->id));
 		$t=$this->template->cloneRegion('Node');
-		$t->setHTML('username','<a href="#xepan" onclick="'.$reload_js->render().'">'.$model['username'].'</a>');
+		$t->setHTML('username','<a href="#xepan" onclick="'.$reload_js->render().'">'.$model['name'].'</a>');
 		$t->set('class',($model['greened_on'] && $model['ansestors_updated'])?'atk-effect-success':($model['greened_on']?'atk-effect-warning':'atk-effect-danger'));
+		if($model['greened_on'] !== null)
+			$greened_on_date = date("d M Y", strtotime($model['greened_on']));
+		else
+			$greened_on_date = "--/---/----";
+		
 		$t->set('title',
 				$model['name'].
 				"<br/>Jn: ". date("d M Y", strtotime($model['created_at'])). 
-				"<br/>Gr: ". date("d M Y", strtotime($model['greened_on'])). 
+				"<br/>Gr: ". $greened_on_date. 
 				"<br/>Kit: ". $model['kit_item'] .
 				"<br/>Intro: ". $model['introducer'] .
 				"<br/><table border=1>
