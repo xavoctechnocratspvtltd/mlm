@@ -109,4 +109,18 @@ CREATE TABLE `mlm_kit_item_asso` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+
+-- ----------------------------
+--  Table structure for `mlm_kyc`
+-- ----------------------------
+DROP TABLE IF EXISTS `mlm_kyc`;
+CREATE TABLE `mlm_kyc` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `pan_no` varchar(255) DEFAULT NULL,
+  `pan_image_id` int(11) DEFAULT NULL,
+  `aadhar_no` varchar(255) DEFAULT NULL,
+  `aadhar_image_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+
 SET FOREIGN_KEY_CHECKS = 1;
