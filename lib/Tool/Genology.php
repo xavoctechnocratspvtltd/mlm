@@ -20,6 +20,10 @@ class Tool_Genology extends \xepan\cms\View_Tool{
 	function init(){
 		parent::init();
 
+		if($this->app->auth->model->isSuperUser()){
+			return "please login with distributor id";
+		}
+
 		$this->distributor = $distributor = $this->add('xavoc\mlm\Model_Distributor');
 		$distributor->loadLoggedIn();
 
