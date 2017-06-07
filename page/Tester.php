@@ -40,7 +40,7 @@ class page_Tester extends \xepan\base\Page_Tester{
 		'kit-0a'=>'kit name',
 		'green-0a'=>'date',
 		'repurchase-0a'=>'total bv',
-		'closing'=>date
+		'closing-daily'=>date
 	]
 	*/
 
@@ -62,7 +62,7 @@ class page_Tester extends \xepan\base\Page_Tester{
 				$dist_id=explode('-',$key)[1];
 			}elseif(strpos($key, 'closing')===0){
 				$action = 'closing';
-				$dist_id=null;
+				$closing_type=explode('-',$key)[1];
 			}else{
 				$action = 'joining';
 				$dist_id = null;
@@ -84,7 +84,7 @@ class page_Tester extends \xepan\base\Page_Tester{
 					break;
 				case 'kitpurchase':
 					$dist = $this->add('xavoc\mlm\Model_Distributor')->load($distributor_id_mapping[$dist_id]);
-					$dist->purchaseKit($this->add('xavoc\mlm\Model_Kit')->tryLoadBy('name',$value));
+					$dist->purchaseKit($this->add('xavoc\mlm\Model_Kit')->loadBy('name',$value));
 					break;
 				case 'green':
 					$dist = $this->add('xavoc\mlm\Model_Distributor')->load($distributor_id_mapping[$dist_id]);
@@ -95,7 +95,7 @@ class page_Tester extends \xepan\base\Page_Tester{
 					$dist->repurchase($value);
 					break;
 				case 'closing':
-					$this->add('xavoc\mlm\Model_Closing')->doClosing($value);
+					$this->add('xavoc\mlm\Model_Payout')->doClosing($closing_type,$value);
 					break;
 				
 				default:
@@ -154,7 +154,7 @@ class page_Tester extends \xepan\base\Page_Tester{
 	}
 
 	function resetData(){
-		$this->add('xavoc\mlm\Model_Closing')->deleteAll();
+		$this->add('xavoc\mlm\Model_Payout')->deleteAll();
 		$this->add('xavoc\mlm\Model_Distributor')->setupCompany();
 	}
 	

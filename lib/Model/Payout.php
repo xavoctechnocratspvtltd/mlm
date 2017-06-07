@@ -26,9 +26,9 @@ class Model_Payout extends \xepan\base\Model_Table {
 		$q="
 			UPDATE mlm_distributor
 			SET
-				day_pairs = IF(day_left_pv > day_right_pv, day_right_pv ,day_left_pv ),
-				day_pairs = IF(day_left_pv = day_right_pv AND day_left_pv <> 0 AND day_left_pv <= capping, pairs - $pair_pv ,pairs),
-				day_pairs = IF(day_pairs >= capping, capping, pairs),
+				day_pairs = IF(day_left_sv > day_right_sv, day_right_sv ,day_left_sv ),
+				day_pairs = IF(day_left_sv = day_right_sv AND day_left_sv <> 0 AND day_left_sv <= capping, day_pairs - $pair_pv ,day_pairs),
+				day_pairs = IF(day_pairs >= capping, capping, day_pairs),
 				week_pairs = week_pairs + day_pairs
 		";
 		$this->query($q);
@@ -39,9 +39,9 @@ class Model_Payout extends \xepan\base\Model_Table {
 				mlm_distributor d
 			SET
 				d.temp=0,
-				d.temp = IF(d.day_left_pv = d.day_right_pv AND d.day_left_pv > 0, d.day_left_pv - $pair_pv, IF(d.day_left_pv > d.day_right_pv,d.day_right_pv,d.day_left_pv)),
-				d.day_left_pv = d.day_left_pv - d.temp,
-				d.day_right_pv = d.day_right_pv - d.temp
+				d.temp = IF(d.day_left_sv = d.day_right_sv AND d.day_left_sv > 0, d.day_left_sv - $pair_pv, IF(d.day_left_sv > d.day_right_sv,d.day_right_sv,d.day_left_sv)),
+				d.day_left_sv = d.day_left_sv - d.temp,
+				d.day_right_sv = d.day_right_sv - d.temp
 		";
 		$this->query($q);
 
@@ -60,8 +60,28 @@ class Model_Payout extends \xepan\base\Model_Table {
 		
 	}
 
-	function doClosing($on_date=null){
+	function calculatePayment(){
+
+	}
+
+	function doClosing($type='daily',$on_date=null){
 		if(!$on_date) $on_date = $this->app->now;
+		switch ($type) {
+			case 'daily':
+				$this->dailyClosing($on_date);
+				break;
+			case 'weekly':
+				$this->weeklyClosing($on_date);
+				$this->calculatePayment();
+				break;
+			case 'monthly':
+				$this->monthlyClosing($on_date);
+				$this->calculatePayment();
+				break;
+			default:
+				throw new \Exception("$type type closing not available", 1);				
+				break;
+		}
 	}
 
 	function query($q){

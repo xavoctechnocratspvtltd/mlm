@@ -7,7 +7,5 @@ class Model_Kit extends \xavoc\mlm\Model_Item{
 	function init(){
 		parent::init();
 		$this->addCondition('is_package',true);
-		$this->hasMany('xavoc\mlm\KitItem','mlm_kit_id');
-
 	}
 }

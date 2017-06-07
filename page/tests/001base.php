@@ -35,7 +35,7 @@ class page_tests_001base extends page_Tester {
         'kit-gowrav'=>'kit name',
         // 'green-0a'=>'date',
         // 'repurchase-0a'=>'total bv',
-        // 'closing'=>'date'
+        'closing-daily'=>'2017-05-08'
         ];
         $x = $this->process($data);
         return $x;
