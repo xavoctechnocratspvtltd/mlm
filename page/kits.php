@@ -10,8 +10,9 @@ class page_kits extends \xepan\base\Page {
 		parent::init();
 		
 		$crud = $this->add('CRUD');
-		$model= $this->add('xavoc\mlm\Model_Item');
-		$crud->setModel($model,['qty_unit','name','sku','display_sequence','original_price','sale_price','pv','bv','sv','capping','introducer_income','description']);
+		$model= $this->add('xavoc\mlm\Model_Kit');
+		$crud->setModel($model);
+		$crud->addRef('xavoc\mlm\KitItem',['label'=>'Item']);		
 	}
 
 }
