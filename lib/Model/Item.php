@@ -80,7 +80,5 @@ class Model_Item extends \xepan\commerce\Model_Item {
 		$this->addCondition('ii_customfield_generic_id',$specification->fieldQuery('id'));
 
 		$this->getElement('status')->defaultValue('Published');
-
-		$this->hasMany('xavoc\mlm\KitItem','mlm_item_id');
 	}
 }
