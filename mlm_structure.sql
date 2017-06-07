@@ -11,7 +11,7 @@
  Target Server Version : 100118
  File Encoding         : utf-8
 
- Date: 06/04/2017 17:42:19 PM
+ Date: 06/06/2017 19:12:54 PM
 */
 
 SET NAMES utf8;
@@ -30,6 +30,7 @@ CREATE TABLE `mlm_distributor` (
   `right_id` int(11) DEFAULT NULL,
   `pin_id` int(11) DEFAULT NULL,
   `path` text,
+  `introducer_path` text,
   `side` varchar(2) DEFAULT NULL,
   `kit_item_id` int(11) DEFAULT NULL,
   `capping` int(11) DEFAULT NULL,
@@ -55,7 +56,7 @@ CREATE TABLE `mlm_distributor` (
   `greened_on` datetime DEFAULT NULL,
   `ansestors_updated` tinyint(4) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `mlm_generation_business`
@@ -68,6 +69,6 @@ CREATE TABLE `mlm_generation_business` (
   `introduced_path` text,
   `bv_sum` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 SET FOREIGN_KEY_CHECKS = 1;

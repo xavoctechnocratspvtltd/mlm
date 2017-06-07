@@ -24,6 +24,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		$dist_j->hasOne('xavoc\mlm\Right','right_id')->display(['form'=>'xepan\base\DropDownNormal']);
 
 		$dist_j->addField('path')->type('text');
+		$dist_j->addField('introducer_path')->type('text');
 		$dist_j->addField('side')->enum(['A','B'])->display(['form'=>'xepan\base\DropDownNormal']);
 
 		$dist_j->hasOne('xavoc\mlm\Kit','kit_item_id')->defaultValue(null)->caption('Startup Package');
@@ -113,6 +114,9 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 				$this['path'] = $sponsor->path() . $this['side'];
 				$this->memorize('leg',$this['side']);
 				$this->memorize('raw_password',$this['password']);
+			}
+			if($introducer = $this->introducer()){
+				$this['introduced_path'] = $introducer->path() . $this['side'];
 			}
 		}
 	}
