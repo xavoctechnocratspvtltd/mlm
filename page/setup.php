@@ -11,6 +11,36 @@ class page_setup extends \Page {
 		// add new default employee
 		
 		// add default specifications
+
+		$specfic_array=['BV','SV','PV','Capping','Introducer Income'];
+		foreach ($specfic_array as $sp) {
+			$this->add('xepan\commerce\Model_Item_Specification')
+					->addCondition('name',$sp)
+					->tryLoadAny()
+					->save();
+		}
+
+		$item_array=[
+					['name'=>'kit 1','code'=> 'kit1','pv'=>'1','bv'=>'1','sv'=>'1','capping'=>'1','introducer_income'=>'1'],
+					['name'=>'kit 2','code'=> 'kit2','pv'=>'1','bv'=>'1','sv'=>'1','capping'=>'1','introducer_income'=>'1'],
+					['name'=>'kit 3','code'=> 'kit3','pv'=>'1','bv'=>'1','sv'=>'1','capping'=>'1','introducer_income'=>'1'],
+					['name'=>'kit 4','code'=> 'kit4','pv'=>'1','bv'=>'1','sv'=>'1','capping'=>'1','introducer_income'=>'1'],
+					['name'=>'kit 5','code'=> 'kit5','pv'=>'1','bv'=>'1','sv'=>'1','capping'=>'1','introducer_income'=>'1']
+		];
+		foreach ($item_array as $item) {
+			$this->add('xavoc\mlm\Model_Kit')
+					->addCondition('name',$item['name'])
+					->addCondition('sku',$item['code'])
+					->addCondition('pv',$item['pv'])
+					->addCondition('bv',$item['bv'])
+					->addCondition('sv',$item['sv'])
+					->addCondition('capping',$item['capping'])
+					->addCondition('introducer_income',$item['introducer_income'])
+					->tryLoadAny()
+					->save();
+		}
+
+
 		// create a few kits with different SV BV Capping and Introduction Income
 			// to create kit first create an array and then create kit in foreach so we can add other kits easily
 
@@ -42,10 +72,12 @@ class page_setup extends \Page {
 		$user['password']='admin';
 		$user->save();
 
-		$this->addCondition('path',0);
-		$this->tryLoadAny();
-		$this['first_name']="Company";
-		$this['user_id']=$user->id;
-		$this->save();
+		$dis = $this->add('xavoc\mlm\Model_Distributor');
+		$dis->addCondition('path',0);
+		$dis->tryLoadAny();
+		$dis['first_name']="Company";
+		$dis['user_id']=$user->id;
+		$dis->save();
+
 	}
 }
