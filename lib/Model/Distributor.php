@@ -221,6 +221,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 				 next_char = 'A' AND desired=path
 				 ) lefts on lefts.id = d.id
 				SET
+					day_left_sv = day_left_sv + $sv_points,
 					week_left_sv = week_left_sv + $sv_points,
 					total_left_sv = total_left_sv + $sv_points,
 		";
@@ -239,6 +240,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 				 next_char = 'B' AND desired=path
 				 ) rights on rights.id = d.id
 				SET
+					day_right_sv = day_right_sv + $sv_points,
 					week_right_sv = week_right_sv + $sv_points,
 					total_right_sv = total_right_sv + $sv_points
 		";
