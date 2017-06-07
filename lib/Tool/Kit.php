@@ -7,7 +7,10 @@ namespace xavoc\mlm;
 	Purchase kit directly and make order and redirect to payment gateway
 */
 class Tool_Kit extends \xepan\cms\View_Tool{
-	public $options = ['shwo_purchase_btn'=>true];
+	public $options = [
+						'show_purchase_btn'=>true,
+						'checkout_page'=>'payment'
+					];
 
 	public $complete_lister = null;
 	function init(){
@@ -34,15 +37,18 @@ class Tool_Kit extends \xepan\cms\View_Tool{
 			$result = $this->placeOrder($data);
 
 			if($result['status'] == "success"){
-				return $js->univ()->successMessage($result['message']);
-
+				$url = $this->app->url($this->options['checkout_page'],['order_id'=>$result['order_id'],'step'=>'complete','paid'=>true]);
+				$js_event = [
+					$js->univ()->redirect($url)
+				]; 
+				return $js->univ(null,$js_event)->successMessage($result['message']);
 			}else{
 				return $js->univ()->errorMessage($result['message']);
 			}
 		});
 	}
 
-	function addToolCondition_row_shwo_purchase_btn($value,$l){
+	function addToolCondition_row_show_purchase_btn($value,$l){
 		
 		if($value != true){
 			$l->current_row_html['purchase_btn_wrapper'] = "";
@@ -139,7 +145,7 @@ class Tool_Kit extends \xepan\cms\View_Tool{
 
 			$qsp = $this->add('xepan\commerce\Model_QSP_Master')->createQSP($master_detail,$detail_data,'SalesOrder');
 
-			$result = ['status'=>'success','message'=>'redirect to payment gateway please wait ...','order'=>$qsp['master_detail']['id']];
+			$result = ['status'=>'success','message'=>'redirect to payment gateway please wait ...','order_id'=>$qsp['master_detail']['id']];
 
 		}catch(\Exception $e){
 			$result = ['status'=>'failed','message'=>$e->getMessage()];
