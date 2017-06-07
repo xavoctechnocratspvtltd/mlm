@@ -46,8 +46,10 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		$dist_j->addField('weekly_intros_amount')->type('money')->defaultValue(0);
 		$dist_j->addField('total_intros_amount')->type('money')->defaultValue(0);
 
-		$dist_j->addField('weekly_left_sv')->type('int')->defaultValue(0);
-		$dist_j->addField('weekly_right_sv')->type('int')->defaultValue(0);
+		$dist_j->addField('day_left_sv')->type('int')->defaultValue(0);
+		$dist_j->addField('day_right_sv')->type('int')->defaultValue(0);
+		$dist_j->addField('day_pairs')->type('int')->defaultValue(0);
+		$dist_j->addField('week_pairs')->type('int')->defaultValue(0);
 
 		$dist_j->addField('total_left_sv')->type('int')->defaultValue(0);
 		$dist_j->addField('total_right_sv')->type('int')->defaultValue(0);
@@ -61,6 +63,8 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 		$dist_j->addField('greened_on')->type('datetime')->defaultValue(null)->caption('Qualified date');
 		$dist_j->addField('ansestors_updated')->type('boolean')->defaultValue(false)->system(true);
+		
+		$dist_j->addField('temp')->type('number')->system(true);
 
 		$this->hasMany('xavoc\mlm\GenerationBusiness','distributor_id');
 
@@ -222,7 +226,6 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 				 ) lefts on lefts.id = d.id
 				SET
 					day_left_sv = day_left_sv + $sv_points,
-					week_left_sv = week_left_sv + $sv_points,
 					total_left_sv = total_left_sv + $sv_points,
 		";
 		$this->api->db->dsql($this->api->db->dsql()->expr($q))->execute();
@@ -241,7 +244,6 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 				 ) rights on rights.id = d.id
 				SET
 					day_right_sv = day_right_sv + $sv_points,
-					week_right_sv = week_right_sv + $sv_points,
 					total_right_sv = total_right_sv + $sv_points
 		";
 
