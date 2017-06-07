@@ -18,7 +18,7 @@ SET NAMES utf8;
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------
---  Table structure for `mlm_distributor`
+-- Table structure for `mlm_distributor`
 -- ----------------------------
 DROP TABLE IF EXISTS `mlm_distributor`;
 CREATE TABLE `mlm_distributor` (
@@ -61,8 +61,12 @@ CREATE TABLE `mlm_distributor` (
   `greened_on` datetime DEFAULT NULL,
   `ansestors_updated` tinyint(4) DEFAULT NULL,
   `temp` int(11) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `mobile_number` varchar(255) DEFAULT NULL,
+  `dob` date DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=180 DEFAULT CHARSET=utf8;
+
 
 -- ----------------------------
 --  Table structure for `mlm_generation_business`

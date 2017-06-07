@@ -32,8 +32,8 @@ class page_tests_001base extends page_Tester {
         'ghanshyam'=>['introducer'=>'company','side'=>'A','on'=>'2017-05-07'],
         'gowrav'=>['introducer'=>'company','side'=>'B','on'=>'2017-05-07'],
         'rakesh'=>['introducer'=>'ram','side'=>'A','on'=>'2017-05-07'],
-        'kit-gowrav'=>'kit name',
-        // 'green-0a'=>'date',
+        'kit-gowrav'=>'kit 1',
+        'green-gowrav'=>'2017-05-08',
         // 'repurchase-0a'=>'total bv',
         'closing-daily'=>'2017-05-08'
         ];

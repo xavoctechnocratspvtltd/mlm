@@ -155,7 +155,7 @@ class page_Tester extends \xepan\base\Page_Tester{
 
 	function resetData(){
 		$this->add('xavoc\mlm\Model_Payout')->deleteAll();
-		$this->add('xavoc\mlm\Model_Distributor')->setupCompany();
+		$this->add('xavoc\mlm\Controller_Setup');
 	}
 	
 

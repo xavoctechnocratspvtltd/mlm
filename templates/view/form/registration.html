@@ -1,0 +1,48 @@
+
+<div class="container">
+  <div class="row centered-form">
+    <div class="col-xs-12 col-sm-12 col-md-12">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h2 class="panel-title">Registration</h2>
+        </div>
+        <div class="panel-body">
+          <form role="form">
+            <div class="row">
+              <div class="col-xs-6 col-sm-6 col-md-6 form-group atk-form-field atk-form-field">{$first_name}
+              </div>
+              <div class="col-xs-6 col-sm-6 col-md-6 form-group atk-form-row atk-form-field">{$last_name}
+              </div>
+              <div class="col-xs-6 col-sm-6 col-md-6 form-group atk-form-row atk-form-field">{$introducer_id}{$introducer}
+              </div>
+              <div class="col-xs-6 col-sm-6 col-md-6 form-group atk-form-row atk-form-field">{$side}
+              </div>
+              <div class="col-xs-6 col-sm-6 col-md-6 atk-form-row atk-form-field form-group">{$dob}
+              </div>
+              <div class="col-xs-6 col-sm-6 col-md-6 form-group atk-form-row atk-form-field">{$pan_no}
+              </div>
+              <div class="col-xs-6 col-sm-6 col-md-6 form-group atk-form-row atk-form-field">{$email}
+              </div>
+              <div class="col-xs-12 col-sm-12 col-md-6 form-group atk-form-row atk-form-field">{$mobile_number}
+              </div>
+              <div class="col-xs-12 col-sm-12 col-md-12 form-group atk-form-row atk-form-field">{$address}
+              </div>
+            </div>
+            <div class="row">
+            </div>{$FormButtons}
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<style>
+  .centered-form input,.centered-form select,.centered-form textarea{
+  	width:100%;
+  }
+  
+  .centered-form .panel{
+  	background: rgba(255, 255, 255, 0.8);
+  	box-shadow: rgba(0, 0, 0, 0.3) 20px 20px 20px;
+  }
+</style>
