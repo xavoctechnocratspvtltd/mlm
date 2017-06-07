@@ -142,8 +142,8 @@ class page_Tester extends \xepan\base\Page_Tester{
 				'rightDP'=>$r['monthly_right_dp_mrp_diff'],
 				'totalPairs'=>$r['total_pairs'],
 				'carriedAmount'=>$r['carried_amount'],
-				'joinedOn'=>$r['created_at'],
-				'greenedOn'=>$r['greened_on'],
+				'joinedOn'=>date('Y-m-d',strtotime($r['created_at'])),
+				'greenedOn'=>date('Y-m-d',strtotime($r['greened_on'])),
 				];
 		}
 		return $array;
