@@ -201,7 +201,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 	}
 
 	function purchaseKit($kit){
-		$this['kit_id']= $kit->id;
+		$this['kit_item_id']= $kit->id;
 		$this->save();
 	}
 
@@ -213,9 +213,9 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		$kit = $this->kit();
 		if(!$kit) throw new \Exception("Cannot mark green without kit", 1);
 		
-		$this['pv'] = $kit['PV'];
-		$this['bv'] = $kit['BV'];
-		$this['sv'] = $kit['SV'];
+		$this['pv'] = $kit['pv'];
+		$this['bv'] = $kit['bv'];
+		$this['sv'] = $kit['sv'];
 
 		$this->save();
 		$this->updateAnsestorsSV($this['sv']);
@@ -241,7 +241,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 				 ) lefts on lefts.id = d.id
 				SET
 					day_left_sv = day_left_sv + $sv_points,
-					total_left_sv = total_left_sv + $sv_points,
+					total_left_sv = total_left_sv + $sv_points
 		";
 		$this->api->db->dsql($this->api->db->dsql()->expr($q))->execute();
 
