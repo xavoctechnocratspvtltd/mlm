@@ -81,5 +81,6 @@ class Model_Item extends \xepan\commerce\Model_Item {
 
 		$this->getElement('status')->defaultValue('Published');
 
+		$this->hasMany('xavoc\mlm\KitItem','mlm_item_id');
 	}
 }
