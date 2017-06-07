@@ -33,7 +33,9 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		$dist_j->addField('pv')->type('int')->system(true);
 		$dist_j->addField('bv')->type('int')->system(true);
 		$dist_j->addField('sv')->type('int')->system(true);
-
+		$dist_j->addField('email');
+		$dist_j->addField('mobile_number');
+		$dist_j->addField('dob')->type('date')->caption('Date of Birth');
 		$dist_j->addField('IFCS_Code')->mandatory("IFSC Code is required")->display(array('form'=>'xavoc\mlm\AlphaNumeric'))->caption('IFSC Code');
 		$dist_j->addField('branch_name')->caption('Branch')->mandatory("Branch name is required")->display(array('form'=>'\xavoc\mlm\Alpha'));//->system(true);
 		$dist_j->addField('kyc_no')->mandatory("KYC no is required")->caption('KYC no.');

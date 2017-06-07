@@ -19,10 +19,20 @@ class Tool_Register extends \xepan\cms\View_Tool{
 		parent::init();
 
 		$form = $this->add('Form');
-		$form->setModel('xavoc\mlm\Distributor',['first_name','last_name','introducer_id','side']);
+		$form->setLayout(['view/form/registration']);
+		$form->setModel('xavoc\mlm\Distributor',['first_name','last_name','introducer_id','side','email','mobile_number','pan_no','address','dob']);
+		$form->getElement('first_name')->validate('required');
+		$form->getElement('last_name')->validate('required');
+		$form->getElement('introducer_id')->validate('required');
+		$form->getElement('side')->validate('required');
+		$form->getElement('dob')->validate('required');
+		$form->getElement('pan_no')->validate('required');
+		$form->getElement('email')->validate('required');
+		$form->getElement('mobile_number')->validate('required');
+		$form->getElement('address')->validate('required');
 		// $form->addField('xepan\base\DropDownNormal','sponsor')->setModel('xavoc\mlm\Distributor');
 		// $form->addField('xepan\base\DropDownNormal','introducer')->setModel('xavoc\mlm\Distributor');
-		$form->addSubmit('Register');
+		$form->addSubmit('Register')->addClass(' btn btn-info btn-block');
 		
 		if($form->isSubmitted()){
 			$distributor = $this->add('xavoc\mlm\Model_Distributor');

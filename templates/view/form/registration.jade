@@ -1,0 +1,59 @@
+.container
+	.row.centered-form
+		.col-xs-12.col-sm-12.col-md-12
+			.panel.panel-default
+				.panel-heading
+					h2.panel-title
+						| Registration
+				.panel-body
+					form(role='form')
+						.row
+							.col-xs-6.col-sm-6.col-md-6.form-group.atk-form-field.atk-form-field
+									//- .form-control.input-sm
+									{$first_name}
+									//- input#first_name.form-control.input-sm(type='text', name='first_name', placeholder='First Name')
+							.col-xs-6.col-sm-6.col-md-6.form-group.atk-form-row.atk-form-field
+									//- .form-control.input-sm
+									{$last_name}
+									//- input#last_name.form-control.input-sm(type='text', name='last_name', placeholder='Last Name')
+						
+							.col-xs-6.col-sm-6.col-md-6.form-group.atk-form-row.atk-form-field
+									//- .form-control.input-sm
+									{$introducer_id}{$introducer}
+									//- input#email.form-control.input-sm(type='email', name='email', placeholder='Email Address')
+							.col-xs-6.col-sm-6.col-md-6.form-group.atk-form-row.atk-form-field
+									//- .form-control.input-sm
+									{$side}
+							.col-xs-6.col-sm-6.col-md-6.atk-form-row.atk-form-field.form-group
+									//- .form-control.input-sm
+									{$dob}
+							.col-xs-6.col-sm-6.col-md-6.form-group.atk-form-row.atk-form-field
+									//- .form-control.input-sm			
+									{$pan_no}
+							.col-xs-6.col-sm-6.col-md-6.form-group.atk-form-row.atk-form-field
+									//- .form-control.input-sm
+									{$email}
+							.col-xs-12.col-sm-12.col-md-6.form-group.atk-form-row.atk-form-field
+									//- .form-control.input-sm
+									{$mobile_number}
+							.col-xs-12.col-sm-12.col-md-12.form-group.atk-form-row.atk-form-field
+									//- .form-control.input-sm
+									{$address}
+						.row
+									//- input#password.form-control.input-sm(type='password', name='password', placeholder='Password')
+							//- .col-xs-6.col-sm-6.col-md-6
+							//- 	.form-group
+							//- 		input#password_confirmation.form-control.input-sm(type='password', name='password_confirmation', placeholder='Confirm Password')
+						{$FormButtons}
+						//- input.btn.btn-info.btn-block(type='submit', value='Register')
+
+style.
+	.centered-form input,.centered-form select,.centered-form textarea{
+		width:100%;
+	}
+
+	.centered-form .panel{
+		background: rgba(255, 255, 255, 0.8);
+		box-shadow: rgba(0, 0, 0, 0.3) 20px 20px 20px;
+	}
+
