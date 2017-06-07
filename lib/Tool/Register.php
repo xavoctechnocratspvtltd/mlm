@@ -9,10 +9,10 @@ namespace xavoc\mlm;
 class Tool_Register extends \xepan\cms\View_Tool{
 	
 	public $options = [
-				'show_caption'=>true
+				'show_caption'=>true,
 				'registration_message'=>'Registration mail sent. Check your email address linked to the account.',
 				'after_registration_redirect_url'=>null,
-				'show_kit'=>true
+				'show_kit'=>true,
 			];
 	
 	function init(){
