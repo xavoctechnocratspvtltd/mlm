@@ -64,7 +64,7 @@ class Tool_Genology extends \xepan\cms\View_Tool{
 		$output="";
 		$reload_js = $this->js()->reload(array('start_id'=>$model->id));
 		$t=$this->template->cloneRegion('Node');
-		$t->setHTML('username','<a href="#xepan" onclick="'.$reload_js->render().'">'.$model['username'].'</a>');
+		$t->setHTML('username','<a href="#xepan" onclick="'.$reload_js->render().'">'.$model['name'].'</a>');
 		$t->set('class',($model['greened_on'] && $model['ansestors_updated'])?'atk-effect-success':($model['greened_on']?'atk-effect-warning':'atk-effect-danger'));
 		$t->set('title',
 				$model['name'].
