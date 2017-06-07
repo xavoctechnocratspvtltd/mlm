@@ -3,7 +3,7 @@
 namespace xavoc\mlm;
 
 
-class Model_KitItem extends \xepan\base\Model_Tabel {
+class Model_KitItem extends \xepan\base\Model_Table {
 	public $table = "mlm_kit_item_asso";
 
 	function init(){
