@@ -28,10 +28,10 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		$dist_j->addField('side')->enum(['A','B'])->display(['form'=>'xepan\base\DropDownNormal']);
 
 		$dist_j->hasOne('xavoc\mlm\Kit','kit_item_id')->defaultValue(null)->caption('Startup Package');
-		$dist_j->addField('capping')->type('int')->system(true);
-		$dist_j->addField('pv')->type('int')->system(true);
-		$dist_j->addField('bv')->type('int')->system(true);
-		$dist_j->addField('sv')->type('int')->system(true);
+		$dist_j->addField('capping')->type('int')->system(true)->defaultValue(0);
+		$dist_j->addField('pv')->type('int')->system(true)->defaultValue(0);
+		$dist_j->addField('bv')->type('int')->system(true)->defaultValue(0);
+		$dist_j->addField('sv')->type('int')->system(true)->defaultValue(0);
 		$dist_j->addField('email');
 		$dist_j->addField('mobile_number');
 		$dist_j->addField('dob')->type('date')->caption('Date of Birth');
@@ -129,6 +129,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 			if(!($dist OR $this->api->auth->model->isSuperUser())){
 				throw $this->exception('You do not have rights to add distributor');
 			}
+
 			if($introducer = $this->introducer()){
 				$this['introduced_path'] = $introducer->path() . $this['side'];
 			}
@@ -215,7 +216,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 	}
 
 	function purchaseKit($kit){
-		$this['kit_id']= $kit->id;
+		$this['kit_item_id']= $kit->id;
 		$this->save();
 	}
 
@@ -227,12 +228,14 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		$kit = $this->kit();
 		if(!$kit) throw new \Exception("Cannot mark green without kit", 1);
 		
-		$this['pv'] = $kit['PV'];
-		$this['bv'] = $kit['BV'];
-		$this['sv'] = $kit['SV'];
+		$this['capping'] = $kit['capping'];
+		$this['pv'] = $kit['pv'];
+		$this['bv'] = $kit['bv'];
+		$this['sv'] = $kit['sv'];
 
 		$this->save();
 		$this->updateAnsestorsSV($this['sv']);
+		if($introducer  = $this->introducer()) $introducer->addSessionIntro($kit['introducer_income']);
 	}
 
 	function repurchase($bv){
@@ -255,7 +258,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 				 ) lefts on lefts.id = d.id
 				SET
 					day_left_sv = day_left_sv + $sv_points,
-					total_left_sv = total_left_sv + $sv_points,
+					total_left_sv = total_left_sv + $sv_points
 		";
 		$this->api->db->dsql($this->api->db->dsql()->expr($q))->execute();
 
