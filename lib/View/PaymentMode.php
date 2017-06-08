@@ -189,9 +189,10 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 
 			$qsp = $this->add('xepan\commerce\Model_QSP_Master')->createQSP($master_detail,$detail_data,'SalesOrder');
 
+			// afetr payment is complete then kit is associateted with distributor
 			// associating kit id with distributor
-			$distributor['kit_item_id'] = $kit_model->id;
-			$distributor->save();
+			// $distributor['kit_item_id'] = $kit_model->id;
+			// $distributor->save();
 
 			$result = ['status'=>'success','message'=>'redirect to payment gateway please wait ...','order_id'=>$qsp['master_detail']['id']];
 

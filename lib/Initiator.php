@@ -15,6 +15,7 @@ class Initiator extends \Controller_Addon {
         $m->addItem(['Pin Management','icon'=>'fa fa-check-square-o'],'xavoc_dm_distributors');
         $m->addItem(['Kit Management','icon'=>'fa fa-check-square-o'],'xavoc_dm_kits');
         $m->addItem(['Distributors','icon'=>'fa fa-check-square-o'],'xavoc_dm_distributors');
+        $m->addItem(['Distributors Actions','icon'=>'fa fa-check-square-o'],'xavoc_dm_distributoractions');
         $m->addItem(['Closings','icon'=>'fa fa-check-square-o'],'xavoc_dm_distributors');
         $m->addItem(['Configuration','icon'=>'fa fa-check-square-o'],'xavoc_dm_config');
 
@@ -45,7 +46,8 @@ class Initiator extends \Controller_Addon {
         $this->app->exportFrontEndTool('xavoc\mlm\Tool_Register','MLM');
         $this->app->exportFrontEndTool('xavoc\mlm\Tool_Kit','MLM');
         $this->app->exportFrontEndTool('xavoc\mlm\Tool_Profile','MLM');
-
+        $this->app->exportFrontEndTool('xavoc\mlm\Tool_MenuBar','MLM');
+	        $this->app->exportFrontEndTool('xavoc\mlm\Tool_DistributorMenu','MLM');
         return $this;
     }
 
