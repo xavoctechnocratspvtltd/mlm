@@ -4,6 +4,7 @@ namespace xavoc\mlm;
 
 class Model_GenerationIncomeSlab extends \xepan\base\Model_Table {
 	public $table ='mlm_generation_income_slab';
+	public $acl_type = "GenerationIncomeSlab";
 
 	function init(){
 		parent::init();
