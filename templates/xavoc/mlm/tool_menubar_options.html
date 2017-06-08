@@ -1,0 +1,37 @@
+
+<div id="{$_name}" style="display:none" for-xepan-component="xavoc/mlm/Tool_MenuBar" class="xepan-tool-options">
+  <div id="xepan-cms-groups-panel" class="xepan-cms-groups-panel collapse in"></div>
+  <div class="xepan-cms-group-panel clearfix">
+    <h3 data-toggle="collapse" data-target="#collapse-item-category" aria-expanded="false" class="collapsed"><span>MLM MegaMenu Options</span></h3>
+    <div id="collapse-item-category" class="xepan-cms-tools-bar-panel row-fluid collapse in">
+      <div class="panel-body">
+        <table class="table table-condensed table-hover">
+          <tr>						
+            <div class="xepan-tool-option">
+              <td class="xepan-tool-option-title">URL Page</td>
+              <td class="xepan-tool-option-value"> 
+                <input id="menu_url" data-attr="menu_url"/>
+              </td>
+            </div>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+  <script>
+    $('#{$_name} [data-attr]').on('change',function(){
+    	$(current_selected_component).attr($(this).data('attr'),$(this).val());
+    });
+    
+    $('#{$_name}').on('show',function(event){
+    	$('#{$_name} [data-attr]').each(function(index,value){
+    		
+    		var default_value = $(this).attr('data-defaultvalue');
+    		if($(current_selected_component).attr($(this).data('attr')))
+    			default_value = $(current_selected_component).attr($(this).data('attr'));
+    		
+    		$(this).val(default_value);
+    	});
+    })
+  </script>
+</div>
