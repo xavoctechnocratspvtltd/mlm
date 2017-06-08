@@ -59,6 +59,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		$dist_j->addField('total_right_sv')->type('int')->defaultValue(0);
 
 		// monthly session
+		$dist_j->addField('month_self_bv')->type('int')->defaultValue(0);
 		$dist_j->addField('monthly_left_dp_mrp_diff')->type('int')->defaultValue(0);
 		$dist_j->addField('monthly_right_dp_mrp_diff')->type('int')->defaultValue(0);
 		
@@ -90,6 +91,8 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		$dist_j->addField('dd_number');
 		$dist_j->addField('cheque_date');
 		$dist_j->addField('dd_date');
+		
+		$dist_j->addField('current_rank');
 		
 		$this->hasMany('xavoc\mlm\GenerationBusiness','distributor_id');
 		$this->hasMany('xavoc\mlm\Attachment','distributor_id');
@@ -138,7 +141,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 			}
 
 			if($introducer = $this->introducer()){
-				$this['introduced_path'] = $introducer->path() . $this['side'];
+				$this['introducer_path'] = $introducer->path() . $this['side'];
 			}
 
 			$this['sponsor_id'] = $this->findSponsor($introducer, $this['side'])->get('id');
@@ -254,7 +257,9 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 	}
 
 	function repurchase($bv){
-
+		$this['month_self_bv'] = $this['month_self_bv'] + $bv;
+		$this->save();
+		$this->updateAnsestorsBV($bv);
 	}
 
 	function updateAnsestorsSV($sv_points){
@@ -305,7 +310,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 				SET
 					bv_sum = bv_sum + $bv_points
 				WHERE 
-					LEFT('$path',LENGTH(path)) = path;
+					LEFT('$path',LENGTH(introduced_path)) = introduced_path;
 		";
 		$this->api->db->dsql($this->api->db->dsql()->expr($q))->execute();
 

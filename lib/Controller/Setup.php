@@ -23,7 +23,6 @@ class Controller_Setup extends \AbstractController {
 		});
 
 		// add default specifications
-
 		$specfic_array=['BV','SV','PV','Capping','Introduction Income'];
 		foreach ($specfic_array as $sp) {
 			$this->add('xepan\commerce\Model_Item_Specification')
@@ -52,9 +51,49 @@ class Controller_Setup extends \AbstractController {
 				->save();
 		}
 
+		$re_purchase_slab = [
+			['name'=>'Star',		'slab_percentage'=>5,	'from_bv'=>199, 	'to_bv'=>3000],
+			['name'=>'Yellow Star',	'slab_percentage'=>10,	'from_bv'=>3001, 	'to_bv'=>10000],
+			['name'=>'Orange Star',	'slab_percentage'=>15,	'from_bv'=>10001, 	'to_bv'=>35000],
+			['name'=>'Red Star',	'slab_percentage'=>20,	'from_bv'=>35001, 	'to_bv'=>100000],
+			['name'=>'Purpule Star','slab_percentage'=>25,	'from_bv'=>100001, 	'to_bv'=>250000],
+			['name'=>'Green Star',	'slab_percentage'=>30,	'from_bv'=>250001, 	'to_bv'=>500000],
+			['name'=>'Brown Star',	'slab_percentage'=>35,	'from_bv'=>500001, 	'to_bv'=>2500000],
+			['name'=>'Blue Star',	'slab_percentage'=>40,	'from_bv'=>2500001, 'to_bv'=>5000000],
+		];
 
-		// create a few kits with different SV BV Capping and Introduction Income
-			// to create kit first create an array and then create kit in foreach so we can add other kits easily
+		foreach ($re_purchase_slab as $row) {
+			$slab = $this->add('xavoc\mlm\Model_RePurchaseBonusSlab')
+						->addCondition('name',$row['name'])
+						->tryLoadAny();
+			$slab['slab_percentage']=$row['slab_percentage'];
+			$slab['from_bv']=$row['from_bv'];
+			$slab['to_bv']=$row['to_bv'];
+			$slab->save();
+		}
+
+		$generation_income_slab = [
+			['name'=>'Yellow Star',	'generation_1'=>10,'generation_2'=>00,'generation_3'=>00,'generation_4'=>0,'generation_5'=>0,'generation_6'=>0,'generation_7'=>0],
+			['name'=>'Orange Star',	'generation_1'=>10,'generation_2'=>10,'generation_3'=>00,'generation_4'=>0,'generation_5'=>0,'generation_6'=>0,'generation_7'=>0],
+			['name'=>'Red Star',	'generation_1'=>10,'generation_2'=>10,'generation_3'=>10,'generation_4'=>0,'generation_5'=>0,'generation_6'=>0,'generation_7'=>0],
+			['name'=>'Purpule Star','generation_1'=>10,'generation_2'=>10,'generation_3'=>10,'generation_4'=>5,'generation_5'=>0,'generation_6'=>0,'generation_7'=>0],
+			['name'=>'Green Star',	'generation_1'=>10,'generation_2'=>10,'generation_3'=>10,'generation_4'=>5,'generation_5'=>5,'generation_6'=>0,'generation_7'=>0],
+			['name'=>'Brown Star',	'generation_1'=>10,'generation_2'=>10,'generation_3'=>10,'generation_4'=>5,'generation_5'=>5,'generation_6'=>5,'generation_7'=>0],
+			['name'=>'Blue Star',	'generation_1'=>10,'generation_2'=>10,'generation_3'=>10,'generation_4'=>5,'generation_5'=>5,'generation_6'=>5,'generation_7'=>5]
+		];
+
+		foreach ($generation_income_slab as $row) {
+			$slab = $this->add('xavoc\mlm\Model_GenerationIncomeSlab')
+						->addCondition('name',$row['name'])
+						->tryLoadAny();
+			foreach ($row as $field => $value) {
+				$slab[$field]=$value;
+			}
+
+			$slab['rank_id'] = $this->add('xavoc\mlm\Model_RePurchaseBonusSlab')->loadBy('name',$row['name'])->get('id');
+			$slab->save();
+		}
+
 
 		$this->setupCompany();
 	}
