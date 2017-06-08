@@ -13,5 +13,7 @@ class Model_RePurchaseBonus extends \xepan\base\Model_Table {
 		$this->addField('from_bv')->type('int');
 		$this->addField('to_bv')->type('int');
 
+		$this->setOrder('to_bv','desc');
+
 	}
 }

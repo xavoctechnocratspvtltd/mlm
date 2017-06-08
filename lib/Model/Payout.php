@@ -15,6 +15,13 @@ class Model_Payout extends \xepan\base\Model_Table {
 		$this->addField('binary_income')->type('money');
 		$this->addField('introduction_amount')->type('money');
 		$this->addField('retail_profit')->type('money');
+		
+		$this->addField('rank');
+		$this->addField('generation_a_business')->type('int');
+		$this->addField('generation_b_business')->type('int');
+		$this->addField('re_purchase_incomce_gross')->type('int');
+		$this->addField('re_purchase_incomce')->type('int');
+
 		$this->addField('repurchase_bonus')->type('money');
 		$this->addField('generation_income')->type('money');
 		$this->addField('loyalty_bonus')->type('money');
@@ -85,20 +92,36 @@ class Model_Payout extends \xepan\base\Model_Table {
 		// add re-purchase bonus & generation income to this payout rows
 		// update distributor with A/B legs from bv table ((max) & (All-max))
 		$q="UPDATE 
-				mlm_distributor d
+				mlm_payout p
 			SET 
-				generation_a_business = (select max(bv_sum) from mlm_generation_business where distributor_id = d.customer_id ),
-				generation_b_business = ((select sum(bv_sum) from mlm_generation_business where distributor_id = d.customer_id ) - (select max(bv_sum) from mlm_generation_business where distributor_id = d.customer_id ))
-			WHERE greened_on is not null
+				generation_a_business = (select max(bv_sum) from mlm_generation_business bv_table where bv_table.distributor_id = p.distributor_id ),
+				generation_b_business = ((select sum(bv_sum) from mlm_generation_business bv_table where bv_table.distributor_id = d.distributor_id ) - (select max(bv_sum) from mlm_generation_business bv_table where bv_table.distributor_id = d.distributor_id ))
+			WHERE 
+				greened_on is not null AND
+				closing_date = '$on_date'
+
 				";
 		$this->query($q);
+
 		// what if 60% ratio is not maintained ?? 
 		// TODO
 
 
 		// update rank 
-		
 
+		$ranks = $this->add('xavoc\mlm\Model_RePurchaseBonus');
+
+		foreach ($ranks as $row) {
+			$q = "
+				UPDATE
+					mlm_payout p
+				SET rank = (select name from mlm_re_purchase_bonus_slab WHERE p.generation_a_business+p.generation_b_business > from_bv AND p.generation_a_business+p.generation_b_business <= to_bv)
+				WHERE
+					closing_date = '$on_date'
+			";
+
+			$this->query($q);
+		}
 
 		// generate commission as per slab
 		// find difference from introducer downline path

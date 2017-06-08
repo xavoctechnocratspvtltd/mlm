@@ -11,7 +11,7 @@
  Target Server Version : 100118
  File Encoding         : utf-8
 
- Date: 06/08/2017 12:33:11 PM
+ Date: 06/08/2017 13:21:55 PM
 */
 
 SET NAMES utf8;
@@ -135,6 +135,11 @@ CREATE TABLE `mlm_payout` (
   `binary_income` decimal(10,2) DEFAULT NULL,
   `introduction_amount` decimal(10,2) DEFAULT NULL,
   `retail_profit` decimal(10,2) DEFAULT NULL,
+  `rank` varchar(255) DEFAULT NULL,
+  `generation_a_business` int(11) DEFAULT NULL,
+  `generation_b_business` int(11) DEFAULT NULL,
+  `re_purchase_incomce_gross` int(11) DEFAULT NULL,
+  `re_purchase_incomce` int(11) DEFAULT NULL,
   `repurchase_bonus` decimal(10,2) DEFAULT NULL,
   `generation_income` decimal(10,2) DEFAULT NULL,
   `loyalty_bonus` decimal(10,2) DEFAULT NULL,
