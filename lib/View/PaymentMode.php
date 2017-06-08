@@ -13,6 +13,8 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 			$this->add('View_Warning')->set('kit id not found')->addClass('alert alert-warning');
 		}
 
+		$kit_model = $this->add('xavoc\mlm\Model_Kit')->load($this->kit_id);
+
 		$this->distributor = $distributor = $this->add('xavoc\mlm\Model_Distributor');
 		$distributor->loadLoggedIn();
 		if(!$distributor->loaded()){
@@ -20,7 +22,7 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 		}
 
 		if($distributor['kit_item_id']){
-			$this->add('View_Info')->set('you already purchase a kit');
+			$this->add('View_Info')->set('you have a kit or you purchased it');
 			return;
 		}
 
@@ -57,20 +59,23 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 		$attachment->addCondition('distributor_id',$distributor->id);
 
 		$cheque_form = $cheque_tab->add('Form');
-		$cheque_form->addField('bank_name');
-		$cheque_form->addField('bank_ifsc_code');
-		$cheque_form->addField('cheque_number');
-		$cheque_form->addField('DatePicker','cheque_date');
+		$cheque_form->addField('bank_name')->validate('required');
+		$cheque_form->addField('bank_ifsc_code')->validate('required');
+		$cheque_form->addField('cheque_number')->validate('required');
+		$cheque_form->addField('DatePicker','cheque_date')->validate('required');
 		$cheque_form->setModel($attachment,['cheque_deposite_receipt_image_id']);
 		$cheque_form->addSubmit('Submit');
+		
 		if($cheque_form->isSubmitted()){
 			$cheque_form->update();
 
+			$distributor['kit_id'] = $cheque_form['bank_name'];
 			$distributor['bank_name'] = $cheque_form['bank_name'];
 			$distributor['bank_ifsc_code'] = $cheque_form['bank_ifsc_code'];
 			$distributor['cheque_number'] = $cheque_form['cheque_number'];
 			$distributor['cheque_date'] = $cheque_form['cheque_date'];
-			$distributor->save();
+			$distributor->purchaseKit($kit_model);
+
 			$cheque_form->js()->univ()->successMessage('cheque detail submitted')->execute();
 		}
 
@@ -82,13 +87,15 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 		$dd_form->setModel($attachment,['dd_deposite_receipt_image_id']);
 		$dd_form->addSubmit('Submit');
 		if($dd_form->isSubmitted()){
+
 			$dd_form->update();
 
 			$distributor['bank_name'] = $dd_form['bank_name'];
 			$distributor['bank_ifsc_code'] = $dd_form['bank_ifsc_code'];
 			$distributor['cheque_number'] = $dd_form['cheque_number'];
 			$distributor['cheque_date'] = $dd_form['cheque_date'];
-			$distributor->save();
+			$distributor->purchaseKit($kit_model);
+
 			$dd_form->js()->univ()->successMessage('DD detail submitted')->execute();
 		}
 
