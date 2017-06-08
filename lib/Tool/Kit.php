@@ -9,15 +9,32 @@ namespace xavoc\mlm;
 class Tool_Kit extends \xepan\cms\View_Tool{
 	public $options = [
 						'show_purchase_btn'=>true,
-						'checkout_page'=>'payment'
+						'checkout_page'=>'payment',
+						'check_distributor'=>true
 					];
 
 	public $complete_lister = null;
 	function init(){
 		parent::init();
 
+
+		// check distributor
+		if($this->options['check_distributor']){
+			$this->distributor = $distributor = $this->add('xavoc\mlm\Model_Distributor');
+			$distributor->loadLoggedIn();
+			if(!$distributor->loaded()){
+				return "distributor not found";
+			}
+			if($distributor['kit_item_id']){
+				$this->add('View')->set("Kit Purchased");
+				$this->add('Button')->set('Go To DashBoard')->js('click')->redirect($this->app->url('dashboard'));
+				return;
+			}
+		}
+
+
 		$kit_model = $this->add('xavoc\mlm\Model_Kit');
-		// $kit_model->addCondition('status','Published');
+		$kit_model->addCondition('status','Published');
 
 		$layout_template = "kitlist";
 		$this->complete_lister = $cl = $this->add('CompleteLister',null,null,['xavoc/tool/'.$layout_template]);

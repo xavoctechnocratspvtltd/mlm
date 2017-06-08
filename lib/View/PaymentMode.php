@@ -52,11 +52,11 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 		$cash_form = $cash_tab->add('Form');
 		$cash_form->addSubmit('Due');
 		if($cash_form->isSubmitted()){
-			
+
 			$distributor['payment_mode'] = "cash";
 			$distributor->purchaseKit($kit_model);
-			
-			$cash_form->js()->univ()->errorMessage('Cash Deposite')->execute();
+
+			$cash_form->js(null,$cash_form->js()->univ()->closeDialog())->univ()->errorMessage('Cash Deposite')->execute();
 		}
 
 		$attachment = $this->add('xavoc\mlm\Model_Attachment');
@@ -81,7 +81,7 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 			$distributor['cheque_date'] = $cheque_form['cheque_date'];
 			$distributor->purchaseKit($kit_model);
 
-			$cheque_form->js()->univ()->successMessage('cheque detail submitted')->execute();
+			$cheque_form->js(null,$cheque_form->js()->univ()->closeDialog())->univ()->successMessage('cheque detail submitted')->execute();
 		}
 
 		$dd_form = $dd_tab->add('Form');
@@ -102,7 +102,7 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 			$distributor['cheque_date'] = $dd_form['cheque_date'];
 			$distributor->purchaseKit($kit_model);
 
-			$dd_form->js()->univ()->successMessage('DD detail submitted')->execute();
+			$dd_form->js(null,$dd->js()->univ()->closeDialog())->univ()->successMessage('DD detail submitted')->execute();
 		}
 
 	}

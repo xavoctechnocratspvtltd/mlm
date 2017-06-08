@@ -226,6 +226,12 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 	function purchaseKit($kit){
 		$this['kit_item_id']= $kit->id;
+		$this['status'] = "KitPaid";
+
+		$this->app->employee
+		->addActivity("Distributor ".$this['name']." purchase a kit( ".$this['kit']." ) and waiting for payment verification")
+		->notifyWhoCan(['PaymentVerified'],'KitPaid',$this);
+		
 		$this->save();
 	}
 
