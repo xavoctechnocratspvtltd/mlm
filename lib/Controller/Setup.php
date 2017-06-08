@@ -15,12 +15,12 @@ class Controller_Setup extends \AbstractController {
 			$m->delete();
 		});
 		
-		// $item =$this->add('xepan\commerce\Model_Item')->each(function($m){
-		// 	$m->delete();
-		// });
-		// $this->add('xepan\commerce\Model_Item_Specification')->each(function($m){
-		// 	$m->delete();
-		// });
+		$item =$this->add('xepan\commerce\Model_Item')->each(function($m){
+			$m->delete();
+		});
+		$this->add('xepan\commerce\Model_Item_Specification')->each(function($m){
+			$m->delete();
+		});
 
 		// add default specifications
 

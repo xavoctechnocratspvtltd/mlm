@@ -69,12 +69,11 @@ class Model_Payout extends \xepan\base\Model_Table {
 		$q="
 			INSERT INTO mlm_payout
 						(id,distributor_id,closing_date,previous_carried_amount, binary_income, introduction_amount, retail_profit,generation_income,loyalty_bonus,gross_payment,tds, net_payment,  carried_amount)
-				SELECT 	  0,     id,       '$on_date'  ,carried_amount         , week_pairs   , weekly_intros_amount,      0      ,      0          ,       0     ,     0       , 0 ,     0      ,        0       FROM mlm_distributor WHERE greened_on is not null
+				SELECT 	  0,     customer_id,       '$on_date'  ,carried_amount         , week_pairs   , weekly_intros_amount,      0      ,      0          ,       0     ,     0       , 0 ,     0      ,        0       FROM mlm_distributor WHERE greened_on is not null
 		";
 		$this->query($q);
 
 		// make weekly figures zero
-
 		$q="UPDATE mlm_distributor SET week_pairs=0, weekly_intros_amount=0 WHERE greened_on is not null";
 		$this->query($q);
 		
@@ -85,8 +84,22 @@ class Model_Payout extends \xepan\base\Model_Table {
 		$this->weeklyClosing($on_date);
 		// add re-purchase bonus & generation income to this payout rows
 		// update distributor with A/B legs from bv table ((max) & (All-max))
+		$q="UPDATE 
+				mlm_distributor d
+			SET 
+				generation_a_business = (select max(bv_sum) from mlm_generation_business where distributor_id = d.customer_id ),
+				generation_b_business = ((select sum(bv_sum) from mlm_generation_business where distributor_id = d.customer_id ) - (select max(bv_sum) from mlm_generation_business where distributor_id = d.customer_id ))
+			WHERE greened_on is not null
+				";
+		$this->query($q);
 		// what if 60% ratio is not maintained ?? 
+		// TODO
+
+
 		// update rank 
+		
+
+
 		// generate commission as per slab
 		// find difference from introducer downline path
 		// 
@@ -108,6 +121,7 @@ class Model_Payout extends \xepan\base\Model_Table {
 	}
 
 	function doClosing($type='daily',$on_date=null){
+
 		if(!$on_date) $on_date = $this->app->now;
 		switch ($type) {
 			case 'daily':
