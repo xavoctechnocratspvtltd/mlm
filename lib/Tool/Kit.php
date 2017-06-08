@@ -10,7 +10,9 @@ class Tool_Kit extends \xepan\cms\View_Tool{
 	public $options = [
 						'show_purchase_btn'=>true,
 						'checkout_page'=>'payment',
-						'check_distributor'=>true
+						'check_distributor'=>true,
+						'show_image'=>true,
+						'show_description'=>true
 					];
 
 	public $complete_lister = null;
@@ -87,6 +89,25 @@ class Tool_Kit extends \xepan\cms\View_Tool{
 		$l->current_row_html['purchase_btn'] = $btn->getHtml();
 	}
 
+	function addToolCondition_row_show_image($value,$l){
+		if($value != true){
+			$l->current_row_html['image_wrapper'] = "";
+			return;
+		}
+
+		$l->current_row_html['kit_img'] = $l->model['kit_image']?:"websites/dsmarketing/www/img/100.svg";
+	}
 	
-}
+	function addToolCondition_row_show_description($value,$l){
+		if(!$value){
+			$l->current_row_html['description']='';
+			return;
+		}
+		if($this->options['show_description']){
+			$l->current_row_html['description']=$l->model['description'];
+		}else{
+			$l->current_row_html['description']=" ";
+		}
+	}
+}	
 						
