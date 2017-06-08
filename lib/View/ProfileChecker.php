@@ -30,9 +30,9 @@ class View_ProfileChecker extends \xepan\cms\View_Tool{
 		// distributor is verified or not
 		$complete_percentage = '0';
 		// $distributor['kit_item_id'] = 90;
-		if($distributor['kit_item_id']) $complete_percentage += '30';
+		if($distributor['kit_item_id']) $complete_percentage += '40';
 		if($distributor['attachment_count']) $complete_percentage += '40';
-		if($distributor['is_verified']) $complete_percentage += '40';
+		if($distributor['is_verified']) $complete_percentage += '20';
 
 		$this->template->set('profile_percentage',$complete_percentage."%");
 
