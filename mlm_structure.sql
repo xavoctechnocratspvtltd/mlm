@@ -11,7 +11,7 @@
  Target Server Version : 100118
  File Encoding         : utf-8
 
- Date: 06/08/2017 11:22:56 AM
+ Date: 06/08/2017 11:31:14 AM
 */
 
 SET NAMES utf8;
@@ -71,6 +71,9 @@ CREATE TABLE `mlm_distributor` (
   `dd_number` int(11) DEFAULT NULL,
   `cheque_date` datetime DEFAULT NULL,
   `dd_date` datetime DEFAULT NULL,
+  `rank` varchar(255) DEFAULT NULL,
+  `generation_a_business` int(11) DEFAULT NULL,
+  `generation_b_business` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=327 DEFAULT CHARSET=utf8;
 
