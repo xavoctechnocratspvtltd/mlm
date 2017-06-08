@@ -11,7 +11,7 @@
  Target Server Version : 100118
  File Encoding         : utf-8
 
- Date: 06/08/2017 21:56:22 PM
+ Date: 06/08/2017 23:31:03 PM
 */
 
 SET NAMES utf8;
@@ -74,7 +74,7 @@ CREATE TABLE `mlm_distributor` (
   `dd_date` datetime DEFAULT NULL,
   `current_rank` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=663 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=669 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `mlm_generation_business`
@@ -87,7 +87,7 @@ CREATE TABLE `mlm_generation_business` (
   `introduced_path` text,
   `bv_sum` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=271 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=276 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `mlm_generation_income_slab`
@@ -156,7 +156,7 @@ CREATE TABLE `mlm_payout` (
   `net_payment` decimal(10,2) DEFAULT NULL,
   `carried_amount` decimal(10,2) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=145 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=148 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `mlm_re_purchase_bonus_slab`
