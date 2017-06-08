@@ -3,6 +3,7 @@
 namespace xavoc\mlm;
 
 class Model_GenerationIncomeSlab extends \xepan\base\Model_Table {
+	
 	public $table ='mlm_generation_income_slab';
 	public $acl_type = "GenerationIncomeSlab";
 
@@ -19,6 +20,8 @@ class Model_GenerationIncomeSlab extends \xepan\base\Model_Table {
 		$this->addField('generation_5')->type('int');
 		$this->addField('generation_6')->type('int');
 		$this->addField('generation_7')->type('int');
+
+		$this->setOrder('rank_id','asc');
 		
 	}
 }

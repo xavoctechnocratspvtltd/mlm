@@ -33,10 +33,14 @@ class page_tests_001base extends page_Tester {
         'Gowrav'=>['introducer'=>'company','side'=>'B','on'=>'2017-05-07'],
         'Rakesh'=>['introducer'=>'Ram','side'=>'A','on'=>'2017-05-07'],
         'kit-0'=>'kit 1',
+        'kit-Ram'=>'kit 1',
         'green-0'=>'2017-05-08',
+        'green-Ram'=>'2017-05-08',
         'kit-Gowrav'=>'kit 1',
         'green-Gowrav'=>'2017-05-08',
-        // 'repurchase-0a'=>'total bv',
+        'repurchase-Gowrav'=>'120',
+        'repurchase-Ram'=>'12000',
+        'repurchase-Rakesh'=>'10000',
         // 'closing-daily'=>'2017-05-08'
         // 'closing-weekly'=>'2017-05-08'
         'closing-monthly'=>'2017-05-08'
