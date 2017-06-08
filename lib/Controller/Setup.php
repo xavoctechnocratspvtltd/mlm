@@ -15,12 +15,12 @@ class Controller_Setup extends \AbstractController {
 			$m->delete();
 		});
 		
-		$item =$this->add('xepan\commerce\Model_Item')->each(function($m){
-			$m->delete();
-		});
-		$this->add('xepan\commerce\Model_Item_Specification')->each(function($m){
-			$m->delete();
-		});
+		// $item =$this->add('xepan\commerce\Model_Item')->each(function($m){
+		// 	$m->delete();
+		// });
+		// $this->add('xepan\commerce\Model_Item_Specification')->each(function($m){
+		// 	$m->delete();
+		// });
 
 		// add default specifications
 
@@ -33,7 +33,7 @@ class Controller_Setup extends \AbstractController {
 		}
 
 		$item_array=[
-					['name'=>'kit 1','code'=> 'kit1','pv'=>'1','bv'=>'1','sv'=>'1','capping'=>'1','introducer_income'=>'1'],
+					['name'=>'kit 1','code'=> 'kit1','pv'=>'0','bv'=>'1','sv'=>'500','capping'=>'100000','introducer_income'=>'1'],
 					['name'=>'kit 2','code'=> 'kit2','pv'=>'1','bv'=>'1','sv'=>'1','capping'=>'1','introducer_income'=>'1'],
 					['name'=>'kit 3','code'=> 'kit3','pv'=>'1','bv'=>'1','sv'=>'1','capping'=>'1','introducer_income'=>'1'],
 					['name'=>'kit 4','code'=> 'kit4','pv'=>'1','bv'=>'1','sv'=>'1','capping'=>'1','introducer_income'=>'1'],

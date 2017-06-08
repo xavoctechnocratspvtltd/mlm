@@ -35,8 +35,8 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		$dist_j->addField('email');
 		$dist_j->addField('mobile_number');
 		$dist_j->addField('dob')->type('date')->caption('Date of Birth');
-		$dist_j->addField('IFCS_Code')->mandatory("IFSC Code is required")->display(array('form'=>'xavoc\mlm\AlphaNumeric'))->caption('IFSC Code');
-		$dist_j->addField('branch_name')->caption('Branch')->mandatory("Branch name is required")->display(array('form'=>'\xavoc\mlm\Alpha'));//->system(true);
+		// $dist_j->addField('IFCS_Code')->mandatory("IFSC Code is required")->display(array('form'=>'xavoc\mlm\AlphaNumeric'))->caption('IFSC Code');
+		// $dist_j->addField('branch_name')->caption('Branch')->mandatory("Branch name is required")->display(array('form'=>'\xavoc\mlm\Alpha'));//->system(true);
 		$dist_j->addField('kyc_no')->mandatory("KYC no is required")->caption('KYC no.');
 		// $dist_j->add('xepan\filestore\Field_Image','kyc_id')->caption('KYC form');
 		// $dist_j->add('xepan\filestore\Field_Image','address_proof_id')->caption('Address proof');
@@ -61,6 +61,10 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		// monthly session
 		$dist_j->addField('monthly_left_dp_mrp_diff')->type('int')->defaultValue(0);
 		$dist_j->addField('monthly_right_dp_mrp_diff')->type('int')->defaultValue(0);
+		
+		$dist_j->addField('rank');
+		$dist_j->addField('generation_a_business')->type('int');
+		$dist_j->addField('generation_b_business')->type('int');
 		
 		$dist_j->addField('total_pairs')->type('int')->defaultValue(0);
 		$dist_j->addField('carried_amount')->type('money')->defaultValue(0)->caption('Carried amount');

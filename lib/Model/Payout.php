@@ -11,14 +11,25 @@ class Model_Payout extends \xepan\base\Model_Table {
 
 		$this->hasOne('xavoc\mlm\Model_Distributor','distributor_id');
 		$this->addField('closing_date')->type('datetime');
-		$this->addField('week_pairs')->type('number');
+		$this->addField('previous_carried_amount')->type('datetime');
+		$this->addField('binary_income')->type('money');
+		$this->addField('introduction_amount')->type('money');
+		$this->addField('retail_profit')->type('money');
+		$this->addField('repurchase_bonus')->type('money');
+		$this->addField('generation_income')->type('money');
+		$this->addField('loyalty_bonus')->type('money');
+		$this->addField('leadership_bonus')->type('money');
+		$this->addField('gross_payment')->type('datetime');
+		$this->addField('tds')->type('datetime');
+		$this->addField('net_payment')->type('datetime');
+		$this->addField('carried_amount')->type('datetime');
 
 	}
 
 	function dailyClosing($on_date){
 		if(!$on_date) $on_date = $this->app->now;
 
-		$pair_pv = '1000';
+		$pair_pv = '200'; //tail pv
 		// $admin_charge = $config['admin_charge'];
 		// $min_payout = $config['minimum_payout_amount'];
 
@@ -30,6 +41,7 @@ class Model_Payout extends \xepan\base\Model_Table {
 				day_pairs = IF(day_left_sv = day_right_sv AND day_left_sv <> 0 AND day_left_sv <= capping, day_pairs - $pair_pv ,day_pairs),
 				day_pairs = IF(day_pairs >= capping, capping, day_pairs),
 				week_pairs = week_pairs + day_pairs
+			WHERE greened_on is not null
 		";
 		$this->query($q);
 
@@ -42,26 +54,57 @@ class Model_Payout extends \xepan\base\Model_Table {
 				d.temp = IF(d.day_left_sv = d.day_right_sv AND d.day_left_sv > 0, d.day_left_sv - $pair_pv, IF(d.day_left_sv > d.day_right_sv,d.day_right_sv,d.day_left_sv)),
 				d.day_left_sv = d.day_left_sv - d.temp,
 				d.day_right_sv = d.day_right_sv - d.temp
+			WHERE greened_on is not null
 		";
 		$this->query($q);
-
 		
 	}
 
 	function weeklyClosing($on_date){
 		if(!$on_date) $on_date = $this->app->now;
 		$this->dailyClosing($on_date);
+		// move data to payout table
+
+		// copy all distributors in here
+		$q="
+			INSERT INTO mlm_payout
+						(id,distributor_id,closing_date,previous_carried_amount, binary_income, introduction_amount, retail_profit,generation_income,loyalty_bonus,gross_payment,tds, net_payment,  carried_amount)
+				SELECT 	  0,     id,       '$on_date'  ,carried_amount         , week_pairs   , weekly_intros_amount,      0      ,      0          ,       0     ,     0       , 0 ,     0      ,        0       FROM mlm_distributor WHERE greened_on is not null
+		";
+		$this->query($q);
+
+		// make weekly figures zero
+
+		$q="UPDATE mlm_distributor SET week_pairs=0, weekly_intros_amount=0 WHERE greened_on is not null";
+		$this->query($q);
 		
 	}
 
 	function monthlyClosing($on_date){
 		if(!$on_date) $on_date = $this->app->now;
 		$this->weeklyClosing($on_date);
+		// add re-purchase bonus & generation income to this payout rows
+		// update distributor with A/B legs from bv table ((max) & (All-max))
+		// what if 60% ratio is not maintained ?? 
+		// update rank 
+		// generate commission as per slab
+		// find difference from introducer downline path
+		// 
+
+
+		// Generation Income
+
+		// calculate loyalty bonus
+
+		// calculate leadership bonus
+
+		// Awards & Rewards
 		
 	}
 
 	function calculatePayment(){
-
+		// calculate payment tds deduction carry forward etc. inclusing previous carried amount
+		// set and save carried_amount to distributor
 	}
 
 	function doClosing($type='daily',$on_date=null){

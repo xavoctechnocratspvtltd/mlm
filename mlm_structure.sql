@@ -11,14 +11,14 @@
  Target Server Version : 100118
  File Encoding         : utf-8
 
- Date: 06/07/2017 22:13:59 PM
+ Date: 06/08/2017 11:31:14 AM
 */
 
 SET NAMES utf8;
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------
--- Table structure for `mlm_distributor`
+--  Table structure for `mlm_distributor`
 -- ----------------------------
 DROP TABLE IF EXISTS `mlm_distributor`;
 CREATE TABLE `mlm_distributor` (
@@ -37,8 +37,6 @@ CREATE TABLE `mlm_distributor` (
   `pv` int(11) DEFAULT NULL,
   `bv` int(11) DEFAULT NULL,
   `sv` int(11) DEFAULT NULL,
-  `IFCS_Code` varchar(255) DEFAULT NULL,
-  `branch_name` varchar(255) DEFAULT NULL,
   `kyc_no` int(11) DEFAULT NULL,
   `kyc_id` int(11) DEFAULT NULL,
   `address_proof_id` int(11) DEFAULT NULL,
@@ -65,17 +63,19 @@ CREATE TABLE `mlm_distributor` (
   `mobile_number` varchar(255) DEFAULT NULL,
   `dob` date DEFAULT NULL,
   `payment_mode` varchar(255) DEFAULT NULL,
-  `transaction_detail` text DEFAULT NULL,
-  `transaction_reference` varchar DEFAULT NULL,
-  `bank_name` varchar DEFAULT NULL,
-  `bank_ifsc_code` varchar DEFAULT NULL,
-  `cheque_number` varchar DEFAULT NULL,
-  `dd_number` varchar DEFAULT NULL,
-  `cheque_date` date DEFAULT NULL,
-  `dd_date` date DEFAULT NULL,
+  `transaction_reference` varchar(255) DEFAULT NULL,
+  `transaction_detail` varchar(255) DEFAULT NULL,
+  `bank_name` varchar(255) DEFAULT NULL,
+  `bank_ifsc_code` varchar(255) DEFAULT NULL,
+  `cheque_number` int(11) DEFAULT NULL,
+  `dd_number` int(11) DEFAULT NULL,
+  `cheque_date` datetime DEFAULT NULL,
+  `dd_date` datetime DEFAULT NULL,
+  `rank` varchar(255) DEFAULT NULL,
+  `generation_a_business` int(11) DEFAULT NULL,
+  `generation_b_business` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=180 DEFAULT CHARSET=utf8;
-
+) ENGINE=InnoDB AUTO_INCREMENT=327 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `mlm_generation_business`
@@ -88,7 +88,7 @@ CREATE TABLE `mlm_generation_business` (
   `introduced_path` text,
   `bv_sum` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=47 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=167 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `mlm_kyc`
@@ -109,6 +109,20 @@ CREATE TABLE `mlm_kyc` (
 DROP TABLE IF EXISTS `mlm_payout`;
 CREATE TABLE `mlm_payout` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `distributor_id` int(11) DEFAULT NULL,
+  `closing_date` datetime DEFAULT NULL,
+  `previous_carried_amount` decimal(10,2) DEFAULT NULL,
+  `binary_income` decimal(10,2) DEFAULT NULL,
+  `introduction_amount` decimal(10,2) DEFAULT NULL,
+  `retail_profit` decimal(10,2) DEFAULT NULL,
+  `repurchase_bonus` decimal(10,2) DEFAULT NULL,
+  `generation_income` decimal(10,2) DEFAULT NULL,
+  `loyalty_bonus` decimal(10,2) DEFAULT NULL,
+  `leadership_bonus` decimal(10,2) DEFAULT NULL,
+  `gross_payment` decimal(10,2) DEFAULT NULL,
+  `tds` decimal(10,2) DEFAULT NULL,
+  `net_payment` decimal(10,2) DEFAULT NULL,
+  `carried_amount` decimal(10,2) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
