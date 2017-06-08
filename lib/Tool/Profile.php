@@ -25,7 +25,7 @@ class Tool_Profile extends \xepan\cms\View_Tool{
 		$form->addSubmit("Update");
 		if($form->isSubmitted()){
 			$form->update();
-			$form->js()->univ()->successMessage('saved');
+			$form->js()->univ()->successMessage('saved')->execute();
 		}
 
 	}
