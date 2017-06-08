@@ -214,23 +214,62 @@ class Model_Payout extends \xepan\base\Model_Table {
 				}
 			}
 		}
-		
+
+		// sum of generation_income
+		$q="
+			UPDATE
+				mlm_payout
+			SET
+				generation_income = generation_income_1 + generation_income_2 + generation_income_3 + generation_income_4 + generation_income_5 + generation_income_6 + generation_income_7
+			WHERE
+				closing_date='$on_date'
+		";
+
 		$this->query('UPDATE mlm_distributor SET temp=0');
 
 		// calculate loyalty bonus
+		$q="SELECT SUM(month_self_bv) bv_sum FROM mlm_distributor";
+		$company_turnover = $this->app->db->dsql()->expr($q)->getHash();
+		$company_turnover = $company_turnover['bv_sum'];
+
+		$brown_rank_holder_count = $this->app->db->dsql()->expr("SELECT COUNT(*) FROM mlm_distributor WHERE current_rank ='' ")->getHash()
 
 		// calculate leadership bonus
+		// TODO ... confusions
 
 		// Awards & Rewards
-		
+		// Need clear picture to write code
+
 	}
+
+	// $this->addField('gross_payment')->type('datetime');
+	// $this->addField('tds')->type('datetime');
+	// $this->addField('net_payment')->type('datetime');
+	// $this->addField('carried_amount')->type('datetime');
 
 	function calculatePayment(){
 		// calculate payment tds deduction carry forward etc. inclusing previous carried amount
 		// set and save carried_amount to distributor
 
+		$q="UPDATE mlm_payout SET gross_payment = previous_carried_amount + binary_income + introduction_amount + retail_profit + repurchase_bonus + generation_income + loyalty_bonus + leadership_bonus   WHERE closing_date='$on_date'";
+		$this->query($q);
+
+
+		// Carry forward condition ..
+
+		// non green not in payout but how to carry paris
+	}
+
+	function resetWeekData(){
 		// set fields zero in distributor 
 		// like month_self_bv if greened_on is not null
+
+	}
+
+	function resetMonthData(){
+		// set fields zero in distributor 
+		// like month_self_bv if greened_on is not null
+
 	}
 
 	function doClosing($type='daily',$on_date=null){
@@ -243,10 +282,12 @@ class Model_Payout extends \xepan\base\Model_Table {
 			case 'weekly':
 				$this->weeklyClosing($on_date);
 				$this->calculatePayment();
+				$this->resetWeekData();
 				break;
 			case 'monthly':
 				$this->monthlyClosing($on_date);
 				$this->calculatePayment();
+				$this->resetMonthData();
 				break;
 			default:
 				throw new \Exception("$type type closing not available", 1);				
