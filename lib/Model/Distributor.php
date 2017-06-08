@@ -62,6 +62,10 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		$dist_j->addField('monthly_left_dp_mrp_diff')->type('int')->defaultValue(0);
 		$dist_j->addField('monthly_right_dp_mrp_diff')->type('int')->defaultValue(0);
 		
+		$dist_j->addField('rank');
+		$dist_j->addField('generation_a_business')->type('int');
+		$dist_j->addField('generation_b_business')->type('int');
+		
 		$dist_j->addField('total_pairs')->type('int')->defaultValue(0);
 		$dist_j->addField('carried_amount')->type('money')->defaultValue(0)->caption('Carried amount');
 

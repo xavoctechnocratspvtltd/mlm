@@ -73,7 +73,7 @@ class page_Tester extends \xepan\base\Page_Tester{
 					$dist = $this->add('xavoc\mlm\Model_Distributor');
 					$data = [
 								'first_name'=>$key,
-								'introducer'=>$distributor_id_mapping[$value['introducer']],
+								'introducer_id'=>$distributor_id_mapping[$value['introducer']],
 								'created_at'=>$value['on'],
 								'side'=>$value['side']
 							];
