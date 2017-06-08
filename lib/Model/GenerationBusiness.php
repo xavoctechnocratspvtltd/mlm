@@ -12,7 +12,7 @@ class Model_GenerationBusiness extends \xepan\base\Model_Table{
 		$this->hasOne('xavoc\mlm\Distributor','distributor_id');
 		$this->hasOne('xavoc\mlm\Distributor','introduced_id');
 		$this->addField('introduced_path')->type('text');
-		$this->addField('bv_sum')->type('number');
+		$this->addField('bv_sum')->type('number')->defaultValue(0);
 		
 	}
 }

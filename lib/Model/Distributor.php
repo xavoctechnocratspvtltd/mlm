@@ -189,12 +189,14 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		
 			// $this->add('Controller_Sms')->sendMessage($m_no,$message);
 
-			$bv_table = $this->add('xavoc\mlm\Model_GenerationBusiness');
-			$bv_table->addCondition('introduced_id',$this->id);
-			$bv_table->addCondition('distributor_id',$this['introducer_id']);
-			$bv_table->tryLoadAny();
-			$bv_table['introduced_path'] = $this['path'];
-			$bv_table->save();
+			if($this->introducer()){
+				$bv_table = $this->add('xavoc\mlm\Model_GenerationBusiness');
+				$bv_table->addCondition('introduced_id',$this->id);
+				$bv_table->addCondition('distributor_id',$this['introducer_id']);
+				$bv_table->tryLoadAny();
+				$bv_table['introduced_path'] = $this['path'];
+				$bv_table->save();
+			}
 
 
 			$this->forget('leg');

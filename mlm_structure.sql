@@ -11,7 +11,7 @@
  Target Server Version : 100118
  File Encoding         : utf-8
 
- Date: 06/08/2017 11:31:14 AM
+ Date: 06/08/2017 12:33:11 PM
 */
 
 SET NAMES utf8;
@@ -75,7 +75,7 @@ CREATE TABLE `mlm_distributor` (
   `generation_a_business` int(11) DEFAULT NULL,
   `generation_b_business` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=327 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=375 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `mlm_generation_business`
@@ -88,7 +88,27 @@ CREATE TABLE `mlm_generation_business` (
   `introduced_path` text,
   `bv_sum` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=167 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+--  Table structure for `mlm_generation_income_slab`
+-- ----------------------------
+DROP TABLE IF EXISTS `mlm_generation_income_slab`;
+CREATE TABLE `mlm_generation_income_slab` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `rank_id` int(11) DEFAULT NULL,
+  `generation_1` int(11) DEFAULT NULL,
+  `generation_2` int(11) DEFAULT NULL,
+  `generation_3` int(11) DEFAULT NULL,
+  `generation_4` int(11) DEFAULT NULL,
+  `generation_5` int(11) DEFAULT NULL,
+  `generation_6` int(11) DEFAULT NULL,
+  `generation_7` int(11) DEFAULT NULL,
+  `generation_8` int(11) DEFAULT NULL,
+  `generation_9` int(11) DEFAULT NULL,
+  `generation_10` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `mlm_kyc`
@@ -123,6 +143,19 @@ CREATE TABLE `mlm_payout` (
   `tds` decimal(10,2) DEFAULT NULL,
   `net_payment` decimal(10,2) DEFAULT NULL,
   `carried_amount` decimal(10,2) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+--  Table structure for `mlm_re_purchase_bonus_slab`
+-- ----------------------------
+DROP TABLE IF EXISTS `mlm_re_purchase_bonus_slab`;
+CREATE TABLE `mlm_re_purchase_bonus_slab` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  `slab_percentage` int(11) DEFAULT NULL,
+  `from_bv` int(11) DEFAULT NULL,
+  `to_bv` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

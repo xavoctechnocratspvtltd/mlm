@@ -45,76 +45,82 @@ class page_Tester extends \xepan\base\Page_Tester{
 	*/
 
 	function process($data,$result='dist'){
-		$this->resetData();
-		$root_id = $this->add('xavoc\mlm\Model_Distributor')->loadRoot()->get('id');
-		
-		$distributor_id_mapping=['0'=>$root_id,'company'=>$root_id];
-
-		foreach ($data as $key => $value) {
-			if(strpos($key, 'kit')===0){
-				$action = 'kitpurchase';
-				$dist_id=(explode('-',$key))[1];
-			}elseif(strpos($key, 'green')===0){
-				$action = 'green';
-				$dist_id=(explode('-', $key))[1];
-			}elseif(strpos($key, 'repurchase')===0){
-				$action = 'repurchase';
-				$dist_id=explode('-',$key)[1];
-			}elseif(strpos($key, 'closing')===0){
-				$action = 'closing';
-				$closing_type=explode('-',$key)[1];
-			}else{
-				$action = 'joining';
-				$dist_id = null;
-			}
-
-			switch ($action) {
-				case 'joining':
-					$dist = $this->add('xavoc\mlm\Model_Distributor');
-					$data = [
-								'first_name'=>$key,
-								'introducer_id'=>$distributor_id_mapping[$value['introducer']],
-								'created_at'=>$value['on'],
-								'side'=>$value['side']
-							];
-					$dist->register($data);
-
-					if(isset($value['kit'])) $dist->purchaseKit($this->add('xavoc\mlm\Model_Kit')->loadBy('name',$value['kit']));
-					$distributor_id_mapping[$key]= $dist->id;
-					if(isset($value['green'])) $dist->markGreen($value['on']);
-					break;
-				case 'kitpurchase':
-					$dist = $this->add('xavoc\mlm\Model_Distributor')->load($distributor_id_mapping[$dist_id]);
-					$dist->purchaseKit($this->add('xavoc\mlm\Model_Kit')->loadBy('name',$value));
-					break;
-				case 'green':
-					$dist = $this->add('xavoc\mlm\Model_Distributor')->load($distributor_id_mapping[$dist_id]);
-					$dist->markGreen($value);
-					break;
-				case 'repurchase':
-					$dist = $this->add('xavoc\mlm\Model_Distributor')->load($distributor_id_mapping[$dist_id]);
-					$dist->repurchase($value);
-					break;
-				case 'closing':
-					$this->add('xavoc\mlm\Model_Payout')->doClosing($closing_type,$value);
-					break;
+		try{
+			$this->api->db->beginTransaction();
 				
-				default:
-					# code...
-					break;
+			$this->resetData();
+			$root_id = $this->add('xavoc\mlm\Model_Distributor')->loadRoot()->get('id');
+			
+			$distributor_id_mapping=['0'=>$root_id,'company'=>$root_id];
+
+			foreach ($data as $key => $value) {
+				if(strpos($key, 'kit')===0){
+					$action = 'kitpurchase';
+					$dist_id=(explode('-',$key))[1];
+				}elseif(strpos($key, 'green')===0){
+					$action = 'green';
+					$dist_id=(explode('-', $key))[1];
+				}elseif(strpos($key, 'repurchase')===0){
+					$action = 'repurchase';
+					$dist_id=explode('-',$key)[1];
+				}elseif(strpos($key, 'closing')===0){
+					$action = 'closing';
+					$closing_type=explode('-',$key)[1];
+				}else{
+					$action = 'joining';
+					$dist_id = null;
+				}
+
+				switch ($action) {
+					case 'joining':
+						$dist = $this->add('xavoc\mlm\Model_Distributor');
+						$data = [
+									'first_name'=>$key,
+									'introducer_id'=>$distributor_id_mapping[$value['introducer']],
+									'created_at'=>$value['on'],
+									'side'=>$value['side']
+								];
+						$dist->register($data);
+
+						if(isset($value['kit'])) $dist->purchaseKit($this->add('xavoc\mlm\Model_Kit')->loadBy('name',$value['kit']));
+						$distributor_id_mapping[$key]= $dist->id;
+						if(isset($value['green'])) $dist->markGreen($value['on']);
+						break;
+					case 'kitpurchase':
+						$dist = $this->add('xavoc\mlm\Model_Distributor')->load($distributor_id_mapping[$dist_id]);
+						$dist->purchaseKit($this->add('xavoc\mlm\Model_Kit')->loadBy('name',$value));
+						break;
+					case 'green':
+						$dist = $this->add('xavoc\mlm\Model_Distributor')->load($distributor_id_mapping[$dist_id]);
+						$dist->markGreen($value);
+						break;
+					case 'repurchase':
+						$dist = $this->add('xavoc\mlm\Model_Distributor')->load($distributor_id_mapping[$dist_id]);
+						$dist->repurchase($value);
+						break;
+					case 'closing':
+						$this->add('xavoc\mlm\Model_Payout')->doClosing($closing_type,$value);
+						break;
+					
+					default:
+						# code...
+						break;
+				}
 			}
+
+			$this->api->db->commit();
+
+			$result = strtolower(substr($result, 0,4));
+			if($result == 'dist'){
+				$r= $this->add('xavoc\mlm\Model_Distributor')->addCondition('id',$distributor_id_mapping);
+				return $this->resultDistributor($r,$distributor_id_mapping);
+			}
+			else
+				return $this->resultClosing($r,$distributor_id_mapping);
+		}catch(\Exception $e){
+			$this->api->db->rollback();
+			throw $e;
 		}
-
-
-
-		$result = strtolower(substr($result, 0,4));
-		if($result == 'dist'){
-			$r= $this->add('xavoc\mlm\Model_Distributor')->addCondition('id',$distributor_id_mapping);
-			return $this->resultDistributor($r,$distributor_id_mapping);
-		}
-		else
-			return $this->resultClosing($r,$distributor_id_mapping);
-
 	}
 
 	// function result($r,$table='dist'){
