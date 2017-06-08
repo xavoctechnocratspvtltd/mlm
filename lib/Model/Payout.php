@@ -17,12 +17,22 @@ class Model_Payout extends \xepan\base\Model_Table {
 		$this->addField('retail_profit')->type('money');
 		
 		$this->addField('rank');
+		$this->addField('slab_percentage')->type('number');
+
 		$this->addField('generation_a_business')->type('int');
 		$this->addField('generation_b_business')->type('int');
-		$this->addField('re_purchase_incomce_gross')->type('int');
-		$this->addField('re_purchase_incomce')->type('int');
+		$this->addField('re_purchase_income_gross')->type('int');
 
 		$this->addField('repurchase_bonus')->type('money');
+		
+		$this->addField('generation_income_1')->type('money');
+		$this->addField('generation_income_2')->type('money');
+		$this->addField('generation_income_3')->type('money');
+		$this->addField('generation_income_4')->type('money');
+		$this->addField('generation_income_5')->type('money');
+		$this->addField('generation_income_6')->type('money');
+		$this->addField('generation_income_7')->type('money');
+
 		$this->addField('generation_income')->type('money');
 		$this->addField('loyalty_bonus')->type('money');
 		$this->addField('leadership_bonus')->type('money');
@@ -75,8 +85,8 @@ class Model_Payout extends \xepan\base\Model_Table {
 		// copy all distributors in here
 		$q="
 			INSERT INTO mlm_payout
-						(id,distributor_id,closing_date,previous_carried_amount, binary_income, introduction_amount, retail_profit,generation_income,loyalty_bonus,gross_payment,tds, net_payment,  carried_amount)
-				SELECT 	  0,     distributor_id,       '$on_date'  ,carried_amount         , week_pairs   , weekly_intros_amount,      0      ,      0          ,       0     ,     0       , 0 ,     0      ,        0       FROM mlm_distributor WHERE greened_on is not null
+						(id,distributor_id,closing_date,previous_carried_amount, binary_income, introduction_amount, retail_profit,slab_percentage,month_self_bv,generation_income,loyalty_bonus,gross_payment,tds, net_payment,  carried_amount)
+				SELECT 	  0,distributor_id,'$on_date'  ,carried_amount         , week_pairs   , weekly_intros_amount,         0   ,          0    ,month_self_bv,      0          ,       0     ,     0       , 0 ,     0      ,        0       FROM mlm_distributor WHERE greened_on is not null
 		";
 		$this->query($q);
 
@@ -95,8 +105,8 @@ class Model_Payout extends \xepan\base\Model_Table {
 				mlm_payout p
 				JOIN mlm_distributor d on p.distributor_id = d.distributor_id
 			SET 
-				generation_a_business = (select max(bv_sum) from mlm_generation_business bv_table where bv_table.distributor_id = p.distributor_id ),
-				generation_b_business = ((select sum(bv_sum) from mlm_generation_business bv_table where bv_table.distributor_id = d.distributor_id ) - (select max(bv_sum) from mlm_generation_business bv_table where bv_table.distributor_id = d.distributor_id ))
+				generation_a_business = IFNULL((select max(bv_sum) from mlm_generation_business bv_table where bv_table.distributor_id = p.distributor_id ),0),
+				generation_b_business = IFNULL(((select sum(bv_sum) from mlm_generation_business bv_table where bv_table.distributor_id = d.distributor_id ) - (select max(bv_sum) from mlm_generation_business bv_table where bv_table.distributor_id = d.distributor_id )),0)
 			WHERE 
 				d.greened_on is not null AND
 				closing_date = '$on_date'
@@ -116,7 +126,11 @@ class Model_Payout extends \xepan\base\Model_Table {
 			$q = "
 				UPDATE
 					mlm_payout p
-				SET rank = (select name from mlm_re_purchase_bonus_slab WHERE p.generation_a_business+p.generation_b_business > from_bv AND p.generation_a_business+p.generation_b_business <= to_bv)
+					JOIN mlm_distributor d on p.distributor_id = d.distributor_id
+				SET 
+					p.rank = (select name from mlm_re_purchase_bonus_slab WHERE p.month_self_bv+p.generation_a_business+p.generation_b_business > from_bv AND p.month_self_bv+p.generation_a_business+p.generation_b_business <= to_bv),
+					p.slab_percentage = IFNULL((select slab_percentage from mlm_re_purchase_bonus_slab WHERE p.month_self_bv+p.generation_a_business+p.generation_b_business > from_bv AND p.month_self_bv+p.generation_a_business+p.generation_b_business <= to_bv),0),
+					d.current_rank = p.rank
 				WHERE
 					closing_date = '$on_date'
 			";
@@ -125,11 +139,83 @@ class Model_Payout extends \xepan\base\Model_Table {
 		}
 
 		// generate commission as per slab
-		// find difference from introducer downline path
-		// 
+		$q="
+			UPDATE 
+				mlm_payout
+			SET 
+				re_purchase_income_gross = (month_self_bv + generation_a_business+ generation_b_business)* slab_percentage/100
+			WHERE
+				closing_date = '$on_date'
 
+		";
+		$this->query($q);
+
+
+		// find difference from introducer downline path
+		$q="
+			UPDATE
+				mlm_payout p 
+				JOIN mlm_distributor d on p.distributor_id=d.distributor_id
+			SET
+				p.repurchase_bonus = 
+									p.re_purchase_income_gross 
+										- 
+									IFNULL((
+										SELECT 
+											SUM(re_purchase_income_gross)
+										FROM 
+											(select * from mlm_payout where closing_date = '$on_date' ) intros_payout 
+										JOIN mlm_distributor intros  on intros.distributor_id = intros_payout.distributor_id
+										WHERE
+											intros.introducer_id = d.distributor_id 
+									),0)
+			WHERE
+				closing_date = '$on_date'
+		";
+
+		$this->query($q);
 
 		// Generation Income
+		$this->query('UPDATE mlm_distributor SET temp=0');
+		$this->query("UPDATE mlm_distributor d JOIN mlm_payout p  ON d.distributor_id = p.distributor_id SET d.temp=p.repurchase_bonus WHERE p.closing_date='$on_date'");
+
+		$slabs = $this->add('xavoc\mlm\Model_GenerationIncomeSlab');
+		foreach ($slabs as $row) {
+			
+			$field='generation_';
+			$rank=$row['name'];
+			
+			for($i=1;$i<=7;$i++){
+				$ques="";
+				$ques = str_pad($ques, $i,'_');
+				$per = $row[$field.$i];
+				if($row[$field.$i]>0){
+					$q="
+						UPDATE 
+							mlm_payout p
+						JOIN mlm_distributor d on p.distributor_id=d.distributor_id
+						SET
+							generation_income_$i = 
+												IFNULL((
+													SELECT 
+														SUM(temp) as repurchase_bonus 
+													FROM
+														mlm_distributor intros 
+													WHERE
+														intros.introducer_path like CONCAT(d.path,'$ques')
+												)*$per/100,0)
+						WHERE
+							p.rank = '$rank' AND
+							closing_date='$on_date'
+					";
+					// echo $q.'<br/>';
+					$this->query($q);
+					
+				}
+			}
+		}
+		
+		$this->query('UPDATE mlm_distributor SET temp=0');
 
 		// calculate loyalty bonus
 
@@ -142,6 +228,9 @@ class Model_Payout extends \xepan\base\Model_Table {
 	function calculatePayment(){
 		// calculate payment tds deduction carry forward etc. inclusing previous carried amount
 		// set and save carried_amount to distributor
+
+		// set fields zero in distributor 
+		// like month_self_bv if greened_on is not null
 	}
 
 	function doClosing($type='daily',$on_date=null){
