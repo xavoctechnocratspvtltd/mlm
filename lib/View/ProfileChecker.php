@@ -16,6 +16,10 @@ class View_ProfileChecker extends \xepan\cms\View_Tool{
 		parent::init();
 
 		$this->distributor = $distributor = $this->add('xavoc\mlm\Model_Distributor');
+		$distributor->addExpression('attachment_count')->set(function($m,$q){
+			return $q->expr('IFNULL([0],0)',[$m->refSQL('xavoc\mlm\Attachment')->count()]);
+		});
+
 		$distributor->loadLoggedIn();
 		if(!$distributor->loaded()){
 			return "distributor not found";
@@ -27,18 +31,18 @@ class View_ProfileChecker extends \xepan\cms\View_Tool{
 		$complete_percentage = '0';
 		// $distributor['kit_item_id'] = 90;
 		if($distributor['kit_id']) $complete_percentage += '20';
-		if($distributor['kyc_id']) $complete_percentage += '40';
+		if($distributor['attachment_count']) $complete_percentage += '40';
 		if($distributor['is_verified']) $complete_percentage += '40';
 
 		$this->template->set('profile_percentage',$complete_percentage."%");
 
 		if($complete_percentage > 0)
 			$this->template->tryDel('not_found');
-
-		if(!$distributor['kit_item_id']){
+		
+		if(!$distributor['kit_id']){
 			$this->add('Button')->set('Purchase Kit Now')->addClass('btn btn-primary')->js('click')->univ()->redirect($this->app->url($this->options['kit_purchase_page']));
 		}
-		if(!$distributor['is_kyc_updated']){
+		if(!$distributor['attachment_count']){
 			$this->add('Button')->set('Update KYC')->addClass('btn btn-primary')->js('click')->univ()->redirect($this->app->url($this->options['kyc_purchase_page']));
 		}
 		if(!$distributor['is_verified']){

@@ -13,12 +13,23 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 			$this->add('View_Warning')->set('kit id not found')->addClass('alert alert-warning');
 		}
 
+		$this->distributor = $distributor = $this->add('xavoc\mlm\Model_Distributor');
+		$distributor->loadLoggedIn();
+		if(!$distributor->loaded()){
+			return "distributor not found";
+		}
+
+		if($distributor['kit_item_id']){
+			$this->add('View_Info')->set('you already purchase a kit');
+			return;
+		}
+
 		$tabs = $this->add('Tabs');
 		$online_tab = $tabs->addTab('Online');
-		$cash_atb = $tabs->addTab('Cash');
-		$cheque_atb = $tabs->addTab('Cheque');
-		$dd_atb = $tabs->addTab('Demand Draft');
-		$dd_atb = $tabs->addTab('Deposite in Franchies');
+		$cash_tab = $tabs->addTab('Cash');
+		$cheque_tab = $tabs->addTab('Cheque');
+		$dd_tab = $tabs->addTab('Demand Draft');
+		$df_tab = $tabs->addTab('Deposite in Franchies');
 
 		$online_pay_btn = $online_tab->add('Button')->set("pay via online")->addClass('btn btn-primary');
 		if($online_pay_btn->isClicked()){
@@ -36,15 +47,50 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 			}
 		}
 
-		$cash_form = $cash_atb->add('Form');
+		$cash_form = $cash_tab->add('Form');
 		$cash_form->addSubmit('Due');
 		if($cash_form->isSubmitted()){
 			$cash_form->js()->univ()->errorMessage('Cash Paid is due')->execute();
 		}
 
-		$cheque_form = $cheque_atb->add('Form');
+		$attachment = $this->add('xavoc\mlm\Model_Attachment');
+		$attachment->addCondition('distributor_id',$distributor->id);
+
+		$cheque_form = $cheque_tab->add('Form');
 		$cheque_form->addField('bank_name');
 		$cheque_form->addField('bank_ifsc_code');
+		$cheque_form->addField('cheque_number');
+		$cheque_form->addField('DatePicker','cheque_date');
+		$cheque_form->setModel($attachment,['cheque_deposite_receipt_image_id']);
+		$cheque_form->addSubmit('Submit');
+		if($cheque_form->isSubmitted()){
+			$cheque_form->update();
+
+			$distributor['bank_name'] = $cheque_form['bank_name'];
+			$distributor['bank_ifsc_code'] = $cheque_form['bank_ifsc_code'];
+			$distributor['cheque_number'] = $cheque_form['cheque_number'];
+			$distributor['cheque_date'] = $cheque_form['cheque_date'];
+			$distributor->save();
+			$cheque_form->js()->univ()->successMessage('cheque detail submitted')->execute();
+		}
+
+		$dd_form = $dd_tab->add('Form');
+		$dd_form->addField('bank_name');
+		$dd_form->addField('bank_ifsc_code');
+		$dd_form->addField('dd_number');
+		$dd_form->addField('DatePicker','dd_date');
+		$dd_form->setModel($attachment,['dd_deposite_receipt_image_id']);
+		$dd_form->addSubmit('Submit');
+		if($dd_form->isSubmitted()){
+			$dd_form->update();
+
+			$distributor['bank_name'] = $dd_form['bank_name'];
+			$distributor['bank_ifsc_code'] = $dd_form['bank_ifsc_code'];
+			$distributor['cheque_number'] = $dd_form['cheque_number'];
+			$distributor['cheque_date'] = $dd_form['cheque_date'];
+			$distributor->save();
+			$dd_form->js()->univ()->successMessage('DD detail submitted')->execute();
+		}
 
 	}
 
@@ -131,7 +177,7 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 			$qsp = $this->add('xepan\commerce\Model_QSP_Master')->createQSP($master_detail,$detail_data,'SalesOrder');
 
 			// associating kit id with distributor
-			$distributor['kit_id'] = $kit_model->id;
+			$distributor['kit_item_id'] = $kit_model->id;
 			$distributor->save();
 
 			$result = ['status'=>'success','message'=>'redirect to payment gateway please wait ...','order_id'=>$qsp['master_detail']['id']];

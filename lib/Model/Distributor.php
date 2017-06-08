@@ -70,9 +70,23 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		
 		$dist_j->addField('temp')->type('number')->system(true);
 
+		// payment mode fields
+		// for online payment
+		$dist_j->addField('payment_mode')->enum(['online','cash','cheque','dd','deposite_in_franchies']);
+		$dist_j->addField('transaction_reference');
+		$dist_j->addField('transaction_detail');
+		// cash field
+		// cheque field or dd
+		$dist_j->addField('bank_name');
+		$dist_j->addField('bank_ifsc_code');
+		$dist_j->addField('cheque_number');
+		$dist_j->addField('dd_number');
+		$dist_j->addField('cheque_date');
+		$dist_j->addField('dd_date');
+		
 		$this->hasMany('xavoc\mlm\GenerationBusiness','distributor_id');
 		$this->hasMany('xavoc\mlm\Attachment','distributor_id');
-
+		
 		$this->addHook('beforeSave',array($this,'beforeSaveDistributor'));
 		$this->addHook('afterSave',array($this,'afterSaveDistributor'));
 		$this->addHook('beforeDelete',array($this,'beforeDeleteDistributor'));

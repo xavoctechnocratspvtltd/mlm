@@ -64,6 +64,15 @@ CREATE TABLE `mlm_distributor` (
   `email` varchar(255) DEFAULT NULL,
   `mobile_number` varchar(255) DEFAULT NULL,
   `dob` date DEFAULT NULL,
+  `payment_mode` varchar(255) DEFAULT NULL,
+  `transaction_detail` text DEFAULT NULL,
+  `transaction_reference` varchar DEFAULT NULL,
+  `bank_name` varchar DEFAULT NULL,
+  `bank_ifsc_code` varchar DEFAULT NULL,
+  `cheque_number` varchar DEFAULT NULL,
+  `dd_number` varchar DEFAULT NULL,
+  `cheque_date` date DEFAULT NULL,
+  `dd_date` date DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=180 DEFAULT CHARSET=utf8;
 
