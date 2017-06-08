@@ -15,7 +15,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 	function init(){
 		parent::init();
 
-		$dist_j = $this->join('mlm_distributor.customer_id');
+		$dist_j = $this->join('mlm_distributor.distributor_id');
 
 		$dist_j->hasOne('xavoc\mlm\Sponsor','sponsor_id')->display(['form'=>'xepan\base\Basic']);
 		$dist_j->hasOne('xavoc\mlm\Introducer','introducer_id')->display(['form'=>'xepan\base\Basic']);

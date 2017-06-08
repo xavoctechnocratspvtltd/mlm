@@ -76,7 +76,7 @@ class Model_Payout extends \xepan\base\Model_Table {
 		$q="
 			INSERT INTO mlm_payout
 						(id,distributor_id,closing_date,previous_carried_amount, binary_income, introduction_amount, retail_profit,generation_income,loyalty_bonus,gross_payment,tds, net_payment,  carried_amount)
-				SELECT 	  0,     customer_id,       '$on_date'  ,carried_amount         , week_pairs   , weekly_intros_amount,      0      ,      0          ,       0     ,     0       , 0 ,     0      ,        0       FROM mlm_distributor WHERE greened_on is not null
+				SELECT 	  0,     distributor_id,       '$on_date'  ,carried_amount         , week_pairs   , weekly_intros_amount,      0      ,      0          ,       0     ,     0       , 0 ,     0      ,        0       FROM mlm_distributor WHERE greened_on is not null
 		";
 		$this->query($q);
 
@@ -93,11 +93,12 @@ class Model_Payout extends \xepan\base\Model_Table {
 		// update distributor with A/B legs from bv table ((max) & (All-max))
 		$q="UPDATE 
 				mlm_payout p
+				JOIN mlm_distributor d on p.distributor_id = d.distributor_id
 			SET 
 				generation_a_business = (select max(bv_sum) from mlm_generation_business bv_table where bv_table.distributor_id = p.distributor_id ),
 				generation_b_business = ((select sum(bv_sum) from mlm_generation_business bv_table where bv_table.distributor_id = d.distributor_id ) - (select max(bv_sum) from mlm_generation_business bv_table where bv_table.distributor_id = d.distributor_id ))
 			WHERE 
-				greened_on is not null AND
+				d.greened_on is not null AND
 				closing_date = '$on_date'
 
 				";
@@ -109,7 +110,7 @@ class Model_Payout extends \xepan\base\Model_Table {
 
 		// update rank 
 
-		$ranks = $this->add('xavoc\mlm\Model_RePurchaseBonus');
+		$ranks = $this->add('xavoc\mlm\Model_RePurchaseBonusSlab');
 
 		foreach ($ranks as $row) {
 			$q = "
