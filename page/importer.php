@@ -86,8 +86,8 @@ class page_importer extends \xepan\base\Page {
 				$data['mobile_number'] = $old_dis['mobileno'];
 				$data['email'] = $old_dis['email'];
 
-				$data['created_at'] = $old_dis['joiningdate'];
-				$data['greened_on'] = $old_dis['topupeddate'];
+				$data['created_at'] = date('Y-m-d H:i:s', strtotime($old_dis['joiningdate']));
+				$data['greened_on'] = date('Y-m-d H:i:s', strtotime($old_dis['topupeddate']));
 
 				$data['d_bank_name'] = $old_dis['bankname'];
 				$data['d_account_number'] = $old_dis['accountno'];
