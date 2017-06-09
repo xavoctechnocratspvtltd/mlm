@@ -11,11 +11,25 @@
  Target Server Version : 100118
  File Encoding         : utf-8
 
- Date: 06/08/2017 23:31:03 PM
+ Date: 06/08/2017 23:44:57 PM
 */
 
 SET NAMES utf8;
 SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+--  Table structure for `mlm_attachment`
+-- ----------------------------
+DROP TABLE IF EXISTS `mlm_attachment`;
+CREATE TABLE `mlm_attachment` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `distributor_id` int(11) DEFAULT NULL,
+  `pan_card_id` int(11) DEFAULT NULL,
+  `aadhar_card_id` int(11) DEFAULT NULL,
+  `cheque_deposite_receipt_image_id` int(11) DEFAULT NULL,
+  `dd_deposite_receipt_image_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `mlm_distributor`
