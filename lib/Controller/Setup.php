@@ -32,11 +32,10 @@ class Controller_Setup extends \AbstractController {
 		}
 
 		$item_array=[
-					['name'=>'kit 1','code'=> 'kit1','pv'=>'0','bv'=>'1','sv'=>'500','capping'=>'100000','introducer_income'=>'1'],
-					['name'=>'kit 2','code'=> 'kit2','pv'=>'1','bv'=>'1','sv'=>'1','capping'=>'1','introducer_income'=>'1'],
-					['name'=>'kit 3','code'=> 'kit3','pv'=>'1','bv'=>'1','sv'=>'1','capping'=>'1','introducer_income'=>'1'],
-					['name'=>'kit 4','code'=> 'kit4','pv'=>'1','bv'=>'1','sv'=>'1','capping'=>'1','introducer_income'=>'1'],
-					['name'=>'kit 5','code'=> 'kit5','pv'=>'1','bv'=>'1','sv'=>'1','capping'=>'1','introducer_income'=>'1']
+					['name'=>'Package 1','code'=> 'package1','pv'=>'0','bv'=>'200','sv'=>'1000','capping'=>'5000','introducer_income'=>'50'],
+					['name'=>'Package 2','code'=> 'package2','pv'=>'0','bv'=>'700','sv'=>'3000','capping'=>'10000','introducer_income'=>'150'],
+					['name'=>'Package 3','code'=> 'package3','pv'=>'0','bv'=>'1500','sv'=>'6000','capping'=>'15000','introducer_income'=>'300'],
+					['name'=>'Package 4','code'=> 'package4','pv'=>'0','bv'=>'3200','sv'=>'12000','capping'=>'25000','introducer_income'=>'600']
 		];
 		foreach ($item_array as $item) {
 			$kit = $this->add('xavoc\mlm\Model_Kit')
