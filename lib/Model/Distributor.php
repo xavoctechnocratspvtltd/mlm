@@ -408,8 +408,6 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 				->addEncryptionHook($user);
 		
 		$user->addCondition('username',(isset($data['username'])?$data['username']:$data['first_name']).'@dummy.com');
-		$user->tryLoadAny();
-
 		$user['password']= $data['password']?:'123456';
 		$user->save();
 
