@@ -51,11 +51,13 @@ class page_importer extends \xepan\base\Page {
 			}
 
 			$dis_id_mapping = [1=>$root_ds->id];
+			// old_plan_name => new package_code
 			$package_mapping = [
 							'Registration'=>'package1',
 							'801'=>'package2',
 							'1000'=>'package3',
 						];
+
 			// throw new \Exception("Error Processing Request", 1);
 			$count = 0;
 			foreach ($csv_data as $key => $old_dis) {
