@@ -39,7 +39,7 @@ class page_importer extends \xepan\base\Page {
 			$importer = new \xepan\base\CSVImporter($path,true,',');
 			$csv_data = $importer->get();
 
-			// $this->add('xavoc\mlm\Controller_Setup');
+			$this->add('xavoc\mlm\Controller_Setup');
 
 			// [old_dis_id => new_dis_id,old_dis_id => new_dis_id]
 			$root_ds = $this->add('xavoc\mlm\Model_Distributor')->loadRoot();
