@@ -36,10 +36,11 @@ class Model_Payout extends \xepan\base\Model_Table {
 		$this->addField('generation_income')->type('money');
 		$this->addField('loyalty_bonus')->type('money');
 		$this->addField('leadership_bonus')->type('money');
-		$this->addField('gross_payment')->type('datetime');
-		$this->addField('tds')->type('datetime');
-		$this->addField('net_payment')->type('datetime');
-		$this->addField('carried_amount')->type('datetime');
+		$this->addField('gross_payment')->type('money');
+		$this->addField('tds')->type('money');
+		$this->addField('admin_charge')->type('money');
+		$this->addField('net_payment')->type('money');
+		$this->addField('carried_amount')->type('money');
 
 	}
 
@@ -334,11 +335,54 @@ class Model_Payout extends \xepan\base\Model_Table {
 		// calculate payment tds deduction carry forward etc. inclusing previous carried amount
 		// set and save carried_amount to distributor
 
-		$q="UPDATE mlm_payout SET gross_payment = previous_carried_amount + binary_income + introduction_amount + retail_profit + repurchase_bonus + generation_income + loyalty_bonus + leadership_bonus   WHERE closing_date='$on_date'";
+		$q="
+			UPDATE
+				mlm_payout p
+			JOIN mlm_distributor d on p.distributor_id=d.distributor_id
+			JOIN customer c on c.contact_id = d.distributor_id
+			SET 
+				gross_payment = previous_carried_amount + binary_income + introduction_amount + retail_profit + repurchase_bonus + generation_income + loyalty_bonus + leadership_bonus,
+				tds = IF(c.pan_no is not null,gross_payment*5/100,gross_payment*20/100),
+				admin_charge = gross_payment*5/100,
+				net_payment = gross_payment - ( tds + admin_charge + net_payment )
+			WHERE closing_date='$on_date'";
 		$this->query($q);
 
 
 		// Carry forward condition ..
+		// TODO min self purchase and payout from config
+
+		$q="
+			UPDATE
+				mlm_payout p
+			SET
+				carried_amount = gross_payment,
+				tds=0,
+				admin_charge=0,
+				net_payment = 0
+			WHERE
+				(
+					month_self_bv < 500 OR
+					net_payment < 500
+				) AND
+
+				closing_date='$on_date'
+		";
+		$this->query($q);
+
+		// add this carried amount in distributor for previous_carried_amount for next closing
+		$q="
+			UPDATE
+				mlm_distributor d
+			JOIN mlm_payout p on d.distributor_id = p.distributor_id
+			SET
+				d.carried_amount = d.carried_amount + p.carried_amount
+			WHERE
+				p.carried_amount is not null AND 
+				p.carried_amount > 0 AND
+				p.closing_date='$on_date'
+		";
+		$this->query($q);
 
 		// non green not in payout but how to carry paris
 		// non min purchase persons amount or min payout amount to carryied .. make tds admin etc zero 
@@ -348,14 +392,13 @@ class Model_Payout extends \xepan\base\Model_Table {
 
 	function resetWeekData(){
 		// set fields zero in distributor 
-		// like month_self_bv if greened_on is not null
 
 	}
 
 	function resetMonthData(){
 		// set fields zero in distributor 
 		// like month_self_bv if greened_on is not null
-
+		
 	}
 
 	function doClosing($type='daily',$on_date=null, $calculate_loyalty=false){
