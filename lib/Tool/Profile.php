@@ -11,22 +11,30 @@ class Tool_Profile extends \xepan\cms\View_Tool{
 	function init(){
 		parent::init();
 
+		$this->addClass('main-box');
+
 		$this->distributor = $distributor = $this->add('xavoc\mlm\Model_Distributor');
 		$distributor->loadLoggedIn();
 		if(!$distributor->loaded()) return "distributor is not loaded";
 		
+		$col = $this->add('Columns');
+		$col_1 = $col->addColumn(8);
+
+		$col_2 = $col->addColumn(4);
+
 		$attachment = $this->add('xavoc\mlm\Model_Attachment');
 		$attachment->addCondition('distributor_id',$distributor->id);
 		$attachment->tryLoadAny();
 		if($attachment->count()->getOne() > 1) throw new \Exception("more thenn one kyc attachment found");		
 
-		$form = $this->add('Form');
+		$form = $col_1->add('Form');
 		$form->setModel($attachment,['pan_card_id','aadhar_card_id']);
 		$form->addSubmit("Update");
 		if($form->isSubmitted()){
 			$form->update();
 			$form->js()->univ()->successMessage('saved')->execute();
 		}
+		
 
 	}
 }
