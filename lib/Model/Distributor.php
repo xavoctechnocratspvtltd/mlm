@@ -78,6 +78,11 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		
 		$dist_j->addField('temp')->type('number')->system(true);
 
+		// distributor account detail
+		$dist_j->addField('d_account_number');
+		$dist_j->addField('d_bank_name');
+		$dist_j->addField('d_bank_ifsc_code');
+
 		// payment mode fields
 		// for online payment
 		$dist_j->addField('payment_mode')->enum(['online','cash','cheque','dd','deposite_in_franchies']);
@@ -144,7 +149,9 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 				$this['introducer_path'] = $introducer->path() . $this['side'];
 			}
 
-			$this['sponsor_id'] = $this->findSponsor($introducer, $this['side'])->get('id');
+			if($this['sponsor_id']){
+				$this['sponsor_id'] = $this->findSponsor($introducer, $this['side'])->get('id');
+			}
 
 			if($sponsor = $this->sponsor()){
 				if($sponsor[($this['side']=='A'?'left':'right').'_id']){
@@ -228,11 +235,16 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 	}
 
 	function purchaseKit($kit){
-		$this['kit_item_id']= $kit->id;
+
+		$kit_id = $kit;
+		if($kit instanceof \xavoc\mlm\Model_Kit)
+			$kit_id = $kit->id;
+
+		$this['kit_item_id']= $kit_id;
 		$this['status'] = "KitPaid";
 
 		$this->app->employee
-		->addActivity("Distributor ".$this['name']." purchase a kit( ".$this['kit']." ) and waiting for payment verification")
+		->addActivity("Distributor ".$this['name']." purchase a kit( ".$this['kit_item']." ) and waiting for payment verification")
 		->notifyWhoCan(['PaymentVerified'],'KitPaid',$this);
 		
 		$this->save();
@@ -385,7 +397,8 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		
 		$user->addCondition('username',(isset($data['username'])?$data['username']:$data['first_name']).'@dummy.com');
 		$user->tryLoadAny();
-		$user['password']='123456';
+
+		$user['password']= $data['password']?:'123456';
 		$user->save();
 
 		$this['user_id'] = $user->id;
