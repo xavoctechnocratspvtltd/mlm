@@ -40,13 +40,19 @@ class View_ProfileChecker extends \xepan\cms\View_Tool{
 			$this->template->tryDel('not_found');
 		
 		if(!$distributor['kit_item_id']){
-			$this->add('Button')->set('Purchase Kit Now')->addClass('btn btn-primary')->js('click')->univ()->redirect($this->app->url($this->options['kit_purchase_page']));
+			$this->add('Button',null,'kit_info')->set('Purchase Kit Now')->addClass('btn btn-warning btn-block alert')->js('click')->univ()->redirect($this->app->url($this->options['kit_purchase_page']));
+		}else{
+			$this->add('View_Box',null,'kit_info')->setHTML('<i class="glyphicon glyphicon-ok"></i> Your Startup Package is <b>'.$distributor['kit_item']."</b>")->addClass('alert alert-success');
 		}
+		
 		if(!$distributor['attachment_count']){
-			$this->add('Button')->set('Update KYC')->addClass('btn btn-primary')->js('click')->univ()->redirect($this->app->url($this->options['kyc_purchase_page']));
+			$this->add('Button',null,'kyc_info')->set('Update KYC')->addClass('btn btn-primary')->js('click')->univ()->redirect($this->app->url($this->options['kyc_purchase_page']));
+		}else{ 
+			$this->add('View_Box',null,'kyc_info')->setHTML('<i class="glyphicon glyphicon-ok"></i> You Updated Your KYC')->addClass('alert alert-success');
 		}
+
 		if(!$distributor['is_verified']){
-			$this->add('View_Box')->addClass('alert alert-info')->set('You are under admin verification process');
+			$this->add('View_Box',null,'verification_info')->addClass('alert alert-info')->set('You are under admin verification process');
 		}
 	}
 
