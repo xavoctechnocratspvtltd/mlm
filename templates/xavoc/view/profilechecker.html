@@ -1,14 +1,16 @@
 
 <div id="{$_name}" style="{$style}" class="{$class}">
-  <h3>Profile</h3>
-  <div class="progress progress-striped">{profile_percentage_wrapper}
-    <div style="width: {$profile_percentage};" aria-valuenow="{$profile_percentage}" aria-valuemin="0" aria-valuemax="100" class="progress-bar progress-bar-success">{$profile_percentage}</div>{/}
+  <div class="main-box">
+    <h3>Profile</h3>
+    <div class="progress progress-striped">{profile_percentage_wrapper}
+      <div style="width: {$profile_percentage};" aria-valuenow="{$profile_percentage}" aria-valuemin="0" aria-valuemax="100" class="progress-bar progress-bar-success">{$profile_percentage}</div>{/}
+    </div>
+    <div class="row">
+      <div class="col-md-4 col-sm-4 col-lg-4">{$kit_info}</div>
+      <div class="col-md-4 col-sm-4 col-lg-4">{$kyc_info}</div>
+      <div class="col-md-4 col-sm-4 col-lg-4">{$verification_info}</div>
+    </div>{not_found}
+    <div role="alert" class="alert alert-danger"><span aria-hidden="true" class="glyphicon glyphicon-exclamation-sign"></span><span class="sr-only">Error:&nbsp;</span>&nbsp;update your profile, 0% completed</div>{/}
+    {$Content}
   </div>
-  <div class="row">
-    <div class="col-md-4 col-sm-4 col-lg-4">{$kit_info}</div>
-    <div class="col-md-4 col-sm-4 col-lg-4">{$kyc_info}</div>
-    <div class="col-md-4 col-sm-4 col-lg-4">{$verification_info}</div>
-  </div>{not_found}
-  <div role="alert" class="alert alert-danger"><span aria-hidden="true" class="glyphicon glyphicon-exclamation-sign"></span><span class="sr-only">Error:&nbsp;</span>&nbsp;update your profile, 0% completed</div>{/}
-  {$Content}
 </div>
