@@ -32,10 +32,32 @@ class Controller_Setup extends \AbstractController {
 		}
 
 		$item_array=[
-					['name'=>'Package 1','code'=> 'package1','pv'=>'0','bv'=>'200','sv'=>'1000','capping'=>'5000','introducer_income'=>'50'],
-					['name'=>'Package 2','code'=> 'package2','pv'=>'0','bv'=>'700','sv'=>'3000','capping'=>'10000','introducer_income'=>'150'],
-					['name'=>'Package 3','code'=> 'package3','pv'=>'0','bv'=>'1500','sv'=>'6000','capping'=>'15000','introducer_income'=>'300'],
-					['name'=>'Package 4','code'=> 'package4','pv'=>'0','bv'=>'3200','sv'=>'12000','capping'=>'25000','introducer_income'=>'600']
+					['name'=>'Health Care Product','code'=> 'Package A1','pv'=>'0','bv'=>'200','sv'=>'1000','capping'=>'5000','introducer_income'=>'50'],
+					['name'=>'Health Care Product','code'=> 'Package A2','pv'=>'0','bv'=>'200','sv'=>'1000','capping'=>'5000','introducer_income'=>'50'],
+					['name'=>'Health Care Product','code'=> 'Package A3','pv'=>'0','bv'=>'200','sv'=>'1000','capping'=>'5000','introducer_income'=>'50'],
+					['name'=>'Health Care Product','code'=> 'Package A4','pv'=>'0','bv'=>'200','sv'=>'1000','capping'=>'5000','introducer_income'=>'50'],
+					['name'=>'Health Care Product','code'=> 'Package A5','pv'=>'0','bv'=>'200','sv'=>'1000','capping'=>'5000','introducer_income'=>'50'],
+					['name'=>'Health Care Product','code'=> 'Package A6','pv'=>'0','bv'=>'200','sv'=>'1000','capping'=>'5000','introducer_income'=>'50'],
+					['name'=>'Health Care Product','code'=> 'Package A7','pv'=>'0','bv'=>'200','sv'=>'1000','capping'=>'5000','introducer_income'=>'50'],
+					['name'=>'Health Care Product','code'=> 'Package A8','pv'=>'0','bv'=>'200','sv'=>'1000','capping'=>'5000','introducer_income'=>'50'],
+					['name'=>'Health Care Product','code'=> 'Package A9','pv'=>'0','bv'=>'200','sv'=>'1000','capping'=>'5000','introducer_income'=>'50'],
+					['name'=>'Health Care Product','code'=> 'Package A10','pv'=>'0','bv'=>'200','sv'=>'1000','capping'=>'5000','introducer_income'=>'50'],
+					['name'=>'Health Care Product','code'=> 'Package A11','pv'=>'0','bv'=>'200','sv'=>'1000','capping'=>'5000','introducer_income'=>'50'],
+					['name'=>'DS Tobak Kit','code'=> 'Package A12','pv'=>'0','bv'=>'200','sv'=>'1000','capping'=>'5000','introducer_income'=>'50'],
+					['name'=>'DS Alco Kit','code'=> 'Package A13','pv'=>'0','bv'=>'200','sv'=>'1000','capping'=>'5000','introducer_income'=>'50'],
+
+					['name'=>'Male/Female Immune Kit','code'=> 'Package B1','pv'=>'0','bv'=>'700','sv'=>'3000','capping'=>'10000','introducer_income'=>'150'],
+					['name'=>'Child Immune Kit','code'=> 'Package B2','pv'=>'0','bv'=>'700','sv'=>'3000','capping'=>'10000','introducer_income'=>'150'],
+					['name'=>'Remove Tobacco Addiction kit','code'=> 'Package B3','pv'=>'0','bv'=>'700','sv'=>'3000','capping'=>'10000','introducer_income'=>'150'],
+					['name'=>'Remove Alcohol Addiction kit','code'=> 'Package B4','pv'=>'0','bv'=>'700','sv'=>'3000','capping'=>'10000','introducer_income'=>'150'],
+					['name'=>'Hair Treatment kit','code'=> 'Package B5','pv'=>'0','bv'=>'700','sv'=>'3000','capping'=>'10000','introducer_income'=>'150'],
+					['name'=>'Skin Treatment kit','code'=> 'Package B6','pv'=>'0','bv'=>'700','sv'=>'3000','capping'=>'10000','introducer_income'=>'150'],
+					['name'=>'Joint Care kit','code'=> 'Package B7','pv'=>'0','bv'=>'700','sv'=>'3000','capping'=>'10000','introducer_income'=>'150'],
+
+					['name'=>'General Health Care Kit','code'=> 'Package C1','pv'=>'0','bv'=>'1500','sv'=>'6000','capping'=>'15000','introducer_income'=>'300'],
+					['name'=>'DS Promotional Kit','code'=> 'Package C2','pv'=>'0','bv'=>'1500','sv'=>'6000','capping'=>'15000','introducer_income'=>'300'],
+
+					['name'=>'DS King-Size Product Kit','code'=> 'Package D1','pv'=>'0','bv'=>'3200','sv'=>'12000','capping'=>'25000','introducer_income'=>'600']
 		];
 		foreach ($item_array as $item) {
 			$kit = $this->add('xavoc\mlm\Model_Kit')
