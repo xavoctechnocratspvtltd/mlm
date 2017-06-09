@@ -29,11 +29,17 @@ class Initiator extends \Controller_Addon {
         
     }
 
-    function setup_frontend(){
+    function setup_pre_frontend(){
         $this->routePages('xavoc_dm');
         $this->addLocation(array('template'=>'templates','js'=>'templates/js','css'=>'templates/css'))
         ->setBaseURL('./shared/apps/xavoc/mlm/');
 
+        return $this;
+
+    }
+
+    function setup_frontend(){
+        
         $this->app->exportFrontEndTool('xavoc\mlm\Tool_Register','MLM');
       
         $this->app->exportFrontEndTool('xavoc\mlm\Tool_DashBoard','MLM');
