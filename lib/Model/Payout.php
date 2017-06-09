@@ -96,7 +96,7 @@ class Model_Payout extends \xepan\base\Model_Table {
 		
 	}
 
-	function monthlyClosing($on_date){
+	function monthlyClosing($on_date,$calculate_loyalty=false){
 		if(!$on_date) $on_date = $this->app->now;
 		$this->weeklyClosing($on_date);
 		// add re-purchase bonus & generation income to this payout rows
@@ -106,7 +106,9 @@ class Model_Payout extends \xepan\base\Model_Table {
 				JOIN mlm_distributor d on p.distributor_id = d.distributor_id
 			SET 
 				generation_a_business = IFNULL((select max(bv_sum) from mlm_generation_business bv_table where bv_table.distributor_id = p.distributor_id ),0),
-				generation_b_business = IFNULL(((select sum(bv_sum) from mlm_generation_business bv_table where bv_table.distributor_id = d.distributor_id ) - (select max(bv_sum) from mlm_generation_business bv_table where bv_table.distributor_id = d.distributor_id )),0)
+				generation_b_business = IFNULL(((select sum(bv_sum) from mlm_generation_business bv_table where bv_table.distributor_id = d.distributor_id ) - (select max(bv_sum) from mlm_generation_business bv_table where bv_table.distributor_id = d.distributor_id )),0),
+				actual_generation_a_business = generation_a_business,
+				actual_generation_b_business = generation_b_business
 			WHERE 
 				d.greened_on is not null AND
 				closing_date = '$on_date'
@@ -117,9 +119,34 @@ class Model_Payout extends \xepan\base\Model_Table {
 		// what if 60% ratio is not maintained ?? 
 		// TODO
 
+		// add self bv in weeker leg
+		$q="
+			UPDATE
+				mlm_payout p 
+			SET
+				generation_a_business = generation_a_business + (IF(generation_a_business <= generation_b_business,month_self_bv,0)),
+				generation_b_business = generation_b_business + (IF(generation_b_business <  generation_a_business,month_self_bv,0))
+			WHERE
+				closing_date = '$on_date'
+		";
+		$this->query($q);
+
+		// if any leg is above 60% cap it to 60% business
+
+		$q="
+			UPDATE
+				mlm_payout p
+			SET
+				generation_a_business = IF(generation_a_business > ((generation_a_business+generation_b_business)*60/100),((generation_a_business+generation_b_business)*60/100),generation_a_business),
+				generation_b_business = IF(generation_b_business > ((generation_a_business+generation_b_business)*60/100),((generation_a_business+generation_b_business)*60/100),generation_b_business)
+			WHERE
+				closing_date='$on_date'
+		";
+		$this->query($q);
+
 
 		// update rank 
-
+		// TODO : Do not degrade rank due to this 60:40.. maintain hiegher rank
 		$ranks = $this->add('xavoc\mlm\Model_RePurchaseBonusSlab');
 
 		foreach ($ranks as $row) {
@@ -232,10 +259,65 @@ class Model_Payout extends \xepan\base\Model_Table {
 		$company_turnover = $this->app->db->dsql()->expr($q)->getHash();
 		$company_turnover = $company_turnover['bv_sum'];
 
-		$brown_rank_holder_count = $this->app->db->dsql()->expr("SELECT COUNT(*) FROM mlm_distributor WHERE current_rank ='' ")->getHash()
+		if($calculate_loyalty){
+			
+			$slabs = $this->add('xavoc\mlm\Model_LoyaltiBonusSlab');
+			foreach ($slabs as $row) {
+				$rank = $row['name'];
+				$turnover_criteria = $row['turnover_criteria'];
+				$distributable_amount = $row['distribution_percentage'] * $company_turnover /100;
+
+				$q="SELECT SUM(quarter_bv_saved) quarter_bv_sum FROM mlm_distributor WHERE rank= '$rank' AND quarter_bv_saved > $turnover_criteria";
+				$loyalti_level_bv_sum = $this->app->db->dsql()->expr($q)->getHash();
+				$loyalti_level_bv_sum = $loyalti_level_bv_sum['quarter_bv_sum'];
+
+				$q="
+					UPDATE
+						mlm_payout p 
+					JOIN mlm_distributor d on p.distributor_id = d.distributor_id
+					SET
+						p.loyalty_bonus = $distributable_amount * d.quarter_bv_saved / $loyalti_level_bv_sum
+					WHERE
+						rank= '$rank' AND 
+						quarter_bv_saved > $turnover_criteria AND
+						closing_date = '$on_date'
+				";
+				$this->query($q);
+				
+			}
+
+			// set quarter bv value to zero 
+			$q="UPDATE mlm_distributor SET quarter_bv_saved=0";
+			$this->query($q);
+
+		}
 
 		// calculate leadership bonus
-		// TODO ... confusions
+		
+		// save total amount of income other then leadership bonus to distributor temp
+		$q="UPDATE mlm_distributor SET temp=0;";
+		$this->query($q);
+		$q="UPDATE 
+				mlm_distributor d
+			JOIN mlm_payout p  on p.distributor_id = d.distributor_id
+			SET
+				d.temp = p.previous_carried_amount + p.binary_income + p.introduction_amount + p.retail_profit + p.repurchase_bonus + p.generation_income + p.loyalty_bonus
+			WHERE
+				p.closing_date='$on_date'
+			";
+		$this->query($q);
+
+
+		$q="
+			UPDATE
+				mlm_payout p 
+			SET
+				p.leadership_bonus = IFNULL((SELECT sum(d.temp) from mlm_distributor d WHERE d.introducer_id = p.distributor_id),0)*10/100
+			WHERE
+				p.closing_date='$on_date';
+
+		";
+		$this->query($q);
 
 		// Awards & Rewards
 		// Need clear picture to write code
@@ -247,7 +329,8 @@ class Model_Payout extends \xepan\base\Model_Table {
 	// $this->addField('net_payment')->type('datetime');
 	// $this->addField('carried_amount')->type('datetime');
 
-	function calculatePayment(){
+	function calculatePayment($on_date=null){
+		if(!$on_date) $on_date = $this->app->now;
 		// calculate payment tds deduction carry forward etc. inclusing previous carried amount
 		// set and save carried_amount to distributor
 
@@ -258,6 +341,9 @@ class Model_Payout extends \xepan\base\Model_Table {
 		// Carry forward condition ..
 
 		// non green not in payout but how to carry paris
+		// non min purchase persons amount or min payout amount to carryied .. make tds admin etc zero 
+		// put this in distributor carried amount field
+
 	}
 
 	function resetWeekData(){
@@ -272,7 +358,7 @@ class Model_Payout extends \xepan\base\Model_Table {
 
 	}
 
-	function doClosing($type='daily',$on_date=null){
+	function doClosing($type='daily',$on_date=null, $calculate_loyalty=false){
 
 		if(!$on_date) $on_date = $this->app->now;
 		switch ($type) {
@@ -281,12 +367,12 @@ class Model_Payout extends \xepan\base\Model_Table {
 				break;
 			case 'weekly':
 				$this->weeklyClosing($on_date);
-				$this->calculatePayment();
+				$this->calculatePayment($on_date);
 				$this->resetWeekData();
 				break;
 			case 'monthly':
-				$this->monthlyClosing($on_date);
-				$this->calculatePayment();
+				$this->monthlyClosing($on_date,$calculate_loyalty);
+				$this->calculatePayment($on_date);
 				$this->resetMonthData();
 				break;
 			default:

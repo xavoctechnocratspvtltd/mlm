@@ -93,6 +93,22 @@ class Controller_Setup extends \AbstractController {
 			$slab->save();
 		}
 
+		$loyalti_bonus_slab = [
+			['name'=>'Brown Star','distribution_percentage'=>2.5,'turnover_criteria'=>2500000],
+			['name'=>'Blue Star','distribution_percentage'=>2.5,'turnover_criteria'=>5000000]
+		];
+
+		foreach ($loyalti_bonus_slab as $row) {
+			$slab = $this->add('xavoc\mlm\Model_LoyaltiBonusSlab')
+						->addCondition('name',$row['name'])
+						->tryLoadAny();
+			foreach ($row as $field => $value) {
+				$slab[$field]=$value;
+			}
+
+			$slab['rank_id'] = $this->add('xavoc\mlm\Model_RePurchaseBonusSlab')->loadBy('name',$row['name'])->get('id');
+			$slab->save();
+		}
 
 		$this->setupCompany();
 	}

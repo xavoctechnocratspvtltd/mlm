@@ -2,10 +2,10 @@
 
 namespace xavoc\mlm;
 
-class Model_RoyaltiBonusSlab extends \xepan\base\Model_Table {
+class Model_LoyaltiBonusSlab extends \xepan\base\Model_Table {
 	
-	public $table ='mlm_royalti_bonus_slab';
-	public $acl_type = "RoyaltiBonusSlab";
+	public $table ='mlm_loyalti_bonus_slab';
+	public $acl_type = "LoyaltiBonusSlab";
 
 	function init(){
 		parent::init();

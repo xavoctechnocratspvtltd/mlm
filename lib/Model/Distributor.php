@@ -60,6 +60,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 		// monthly session
 		$dist_j->addField('month_self_bv')->type('int')->defaultValue(0);
+		$dist_j->addField('quarter_bv_saved')->type('int')->defaultValue(0);
 		$dist_j->addField('monthly_left_dp_mrp_diff')->type('int')->defaultValue(0);
 		$dist_j->addField('monthly_right_dp_mrp_diff')->type('int')->defaultValue(0);
 		
@@ -265,6 +266,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 		$this->save();
 		$this->updateAnsestorsSV($this['sv']);
+		$this->updateAnsestorsBV($this['bv']);
 		if($introducer  = $this->introducer()) $introducer->addSessionIntro($kit['introducer_income']);
 	}
 
@@ -323,6 +325,16 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 					bv_sum = bv_sum + $bv_points
 				WHERE 
 					LEFT('$path',LENGTH(introduced_path)) = introduced_path;
+		";
+		$this->api->db->dsql($this->api->db->dsql()->expr($q))->execute();
+
+		$path = $this['path'];
+		$q="
+				UPDATE mlm_distributor d
+				SET
+					quarter_bv_saved = quarter_bv_saved + $bv_points
+				WHERE 
+					LEFT('$path',LENGTH(path)) = path;
 		";
 		$this->api->db->dsql($this->api->db->dsql()->expr($q))->execute();
 
