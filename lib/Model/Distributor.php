@@ -150,7 +150,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 				$this['introducer_path'] = $introducer->path() . $this['side'];
 			}
 
-			if($this['sponsor_id']){
+			if(!$this['sponsor_id']){
 				$this['sponsor_id'] = $this->findSponsor($introducer, $this['side'])->get('id');
 			}
 
