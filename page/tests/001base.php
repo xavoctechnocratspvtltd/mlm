@@ -27,16 +27,16 @@ class page_tests_001base extends page_Tester {
 
     function test_company_record(){
         $data = [
-        'Ram'=>['introducer'=>'company','side'=>'A','on'=>'2017-05-07','kit'=>'kit 1', 'green'=>'yes'],
+        'Ram'=>['introducer'=>'company','side'=>'A','on'=>'2017-05-07','kit'=>'Package A1', 'green'=>'yes'],
         'Shyam'=>['introducer'=>'company','side'=>'A','on'=>'2017-05-07'],
         'Ghanshyam'=>['introducer'=>'company','side'=>'A','on'=>'2017-05-07'],
         'Gowrav'=>['introducer'=>'company','side'=>'B','on'=>'2017-05-07'],
         'Rakesh'=>['introducer'=>'Ram','side'=>'A','on'=>'2017-05-07'],
-        'kit-0'=>'kit 1',
-        'kit-Ram'=>'kit 1',
+        'kit-0'=>'Package A1',
+        'kit-Ram'=>'Package A1',
         'green-0'=>'2017-05-08',
         'green-Ram'=>'2017-05-08',
-        'kit-Gowrav'=>'kit 1',
+        'kit-Gowrav'=>'Package A1',
         'green-Gowrav'=>'2017-05-08',
         'repurchase-Gowrav'=>'120',
         'repurchase-Ram'=>'12000',
