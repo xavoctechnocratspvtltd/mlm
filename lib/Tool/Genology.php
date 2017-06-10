@@ -34,7 +34,7 @@ class Tool_Genology extends \xepan\cms\View_Tool{
 		if(!$this->start_id){
 			$this->start_id = $distributor->id;
 		}else{
-			if(!$this->api->auth->model->isBackEndUser()){
+			if(!$this->api->auth->model->isSuperUser()){
 				if(!$distributor->isInDown($this->add('xavoc\mlm\Model_Distributor')->tryLoad($this->start_id))){
 					$this->add('View_Error')->set('You are not Authorized to look out of your Tree');
 					$this->start_id = $distributor?$distributor->id: null;
