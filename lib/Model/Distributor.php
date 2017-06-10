@@ -5,12 +5,16 @@ namespace xavoc\mlm;
 
 class Model_Distributor extends \xepan\commerce\Model_Customer {
 
-	public $status = ['Active','InActive'];
+	public $status = ['Active','Red','KitSelected','KitPaid','PaymentVerified','Green','InActive'];
 	public $actions = [
 				'Active'=>['view','edit','delete'],
-				'InActive'=>['view','edit','delete','active']
+				'InActive'=>['view','edit','delete','active'],
+				'KitPaid'=>['view','edit','delete','verifyPayment'],
+				'RedPay'=>['view','edit','delete','payNow'],
+				'KitSelected'=>['view','edit','delete','verifyPayment'],
 				];
 	public $acl_type= "ispmanager_distributor";
+
 
 	function init(){
 		parent::init();

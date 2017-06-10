@@ -12,11 +12,11 @@ class Initiator extends \Controller_Addon {
         ->setBaseURL('../shared/apps/xavoc/mlm/');
 
         $m = $this->app->top_menu->addMenu('Direct Marketing');
-        $m->addItem(['Pin Management','icon'=>'fa fa-check-square-o'],'xavoc_dm_distributors');
+        // $m->addItem(['Pin Management','icon'=>'fa fa-check-square-o'],'xavoc_dm_distributors');
         $m->addItem(['Kit Management','icon'=>'fa fa-check-square-o'],'xavoc_dm_kits');
         $m->addItem(['Distributors','icon'=>'fa fa-check-square-o'],'xavoc_dm_distributors');
         $m->addItem(['Distributors Actions','icon'=>'fa fa-check-square-o'],'xavoc_dm_distributoractions');
-        $m->addItem(['Closings','icon'=>'fa fa-check-square-o'],'xavoc_dm_distributors');
+        $m->addItem(['Closings','icon'=>'fa fa-check-square-o'],'xavoc_dm_closings');
         $m->addItem(['Configuration','icon'=>'fa fa-check-square-o'],'xavoc_dm_config');
 
         $this->addAppFunctions();
