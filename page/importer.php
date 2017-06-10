@@ -18,6 +18,12 @@ class page_importer extends \xepan\base\Page {
 			$msg = '<div class="alert bg bg-success">Total Distributor Import = '.$_GET['total_dist'].'</div>';
 			$msg .= '<div class="alert bg bg-danger">Distributor having no kit id = '.count($_GET['dis_having_not_kit']).'</div>';
 			
+			if(isset($_GET['unused_data']) && count($_GET['unused_data'])){
+				$msg .= "Distributor not added = ".count($_GET['unused_data']);
+				foreach ($_GET['unused_data'] as $key => $data) {
+					$msg .= " Distributor = ".$data['first_name']." Member_PrimaryKey".$data['Member_PrimaryKey']."<br/>";
+				}
+			}
 			// $mapping = $_GET['mapping']?:[];
 			// $mapping_str = "";
 			// if(is_array($mapping)){
@@ -38,10 +44,9 @@ class page_importer extends \xepan\base\Page {
 
 			$importer = new \xepan\base\CSVImporter($path,true,',');
 			$csv_data = $importer->get();
+			// try{
 
-			try{
-
-				$this->api->db->beginTransaction();
+				// $this->api->db->beginTransaction();
 
 				$this->add('xavoc\mlm\Controller_Setup');
 
@@ -61,10 +66,11 @@ class page_importer extends \xepan\base\Page {
 								'801'=>'package2',
 								'1000'=>'package3',
 							];
-
+				$unused_data = [];
 				// throw new \Exception("Error Processing Request", 1);
 				$count = 0;
 				foreach ($csv_data as $key => $old_dis) {
+
 					if($count > 1) break;
 
 					$data = [];
@@ -111,33 +117,37 @@ class page_importer extends \xepan\base\Page {
 					else
 						$data['side'] =  'B';
 
-					$distributor = $this->add('xavoc\mlm\Model_Distributor');
-					$distributor->register($data);
+					try{
+						$distributor = $this->add('xavoc\mlm\Model_Distributor');
+						$distributor->register($data);
+						$kit_code = $package_mapping[trim($data['planname'])];
+						$kit_id =  isset($all_package[$kit_code])?$all_package[$kit_code]:0;
+						if($kit_id){
+							$distributor->purchaseKit($kit_id);
+						}else{
+							$dis_having_not_kit[] = $distributor->id;
+						}
 
-					$kit_code = $package_mapping[trim($data['planname'])];
-					$kit_id =  isset($all_package[$kit_code])?$all_package[$kit_code]:0;
-					if($kit_id){
-						$distributor->purchaseKit($kit_id);
-					}else{
-						$dis_having_not_kit[] = $distributor->id;
+						if(!isset($dis_id_mapping[$old_dis['Member_PrimaryKey']]))
+							$dis_id_mapping[$old_dis['Member_PrimaryKey']] = $distributor->id;
+
+						$count++;
+					}catch(\Exception $e){
+						$unused_data[] = $data;
 					}
 
-					if(!isset($dis_id_mapping[$old_dis['Member_PrimaryKey']]))
-						$dis_id_mapping[$old_dis['Member_PrimaryKey']] = $distributor->id;
-
-					$count++;
 				}
 
-				$this->api->db->commit();
-			}catch(\Exception $e){
-				$this->api->db->rollback();
-				throw new \Exception($e->getMessage());
-			}
+				// $this->api->db->commit();
+			// }catch(\Exception $e){
+				// $this->api->db->rollback();
+				// throw new \Exception($e->getMessage());
+			// }
 
 			// echo "<pre>";
 			// print_r($dis_id_mapping);
 			// echo "</pre>";
-			$form->js(null,$view->js()->reload(['total_dist'=>$count,'dis_having_not_kit'=>$dis_having_not_kit,'mapping'=>$dis_id_mapping]))->univ()->successMessage('done')->execute();
+			$form->js(null,$view->js()->reload(['total_dist'=>$count,'dis_having_not_kit'=>$dis_having_not_kit,'mapping'=>$dis_id_mapping,'unused_data'=>$unused_data]))->univ()->successMessage('done')->execute();
 		}
 	}
 

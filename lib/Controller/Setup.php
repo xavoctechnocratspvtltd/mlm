@@ -132,7 +132,9 @@ class Controller_Setup extends \AbstractController {
 			$slab->save();
 		}
 
+		$this->app->skip_sponsor_introducer_mandatory = true;
 		$this->setupCompany();
+		$this->app->skip_sponsor_introducer_mandatory = false;
 	}
 
 	function setupCompany(){

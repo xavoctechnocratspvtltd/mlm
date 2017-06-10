@@ -109,12 +109,14 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		$this->addHook('afterInsert',$this);
 
 		$this->add('Controller_Validator');
-		// $this->is(array(
-		// 					'username|to_trim|unique',
-		// 					'password|to_trim',
-		// 					// 're_password|to_trim',
-		// 				)
-		// 		);
+		if(!isset($this->app->skip_sponsor_introducer_mandatory)){
+			$this->is(array(
+							'sponsor_id|to_trim|required',
+							'introducer_id|to_trim|required'
+							// 're_password|to_trim',
+						)
+					);
+		}
 
 		$this->setOrder('greened_on','desc');
 		$this->getElement('created_at')->caption('Joining date');
