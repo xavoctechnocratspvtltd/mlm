@@ -134,14 +134,14 @@ class page_importer extends \xepan\base\Page {
 					else
 						$data['side'] =  'B';
 
+						$kit_code = $package_mapping[trim($data['planname'])];
+						$kit_id =  isset($all_package[$kit_code])?$all_package[$kit_code]:0;
+						$data['kit_item_id'] = $kit_id;
 					// try{
 						$distributor = $this->add('xavoc\mlm\Model_Distributor');
 						$distributor->register($data);
-						$kit_code = $package_mapping[trim($data['planname'])];
-						$kit_id =  isset($all_package[$kit_code])?$all_package[$kit_code]:0;
-						if($kit_id){
-							$distributor->purchaseKit($kit_id);
-						}else{
+						// $distributor->purchaseKit($kit_id);
+						if(!$kit_id){
 							$dis_having_not_kit[] = $distributor->id;
 						}
 
