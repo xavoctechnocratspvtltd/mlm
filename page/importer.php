@@ -50,9 +50,10 @@ class page_importer extends \xepan\base\Page {
 
 			$importer = new \xepan\base\CSVImporter($path,true,',');
 			$csv_data = $importer->get();
-			// try{
+			
+			try{
 
-				// $this->api->db->beginTransaction();
+				$this->api->db->beginTransaction();
 
 				$this->add('xavoc\mlm\Controller_Setup');
 
@@ -133,35 +134,35 @@ class page_importer extends \xepan\base\Page {
 					else
 						$data['side'] =  'B';
 
-					try{
-						$distributor = $this->add('xavoc\mlm\Model_Distributor');
-						$distributor->register($data);
 						$kit_code = $package_mapping[trim($data['planname'])];
 						$kit_id =  isset($all_package[$kit_code])?$all_package[$kit_code]:0;
-						if($kit_id){
-							$distributor->purchaseKit($kit_id);
-						}else{
+						$data['kit_item_id'] = $kit_id;
+					// try{
+						$distributor = $this->add('xavoc\mlm\Model_Distributor');
+						$distributor->register($data);
+						// $distributor->purchaseKit($kit_id);
+						if(!$kit_id){
 							$dis_having_not_kit[] = $distributor->id;
 						}
 
 						if(!isset($dis_id_mapping[$old_dis['Member_PrimaryKey']]))
 							$dis_id_mapping[$old_dis['Member_PrimaryKey']] = $distributor->id;
 
-					}catch(\Exception $e){
-						throw $e;
+					// }catch(\Exception $e){
+					// 	throw $e;
 						
-						$unused_data[] = $data;
-					}
+						// $unused_data[] = $data;
+					// }
 					$count++;
 					$distributor->destroy();
 
 				}
 
-				// $this->api->db->commit();
-			// }catch(\Exception $e){
-				// $this->api->db->rollback();
-				// throw new \Exception($e->getMessage());
-			// }
+				$this->api->db->commit();
+			}catch(\Exception $e){
+				$this->api->db->rollback();
+				throw new \Exception($e->getMessage());
+			}
 
 			// echo "<pre>";
 			// print_r($dis_id_mapping);
