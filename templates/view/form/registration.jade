@@ -1,4 +1,4 @@
-.container.main-box.ds-form(id="{$_name}")
+.main-box.ds-form(id="{$_name}" style="width:100%;")
 	.row
 		.col-xs-6.col-sm-6.col-md-6.form-group.atk-form-row.atk-form-field
 			label Introducer
@@ -27,7 +27,22 @@
 			label PAN Number
 			{$pan_no}
 	.row
-		.col-xs-12.col-sm-12.col-md-12.form-group.atk-form-row.atk-form-field
+		.col-xs-12.col-sm-12.col-md-6
+			.row
+				div.col-xs-12.col-sm-12.col-md-6.form-group.atk-form-row.atk-form-field
+					label Country
+					{$country_id}
+				div.col-xs-12.col-sm-12.col-md-6.form-group.atk-form-row.atk-form-field
+					label State
+					{$state_id}
+			.row
+				div.col-xs-12.col-sm-12.col-md-6.form-group.atk-form-row.atk-form-field
+					label City
+					{$city}
+				div.col-xs-12.col-sm-12.col-md-6.form-group.atk-form-row.atk-form-field
+					label Pincode
+					{$pin_code}
+		.col-xs-12.col-sm-12.col-md-6.form-group.atk-form-row.atk-form-field
 			label Address
 			{$address}
 	.row
