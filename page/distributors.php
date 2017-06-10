@@ -12,6 +12,7 @@ class page_distributors extends \xepan\base\Page {
 
 		$crud = $this->add('xepan\hr\CRUD');
 		$crud->setModel('xavoc\mlm\Distributor');
+		$crud->grid->addPaginator($ipp=50);
 	}
 
 }

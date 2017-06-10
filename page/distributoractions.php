@@ -14,6 +14,7 @@ class page_distributoractions extends \xepan\base\Page {
 		$crud = $this->add('xepan\hr\CRUD');
 		$dis_action_m->add('xavoc\mlm\Controller_SideBarStatusFilter');
 		$crud->setModel($dis_action_m->debug());
+		$crud->grid->addPaginator($ipp=50);
 	}
 
 }
