@@ -51,9 +51,9 @@ class page_importer extends \xepan\base\Page {
 			$importer = new \xepan\base\CSVImporter($path,true,',');
 			$csv_data = $importer->get();
 			
-			try{
+			// try{
 
-				$this->api->db->beginTransaction();
+			// 	$this->api->db->beginTransaction();
 
 				$this->add('xavoc\mlm\Controller_Setup');
 
@@ -158,11 +158,11 @@ class page_importer extends \xepan\base\Page {
 
 				}
 
-				$this->api->db->commit();
-			}catch(\Exception $e){
-				$this->api->db->rollback();
-				throw new \Exception($e->getMessage());
-			}
+				// $this->api->db->commit();
+			// }catch(\Exception $e){
+			// 	$this->api->db->rollback();
+			// 	throw new \Exception($e->getMessage());
+			// }
 
 			// echo "<pre>";
 			// print_r($dis_id_mapping);
