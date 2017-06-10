@@ -9,6 +9,10 @@ class page_importer extends \xepan\base\Page {
 	function init(){
 		parent::init();
 
+		set_time_limit(0);
+
+
+
 		$form = $this->add('Form');
 		$form->addField('Number','import_record');
 		$form->addField('Upload','csv_file')->setModel('xepan\filestore\File');
@@ -43,6 +47,7 @@ class page_importer extends \xepan\base\Page {
 			$file_m = $this->add('xepan\filestore\Model_File')->load($form['csv_file']);
 			$path = $file_m->getPath();
 
+
 			$importer = new \xepan\base\CSVImporter($path,true,',');
 			$csv_data = $importer->get();
 			// try{
@@ -72,7 +77,7 @@ class page_importer extends \xepan\base\Page {
 				$count = 0;
 				foreach ($csv_data as $key => $old_dis) {
 
-					if($form['import_record'] > 0 && $count > $form['import_record']) break;
+					// if($form['import_record'] > 0 && $count > $form['import_record']) break;
 
 					$data = [];
 					$data['sponsor_id'] =  $dis_id_mapping[$old_dis['Upline_PrimaryKey']];
@@ -87,12 +92,14 @@ class page_importer extends \xepan\base\Page {
 					$country->tryLoadAny();
 					if($country->loaded())
 						$data['country_id'] = $country->id;
+					$country->destroy();
 					
 					$state = $this->add('xepan\base\Model_State');
 					$state->addCondition('name', ucwords($data['state']));
 					$state->tryLoadAny();
 					if($state->loaded())
 						$data['state_id'] = $state->id;
+					$state->destroy();
 
 					$data['pin_code'] = $old_dis['pincode'];
 
@@ -107,8 +114,16 @@ class page_importer extends \xepan\base\Page {
 					$data['d_bank_ifsc_code'] = $old_dis['ifsccode'];
 					$data['pan_no'] = $old_dis['panno'];
 
-					$data['username'] = $old_dis['Member_Username'];
+					$data['username'] = $old_dis['Member_Username'].rand(1,1000);
 					$data['password'] = $old_dis['password'];
+
+					if($old_dis['leftpoint'] > $old_dis['rightpoint']){
+						$old_dis['leftpoint'] = $old_dis['leftpoint'] - $old_dis['rightpoint'];
+						$old_dis['rightpoint']= 0;
+					}else{
+						$old_dis['rightpoint'] = $old_dis['rightpoint'] - $old_dis['leftpoint'];
+						$old_dis['leftpoint']= 0;
+					}
 
 					$data['day_left_sv'] = $data['total_left_sv'] = $old_dis['leftpoint'];
 					$data['day_right_sv'] = $data['total_right_sv'] = $old_dis['rightpoint'];
@@ -132,10 +147,13 @@ class page_importer extends \xepan\base\Page {
 						if(!isset($dis_id_mapping[$old_dis['Member_PrimaryKey']]))
 							$dis_id_mapping[$old_dis['Member_PrimaryKey']] = $distributor->id;
 
-						$count++;
 					}catch(\Exception $e){
+						throw $e;
+						
 						$unused_data[] = $data;
 					}
+					$count++;
+					$distributor->destroy();
 
 				}
 
