@@ -10,6 +10,7 @@ class page_importer extends \xepan\base\Page {
 		parent::init();
 
 		$form = $this->add('Form');
+		$form->addField('Number','import_record');
 		$form->addField('Upload','csv_file')->setModel('xepan\filestore\File');
 		$form->addSubmit('Import')->addClass('btn btn-primary');
 		
@@ -18,7 +19,7 @@ class page_importer extends \xepan\base\Page {
 			$msg = '<div class="alert bg bg-success">Total Distributor Import = '.$_GET['total_dist'].'</div>';
 			$msg .= '<div class="alert bg bg-danger">Distributor having no kit id = '.count($_GET['dis_having_not_kit']).'</div>';
 			
-			if(isset($_GET['unused_data']) && count($_GET['unused_data'])){
+			if( is_array($_GET['unused_data'])&& count($_GET['unused_data']) > 0){
 				$msg .= "Distributor not added = ".count($_GET['unused_data']);
 				foreach ($_GET['unused_data'] as $key => $data) {
 					$msg .= " Distributor = ".$data['first_name']." Member_PrimaryKey".$data['Member_PrimaryKey']."<br/>";
@@ -71,7 +72,7 @@ class page_importer extends \xepan\base\Page {
 				$count = 0;
 				foreach ($csv_data as $key => $old_dis) {
 
-					if($count > 1) break;
+					if($form['import_record'] > 0 && $count > $form['import_record']) break;
 
 					$data = [];
 					$data['sponsor_id'] =  $dis_id_mapping[$old_dis['Upline_PrimaryKey']];
