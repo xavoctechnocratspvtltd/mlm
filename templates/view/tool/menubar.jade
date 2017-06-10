@@ -1,5 +1,5 @@
 .xepan-mlm-megamenu(id="{$_name}")
-	nav.navbar.navbar-inverse
+	nav.navbar.bg-primary
 		.container-fluid
 			// Brand and toggle get grouped for better mobile display
 			.navbar-header
@@ -9,7 +9,7 @@
 					span.icon-bar
 					span.icon-bar
 				a.navbar-brand(href='#')
-					img.normal-logo(src='/www/img/logo.png', alt='')
+					img.normal-logo.hidden-md.hidden-lg(src='/www/img/logo.png', alt='' style="width:50% ")
 					//- img.normal-logo.logo-black(src='img/logo3-black.png', alt='')
 					//- img.small-logo.hidden-xs.hidden-sm.hidden(src='img/logo.png', alt='')
 			// Collect the nav links, forms, and other content for toggling
@@ -27,7 +27,7 @@
 				ul.dropdown-menu.mega-dropdown-menu
 					{rows}{row}
 					li.dropdown1.col-sm-2(data-id="{$id}")
-						a(href='{$sub_url}') 
+						a.mlm-mega-sabmenu(href='{$sub_url}') 
 							{name}Products{/} 
 					//- li.col-sm-3
 					//- 	| Features Products
@@ -70,8 +70,29 @@ style.
 	line-height: 30px;
 	}
 	.nav .open > a, .nav .open > a:focus, .nav  .open  > a:hover {
-	background-color: #fff;
-	border-color: #337ab7;
+	background-color: #f47221;
+	border-color: #f47221;
+	}
+	.xepan-mlm-megamenu .mlm-mega-sabmenu:hover {
+	    color: rgb(244, 114, 33);
+	}
+	.xepan-mlm-megamenu .dropdown a.dropdown-toggle {
+	    color: #fff;
+	}
+
+	.xepan-mlm-megamenu .mlm-mega-sabmenu {
+	    border-bottom: 1px solid #e1e1e1;
+	    display: block;
+	    font-size: 12px;
+	    padding: 8px 20px;
+	    text-transform: uppercase;
+	}
+
+	.xepan-mlm-megamenu .mega-dropdown-menu {
+	    border-bottom: 2px solid rgb(244, 114, 33);
+	    box-shadow: none;
+	    padding: 20px 0;
+	    width: 100%;
 	}
 
 script.
