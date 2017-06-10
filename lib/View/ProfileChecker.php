@@ -9,7 +9,7 @@ namespace xavoc\mlm;
 class View_ProfileChecker extends \xepan\cms\View_Tool{
 	public $options = [
 				'kit_purchase_page'=>'kit',
-				'kyc_purchase_page'=>'profile',
+				'kyc_purchase_page'=>'setting',
 			];
 
 	function init(){
