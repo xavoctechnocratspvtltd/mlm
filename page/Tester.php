@@ -121,6 +121,9 @@ class page_Tester extends \xepan\base\Page_Tester{
 
 			$this->api->db->commit();
 
+			// check this->proper_response and make an array with values from db in format
+			// that is given in proper_response_array
+			
 			$result = strtolower(substr($result, 0,4));
 			if($result == 'dist'){
 				$r= $this->add('xavoc\mlm\Model_Distributor')->addCondition('id',$distributor_id_mapping);
