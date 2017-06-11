@@ -48,7 +48,7 @@ class page_Tester extends \xepan\base\Page_Tester{
 		try{
 			$this->api->db->beginTransaction();
 				
-			$this->resetData();
+			// $this->resetData();
 			$root_id = $this->add('xavoc\mlm\Model_Distributor')->loadRoot()->get('id');
 			
 			$distributor_id_mapping=['0'=>$root_id,'company'=>$root_id];
@@ -76,7 +76,7 @@ class page_Tester extends \xepan\base\Page_Tester{
 						$dist = $this->add('xavoc\mlm\Model_Distributor');
 						$data = [
 									'first_name'=>$key,
-									'introducer_id'=>$distributor_id_mapping[$value['introducer']],
+									'introducer_id'=>$distributor_id_mapping[$value['introducer']]?:$this->add('xavoc\mlm\Model_Distributor')->loadBy('user',$value['introducer'])->get('id'),
 									'created_at'=>$value['on'],
 									'side'=>$value['side']
 								];

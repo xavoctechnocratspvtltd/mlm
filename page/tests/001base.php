@@ -26,11 +26,12 @@ class page_tests_001base extends page_Tester {
     }
 
     function test_company_record(){
+        $this->resetData();
         $data = [
-        'Ram'=>['introducer'=>'company','side'=>'A','on'=>'2017-05-07','kit'=>'Package A1', 'green'=>'yes'],
-        'Shyam'=>['introducer'=>'company','side'=>'A','on'=>'2017-05-07'],
-        'Ghanshyam'=>['introducer'=>'company','side'=>'A','on'=>'2017-05-07'],
-        'Gowrav'=>['introducer'=>'company','side'=>'B','on'=>'2017-05-07'],
+        'Ram'=>['introducer'=>'0','side'=>'A','on'=>'2017-05-07','kit'=>'Package A1', 'green'=>'yes'],
+        'Shyam'=>['introducer'=>'0','side'=>'A','on'=>'2017-05-07'],
+        'Ghanshyam'=>['introducer'=>'0','side'=>'A','on'=>'2017-05-07'],
+        'Gowrav'=>['introducer'=>'0','side'=>'B','on'=>'2017-05-07'],
         'Rakesh'=>['introducer'=>'Ram','side'=>'A','on'=>'2017-05-07'],
         'kit-0'=>'Package A1',
         'kit-Ram'=>'Package A1',
@@ -43,7 +44,7 @@ class page_tests_001base extends page_Tester {
         'repurchase-Rakesh'=>'10000',
         // 'closing-daily'=>'2017-05-08'
         // 'closing-weekly'=>'2017-05-08'
-        'closing-monthly'=>'2017-05-08'
+        'closing-monthly'=>'2017-07-08'
         ];
         $x = $this->process($data);
         return $x;
