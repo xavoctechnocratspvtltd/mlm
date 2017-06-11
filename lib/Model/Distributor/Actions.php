@@ -10,12 +10,12 @@ class Model_Distributor_Actions extends \xavoc\mlm\Model_Distributor
 {
 	public $status = ['Active','Red','KitSelected','KitPaid','PaymentVerified','Green','InActive'];
 	public $actions = [
-				'Active'=>['view','edit','delete'],
+				'Active'=>['view','edit','delete','InActive'],
 				'InActive'=>['view','edit','delete','active'],
-				'KitPaid'=>['view','edit','delete','verifyPayment'],
-				'RedPay'=>['view','edit','delete','payNow'],
-				'KitSelected'=>['view','edit','delete','verifyPayment'],
-				];
+				'KitSelected'=>['view','edit','delete','payNow','verifyPayment','verifyDocument','InActive'],
+				'KitPaid'=>['view','edit','delete','verifyPayment','verifyDocument','InActive'],
+				'RedPay'=>['view','edit','delete','payNow','InActive'],
+			];
 	
 	function init(){
 		parent::init();
@@ -45,4 +45,19 @@ class Model_Distributor_Actions extends \xavoc\mlm\Model_Distributor
             ->notifyWhoCan('Active,Green','InActive',$this);
 		$this->saveAndUnload();
 	}
+
+	function page_verifyPayment($page){
+		$page->add('View')->set('verify Payment');
+
+	}
+
+	function page_verifyDocument($page){
+		$page->add('View')->set('verify Document');
+		
+	}
+
+	function page_payNow($page){
+		$page->add('View')->set('Pay Now');
+	}
+
 }

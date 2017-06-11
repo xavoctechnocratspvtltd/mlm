@@ -8,7 +8,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 	public $status = ['Active','Red','KitSelected','KitPaid','PaymentVerified','Green','InActive'];
 
 	public $actions = [
-				'Active'=>['view','edit','delete'],
+				'Active'=>['view','edit','delete','InActive'],
 				'InActive'=>['view','edit','delete','active'],
 				'KitPaid'=>['view','edit','delete','verifyPayment'],
 				'RedPay'=>['view','edit','delete','payNow'],
