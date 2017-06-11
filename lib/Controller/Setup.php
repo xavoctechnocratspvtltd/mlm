@@ -50,8 +50,8 @@ class Controller_Setup extends \AbstractController {
 						['name'=>'Health Care Product','code'=> 'Package A9','pv'=>'0','bv'=>'200','sv'=>'1000','capping'=>'5000','introducer_income'=>'50'],
 						['name'=>'Health Care Product','code'=> 'Package A10','pv'=>'0','bv'=>'200','sv'=>'1000','capping'=>'5000','introducer_income'=>'50'],
 						['name'=>'Health Care Product','code'=> 'Package A11','pv'=>'0','bv'=>'200','sv'=>'1000','capping'=>'5000','introducer_income'=>'50'],
-						['name'=>'DS Tobak Kit','code'=> 'Package A12','pv'=>'0','bv'=>'200','sv'=>'100','capping'=>'5000','introducer_income'=>'50'],
-						['name'=>'DS Alco Kit','code'=> 'Package A13','pv'=>'0','bv'=>'200','sv'=>'100','capping'=>'5000','introducer_income'=>'50'],
+						['name'=>'DS Tobak Kit','code'=> 'Package A12','pv'=>'0','bv'=>'200','sv'=>'1000','capping'=>'5000','introducer_income'=>'50'],
+						['name'=>'DS Alco Kit','code'=> 'Package A13','pv'=>'0','bv'=>'200','sv'=>'1000','capping'=>'5000','introducer_income'=>'50'],
 
 						['name'=>'Male/Female Immune Kit','code'=> 'Package B1','pv'=>'0','bv'=>'700','sv'=>'3000','capping'=>'10000','introducer_income'=>'150'],
 						['name'=>'Child Immune Kit','code'=> 'Package B2','pv'=>'0','bv'=>'700','sv'=>'3000','capping'=>'10000','introducer_income'=>'150'],
