@@ -8,7 +8,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 	public $status = ['Active','Red','KitSelected','KitPaid','PaymentVerified','Green','InActive'];
 
 	public $actions = [
-				'Active'=>['view','edit','delete'],
+				'Active'=>['view','edit','delete','InActive'],
 				'InActive'=>['view','edit','delete','active'],
 				'KitPaid'=>['view','edit','delete','verifyPayment'],
 				'RedPay'=>['view','edit','delete','payNow'],
@@ -204,7 +204,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 			// 	$introducer->addSessionIntro($kit->getIntro());
 			// }
 			
-			// $this->welcomeDistributor();
+			$this->welcomeDistributor();
 
 			// $m_no=$this['mobile_number'];
 		
@@ -225,6 +225,78 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 			$this->forget('leg');
 
 			// $this->api->db->dsql()->table('xshop_memberdetails')->where('id',$this['customer_id'])->set('users_id',$this['user_id'])->update();
+		}
+	}
+
+	// send email and send sms
+	function welcomeDistributor(){
+		if(!$this->loaded()) throw new \Exception("Distributor Not Found, some thing wrong");
+				
+		// welcome mail and sms
+		$welcome_model = $this->add('xepan\base\Model_ConfigJsonModel',
+			[
+				'fields'=>[
+							'welcome_mail_subject'=>'Line',
+							'welcome_mail_content'=>'Text',
+							'welcome_sms_content'=>'Text',
+							'payout_mail_subject'=>'Line',
+							'payout_mail_content'=>'Text',
+							'payout_sms_content'=>'Text',
+							'topup_mail_subject'=>'Line',
+							'topup_mail_content'=>'Text',
+							'topup_sms_content'=>'Text',
+						],
+					'config_key'=>'DM_WELCOME_CONTENT',
+					'application'=>'mlm'
+			]);
+		$welcome_model->tryLoadAny();
+		
+		if(!$welcome_model['welcome_mail_subject'] OR !$welcome_model['welcome_mail_content']) throw new \Exception("plase update welcome mail content");
+
+		// Send Email
+			// subject
+		if($this->app->getConfig('send_email')){
+
+			$temp = $this->add('GiTemplate');
+			$temp->loadTemplateFromString($welcome_model['welcome_mail_subject']);
+			$temp->set($this->data);
+			$subject = $temp->render();
+				// body
+			$temp = $this->add('GiTemplate');
+			$temp->loadTemplateFromString($welcome_model['welcome_mail_content']);
+			$temp->set($this->data);
+			$body = $temp->render();
+
+			$email_setting = $this->add('xepan\communication\Model_Communication_EmailSetting')->setOrder('id','asc');
+			$email_setting->addCondition('is_active',true);
+			$email_setting->tryLoadAny();
+
+			if(!$email_setting->loaded()) throw new \Exception("update your email setting ", 1);
+
+
+			$communication = $this->add('xepan\communication\Model_Communication_Abstract_Email');
+			$communication->addCondition('communication_type','Email');
+
+			$communication->getElement('status')->defaultValue('Draft');
+			$communication['direction']='Out';
+			$communication->setfrom($email_setting['from_email'],$email_setting['from_name']);
+			
+			$communication->addTo($this['email']);
+			$communication->setSubject($subject);
+			$communication->setBody($body);
+			$communication->send($email_setting);
+		}
+
+		// send SMS
+		if($this->app->getConfig('send_sms')){
+			$message = $welcome_model['welcome_sms_content'];
+			$temp = $this->add('GiTemplate');
+			$temp->loadTemplateFromString($message);
+			$temp->set($this->data);
+			$message = $temp->render();
+			
+			if(!$welcome_model['welcome_sms_content']) throw new \Exception("plase update welcome sms content");
+			$this->add('xepan\communication\Controller_Sms')->sendMessage($this['mobile_number'],$message);
 		}
 	}
 
@@ -419,7 +491,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 				->usePasswordEncryption('md5')
 				->addEncryptionHook($user);
 		
-		$user->addCondition('username',(isset($data['username'])?$data['username']:$data['first_name']).'@dummy.com');
+		$user->addCondition('username',(isset($data['username'])?$data['username']:$data['first_name']."@dummy.com"));
 		$user['password']= $data['password']?:'123456';
 		$user->save();
 
