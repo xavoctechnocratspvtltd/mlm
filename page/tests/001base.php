@@ -28,19 +28,20 @@ class page_tests_001base extends page_Tester {
     function test_company_record(){
         $this->resetData();
         $data = [
-        'Ram'=>['introducer'=>'0','side'=>'B','on'=>'2017-05-07','kit'=>'Package A1', 'green'=>'yes'],
-        'Shyam'=>['introducer'=>'0','side'=>'B','on'=>'2017-05-07','kit'=>'Package A1', 'green'=>'yes'],
-        'Ghanshyam'=>['introducer'=>'0','side'=>'B','on'=>'2017-05-07','kit'=>'Package A1', 'green'=>'yes'],
-        'Gowrav'=>['introducer'=>'0','side'=>'A','on'=>'2017-05-07','kit'=>'Package A1', 'green'=>'yes'],
-        'Rakesh'=>['introducer'=>'Ram','side'=>'B','on'=>'2017-05-07','kit'=>'Package A1', 'green'=>'yes'],
-        'repurchase-Gowrav'=>'120',
-        'repurchase-Ram'=>'12000',
-        'repurchase-Rakesh'=>'10000',
+        'Ram'=>['introducer'=>'0','side'=>'B','on'=>'2017-05-07'],
+        'Shyam'=>['introducer'=>'0','side'=>'B','on'=>'2017-05-07'],
+        'Ghanshyam'=>['introducer'=>'Ram','side'=>'B','on'=>'2017-05-07'],
+        'Gowrav'=>['introducer'=>'Shyam','side'=>'A','on'=>'2017-05-07'],
+        'Rakesh'=>['introducer'=>'Ghanshyam','side'=>'A','on'=>'2017-05-07'],
+        'repurchase-Rakesh'=>'120',
+        'repurchase-Gowrav'=>'240',
+        // 'repurchase-Ram'=>'12000',
+        // 'repurchase-Rakesh'=>'10000',
         // 'closing-daily'=>'2017-05-08'
         // 'closing-weekly'=>'2017-05-08'
-        'closing-monthly'=>'2017-07-08'
+        // 'closing-monthly'=>'2017-07-08'
         ];
-        $x = $this->process($data);
+        $x = $this->process($data,'test_company_record');
         return $x;
     }
 

@@ -402,13 +402,16 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		$path = $this['path'];
 		$q="
 				UPDATE mlm_generation_business gt
+				INNER JOIN (select my_max.id, max(length(my_max.introduced_path)) from mlm_generation_business my_max where LEFT('$path',LENGTH(my_max.introduced_path)) = my_max.introduced_path GROUP BY my_max.distributor_id) temp
+				on temp.id=gt.id
 				SET
 					bv_sum = bv_sum + $bv_points,
 					month_bv = month_bv + $bv_points
-				WHERE 
-					LEFT('$path',LENGTH(introduced_path)) = introduced_path;
-					AND LENGTH(introduced_path) = (SELECT MAX(LENGTH(introduced_path)) From (select * from mlm_generation_business) temp WHERE temp.distributor_id = gt.distributor_id)
+
 		";
+				// WHERE 
+				// 	LEFT('$path',LENGTH(introduced_path)) = introduced_path;
+					// AND LENGTH(introduced_path) = (SELECT MAX(LENGTH(introduced_path)) From (select * from mlm_generation_business) temp WHERE temp.distributor_id = gt.distributor_id)
 		$this->api->db->dsql($this->api->db->dsql()->expr($q))->execute();
 
 
