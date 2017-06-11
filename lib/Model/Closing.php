@@ -144,15 +144,16 @@ class Model_Closing extends \xepan\hr\Model_Document {
 
 		// save actual business before 60-40 and adding self bv in weeker leg
 
-		$q="UPDATE 
-				mlm_payout p
-			SET 
-				actual_generation_a_business = generation_a_business,
-				actual_generation_b_business = generation_b_business
-			WHERE 
-				closing_date = '$on_date'
-				";
-		$this->query($q);
+			
+			$q="UPDATE 
+					mlm_payout p
+				SET 
+					actual_generation_a_business = generation_a_business,
+					actual_generation_b_business = generation_b_business
+				WHERE 
+					closing_date = '$on_date'
+					";
+			$this->query($q);
 
 		// what if 60% ratio is not maintained ?? 
 		// TODO
@@ -171,16 +172,18 @@ class Model_Closing extends \xepan\hr\Model_Document {
 
 		// if any leg is above 60% cap it to 60% business
 
-		$q="
-			UPDATE
-				mlm_payout p
-			SET
-				generation_a_business = IF(generation_a_business > ((generation_a_business+generation_b_business)*60/100),((generation_a_business+generation_b_business)*60/100),generation_a_business),
-				generation_b_business = IF(generation_b_business > ((generation_a_business+generation_b_business)*60/100),((generation_a_business+generation_b_business)*60/100),generation_b_business)
-			WHERE
-				closing_date='$on_date'
-		";
-		$this->query($q);
+		if($this->app->getConfig('include_60_40',true)){
+			$q="
+				UPDATE
+					mlm_payout p
+				SET
+					generation_a_business = IF(generation_a_business > ((generation_a_business+generation_b_business)*60/100),((generation_a_business+generation_b_business)*60/100),generation_a_business),
+					generation_b_business = IF(generation_b_business > ((generation_a_business+generation_b_business)*60/100),((generation_a_business+generation_b_business)*60/100),generation_b_business)
+				WHERE
+					closing_date='$on_date'
+			";
+			$this->query($q);
+		}
 
 		// update rank 
 		// TODO : Do not degrade rank due to this 60:40.. maintain hiegher rank
@@ -193,10 +196,10 @@ class Model_Closing extends \xepan\hr\Model_Document {
 					mlm_payout p
 					JOIN mlm_distributor d on p.distributor_id = d.distributor_id
 				SET 
-					p.rank = (select name from mlm_re_purchase_bonus_slab WHERE p.generation_a_business+p.generation_b_business > from_bv AND p.generation_a_business+p.generation_b_business <= to_bv),
-					p.slab_percentage = IFNULL((select slab_percentage from mlm_re_purchase_bonus_slab WHERE p.generation_a_business+p.generation_b_business > from_bv AND p.generation_a_business+p.generation_b_business <= to_bv),0),
+					p.rank = (select name from mlm_re_purchase_bonus_slab WHERE p.generation_month_business > from_bv AND p.generation_month_business <= to_bv),
+					p.slab_percentage = IFNULL((select slab_percentage from mlm_re_purchase_bonus_slab WHERE p.generation_month_business > from_bv AND p.generation_month_business <= to_bv),0),
 					d.current_rank = p.rank,
-					d.current_rank_id = (select id from mlm_re_purchase_bonus_slab WHERE p.generation_a_business+p.generation_b_business > from_bv AND p.generation_a_business+p.generation_b_business <= to_bv)
+					d.current_rank_id = (select id from mlm_re_purchase_bonus_slab WHERE p.generation_month_business > from_bv AND p.generation_month_business <= to_bv)
 				WHERE
 					(d.current_rank_id < $rank_id OR d.current_rank_id is null) AND
 					closing_date = '$on_date'
@@ -507,3 +510,6 @@ class Model_Closing extends \xepan\hr\Model_Document {
 		$this->api->db->dsql($this->api->db->dsql()->expr($q))->execute();
 	}
 }
+
+
+// select `contact`.`first_name` AS `first_name`,`mlm_payout`.`id` AS `id`,`mlm_payout`.`distributor_id` AS `distributor_id`,`mlm_payout`.`closing_date` AS `closing_date`,`mlm_payout`.`previous_carried_amount` AS `previous_carried_amount`,`mlm_payout`.`binary_income` AS `binary_income`,`mlm_payout`.`introduction_amount` AS `introduction_amount`,`mlm_payout`.`retail_profit` AS `retail_profit`,`mlm_payout`.`rank` AS `rank`,`mlm_payout`.`month_self_bv` AS `month_self_bv`,`mlm_payout`.`slab_percentage` AS `slab_percentage`,`mlm_payout`.`actual_generation_a_business` AS `actual_generation_a_business`,`mlm_payout`.`actual_generation_b_business` AS `actual_generation_b_business`,`mlm_payout`.`generation_a_business` AS `generation_a_business`,`mlm_payout`.`generation_b_business` AS `generation_b_business`,`mlm_payout`.`generation_month_business` AS `generation_month_business`,`mlm_payout`.`re_purchase_income_gross` AS `re_purchase_incomce_gross`,`mlm_payout`.`repurchase_bonus` AS `repurchase_bonus`,`mlm_payout`.`generation_income_1` AS `generation_income_1`,`mlm_payout`.`generation_income_2` AS `generation_income_2`,`mlm_payout`.`generation_income_3` AS `generation_income_3`,`mlm_payout`.`generation_income_4` AS `generation_income_4`,`mlm_payout`.`generation_income_5` AS `generation_income_5`,`mlm_payout`.`generation_income_6` AS `generation_income_6`,`mlm_payout`.`generation_income_7` AS `generation_income_7`,`mlm_payout`.`generation_income` AS `generation_income`,`mlm_payout`.`loyalty_bonus` AS `loyalty_bonus`,`mlm_payout`.`leadership_bonus` AS `leadership_bonus`,`mlm_payout`.`gross_payment` AS `gross_payment`,`mlm_payout`.`tds` AS `tds`,`mlm_payout`.`net_payment` AS `net_payment`,`mlm_payout`.`carried_amount` AS `carried_amount`,`user`.`username` AS `username`,`mlm_payout`.`admin_charge` AS `admin_charge` from (((`mlm_distributor` join `mlm_payout` on((`mlm_distributor`.`distributor_id` = `mlm_payout`.`distributor_id`))) join `contact` on((`mlm_distributor`.`distributor_id` = `contact`.`id`))) join `user` on((`contact`.`user_id` = `user`.`id`)))

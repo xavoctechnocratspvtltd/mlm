@@ -8,7 +8,7 @@ namespace xavoc\mlm;
 class Tool_Genology extends \xepan\cms\View_Tool{
 	
 	public $options = [
-						'genology-depth-of-tree'=> 4,
+						'genology-depth-of-tree'=> 5,
 						'genology-show-info-on'=>"hover"
 	];
 
