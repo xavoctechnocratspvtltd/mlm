@@ -251,12 +251,12 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 			]);
 		$welcome_model->tryLoadAny();
 		
-		if(!$welcome_model['welcome_mail_subject'] OR !$welcome_model['welcome_mail_content']) throw new \Exception("plase update welcome mail content");
 
 		// Send Email
 			// subject
 		if($this->app->getConfig('send_email')){
 
+			if(!$welcome_model['welcome_mail_subject'] OR !$welcome_model['welcome_mail_content']) throw new \Exception("plase update welcome mail content");
 			$temp = $this->add('GiTemplate');
 			$temp->loadTemplateFromString($welcome_model['welcome_mail_subject']);
 			$temp->set($this->data);
