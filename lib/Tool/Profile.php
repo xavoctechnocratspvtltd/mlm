@@ -12,7 +12,8 @@ class Tool_Profile extends \xepan\cms\View_Tool{
 		parent::init();
 
 		$this->addClass('main-box');
-		
+		$this->app->stickyGET('country_id');
+
 		$this->distributor = $distributor = $this->add('xavoc\mlm\Model_Distributor');
 		$distributor->loadLoggedIn();
 		if(!$distributor->loaded()) return "distributor is not loaded";
@@ -22,7 +23,7 @@ class Tool_Profile extends \xepan\cms\View_Tool{
 		$profile_tab = $tabs->addTab('Profile');
 		$pass_tab = $tabs->addTab('Change Password');
 
-
+		// attachment tabs
 		$attachment = $this->add('xavoc\mlm\Model_Attachment');
 		$attachment->addCondition('distributor_id',$distributor->id);
 		$attachment->tryLoadAny();
@@ -37,6 +38,55 @@ class Tool_Profile extends \xepan\cms\View_Tool{
 				$form->js()->univ()->successMessage('saved')->execute();
 			}
 		}
+		// end of tabs
+
+		// profile 
+		$col = $profile_tab->add('Columns');
+		$left = $col->addColumn(8);
+		$pro_fields = ['first_name','last_name','dob','country_id','state_id','city','address','pin_code','image_id','image'];
+		$form = $left->add('Form');
+		
+		// $f_c = $form->add('Columns');
+		// $a = $f_c->addColumn('4');
+		// $b = $f_c->addColumn('4');
+		// $c = $f_c->addColumn('4');
+		$form->setLayout(['view/form/profile']);
+		$form->setModel($distributor,$pro_fields);
+
+		// $img_view = $form->add('View')->setHtml('<img src="'.$distributor['image'].'"/>');
+		// $img_field= $form->getElement('image_id');
+		// $img_field->js('change',$img_view->js()->reload());
+
+		$country_field = $form->getElement('country_id');
+		$state_field = $form->getElement('state_id');
+
+		if($_GET['country_id']){
+			$state_field->getModel()->addCondition('country_id',$_GET['country_id']);
+		}
+		$country_field->js('change',$state_field->js()->reload(null,null,[$this->app->url(null,['cut_object'=>$state_field->name]),'country_id'=>$country_field->js()->val()]));
+		// $country_field->js('change',$form->js()->atk4_form('reloadField','state_id',[$this->app->url(null,['cut_object'=>$state_field->name]),'country_id'=>$country_field->js()->val()]));
+
+		$form->addSubmit('Update')->addClass('btn btn-primary');
+
+		if($form->isSubmitted()){
+			if($distributor->isRoot()) $this->app->skip_sponsor_introducer_mandatory = true;
+			$dis = $this->add('xavoc\mlm\Model_Distributor')->load($distributor->id);
+			foreach ($pro_fields as $key => $field_name) {
+				$dis[$field_name] = $form[$field_name];	
+			}
+			$dis->save();
+			$this->app->skip_sponsor_introducer_mandatory = false;
+			$js_event = [
+				$form->js()->reload(),
+				$form->js(true)->_selector('img.ds-dp')->attr('src',$dis['image'])
+			];
+			$form->js(null,$js_event)->univ()->successMessage('saved')->execute();
+
+		}
+
+		$right = $col->addColumn(4);
+
+		// end of profile
 
 
 		// change distributor password -------
