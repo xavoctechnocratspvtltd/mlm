@@ -14,6 +14,8 @@ class page_runtests extends \xepan\base\Page_TestRunner {
 		if(!set_time_limit(0)) throw new \Exception("Could not limit time", 1);
 		parent::init();
 
+		$this->add('xavoc\mlm\Controller_Setup',['remove_everything'=>true]);
+
 	}
 
 }

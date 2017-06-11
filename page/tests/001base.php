@@ -47,7 +47,7 @@ class page_tests_001base extends page_Tester {
 
     function prepare_company_record(){
         $this->proper_responses['test_company_record']=[
-            ['Ram'=>['d.path'=>'0A','d.month_self_bv'=>120,'p.carried_amount'=>1250]]
+            ['Ram'=>['d.path'=>'0B','d.month_self_bv'=>0,'p.carried_amount'=>null]]
         ];
     }
 }
