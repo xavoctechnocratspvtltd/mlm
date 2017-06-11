@@ -11,7 +11,7 @@
  Target Server Version : 100118
  File Encoding         : utf-8
 
- Date: 06/10/2017 16:16:36 PM
+ Date: 06/11/2017 10:51:47 AM
 */
 
 SET NAMES utf8;
@@ -30,6 +30,17 @@ CREATE TABLE `mlm_attachment` (
   `dd_deposite_receipt_image_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+--  Table structure for `mlm_closing`
+-- ----------------------------
+DROP TABLE IF EXISTS `mlm_closing`;
+CREATE TABLE `mlm_closing` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `closing_id` int(11) DEFAULT NULL,
+  `on_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `mlm_distributor`
@@ -88,6 +99,7 @@ CREATE TABLE `mlm_distributor` (
   `cheque_date` datetime DEFAULT NULL,
   `dd_date` datetime DEFAULT NULL,
   `current_rank` varchar(20) DEFAULT NULL,
+  `current_rank_id` int(11) DEFAULT NULL,
   `d_account_number` varchar(255) DEFAULT NULL,
   `d_bank_name` varchar(255) DEFAULT NULL,
   `d_bank_ifsc_code` varchar(255) DEFAULT NULL,
@@ -113,6 +125,7 @@ CREATE TABLE `mlm_generation_business` (
   `introduced_id` int(11) DEFAULT NULL,
   `introduced_path` text,
   `bv_sum` bigint(20) DEFAULT NULL,
+  `month_bv` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `distributor_id` (`distributor_id`),
   KEY `introduced_id` (`introduced_id`),
@@ -159,8 +172,10 @@ CREATE TABLE `mlm_loyalti_bonus_slab` (
 DROP TABLE IF EXISTS `mlm_payout`;
 CREATE TABLE `mlm_payout` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `closing_id` int(11) DEFAULT NULL,
   `distributor_id` int(11) DEFAULT NULL,
   `closing_date` datetime DEFAULT NULL,
+  `type` varchar(20) DEFAULT NULL,
   `previous_carried_amount` decimal(10,2) DEFAULT NULL,
   `binary_income` decimal(10,2) DEFAULT NULL,
   `introduction_amount` decimal(10,2) DEFAULT NULL,
@@ -191,7 +206,8 @@ CREATE TABLE `mlm_payout` (
   `carried_amount` decimal(10,2) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `distributor_id` (`distributor_id`),
-  KEY `closing_date` (`closing_date`)
+  KEY `closing_date` (`closing_date`),
+  KEY `closing_id` (`closing_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=175 DEFAULT CHARSET=utf8;
 
 -- ----------------------------

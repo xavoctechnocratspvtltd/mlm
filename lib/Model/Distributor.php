@@ -1,4 +1,5 @@
 <?php
+<?php
 
 namespace xavoc\mlm;
 
@@ -26,6 +27,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 		$dist_j->hasOne('xavoc\mlm\Left','left_id')->display(['form'=>'xepan\base\DropDownNormal']);
 		$dist_j->hasOne('xavoc\mlm\Right','right_id')->display(['form'=>'xepan\base\DropDownNormal']);
+		$dist_j->hasOne('xavoc\mlm\RePurchaseBonusSlab','current_rank_id');
 
 		$dist_j->addField('path')->type('text');
 		$dist_j->addField('introducer_path')->type('text');
@@ -329,6 +331,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 				UPDATE mlm_generation_business gt
 				SET
 					bv_sum = bv_sum + $bv_points
+					month_bv = month_bv + $bv_points
 				WHERE 
 					LEFT('$path',LENGTH(introduced_path)) = introduced_path;
 		";

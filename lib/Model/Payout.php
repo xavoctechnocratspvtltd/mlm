@@ -9,8 +9,10 @@ class Model_Payout extends \xepan\base\Model_Table {
 	function init(){
 		parent::init();
 
-		$this->hasOne('xavoc\mlm\Model_Distributor','distributor_id');
+		$this->hasOne('xavoc\mlm\Closing','closing_id');
+		$this->hasOne('xavoc\mlm\Distributor','distributor_id');
 		$this->addField('closing_date')->type('datetime');
+		$this->addField('type')->enum(['Weekly','Monthly']);
 		$this->addField('previous_carried_amount')->type('datetime');
 		$this->addField('binary_income')->type('money');
 		$this->addField('introduction_amount')->type('money');
@@ -19,8 +21,11 @@ class Model_Payout extends \xepan\base\Model_Table {
 		$this->addField('rank');
 		$this->addField('slab_percentage')->type('number');
 
+		$this->addField('actual_generation_a_business')->type('int');
+		$this->addField('actual_generation_b_business')->type('int');
 		$this->addField('generation_a_business')->type('int');
 		$this->addField('generation_b_business')->type('int');
+		$this->addField('generation_month_business')->type('int');
 		$this->addField('re_purchase_income_gross')->type('int');
 
 		$this->addField('repurchase_bonus')->type('money');
@@ -109,7 +114,8 @@ class Model_Payout extends \xepan\base\Model_Table {
 				generation_a_business = IFNULL((select max(bv_sum) from mlm_generation_business bv_table where bv_table.distributor_id = p.distributor_id ),0),
 				generation_b_business = IFNULL(((select sum(bv_sum) from mlm_generation_business bv_table where bv_table.distributor_id = d.distributor_id ) - (select max(bv_sum) from mlm_generation_business bv_table where bv_table.distributor_id = d.distributor_id )),0),
 				actual_generation_a_business = generation_a_business,
-				actual_generation_b_business = generation_b_business
+				actual_generation_b_business = generation_b_business,
+				generation_month_business = IFNULL(SELECT sum(month_bv) from mlm_generation_business bv_table WHERE bv_table.distributor_id = d.distributor_id)  ,0)
 			WHERE 
 				d.greened_on is not null AND
 				closing_date = '$on_date'
@@ -145,12 +151,12 @@ class Model_Payout extends \xepan\base\Model_Table {
 		";
 		$this->query($q);
 
-
 		// update rank 
 		// TODO : Do not degrade rank due to this 60:40.. maintain hiegher rank
 		$ranks = $this->add('xavoc\mlm\Model_RePurchaseBonusSlab');
 
 		foreach ($ranks as $row) {
+			$rank_id = $row->id;
 			$q = "
 				UPDATE
 					mlm_payout p
@@ -158,8 +164,10 @@ class Model_Payout extends \xepan\base\Model_Table {
 				SET 
 					p.rank = (select name from mlm_re_purchase_bonus_slab WHERE p.month_self_bv+p.generation_a_business+p.generation_b_business > from_bv AND p.month_self_bv+p.generation_a_business+p.generation_b_business <= to_bv),
 					p.slab_percentage = IFNULL((select slab_percentage from mlm_re_purchase_bonus_slab WHERE p.month_self_bv+p.generation_a_business+p.generation_b_business > from_bv AND p.month_self_bv+p.generation_a_business+p.generation_b_business <= to_bv),0),
-					d.current_rank = p.rank
+					d.current_rank = p.rank,
+					d.current_rank_id = (select id from mlm_re_purchase_bonus_slab WHERE p.month_self_bv+p.generation_a_business+p.generation_b_business > from_bv AND p.month_self_bv+p.generation_a_business+p.generation_b_business <= to_bv)
 				WHERE
+					(d.current_rank_id < $rank_id OR d.current_rank_id is null) AND
 					closing_date = '$on_date'
 			";
 
@@ -171,11 +179,14 @@ class Model_Payout extends \xepan\base\Model_Table {
 			UPDATE 
 				mlm_payout
 			SET 
-				re_purchase_income_gross = (month_self_bv + generation_a_business+ generation_b_business)* slab_percentage/100
+				re_purchase_income_gross = (month_self_bv + generation_month_business)* slab_percentage/100
 			WHERE
 				closing_date = '$on_date'
 
 		";
+		$this->query($q);
+
+		$q="UPDATE mlm_generation_business SET month_bv=0";
 		$this->query($q);
 
 
