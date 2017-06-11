@@ -55,7 +55,7 @@ class page_importer extends \xepan\base\Page {
 
 			// 	$this->api->db->beginTransaction();
 
-				$this->add('xavoc\mlm\Controller_Setup');
+				$this->add('xavoc\mlm\Controller_Setup',['remove_everything'=>true,'importing_old_data'=>true]);
 
 				// [old_dis_id => new_dis_id,old_dis_id => new_dis_id]
 				$root_ds = $this->add('xavoc\mlm\Model_Distributor')->loadRoot();
