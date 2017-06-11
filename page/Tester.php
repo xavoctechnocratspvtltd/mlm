@@ -178,7 +178,10 @@ class page_Tester extends \xepan\base\Page_Tester{
 							$model = $distributor_model;
 						}
 
-						$result[$key][$name][$model_with_field] = $model[$required_field_data];
+						if($model->loaded())
+							$result[$key][$name][$model_with_field] = $model[$required_field_data];
+						else
+							$result[$key][$name][$model_with_field] = 0;
 					}
 				}
 			}
@@ -240,8 +243,8 @@ class page_Tester extends \xepan\base\Page_Tester{
 
 	}
 
-	function resetData(){
-		$this->add('xavoc\mlm\Controller_Setup');
+	function resetData($remove_everything=false){
+		$this->add('xavoc\mlm\Controller_Setup',['remove_everything'=>$remove_everything]);
 	}
 	
 
