@@ -6,6 +6,16 @@ namespace xavoc\mlm;
 
 class page_Tester extends \xepan\base\Page_Tester{
 
+	public $model_name_mapping = [
+						'd'=>'Distributor',
+						'gb'=>'GenerationBusiness',
+						'gis'=>'GenerationIncomeSlab',
+						'c'=>'Closing',
+						'p'=>'Payout',
+						'lbs'=>'LoyaltiBonusSlab',
+						'rpbs'=>'RePurchaseBonusSlab'
+					];
+
 
 	function init(){
 		ini_set('memory_limit', '2048M');
@@ -44,7 +54,7 @@ class page_Tester extends \xepan\base\Page_Tester{
 	]
 	*/
 
-	function process($data,$result='dist'){
+	function process($data,$response_key,$result='dist'){
 		try{
 			$this->api->db->beginTransaction();
 				
@@ -122,15 +132,71 @@ class page_Tester extends \xepan\base\Page_Tester{
 			$this->api->db->commit();
 
 			// check this->proper_response and make an array with values from db in format
+			$response_data = $this->proper_responses[$response_key];
+			// echo "<pre>";
+			// print_r($required_data);
+			// echo "</pre>";
+			// die();
+			//required_data = Array
+			// 	(
+			// 	    [0] => Array
+			// 	        (
+			// 	            [Ram] => Array
+			// 	                (
+			// 	                    [d.path] => 0A
+			// 	                    [d.month_self_bv] => 120
+			// 	                    [p.carried_amount] => 1250
+			//		[1] => Array()
+			// )))
+			$result = [];
+
+			foreach ($response_data as $key => $values) {
+					$result[$key] = [];
+				foreach ($values as $name => $required_data) {
+					$result[$key][$name] = [];
+					$distributor_model = $this->add('xavoc\mlm\Model_Distributor')
+											->loadBy('first_name',$name);
+
+					foreach ($required_data as $model_with_field => $value) {
+
+						$exp_array = explode(".", $model_with_field);
+						$model_name = $this->model_name_mapping[$exp_array[0]];
+						$required_field_data = $exp_array[1];
+						
+						// echo "<pre>";
+						// print_r($required_field_data);
+						// // print_r($exp_array);
+						// echo "</pre>";
+						// die();
+
+						if(!in_array($model_name, ['Distributor'])){
+							$model = $this->add('xavoc\mlm\Model_'.$model_name);
+							$model->addCondition('distributor_id',$distributor_model->id);
+							$model->setOrder('id','desc');
+							$model->tryLoadAny();
+						}else{
+							$model = $distributor_model;
+						}
+
+						$result[$key][$name][$model_with_field] = $model[$required_field_data];
+					}
+				}
+			}
+
+			// echo "<pre>";
+			// print_r($result);
+			// echo "</pre>";
+			// die();
+			return $result; 
 			// that is given in proper_response_array
 			
-			$result = strtolower(substr($result, 0,4));
-			if($result == 'dist'){
-				$r= $this->add('xavoc\mlm\Model_Distributor')->addCondition('id',$distributor_id_mapping);
-				return $this->resultDistributor($r,$distributor_id_mapping);
-			}
-			else
-				return $this->resultClosing($r,$distributor_id_mapping);
+			// $result = strtolower(substr($result, 0,4));
+			// if($result == 'dist'){
+			// 	$r= $this->add('xavoc\mlm\Model_Distributor')->addCondition('id',$distributor_id_mapping);
+			// 	return $this->resultDistributor($r,$distributor_id_mapping);
+			// }
+			// else
+			// 	return $this->resultClosing($r,$distributor_id_mapping);
 		}catch(\Exception $e){
 			$this->api->db->rollback();
 			throw $e;
