@@ -41,9 +41,21 @@ class Tool_Register extends \xepan\cms\View_Tool{
 		$form->addSubmit('Register')->addClass(' btn btn-primary btn-block');
 		
 		if($form->isSubmitted()){
-			$distributor = $this->add('xavoc\mlm\Model_Distributor');
-			$distributor->register($form->get());
-			$form->js()->reload()->univ()->successMessage('Saved')->execute();
+
+			try{
+				$this->api->db->beginTransaction();
+
+				$distributor = $this->add('xavoc\mlm\Model_Distributor');
+				$distributor->register($form->get());
+				
+				$this->api->db->commit();
+				$form->js()->reload()->univ()->successMessage('Saved')->execute();
+			}catch(\Exception $e){
+				$this->api->db->rollback();
+				$form->js()->reload()->univ()->errorMessage($e->getMessage())->execute();
+			}
+
 		}
+
 	}
 }
