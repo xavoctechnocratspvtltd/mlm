@@ -158,7 +158,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 			if($introducer = $this->introducer()){
 				$this['introducer_path'] = $introducer->path() . $this['side'];
 			}
-
+			
 			if(!$this['sponsor_id']){
 				$this['sponsor_id'] = $this->findSponsor($introducer, $this['side'])->get('id');
 			}
@@ -204,7 +204,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 			// 	$introducer->addSessionIntro($kit->getIntro());
 			// }
 			
-			// $this->welcomeDistributor();
+			$this->welcomeDistributor();
 
 			// $m_no=$this['mobile_number'];
 		
@@ -226,6 +226,11 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 			// $this->api->db->dsql()->table('xshop_memberdetails')->where('id',$this['customer_id'])->set('users_id',$this['user_id'])->update();
 		}
+	}
+
+	function welcomeDistributor(){
+		// send email and send sms
+		$this->add('xepan\communication\Controller_Sms')->sendMessage($this['mobile_number'],"hello Rakesh ");
 	}
 
 	function beforeDeleteDistributor(){
@@ -417,7 +422,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 				->usePasswordEncryption('md5')
 				->addEncryptionHook($user);
 		
-		$user->addCondition('username',(isset($data['username'])?$data['username']:$data['first_name']).'@dummy.com');
+		$user->addCondition('username',(isset($data['username'])?$data['username']:$data['first_name']."@dummy.com"));
 		$user['password']= $data['password']?:'123456';
 		$user->save();
 
