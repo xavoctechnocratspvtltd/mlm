@@ -132,8 +132,6 @@ class Model_Closing extends \xepan\hr\Model_Document {
 			SET 
 				generation_a_business = IFNULL((select max(bv_sum) from mlm_generation_business bv_table where bv_table.distributor_id = p.distributor_id ),0),
 				generation_b_business = IFNULL(((select sum(bv_sum) from mlm_generation_business bv_table where bv_table.distributor_id = d.distributor_id ) - (select max(bv_sum) from mlm_generation_business bv_table where bv_table.distributor_id = d.distributor_id )),0),
-				actual_generation_a_business = generation_a_business,
-				actual_generation_b_business = generation_b_business,
 				generation_month_business = IFNULL((SELECT sum(month_bv) from mlm_generation_business bv_table WHERE bv_table.distributor_id = d.distributor_id)  ,0) + IFNULL(d.month_self_bv,0)
 			WHERE 
 				d.greened_on is not null AND
@@ -193,10 +191,10 @@ class Model_Closing extends \xepan\hr\Model_Document {
 					mlm_payout p
 					JOIN mlm_distributor d on p.distributor_id = d.distributor_id
 				SET 
-					p.rank = (select name from mlm_re_purchase_bonus_slab WHERE p.month_self_bv+p.generation_a_business+p.generation_b_business > from_bv AND p.month_self_bv+p.generation_a_business+p.generation_b_business <= to_bv),
-					p.slab_percentage = IFNULL((select slab_percentage from mlm_re_purchase_bonus_slab WHERE p.month_self_bv+p.generation_a_business+p.generation_b_business > from_bv AND p.month_self_bv+p.generation_a_business+p.generation_b_business <= to_bv),0),
+					p.rank = (select name from mlm_re_purchase_bonus_slab WHERE p.generation_a_business+p.generation_b_business > from_bv AND p.generation_a_business+p.generation_b_business <= to_bv),
+					p.slab_percentage = IFNULL((select slab_percentage from mlm_re_purchase_bonus_slab WHERE p.generation_a_business+p.generation_b_business > from_bv AND p.generation_a_business+p.generation_b_business <= to_bv),0),
 					d.current_rank = p.rank,
-					d.current_rank_id = (select id from mlm_re_purchase_bonus_slab WHERE p.month_self_bv+p.generation_a_business+p.generation_b_business > from_bv AND p.month_self_bv+p.generation_a_business+p.generation_b_business <= to_bv)
+					d.current_rank_id = (select id from mlm_re_purchase_bonus_slab WHERE p.generation_a_business+p.generation_b_business > from_bv AND p.generation_a_business+p.generation_b_business <= to_bv)
 				WHERE
 					(d.current_rank_id < $rank_id OR d.current_rank_id is null) AND
 					closing_date = '$on_date'
