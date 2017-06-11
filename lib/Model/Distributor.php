@@ -400,17 +400,6 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 	function updateAnsestorsBV($bv_points){
 		// In introducer table
 		$path = $this['path'];
-		$q="
-				UPDATE mlm_generation_business gt
-				INNER JOIN (
-					select my_max.id, my_max.distributor_id, max(length(my_max.introduced_path)) from mlm_generation_business my_max where LEFT('$path',LENGTH(my_max.introduced_path)) = my_max.introduced_path GROUP BY my_max.distributor_id
-				) temp
-				on temp.id=gt.id
-				SET
-					bv_sum = bv_sum + $bv_points,
-					month_bv = month_bv + $bv_points
-
-		";
 
 		$q="
 				UPDATE mlm_generation_business t1
@@ -420,6 +409,8 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 						distributor_id, max(length(introduced_path)) ml
 					from  
 						mlm_generation_business 
+					WHERE
+						LEFT ( '$path' , LENGTH( introduced_path )) = introduced_path
 					GROUP BY distributor_id
 				) t2 on t1.distributor_id=t2.distributor_id
 				SET
