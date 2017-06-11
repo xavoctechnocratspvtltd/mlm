@@ -46,7 +46,7 @@ class View_ProfileChecker extends \xepan\cms\View_Tool{
 		}
 		
 		if(!$distributor['attachment_count']){
-			$this->add('Button',null,'kyc_info')->set('Update KYC')->addClass('btn btn-primary')->js('click')->univ()->redirect($this->app->url($this->options['kyc_purchase_page']));
+			$this->add('Button',null,'kyc_info')->set('Update KYC')->addClass('btn btn-primary btn-block alert')->js('click')->univ()->redirect($this->app->url($this->options['kyc_purchase_page']));
 		}else{ 
 			$this->add('View_Box',null,'kyc_info')->setHTML('<i class="glyphicon glyphicon-ok"></i> You Updated Your KYC')->addClass('alert alert-success');
 		}

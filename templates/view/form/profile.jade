@@ -1,0 +1,64 @@
+.ds-form(id="{$_name}" style="width:100%;")
+	//- .row
+	//- 	.col-xs-6.col-sm-6.col-md-6.form-group.atk-form-row.atk-form-field
+	//- 		label Introducer
+	//- 		{$introducer_id}{$introducer}
+	//- 	.col-xs-6.col-sm-6.col-md-6.form-group.atk-form-row.atk-form-field
+	//- 		label Side
+	//- 		{$side}
+	//- hr
+	.row
+		.col-xs-4.col-sm-4.col-md-4.form-group.atk-form-row.atk-form-field
+			label First Name
+			{$first_name}
+		.col-xs-4.col-sm-4.col-md-4.form-group.atk-form-row.atk-form-field
+			label Last Name
+			{$last_name}
+		.col-xs-4.col-sm-4.col-md-4.atk-form-row.atk-form-field.form-group
+			label DOB
+			{$dob}
+	//- .row
+	//- 	.col-xs-4.col-sm-4.col-md-4.form-group.atk-form-row.atk-form-field
+	//- 		label Email id
+	//- 		{$email}
+	//- 	.col-xs-4.col-sm-4.col-md-4.form-group.atk-form-row.atk-form-field
+	//- 		label Mobile No
+	//- 		{$mobile_number}
+	//- 	.col-xs-4.col-sm-4.col-md-4.form-group.atk-form-row.atk-form-field
+	//- 		label PAN Number
+	//- 		{$pan_no}
+	.row
+		.col-xs-12.col-sm-12.col-md-6
+			.row
+				div.col-xs-12.col-sm-12.col-md-6.form-group.atk-form-row.atk-form-field
+					label Country
+					{$country_id}
+				div.col-xs-12.col-sm-12.col-md-6.form-group.atk-form-row.atk-form-field
+					label State
+					{$state_id}
+			.row
+				div.col-xs-12.col-sm-12.col-md-6.form-group.atk-form-row.atk-form-field
+					label City
+					{$city}
+				div.col-xs-12.col-sm-12.col-md-6.form-group.atk-form-row.atk-form-field
+					label Pincode
+					{$pin_code}
+		.col-xs-12.col-sm-12.col-md-6.form-group.atk-form-row.atk-form-field
+			label Address
+			{$address}
+	.row
+		.col-xs-12.col-sm-12.col-md-6.form-group.atk-form-row.atk-form-field
+			label Profile Image
+			{$image_id}{$image}
+	{$Content}
+	//- hr
+	//- .row
+	//- 	.col-xs-12.col-sm-12.col-md-6.form-group.atk-form-row.atk-form-field
+	//- 		label User name
+	//- 		{$username}
+	//- 	.col-xs-12.col-sm-12.col-md-6.form-group.atk-form-row.atk-form-field
+	//- 		label Password
+	//- 		{$password}
+	//- .row
+	{$FormButtons}
+	//- input.btn.btn-info.btn-block(type='submit', value='Register')

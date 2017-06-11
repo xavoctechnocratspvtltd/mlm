@@ -1,10 +1,10 @@
 
 <div id="{$_name}" class="xepan-mlm-megamenu">
-  <nav class="navbar navbar-inverse">
+  <nav class="navbar bg-primary">
     <div class="container-fluid">
       <!-- Brand and toggle get grouped for better mobile display-->
       <div class="navbar-header">
-        <button type="button" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false" class="navbar-toggle collapsed"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a href="#" class="navbar-brand"><img src="/www/img/logo.png" alt="" class="normal-logo"/></a>
+        <button type="button" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false" class="navbar-toggle collapsed"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a href="#" class="navbar-brand"><img src="/www/img/logo.png" alt="" style="width:50% " class="normal-logo hidden-md hidden-lg"/></a>
       </div>
       <!-- Collect the nav links, forms, and other content for toggling-->
       <div id="bs-example-navbar-collapse-1" class="collapse navbar-collapse">{category_list}
@@ -13,7 +13,7 @@
         </ul>{child_cat_lister}
         {$Content}		
         <ul class="dropdown-menu mega-dropdown-menu">{rows}{row}
-          <li data-id="{$id}" class="dropdown1 col-sm-2"><a href="{$sub_url}">
+          <li data-id="{$id}" class="dropdown1 col-sm-2"><a href="{$sub_url}" class="mlm-mega-sabmenu">
                
               {name}Products{/} </a></li>{/}{/}
         </ul>{/child_cat_lister}
@@ -54,8 +54,29 @@
   line-height: 30px;
   }
   .nav .open > a, .nav .open > a:focus, .nav  .open  > a:hover {
-  background-color: #fff;
-  border-color: #337ab7;
+  background-color: #f47221;
+  border-color: #f47221;
+  }
+  .xepan-mlm-megamenu .mlm-mega-sabmenu:hover {
+      color: rgb(244, 114, 33);
+  }
+  .xepan-mlm-megamenu .dropdown a.dropdown-toggle {
+      color: #fff;
+  }
+  
+  .xepan-mlm-megamenu .mlm-mega-sabmenu {
+      border-bottom: 1px solid #e1e1e1;
+      display: block;
+      font-size: 12px;
+      padding: 8px 20px;
+      text-transform: uppercase;
+  }
+  
+  .xepan-mlm-megamenu .mega-dropdown-menu {
+      border-bottom: 2px solid rgb(244, 114, 33);
+      box-shadow: none;
+      padding: 20px 0;
+      width: 100%;
   }
   
 </style>

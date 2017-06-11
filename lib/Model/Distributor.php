@@ -425,4 +425,8 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 		$this->save();
 	}
+
+	function isRoot(){
+		return ($this['path'] == 0)?true:false;
+	}
 } 
