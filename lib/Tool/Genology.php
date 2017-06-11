@@ -35,21 +35,21 @@ class Tool_Genology extends \xepan\cms\View_Tool{
 			$this->start_id = $distributor->id;
 		}else{
 			if(!$this->api->auth->model->isSuperUser()){
-				if(!$distributor->isInDown($this->add('xavoc\mlm\Model_Distributor')->tryLoad($this->start_id))){
+				if(!$distributor->isInDown($this->add('xavoc\mlm\Model_Distributor_Genology')->tryLoad($this->start_id))){
 					$this->add('View_Error')->set('You are not Authorized to look out of your Tree');
 					$this->start_id = $distributor?$distributor->id: null;
 				}
 			}
 		}
 
-		$this->start_distributor = $this->add('xavoc\mlm\Model_Distributor')->load($this->start_id);
+		$this->start_distributor = $this->add('xavoc\mlm\Model_Distributor_Genology')->load($this->start_id);
 
 		$form = $this->add('Form');
 		$user_field = $form->addField('line','username');
 		$user_field->afterField()->add('Button')->set(array(' ','icon'=>'search'));
 
 		if($form->isSubmitted()){
-			$model = $this->add('xavoc\mlmModel_Distributor')->tryLoadBy('username',$form['username']);
+			$model = $this->add('xavoc\Model_Distributor_Genology')->tryLoadBy('username',$form['username']);
 			if(!$model->loaded())
 				$form->displayError('username','No, User found with this username');
 			if(!$this->api->auth->model->isBackEndUser()){
@@ -68,7 +68,7 @@ class Tool_Genology extends \xepan\cms\View_Tool{
 		$output="";
 		$reload_js = $this->js()->reload(array('start_id'=>$model->id));
 		$t=$this->template->cloneRegion('Node');
-		$t->setHTML('username','<a href="#xepan" onclick="'.$reload_js->render().'">'.$model['name'].'</a>');
+		$t->setHTML('username','<a href="#xepan" onclick="'.$reload_js->render().'">'.$model['name']."-".$model['id'].'</a>');
 		$t->set('class',($model['greened_on'] && $model['ansestors_updated'])?'atk-effect-success':($model['greened_on']?'atk-effect-warning':'atk-effect-danger'));
 		if($model['greened_on'] !== null)
 			$greened_on_date = date("d M Y", strtotime($model['greened_on']));
@@ -79,19 +79,18 @@ class Tool_Genology extends \xepan\cms\View_Tool{
 				$model['name'].
 				"<br/>Jn: ". date("d M Y", strtotime($model['created_at'])). 
 				"<br/>Gr: ". $greened_on_date. 
-				"<br/>Kit: ". $model['kit_item'] .
+				"<br/>Kit: ". $model['kit_item'] ." SV(".$model['sv'].")"."BV(".$model['bv'].")".
 				"<br/>Intro: ". $model['introducer'] .
 				"<br/><table border=1>
 					<tr>
 						<th> Session </th><th> Left </th><th> Right </th>
 					</tr>
 					<tr>
-						<th>PV</th><td>".$model['session_left_pv']."</td><td>".$model['session_right_pv']."</td>
-					</tr>
-					<tr>
-						<th>BV</th><td>".$model['session_left_bv']."</td><td>".$model['session_right_bv']."</td>
+						<th>SV</th><td>".$model['day_left_sv']."</td><td>".$model['day_right_sv']."</td>
 					</tr>
 					</table>
+					<div class='atk-box-small'>Gen Business: ".$model['generation_business']."</div>
+					<div class='atk-box-small'>Month Self BV: ".$model['month_self_bv']."</div>
 					<div class='atk-box-small atk-swatch-green'>Session Intros: ".$model['session_intros_amount']." /-</div>
 					<div class='atk-box-small atk-size-mega atk-swatch-green'>Downline</div>
 					<table border=1>
@@ -120,7 +119,8 @@ class Tool_Genology extends \xepan\cms\View_Tool{
 				);
 
 		if($model['left_id'] and $level-1 > 0){
-			$t->setHTML('leftnode',$this->renderModel($model->ref('left_id'),$level-1));
+			$l_m= $this->add('xavoc\mlm\Model_Distributor_Genology')->load($model['left_id']);
+			$t->setHTML('leftnode',$this->renderModel($l_m,$level-1));
 		}else{
 			$t->trySet('sponsor_id',$model->id);
 			if($model['left_id'])
@@ -131,7 +131,8 @@ class Tool_Genology extends \xepan\cms\View_Tool{
 		}
 
 		if($model['right_id'] and $level-1 > 0){
-			$t->setHTML('rightnode',$this->renderModel($model->ref('right_id'),$level-1));
+			$r_m= $this->add('xavoc\mlm\Model_Distributor_Genology')->load($model['right_id']);
+			$t->setHTML('rightnode',$this->renderModel($r_m,$level-1));
 		}else{
 			$t->trySet('sponsor_id',$model->id);
 			if($model['right_id'])
@@ -154,7 +155,7 @@ class Tool_Genology extends \xepan\cms\View_Tool{
 			$reload_parent_js = $this->js()->reload(array('start_id'=>$this->start_distributor['sponsor_id']));
 			$distributor_tree_js = $this->js()->reload(array('start_id'=>$this->distributor->id));
 
-			$r=$this->renderModel($this->add('xavoc\mlm\Model_Distributor','d')->load($this->start_id),$this->level);
+			$r=$this->renderModel($this->add('xavoc\mlm\Model_Distributor_Genology','d')->load($this->start_id),$this->level);
 	        $this->template->setHTML('Tree',$r);
 	        if($this->start_id != $this->distributor->id && $this->start_distributor['sponsor_id']){
 		        $this->template->setHTML('ParentURL',$reload_parent_js->render());
