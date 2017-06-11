@@ -116,8 +116,10 @@ class Model_Closing extends \xepan\hr\Model_Document {
 		$this->query($q);
 
 		// make weekly figures zero
-		$q="UPDATE mlm_distributor SET week_pairs=0, weekly_intros_amount=0 WHERE greened_on is not null";
-		$this->query($q);
+		if(!$this->app->getConfig('skipzero_for_testing',false)){
+			$q="UPDATE mlm_distributor SET week_pairs=0, weekly_intros_amount=0 WHERE greened_on is not null";
+			$this->query($q);
+		}
 		
 	}
 
@@ -215,13 +217,14 @@ class Model_Closing extends \xepan\hr\Model_Document {
 		";
 		$this->query($q);
 
-		// set month bv =0
-		$q="UPDATE mlm_generation_business SET month_bv=0";
-		$this->query($q);
+		if(!$this->app->getConfig('skipzero_for_testing',false)){
+			// set month bv =0
+			$q="UPDATE mlm_generation_business SET month_bv=0";
+			$this->query($q);
 
-		$q="UPDATE mlm_distributor SET month_self_bv=0";
-		$this->query($q);
-
+			$q="UPDATE mlm_distributor SET month_self_bv=0";
+			$this->query($q);
+		}
 
 		// find difference from introducer downline path
 		$q="
@@ -247,9 +250,11 @@ class Model_Closing extends \xepan\hr\Model_Document {
 
 		$this->query($q);
 
-		// Generation Income
-		$this->query('UPDATE mlm_distributor SET temp=0');
-		$this->query("UPDATE mlm_distributor d JOIN mlm_payout p  ON d.distributor_id = p.distributor_id SET d.temp=p.repurchase_bonus WHERE p.closing_date='$on_date'");
+		if(!$this->app->getConfig('skipzero_for_testing',false)){
+			// Generation Income
+			$this->query('UPDATE mlm_distributor SET temp=0');
+			$this->query("UPDATE mlm_distributor d JOIN mlm_payout p  ON d.distributor_id = p.distributor_id SET d.temp=p.repurchase_bonus WHERE p.closing_date='$on_date'");
+		}
 
 		$slabs = $this->add('xavoc\mlm\Model_GenerationIncomeSlab');
 		foreach ($slabs as $row) {
@@ -331,9 +336,11 @@ class Model_Closing extends \xepan\hr\Model_Document {
 				
 			}
 
-			// set quarter bv value to zero 
-			$q="UPDATE mlm_distributor SET quarter_bv_saved=0";
-			$this->query($q);
+			if(!$this->app->getConfig('skipzero_for_testing',false)){
+				// set quarter bv value to zero 
+				$q="UPDATE mlm_distributor SET quarter_bv_saved=0";
+				$this->query($q);
+			}
 
 		}
 
