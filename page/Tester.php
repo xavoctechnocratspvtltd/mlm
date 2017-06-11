@@ -5,7 +5,7 @@ namespace xavoc\mlm;
 
 
 class page_Tester extends \xepan\base\Page_Tester{
-
+	public $distributor_id_mapping=null;
 	public $model_name_mapping = [
 						'd'=>'Distributor',
 						'gb'=>'GenerationBusiness',
@@ -61,7 +61,8 @@ class page_Tester extends \xepan\base\Page_Tester{
 			// $this->resetData();
 			$root_id = $this->add('xavoc\mlm\Model_Distributor')->loadRoot()->get('id');
 			
-			$distributor_id_mapping=['0'=>$root_id,'company'=>$root_id];
+			if(!$this->distributor_id_mapping)
+				$this->distributor_id_mapping = ['0'=>$root_id,'company'=>$root_id];
 
 			foreach ($data as $key => $value) {
 				if(strpos($key, 'kit')===0){
@@ -86,26 +87,26 @@ class page_Tester extends \xepan\base\Page_Tester{
 						$dist = $this->add('xavoc\mlm\Model_Distributor');
 						$data = [
 									'first_name'=>$key,
-									'introducer_id'=>$distributor_id_mapping[$value['introducer']]?:$this->add('xavoc\mlm\Model_Distributor')->loadBy('user',$value['introducer'])->get('id'),
+									'introducer_id'=>$this->distributor_id_mapping[$value['introducer']]?:$this->add('xavoc\mlm\Model_Distributor')->loadBy('user',$value['introducer'])->get('id'),
 									'created_at'=>$value['on'],
 									'side'=>$value['side']
 								];
 						$dist->register($data);
 
 						if(isset($value['kit'])) $dist->purchaseKit($this->add('xavoc\mlm\Model_Kit')->loadBy('sku',$value['kit']));
-						$distributor_id_mapping[$key]= $dist->id;
+						$this->distributor_id_mapping[$key]= $dist->id;
 						if(isset($value['green'])) $dist->markGreen($value['on']);
 						break;
 					case 'kitpurchase':
-						$dist = $this->add('xavoc\mlm\Model_Distributor')->load($distributor_id_mapping[$dist_id]);
+						$dist = $this->add('xavoc\mlm\Model_Distributor')->load($this->distributor_id_mapping[$dist_id]);
 						$dist->purchaseKit($this->add('xavoc\mlm\Model_Kit')->loadBy('sku',$value));
 						break;
 					case 'green':
-						$dist = $this->add('xavoc\mlm\Model_Distributor')->load($distributor_id_mapping[$dist_id]);
+						$dist = $this->add('xavoc\mlm\Model_Distributor')->load($this->distributor_id_mapping[$dist_id]);
 						$dist->markGreen($value);
 						break;
 					case 'repurchase':
-						$dist = $this->add('xavoc\mlm\Model_Distributor')->load($distributor_id_mapping[$dist_id]);
+						$dist = $this->add('xavoc\mlm\Model_Distributor')->load($this->distributor_id_mapping[$dist_id]);
 						$dist->repurchase($value);
 						break;
 					case 'closing':
