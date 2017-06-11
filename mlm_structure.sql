@@ -11,7 +11,7 @@
  Target Server Version : 100118
  File Encoding         : utf-8
 
- Date: 06/11/2017 10:51:47 AM
+ Date: 06/11/2017 12:21:40 PM
 */
 
 SET NAMES utf8;
@@ -39,8 +39,9 @@ CREATE TABLE `mlm_closing` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `closing_id` int(11) DEFAULT NULL,
   `on_date` datetime DEFAULT NULL,
+  `type` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `mlm_distributor`
@@ -113,7 +114,7 @@ CREATE TABLE `mlm_distributor` (
   KEY `greened_on` (`greened_on`),
   FULLTEXT KEY `path` (`path`),
   FULLTEXT KEY `introducer_path` (`introducer_path`)
-) ENGINE=InnoDB AUTO_INCREMENT=948 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1032 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `mlm_generation_business`
@@ -130,7 +131,7 @@ CREATE TABLE `mlm_generation_business` (
   KEY `distributor_id` (`distributor_id`),
   KEY `introduced_id` (`introduced_id`),
   FULLTEXT KEY `introduced_path` (`introduced_path`)
-) ENGINE=InnoDB AUTO_INCREMENT=523 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=593 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `mlm_generation_income_slab`
@@ -175,7 +176,6 @@ CREATE TABLE `mlm_payout` (
   `closing_id` int(11) DEFAULT NULL,
   `distributor_id` int(11) DEFAULT NULL,
   `closing_date` datetime DEFAULT NULL,
-  `type` varchar(20) DEFAULT NULL,
   `previous_carried_amount` decimal(10,2) DEFAULT NULL,
   `binary_income` decimal(10,2) DEFAULT NULL,
   `introduction_amount` decimal(10,2) DEFAULT NULL,
@@ -183,6 +183,7 @@ CREATE TABLE `mlm_payout` (
   `rank` varchar(255) DEFAULT NULL,
   `month_self_bv` int(11) DEFAULT NULL,
   `slab_percentage` int(11) DEFAULT '0',
+  `generation_month_business` int(11) DEFAULT NULL,
   `actual_generation_a_business` int(11) DEFAULT NULL,
   `actual_generation_b_business` int(11) DEFAULT NULL,
   `generation_a_business` int(11) DEFAULT NULL,
@@ -208,7 +209,7 @@ CREATE TABLE `mlm_payout` (
   KEY `distributor_id` (`distributor_id`),
   KEY `closing_date` (`closing_date`),
   KEY `closing_id` (`closing_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=175 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=214 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `mlm_re_purchase_bonus_slab`
@@ -221,6 +222,6 @@ CREATE TABLE `mlm_re_purchase_bonus_slab` (
   `from_bv` int(11) DEFAULT NULL,
   `to_bv` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 
 SET FOREIGN_KEY_CHECKS = 1;

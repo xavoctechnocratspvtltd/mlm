@@ -1,5 +1,4 @@
 <?php
-<?php
 
 namespace xavoc\mlm;
 
@@ -7,6 +6,7 @@ namespace xavoc\mlm;
 class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 	public $status = ['Active','Red','KitSelected','KitPaid','PaymentVerified','Green','InActive'];
+
 	public $actions = [
 				'Active'=>['view','edit','delete'],
 				'InActive'=>['view','edit','delete','active'],
@@ -14,6 +14,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 				'RedPay'=>['view','edit','delete','payNow'],
 				'KitSelected'=>['view','edit','delete','verifyPayment'],
 				];
+
 	public $acl_type= "ispmanager_distributor";
 
 
@@ -104,7 +105,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		$dist_j->addField('cheque_date');
 		$dist_j->addField('dd_date');
 		
-		$dist_j->addField('current_rank');
+		// $dist_j->addField('current_rank');
 		
 		$this->hasMany('xavoc\mlm\GenerationBusiness','distributor_id');
 		$this->hasMany('xavoc\mlm\Attachment','distributor_id');
@@ -330,7 +331,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		$q="
 				UPDATE mlm_generation_business gt
 				SET
-					bv_sum = bv_sum + $bv_points
+					bv_sum = bv_sum + $bv_points,
 					month_bv = month_bv + $bv_points
 				WHERE 
 					LEFT('$path',LENGTH(introduced_path)) = introduced_path;

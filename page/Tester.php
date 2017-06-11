@@ -99,7 +99,7 @@ class page_Tester extends \xepan\base\Page_Tester{
 						$dist->repurchase($value);
 						break;
 					case 'closing':
-						$this->add('xavoc\mlm\Model_Payout')->doClosing($closing_type,$value);
+						$this->add('xavoc\mlm\Model_Closing')->doClosing($closing_type,$value);
 						break;
 					
 					default:
@@ -161,7 +161,6 @@ class page_Tester extends \xepan\base\Page_Tester{
 	}
 
 	function resetData(){
-		$this->add('xavoc\mlm\Model_Payout')->deleteAll();
 		$this->add('xavoc\mlm\Controller_Setup');
 	}
 	

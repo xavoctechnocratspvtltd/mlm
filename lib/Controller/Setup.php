@@ -22,6 +22,9 @@ class Controller_Setup extends \AbstractController {
 			$m->delete();
 		});
 
+		$this->add('xavoc\mlm\Model_Payout')->deleteAll();
+		$this->add('xavoc\mlm\Model_Closing')->deleteAll();
+
 		// add default specifications
 		$specfic_array=['BV','SV','PV','Capping','Introduction Income'];
 		foreach ($specfic_array as $sp) {
@@ -73,7 +76,8 @@ class Controller_Setup extends \AbstractController {
 		}
 
 		$re_purchase_slab = [
-			['name'=>'Star',		'slab_percentage'=>5,	'from_bv'=>199, 	'to_bv'=>3000],
+			['name'=>null,			'slab_percentage'=>0,	'from_bv'=>0, 		'to_bv'=>200],
+			['name'=>'Star',		'slab_percentage'=>5,	'from_bv'=>201, 	'to_bv'=>3000],
 			['name'=>'Yellow Star',	'slab_percentage'=>10,	'from_bv'=>3001, 	'to_bv'=>10000],
 			['name'=>'Orange Star',	'slab_percentage'=>15,	'from_bv'=>10001, 	'to_bv'=>35000],
 			['name'=>'Red Star',	'slab_percentage'=>20,	'from_bv'=>35001, 	'to_bv'=>100000],
