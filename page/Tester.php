@@ -240,8 +240,8 @@ class page_Tester extends \xepan\base\Page_Tester{
 
 	}
 
-	function resetData(){
-		$this->add('xavoc\mlm\Controller_Setup');
+	function resetData($remove_everything=false){
+		$this->add('xavoc\mlm\Controller_Setup',['remove_everything'=>$remove_everything]);
 	}
 	
 

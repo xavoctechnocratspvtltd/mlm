@@ -17,6 +17,9 @@ class Controller_Setup extends \AbstractController {
 			$m->delete();
 		});
 
+		$this->add('xavoc\mlm\Model_Payout')->deleteAll();
+		$this->add('xavoc\mlm\Model_Closing')->deleteAll();
+		
 		if($this->remove_everything){
 
 			$item =$this->add('xepan\commerce\Model_Item')->each(function($m){
@@ -26,8 +29,6 @@ class Controller_Setup extends \AbstractController {
 				$m->delete();
 			});
 
-			$this->add('xavoc\mlm\Model_Payout')->deleteAll();
-			$this->add('xavoc\mlm\Model_Closing')->deleteAll();
 
 			// add default specifications
 			$specfic_array=['BV','SV','PV','Capping','Introduction Income'];
