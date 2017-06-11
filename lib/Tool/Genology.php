@@ -24,7 +24,7 @@ class Tool_Genology extends \xepan\cms\View_Tool{
 			return "please login with distributor id";
 		}
 
-		$this->distributor = $distributor = $this->add('xavoc\mlm\Model_Distributor');
+		$this->distributor = $distributor = $this->add('xavoc\mlm\Model_Distributor_Genology');
 		$distributor->loadLoggedIn();
 
 		if($this->api->stickyGET('start_id')){

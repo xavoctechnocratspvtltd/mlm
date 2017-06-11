@@ -14,6 +14,8 @@ class Model_GenerationBusiness extends \xepan\base\Model_Table{
 		$this->addField('introduced_path')->type('text');
 		$this->addField('bv_sum')->type('number')->defaultValue(0);
 		$this->addField('month_bv')->type('number')->defaultValue(0);
+
+		$this->addExpression('name')->set($this->dsql()->expr('CONCAT([0],"-",month_bv)',[$this->getElement('distributor')]));
 		
 	}
 }
