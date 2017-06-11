@@ -99,7 +99,18 @@ class page_Tester extends \xepan\base\Page_Tester{
 						$dist->repurchase($value);
 						break;
 					case 'closing':
-						$this->add('xavoc\mlm\Model_Closing')->doClosing($closing_type,$value);
+						if($closing_type !=='daily'){
+							$this->add('xavoc\mlm\Model_Closing')
+								->set('on_date',$value)
+								->set('type',ucwords($closing_type).'Closing')
+								->set('calculate_loyalty',false)
+								->save()
+								;
+								// ->doClosing($closing_type,$value);
+						}else{
+							$this->add('xavoc\mlm\Model_Closing')
+								->doClosing($closing_type,$value);
+						}
 						break;
 					
 					default:

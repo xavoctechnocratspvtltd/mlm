@@ -18,10 +18,54 @@ class Model_Closing extends \xepan\hr\Model_Document {
 		$this->getElement('status')->defaultValue('All');
 
 		$cls_j = $this->join('mlm_closing.closing_id');
-		$cls_j->addField('on_date')->type('datetime');
+		$cls_j->addField('on_date')->type('datetime')->defaultValue($this->app->now);
+		$cls_j->addField('calculate_loyalty')->type('boolean')->defaultValue(false);
 		$this->getElement('type')->enum(['WeeklyClosing','MonthlyClosing']);
 		$this->hasMany('xavoc\mlm\Payout','closing_id');
 
+		$this->is([
+				'on_date|unique|required',
+				'type|required'
+			]);
+		$this->addHook('beforeSave',$this);
+		$this->addHook('afterInsert',$this);
+
+
+	}
+
+	function beforeSave(){
+		$back_date_closing = $this->add('xavoc\mlm\Model_Closing');
+		$back_date_closing->addCondition('on_date','>=',$this['on_date']);
+		$back_date_closing->tryLoadAny();
+
+		if($back_date_closing->loaded()){
+			throw $this->exception('Closing already done after/on this date','ValidityCheck')->setField('on_date');
+		}
+	}
+
+	function afterInsert($m,$new_id){
+		$this->load($new_id);
+		if($this['type']=='WeeklyClosing' AND $this['calculate_loyalty']){
+			throw $this->exception('Loyalty cannot be calculated on weekly closing','ValidityCheck')->setField('calculate_loyalty');
+		}
+
+		switch ($this['type']) {
+			case 'WeeklyClosing':
+				$this->weeklyClosing($this->id,$this['on_date']);
+				$this->calculatePayment($this['on_date']);
+				$this->resetWeekData();
+				break;
+
+			case 'MonthlyClosing':
+				$this->monthlyClosing($this->id,$this['on_date'],$this['calculate_loyalty']);
+				$this->calculatePayment($this['on_date']);
+				$this->resetMonthData();
+				break;
+			
+			default:
+				
+				break;
+		}
 	}
 
 	function dailyClosing($on_date){
@@ -173,7 +217,11 @@ class Model_Closing extends \xepan\hr\Model_Document {
 		";
 		$this->query($q);
 
+		// set month bv =0
 		$q="UPDATE mlm_generation_business SET month_bv=0";
+		$this->query($q);
+
+		$q="UPDATE mlm_distributor SET month_self_bv=0";
 		$this->query($q);
 
 
@@ -422,25 +470,26 @@ class Model_Closing extends \xepan\hr\Model_Document {
 
 		if(!$on_date) $on_date = $this->app->now;
 
-		if($type !== 'daily'){
-			// save this closing row first
-			$this['type']=ucwords($type).'Closing';
-			$this['on_date'] = $on_date;
-			$this->save();
-		}
+		// if($type !== 'daily'){
+		// 	// save this closing row first
+		// 	$this['type']=ucwords($type).'Closing';
+		// 	$this['on_date'] = $on_date;
+		// 	$this['calculate_loyalty'] = $calculate_loyalty;
+		// 	$this->save();
+		// }
 
 		switch ($type) {
 			case 'daily':
 				$this->dailyClosing($on_date);
 				break;
 			case 'weekly':
-				$this->weeklyClosing($this->id,$on_date);
-				$this->calculatePayment($on_date);
+				$this->weeklyClosing($this->id,$this['on_date']);
+				$this->calculatePayment($this['on_date']);
 				$this->resetWeekData();
 				break;
 			case 'monthly':
-				$this->monthlyClosing($this->id,$on_date,$calculate_loyalty);
-				$this->calculatePayment($on_date);
+				$this->monthlyClosing($this->id,$this['on_date'],$this['calculate_loyalty']);
+				$this->calculatePayment($this['on_date']);
 				$this->resetMonthData();
 				break;
 			default:
