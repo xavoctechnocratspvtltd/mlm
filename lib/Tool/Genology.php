@@ -81,7 +81,7 @@ class Tool_Genology extends \xepan\cms\View_Tool{
 				"<br/>Gr: ". $greened_on_date. 
 				"<br/>Kit: ". $model['kit_item'] ." SV(".$model['sv'].")"."BV(".$model['bv'].")".
 				"<br/>Intro: ". $model['introducer'] .
-				"<br/><table border=1>
+				"<br/><table border='1' width='100%'>
 					<tr>
 						<th> Session </th><th> Left </th><th> Right </th>
 					</tr>
@@ -93,7 +93,7 @@ class Tool_Genology extends \xepan\cms\View_Tool{
 					<div class='atk-box-small'>Month Self BV: ".$model['month_self_bv']."</div>
 					<div class='atk-box-small atk-swatch-green'>Session Intros: ".$model['session_intros_amount']." /-</div>
 					<div class='atk-box-small atk-size-mega atk-swatch-green'>Downline</div>
-					<table border=1>
+					<table border='1' width='100%'>
 						<tr>
 							<td>&nbsp;</td>
 							<td>Left</td>
