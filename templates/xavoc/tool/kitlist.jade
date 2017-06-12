@@ -1,18 +1,20 @@
 div(id='{$_name}' class="{$class} row" style="{$style}")
+  h3.text-center Our Kit/ Package
+  hr
   {rows}{row}
   .col-md-3.col-sm-12.col-lg-3.col-xs-12
     .thumbnail
       {image_wrapper}
-      img(src='{$kit_img}', alt='{$alt}' style="width:100%;")
+      div.img-wrapper(style="height:150px;")
+        img(src='{$kit_img}', alt='{$alt} we are uploading images ...' style="width:100%;max-heigth:150px;")
       {/}
       .caption
         h3 {$name}
-        p
-          | {$description}
+        {$description}
         .row
-          .col-md-6.col-sm-12.col-lg-6.col-xs-12
+          .col-md-12.col-sm-12.col-lg-12.col-xs-12
             p.lead {$sale_price}
-          .col-md-6.col-sm-12.col-lg-6.col-xs-12
+          .col-md-12.col-sm-12.col-lg-12.col-xs-12
             {purchase_btn_wrapper}
             .xepan-commerce-item-purchase-button(data-xbikitid="{$id}" data-name="{$name}"){$purchase_btn}
             {/}
@@ -83,6 +85,6 @@ div(id='{$_name}' class="{$class} row" style="{$style}")
       span &nbsp;{$not_found_message}
   {/}
   {paginator_wrapper}
-  .xepan-commerce-item-paginator(style='float:none; clear:both')
+  .ds-kit-paginator(style='float:none; clear:both;text-align:center;')
     {$Paginator}
   {/}

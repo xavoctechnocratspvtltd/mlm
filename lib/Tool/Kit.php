@@ -12,13 +12,15 @@ class Tool_Kit extends \xepan\cms\View_Tool{
 						'checkout_page'=>'payment',
 						'check_distributor'=>true,
 						'show_image'=>true,
-						'show_description'=>true
+						'show_description'=>true,
+						'paginator_set_rows_per_page'=>20
 					];
 
 	public $complete_lister = null;
 	function init(){
 		parent::init();
 
+		$this->addClass('ds-kitlist main-box');
 
 		// check distributor
 		if($this->options['check_distributor']){
@@ -41,6 +43,8 @@ class Tool_Kit extends \xepan\cms\View_Tool{
 		$layout_template = "kitlist";
 		$this->complete_lister = $cl = $this->add('CompleteLister',null,null,['xavoc/tool/'.$layout_template]);
 		$cl->setModel($kit_model);
+		$paginator = $cl->add('Paginator',['ipp'=>$this->options['paginator_set_rows_per_page']]);
+		$paginator->setRowsPerPage($this->options['paginator_set_rows_per_page']);
 
 		// deleting not found templates
 		if($kit_model->count()->getOne()){
@@ -83,9 +87,9 @@ class Tool_Kit extends \xepan\cms\View_Tool{
 		}
 
 		$btn = $l->add('Button',null,'purchase_btn');
-		$btn->addClass('xepan-di-kit-purchase-button');
+		$btn->addClass('xepan-di-kit-purchase-button btn btn-primary btn-block');
 		$btn->setAttr('data-xbikitid',$l->model->id);
-		$btn->set("Pay Now");
+		$btn->set("Purchase Now");
 		$l->current_row_html['purchase_btn'] = $btn->getHtml();
 	}
 
@@ -95,7 +99,7 @@ class Tool_Kit extends \xepan\cms\View_Tool{
 			return;
 		}
 
-		$l->current_row_html['kit_img'] = $l->model['kit_image']?:"websites/dsmarketing/www/img/100.svg";
+		$l->current_row_html['kit_img'] = $l->model['first_image']?:"shared/apps/xavoc/mlm/templates/img/100.svg";
 	}
 	
 	function addToolCondition_row_show_description($value,$l){

@@ -1,15 +1,17 @@
 
-<div id="{$_name}" style="{$style}" class="{$class} row">{rows}{row}
+<div id="{$_name}" style="{$style}" class="{$class} row">
+  <h3 class="text-center">Our Kit/ Package</h3>
+  <hr/>{rows}{row}
   <div class="col-md-3 col-sm-12 col-lg-3 col-xs-12">
-    <div class="thumbnail">{image_wrapper}<img src="{$kit_img}" alt="{$alt}" style="width:100%;"/>{/}
+    <div class="thumbnail">{image_wrapper}
+      <div style="height:150px;" class="img-wrapper"><img src="{$kit_img}" alt="{$alt} we are uploading images ..." style="width:100%;max-heigth:150px;"/></div>{/}
       <div class="caption">
-        <h3>{$name}</h3>
-        <p>{$description}</p>
+        <h3>{$name}</h3>{$description}
         <div class="row">
-          <div class="col-md-6 col-sm-12 col-lg-6 col-xs-12">
+          <div class="col-md-12 col-sm-12 col-lg-12 col-xs-12">
             <p class="lead">{$sale_price}</p>
           </div>
-          <div class="col-md-6 col-sm-12 col-lg-6 col-xs-12">{purchase_btn_wrapper}
+          <div class="col-md-12 col-sm-12 col-lg-12 col-xs-12">{purchase_btn_wrapper}
             <div data-xbikitid="{$id}" data-name="{$name}" class="xepan-commerce-item-purchase-button">{$purchase_btn}</div>{/}
           </div>
         </div>
@@ -19,5 +21,5 @@
   {not_found}
   <div role="alert" class="full-width alert alert-warning"><strong class="glyphicon glyphicon-warning-sign">&nbsp;Warning!<span>&nbsp;{$not_found_message}</span></strong></div>{/}
   {paginator_wrapper}
-  <div style="float:none; clear:both" class="xepan-commerce-item-paginator">{$Paginator}</div>{/}
+  <div style="float:none; clear:both;text-align:center;" class="ds-kit-paginator">{$Paginator}</div>{/}
 </div>
