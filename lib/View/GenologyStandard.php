@@ -51,10 +51,10 @@ class View_GenologyStandard extends \View{
 		$user_field->afterField()->add('Button')->set(array(' ','icon'=>'search'));
 
 		if($form->isSubmitted()){
-			$model = $this->add('xavoc\Model_Distributor_Genology')->tryLoadBy('username',$form['username']);
+			$model = $this->add('xavoc\mlm\Model_Distributor_Genology')->tryLoadBy('user',$form['username']);
 			if(!$model->loaded())
 				$form->displayError('username','No, User found with this username');
-			if(!$this->api->auth->model->isBackEndUser()){
+			if(!$this->api->auth->model->isSuperUser()){
 				if(!$distributor->isInDown($model)){
 					$form->displayError('username','Looks like, Not in your Downline');
 				}
