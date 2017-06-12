@@ -509,6 +509,10 @@ class Model_Closing extends \xepan\hr\Model_Document {
 	function query($q){
 		$this->api->db->dsql($this->api->db->dsql()->expr($q))->execute();
 	}
+
+	function payoutsheet(){
+		$this->app->redirect($this->app->url('xavoc_dm_payout',['closing_id'=>$this->id]));
+	}
 }
 
 
