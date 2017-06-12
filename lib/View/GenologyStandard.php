@@ -47,8 +47,8 @@ class View_GenologyStandard extends \View{
 		$this->level = $this->options['genology-depth-of-tree'];
 
 		$form = $this->add('Form');
-		$user_field = $form->addField('line','username');
-		$user_field->afterField()->add('Button')->set(array(' ','icon'=>'search'));
+		$user_field = $form->addField('line','username')->addClass('field-group');
+		$user_field->afterField()->add('Button')->set(array(' ','icon'=>'search fa fa-search'));
 
 		if($form->isSubmitted()){
 			$model = $this->add('xavoc\mlm\Model_Distributor_Genology')->tryLoadBy('user',$form['username']);
@@ -62,7 +62,6 @@ class View_GenologyStandard extends \View{
 			$this->js()->reload(array('start_id'=>$model->id))->execute();
 		}
 
-		$this->add('View_Info')->set('Genology Tool '. $this->options['genology-show-info-on']);
 	}
 
 	function renderModel($model,$level){
