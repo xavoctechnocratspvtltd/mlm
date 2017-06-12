@@ -9,9 +9,16 @@ class page_distributoractions extends \xepan\base\Page {
 	function init(){
 		parent::init();
 
+		$status_color = [
+						'Red'=>'danger',
+						'KitSelected'=>'default',
+						'KitPaid'=>'primary',
+						'Green'=>'success'
+					];
+
 		$dis_action_m = $this->add('xavoc\mlm\Model_Distributor_Actions');
 		
-		$crud = $this->add('xepan\hr\CRUD');
+		$crud = $this->add('xepan\hr\CRUD',['status_color'=>$status_color]);
 		$dis_action_m->add('xavoc\mlm\Controller_SideBarStatusFilter');
 		$crud->setModel($dis_action_m,
 						[''],
@@ -19,5 +26,6 @@ class page_distributoractions extends \xepan\base\Page {
 					);
 		$crud->grid->addPaginator($ipp=50);
 		$crud->grid->removeColumn('attachment_icon');
+
 	}
 }

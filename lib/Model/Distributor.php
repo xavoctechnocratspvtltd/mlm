@@ -5,14 +5,15 @@ namespace xavoc\mlm;
 
 class Model_Distributor extends \xepan\commerce\Model_Customer {
 
-	public $status = ['Active','Red','KitSelected','KitPaid','PaymentVerified','Green','InActive'];
+	public $status = ['Active','Red','KitSelected','KitPaid','Green','InActive'];
 
 	public $actions = [
 				'Active'=>['view','edit','delete','InActive'],
-				'InActive'=>['view','edit','delete','active'],
-				'KitPaid'=>['view','edit','delete','verifyPayment'],
-				'RedPay'=>['view','edit','delete','payNow'],
+				'Red'=>['view','edit','delete'],
 				'KitSelected'=>['view','edit','delete','verifyPayment'],
+				'KitPaid'=>['view','edit','delete','markGreen'],
+				'Green'=>['view','edit','delete','document'],
+				'InActive'=>['view','edit','delete','active'],
 				];
 
 	public $acl_type= "ispmanager_distributor";
@@ -104,8 +105,9 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		$dist_j->addField('dd_number');
 		$dist_j->addField('cheque_date');
 		$dist_j->addField('dd_date');
-		
+		$dist_j->addField('is_payment_verified')->type('boolean');
 		// $dist_j->addField('current_rank');
+		$dist_j->addField('is_document_verified')->type('boolean');
 		
 		$this->hasMany('xavoc\mlm\GenerationBusiness','distributor_id');
 		$this->hasMany('xavoc\mlm\Attachment','distributor_id');
@@ -323,7 +325,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 			$kit_id = $kit->id;
 
 		$this['kit_item_id']= $kit_id;
-		$this['status'] = "KitPaid";
+		$this['status'] = "KitSelected";
 
 		$this->app->employee
 		->addActivity("Distributor ".$this['name']." purchase a kit( ".$this['kit_item']." ) and waiting for payment verification")
@@ -332,10 +334,21 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		$this->save();
 	}
 
+	function kitPaid(){
+		$this['status'] = "KitPaid";
+
+		$this->app->employee
+		->addActivity("Distributor ".$this['name']." purchase a kit( ".$this['kit_item']." ) and waiting for payment verification")
+		->notifyWhoCan(['PaymentVerified'],'KitPaid',$this);
+		
+		$this->save();	
+	}
+
 	function markGreen($on_date=null){
 		if(!$on_date) $on_date =  $this->app->now;
 		
 		$this['greened_on'] = $on_date;
+		$this['status'] = "Green";
 
 		$kit = $this->kit();
 		if(!$kit) throw new \Exception("Cannot mark green without kit", 1);
@@ -346,6 +359,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		$this['sv'] = $kit['sv'];
 
 		$this->save();
+		
 		$this->updateAnsestorsSV($this['sv']);
 		$this->updateAnsestorsBV($this['bv']);
 		if($introducer  = $this->introducer()) $introducer->addSessionIntro($kit['introducer_income']);
