@@ -463,14 +463,21 @@ class Model_Closing extends \xepan\hr\Model_Document {
 
 	}
 
-	function resetWeekData(){
+	function resetWeekData($on_date=null){
+		if(!$on_date) $on_date = $this->app->now;
 		// set fields zero in distributor 
+		$q="
+			DELETE FROM mlm_payout WHERE closing_date='$on_date' AND net_payment=0 AND carried_amount=0
+		";
+		$this->query($q);
 
 	}
 
-	function resetMonthData(){
+	function resetMonthData($on_date=null){
+		if(!$on_date) $on_date = $this->app->now;
 		// set fields zero in distributor 
 		// like month_self_bv if greened_on is not null
+		$this->resetWeekData($on_date)
 		
 	}
 
@@ -493,12 +500,12 @@ class Model_Closing extends \xepan\hr\Model_Document {
 			case 'weekly':
 				$this->weeklyClosing($this->id,$this['on_date']);
 				$this->calculatePayment($this['on_date']);
-				$this->resetWeekData();
+				$this->resetWeekData($this['on_date']);
 				break;
 			case 'monthly':
 				$this->monthlyClosing($this->id,$this['on_date'],$this['calculate_loyalty']);
 				$this->calculatePayment($this['on_date']);
-				$this->resetMonthData();
+				$this->resetMonthData($this['on_date']);
 				break;
 			default:
 				throw new \Exception("$type type closing not available", 1);				
