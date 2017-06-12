@@ -11,7 +11,7 @@
  Target Server Version : 100118
  File Encoding         : utf-8
 
- Date: 06/11/2017 17:39:35 PM
+ Date: 06/12/2017 20:23:42 PM
 */
 
 SET NAMES utf8;
@@ -28,8 +28,11 @@ CREATE TABLE `mlm_attachment` (
   `aadhar_card_id` int(11) DEFAULT NULL,
   `cheque_deposite_receipt_image_id` int(11) DEFAULT NULL,
   `dd_deposite_receipt_image_id` int(11) DEFAULT NULL,
+  `driving_license_id` int(11) DEFAULT NULL,
+  `document_narration` text,
+  `payment_narration` text,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `mlm_closing`
@@ -42,7 +45,7 @@ CREATE TABLE `mlm_closing` (
   `type` varchar(20) DEFAULT NULL,
   `calculate_loyalty` tinyint(4) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
 
 -- ----------------------------
 --  Table structure for `mlm_distributor`
@@ -105,6 +108,8 @@ CREATE TABLE `mlm_distributor` (
   `d_account_number` varchar(255) DEFAULT NULL,
   `d_bank_name` varchar(255) DEFAULT NULL,
   `d_bank_ifsc_code` varchar(255) DEFAULT NULL,
+  `is_payment_verified` tinyint(4) DEFAULT NULL,
+  `is_document_verified` tinyint(4) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `distributor_id` (`distributor_id`),
   KEY `sponsor_id` (`sponsor_id`),
@@ -115,7 +120,7 @@ CREATE TABLE `mlm_distributor` (
   KEY `greened_on` (`greened_on`),
   FULLTEXT KEY `path` (`path`),
   FULLTEXT KEY `introducer_path` (`introducer_path`)
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=255 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `mlm_generation_business`
@@ -128,11 +133,12 @@ CREATE TABLE `mlm_generation_business` (
   `introduced_path` text,
   `bv_sum` bigint(20) DEFAULT NULL,
   `month_bv` int(11) DEFAULT NULL,
+  `path_length` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `distributor_id` (`distributor_id`),
   KEY `introduced_id` (`introduced_id`),
   FULLTEXT KEY `introduced_path` (`introduced_path`)
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=197 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `mlm_generation_income_slab`
@@ -153,7 +159,7 @@ CREATE TABLE `mlm_generation_income_slab` (
   `generation_10` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `rank_id` (`rank_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `mlm_loyalti_bonus_slab`
@@ -166,7 +172,7 @@ CREATE TABLE `mlm_loyalti_bonus_slab` (
   `turnover_criteria` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `rank_id` (`rank_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `mlm_payout`
@@ -210,7 +216,7 @@ CREATE TABLE `mlm_payout` (
   KEY `distributor_id` (`distributor_id`),
   KEY `closing_date` (`closing_date`),
   KEY `closing_id` (`closing_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=107 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `mlm_re_purchase_bonus_slab`
@@ -223,16 +229,6 @@ CREATE TABLE `mlm_re_purchase_bonus_slab` (
   `from_bv` int(11) DEFAULT NULL,
   `to_bv` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 
 SET FOREIGN_KEY_CHECKS = 1;
-
--- update attachment
-ALTER TABLE `mlm_attachment` ADD COLUMN `driving_license_id`  int(11) DEFAULT NULL;
-ALTER TABLE `mlm_attachment` ADD COLUMN `document_narration`  text;
-ALTER TABLE `mlm_attachment` ADD COLUMN `payment_narration`  text;
-
--- update Distributor
-ALTER TABLE `mlm_distributor` ADD COLUMN `is_payment_verified` tinyint(4) DEFAULT NULL;
-ALTER TABLE `mlm_distributor` ADD COLUMN `is_document_verified` tinyint(4) DEFAULT NULL;
-
