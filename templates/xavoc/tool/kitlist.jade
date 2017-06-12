@@ -16,10 +16,13 @@ div(id='{$_name}' class="{$class} row" style="{$style}")
             p.price
               i.fa.fa-rupee &nbsp;
               |{$sale_price}
-          .col-md-12.col-sm-12.col-lg-12.col-xs-12
-            {purchase_btn_wrapper}
-            .xepan-commerce-item-purchase-button(data-xbikitid="{$id}" data-name="{$name}"){$purchase_btn}
-            {/}
+        .btn-group.btn-group-justified.btn-sm
+          a.btn.btn-default(href='#', role='button') BV: {$bv}
+          a.btn.btn-default(href='#', role='button') SV: {$sv}
+        div
+          {purchase_btn_wrapper}
+          .xepan-commerce-item-purchase-button(data-xbikitid="{$id}" data-name="{$name}"){$purchase_btn}
+          {/}
   {/}{/}
   //- {item_count_wrapper}
   //- div.row.item-count-container
