@@ -110,7 +110,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		$this->hasMany('xavoc\mlm\GenerationBusiness','distributor_id');
 		$this->hasMany('xavoc\mlm\Attachment','distributor_id');
 		
-		$this->addHook('beforeSave',array($this,'beforeSaveDistributor'));
+		$this->addHook('beforeSave',array($this,'beforeSaveDistributor'),[],1);
 		$this->addHook('afterSave',array($this,'afterSaveDistributor'));
 		$this->addHook('beforeDelete',array($this,'beforeDeleteDistributor'));
 		$this->addHook('afterInsert',$this);
