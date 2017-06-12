@@ -18,9 +18,10 @@ class View_Card extends \View{
 	}
 
 	function render(){
-		$this->template->trySetHtml('header',$this->options['header']?:"Heading");
+		$this->template->trySetHtml('header',$this->options['header']?:" ");
 		$this->template->trySetHtml('title',$this->options['title']?:0);
-		$this->template->trySetHtml('icon',$this->options['icon']?:"glyphicon glyphicon-user");
+		$this->template->trySetHtml('icon',$this->options['icon']);
+
 		$theme_class = "card-".$this->options['theme'];
 
 		$this->template->trySetHtml('theme_class',$theme_class);
