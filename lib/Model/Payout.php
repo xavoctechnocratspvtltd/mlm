@@ -12,7 +12,7 @@ class Model_Payout extends \xepan\base\Model_Table {
 		$this->hasOne('xavoc\mlm\Closing','closing_id');
 		$this->hasOne('xavoc\mlm\Distributor','distributor_id');
 		$this->addField('closing_date')->type('datetime');
-		$this->addField('previous_carried_amount')->type('datetime');
+		$this->addField('previous_carried_amount');
 		$this->addField('binary_income')->type('money');
 		$this->addField('introduction_amount')->type('money');
 		$this->addField('retail_profit')->type('money');
