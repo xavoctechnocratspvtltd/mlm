@@ -335,6 +335,9 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 	function markGreen($on_date=null){
 		if(!$on_date) $on_date =  $this->app->now;
 		
+		if($this['greened_on'])
+			throw $this->exception('Distributor has already been green on '. $this['greened_on']);
+		
 		$this['greened_on'] = $on_date;
 
 		$kit = $this->kit();
