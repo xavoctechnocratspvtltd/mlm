@@ -53,13 +53,13 @@ class Model_Closing extends \xepan\hr\Model_Document {
 			case 'WeeklyClosing':
 				$this->weeklyClosing($this->id,$this['on_date']);
 				$this->calculatePayment($this['on_date']);
-				$this->resetWeekData();
+				$this->resetWeekData($this['on_date']);
 				break;
 
 			case 'MonthlyClosing':
 				$this->monthlyClosing($this->id,$this['on_date'],$this['calculate_loyalty']);
 				$this->calculatePayment($this['on_date']);
-				$this->resetMonthData();
+				$this->resetMonthData($this['on_date']);
 				break;
 			
 			default:
@@ -464,7 +464,7 @@ class Model_Closing extends \xepan\hr\Model_Document {
 	}
 
 	function resetWeekData($on_date=null){
-		if(!$on_date) $on_date = $this->app->now;
+		if(!$on_date) $on_date = $this->app->today;
 		// set fields zero in distributor 
 		$q="
 			DELETE FROM mlm_payout WHERE closing_date='$on_date' AND net_payment=0 AND carried_amount=0
@@ -474,10 +474,10 @@ class Model_Closing extends \xepan\hr\Model_Document {
 	}
 
 	function resetMonthData($on_date=null){
-		if(!$on_date) $on_date = $this->app->now;
+		if(!$on_date) $on_date = $this->app->today;
 		// set fields zero in distributor 
 		// like month_self_bv if greened_on is not null
-		$this->resetWeekData($on_date)
+		$this->resetWeekData($on_date);
 		
 	}
 

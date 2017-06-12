@@ -17,6 +17,7 @@ class page_payout extends \xepan\base\Page {
 		$g = $this->add('Grid');
 		$g->setModel($m);
 		$g->removeColumn('closing');
+		$g->addPaginator($ipp=100);
 		$g->add("misc/Export");
 	}
 }

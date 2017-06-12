@@ -31,10 +31,23 @@ class Tool_Profile extends \xepan\cms\View_Tool{
 			$doc_tab->add('View_Error')->set("more thenn one kyc attachment found");
 		}else{
 			$form = $doc_tab->add('Form');
-			$form->setModel($attachment,['pan_card_id','aadhar_card_id']);
+			$form->setModel($attachment,['pan_card_id','aadhar_card_id','driving_license_id']);
+			$form->addField('bank_account_number')->validate('required');
+			$form->addField('bank_name')->validate('required');
+			$form->addField('bank_ifsc_code')->validate('required');
+
 			$form->addSubmit("Update")->addClass('btn btn-primary');
 			if($form->isSubmitted()){
+				if(!$form['pan_card_id']) $form->error('pan_card_id','pan card id must not be empty');
+				if(!$form['aadhar_card_id']) $form->error('aadhar_card_id','aadhar card id must not be empty');
+				
 				$form->update();
+
+				$distributor['d_account_number'] = $form['bank_account_number'];
+				$distributor['d_bank_name'] = $form['bank_name'];
+				$distributor['d_bank_ifsc_code'] = $form['bank_ifsc_code'];
+				$distributor->save();
+
 				$form->js()->univ()->successMessage('saved')->execute();
 			}
 		}

@@ -8,6 +8,14 @@ namespace xavoc\mlm;
 */
 class Model_Distributor_Actions extends \xavoc\mlm\Model_Distributor
 {
+	public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
+	public $actions = [
+				'Red'=>['view','edit','delete'],
+				'KitSelected'=>['view','edit','delete','verifyPayment','verifyDocument','Document'],
+				'KitPaid'=>['view','edit','delete','verifyPayment','verifyDocument','markGreen'],
+				'Green'=>['view','edit','delete','Document','verifyDocument'],
+				'Blocked'=>['view','edit','delete','Unblocked']
+				];
 	
 	function init(){
 		parent::init();
@@ -41,8 +49,7 @@ class Model_Distributor_Actions extends \xavoc\mlm\Model_Distributor
 	function page_verifyPayment($page){
 		
 		if($this['is_payment_verified']){
-			$page->add('View_Warning')->set('payment is verifed')->addClass('alert alert-danger');
-			return;
+			$page->add('View_Warning')->set('payment is already verifed')->addClass('alert alert-danger');
 		}
 		$attachment = $page->add('xavoc\mlm\Model_Attachment')->addCondition('distributor_id',$this->id);
 		$attachment->tryLoadAny();
@@ -80,27 +87,6 @@ class Model_Distributor_Actions extends \xavoc\mlm\Model_Distributor
 			$this->markGreen();
 			$this->app->page_action_result = $form->js(null,$form->js()->closest('.dialog')->dialog('close'))->univ()->successMessage('payment verified and marked green');
 		}
-	}
-
-	function page_verifyDocument($page){
-		
-		if($this['is_payment_verified']){
-			$page->add('View_Warning')->set('payment is verifed')->addClass('alert alert-danger');
-			return;
-		}
-
-		$form = $page->add('Form');
-		$attachment = $page->add('xavoc\mlm\Model_Attachment')->addCondition('distributor_id',$this->id);
-		$form->setModel($attachment,['cheque_deposite_receipt_image_id','dd_deposite_receipt_image_id','payment_narration']);
-		$form->addSubmit('Verify Payment')->addClass('btn btn-primary');
-
-		if($form->isSubmitted()){
-			$form->update();
-			$this['is_payment_verified'] = true;
-			$this->markGreen();
-			$this->app->page_action_result = $form->js(null,$form->js()->closest('.dialog')->dialog('close'))->univ()->successMessage('payment verified and marked green');
-		}
-		
 	}
 
 	function page_Document($page){
@@ -154,4 +140,54 @@ class Model_Distributor_Actions extends \xavoc\mlm\Model_Distributor
 		$page->add('View')->set('Pay Now');
 	}
 
+	function page_verifyDocument($page){
+
+		if($this['is_document_verified']){
+			$page->add('View_Warning')->set('document is already verified')->addClass('alert alert-danger');
+		}
+
+		$attachment = $page->add('xavoc\mlm\Model_Attachment')->addCondition('distributor_id',$this->id);
+		$attachment->tryLoadAny();
+
+		$form = $page->add('Form');
+
+		$col = $form->add('Columns')->addClass('row');
+		$col1 = $col->addColumn(12);
+
+		$no_one_document_found = 1;
+		if($attachment['pan_card_id']){
+			$col1->add('View')->addClass('col-lg-4 col-md-4 col-sm-12 col-xs-12')->setHtml('<label>Pan Card</label><br/><a target="_blank" style="width:200px;" href="'.$attachment['pan_card'].'"><img style="width:200px;" src="'.$attachment['pan_card'].'"/></a>');
+			$no_one_document_found = false;
+		}else{
+			$col1->add('View')->set('Pan Card Not Submitted')->addClass('alert alert-danger col-lg-4 col-md-4 col-sm-12 col-xs-12');
+		}
+		
+		if($attachment['aadhar_card_id']){
+			$col1->add('View')->addClass('col-lg-4 col-md-4 col-sm-12 col-xs-12')->setHtml('<label>Aadhar Card</label><br/><a target="_blank" style="width:200px;" href="'.$attachment['aadhar_card'].'"><img style="width:200px;" src="'.$attachment['aadhar_card'].'"/></a>');
+			$no_one_document_found = false;
+		}else{
+			$col1->add('View')->set('Aadhar Card Not Submitted')->addClass('alert alert-danger col-lg-4 col-md-4 col-sm-12 col-xs-12');
+		}
+
+		if($attachment['driving_license_id']){
+			$col1->add('View')->addClass('col-lg-4 col-md-4 col-sm-12 col-xs-12')->setHtml('<label>Driving License</label><br/><a target="_blank" style="width:200px;" href="'.$attachment['driving_license'].'"><img style="width:200px;" src="'.$attachment['driving_license'].'"/></a>');
+			$no_one_document_found = false;			
+		}else{
+			$col1->add('View')->set('Driving License Not Submitted')->addClass('alert alert-danger col-lg-4 col-md-4 col-sm-12 col-xs-12');
+		}
+
+		$form->setModel($attachment,['document_narration']);
+		$form->addSubmit('Verify Document')->addClass('btn btn-primary btn-block');
+
+		if($form->isSubmitted()){
+			if($no_one_document_found) {
+				return $this->app->page_action_result = $form->js()->univ()->errorMessage('No One Document is found');
+			}
+
+			$form->update();
+			$this['is_document_verified'] = true;
+			$this->save();
+			$this->app->page_action_result = $form->js(null,$form->js()->closest('.dialog')->dialog('close'))->univ()->successMessage('Document Verified');
+		}
+	}
 }
