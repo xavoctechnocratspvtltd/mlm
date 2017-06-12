@@ -262,7 +262,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 		// Send Email
 			// subject
-		if($this->app->getConfig('send_email')){
+		if($this->app->getConfig('send_email',false)){
 
 			if(!$welcome_model['welcome_mail_subject'] OR !$welcome_model['welcome_mail_content']) throw new \Exception("plase update welcome mail content");
 			$temp = $this->add('GiTemplate');
@@ -296,7 +296,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		}
 
 		// send SMS
-		if($this->app->getConfig('send_sms')){
+		if($this->app->getConfig('send_sms',false)){
 			$message = $welcome_model['welcome_sms_content'];
 			$temp = $this->add('GiTemplate');
 			$temp->loadTemplateFromString($message);
@@ -340,7 +340,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 		// Send Email
 			// subject
-		if($this->app->getConfig('send_email')){
+		if($this->app->getConfig('send_email',false)){
 
 			if(!$green_config['green_mail_subject'] OR !$green_config['green_mail_content']) throw new \Exception("plase update Green Distributor mail content");
 			$temp = $this->add('GiTemplate');
@@ -374,7 +374,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		}
 
 		// send SMS
-		if($this->app->getConfig('send_sms')){
+		if($this->app->getConfig('send_sms',false)){
 			$message = $green_config['green_sms_content'];
 			$temp = $this->add('GiTemplate');
 			$temp->loadTemplateFromString($message);
@@ -418,7 +418,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 		// Send Email
 			// subject
-		if($this->app->getConfig('send_email')){
+		if($this->app->getConfig('send_email',false)){
 
 			if(!$deactivate_config['deactivate_mail_subject'] OR !$deactivate_config['deactivate_mail_content']) throw new \Exception("plase update Deactivate Distributor mail content");
 			$temp = $this->add('GiTemplate');
@@ -452,7 +452,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		}
 
 		// send SMS
-		if($this->app->getConfig('send_sms')){
+		if($this->app->getConfig('send_sms',false)){
 			$message = $deactivate_config['deactivate_sms_content'];
 			$temp = $this->add('GiTemplate');
 			$temp->loadTemplateFromString($message);
