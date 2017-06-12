@@ -226,3 +226,13 @@ CREATE TABLE `mlm_re_purchase_bonus_slab` (
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+-- update attachment
+ALTER TABLE `mlm_attachment` ADD COLUMN `driving_license_id`  int(11) DEFAULT NULL;
+ALTER TABLE `mlm_attachment` ADD COLUMN `document_narration`  text;
+ALTER TABLE `mlm_attachment` ADD COLUMN `payment_narration`  text;
+
+-- update Distributor
+ALTER TABLE `mlm_distributor` ADD COLUMN `is_payment_verified` tinyint(4) DEFAULT NULL;
+ALTER TABLE `mlm_distributor` ADD COLUMN `is_document_verified` tinyint(4) DEFAULT NULL;
+

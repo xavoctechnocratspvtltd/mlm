@@ -14,7 +14,7 @@ class Model_Distributor_Actions extends \xavoc\mlm\Model_Distributor
 				'Red'=>['view','edit','delete'],
 				'KitSelected'=>['view','edit','delete','verifyPayment'],
 				'KitPaid'=>['view','edit','delete','verifyPayment','markGreen'],
-				'Green'=>['view','edit','delete','document'],
+				'Green'=>['view','edit','delete','Document'],
 				'InActive'=>['view','edit','delete','active'],
 				];
 	
@@ -110,6 +110,53 @@ class Model_Distributor_Actions extends \xavoc\mlm\Model_Distributor
 			$this->app->page_action_result = $form->js(null,$form->js()->closest('.dialog')->dialog('close'))->univ()->successMessage('payment verified and marked green');
 		}
 		
+	}
+
+	function page_Document($page){
+
+		$tab = $page->add('Tabs');
+		$tab_doc = $tab->addTab('Document');
+		$tab_pay = $tab->addTab('Payment Related Document');
+
+		$attachment = $tab_doc->add('xavoc\mlm\Model_Attachment');
+		$attachment->addCondition('distributor_id',$this->id);
+		$attachment->tryLoadAny();
+
+		$crud = $tab_doc->add('xepan\hr\CRUD',['allow_add'=>false]);
+		$crud->grid->addHook('formatRow',function($g){
+			$g->current_row_html['pan_card'] = '<a href="'.$g->model['pan_card'].'" target="_blank"><img style="width: 200px;" src="'.$g->model['pan_card'].'"/></a>';
+			$g->current_row_html['aadhar_card'] = '<a href="'.$g->model['aadhar_card'].'" target="_blank"><img <img style="width: 200px;" src="'.$g->model['aadhar_card'].'"></a>';
+			$g->current_row_html['driving_license'] = '<a href="'.$g->model['driving_license'].'" target="_blank"><img <img style="width: 200px;" src="'.$g->model['driving_license'].'"></a>';
+			$g->current_row_html['delete'] = " ";
+		});
+		$crud->setModel($attachment,['distributor','pan_card_id','pan_card','aadhar_card_id','aadhar_card','driving_license_id','driving_license','document_narration'],['pan_card','aadhar_card','driving_license','document_narration']);
+		$crud->grid->removeColumn('attachment_icon');
+		$crud->grid->removeColumn('cheque_deposite_receipt_image');
+		$crud->grid->removeColumn('dd_deposite_receipt_image');
+		$crud->grid->removeColumn('action');
+		$crud->grid->removeColumn('delete');
+		$crud->grid->removeColumn('payment_narration');
+
+		// payment related document
+		$attachment = $tab_doc->add('xavoc\mlm\Model_Attachment');
+		$attachment->addCondition('distributor_id',$this->id);
+		$attachment->tryLoadAny();
+		$crud = $tab_pay->add('xepan\hr\CRUD',['allow_add'=>false]);
+		$crud->grid->addHook('formatRow',function($g){
+			$g->current_row_html['cheque_deposite_receipt_image'] = '<a href="'.$g->model['cheque_deposite_receipt_image'].'" target="_blank"><img style="width: 200px;" src="'.$g->model['cheque_deposite_receipt_image'].'"/></a>';
+			$g->current_row_html['dd_deposite_receipt_image'] = '<a href="'.$g->model['dd_deposite_receipt_image'].'" target="_blank"><img <img style="width: 200px;" src="'.$g->model['dd_deposite_receipt_image'].'"></a>';
+			$g->current_row_html['delete'] = " ";
+		});
+		$crud->setModel($attachment,['distributor','cheque_deposite_receipt_image_id','cheque_deposite_receipt_image','dd_deposite_receipt_image','dd_deposite_receipt_image_id','payment_narration']);
+		$crud->grid->removeColumn('attachment_icon');
+		$crud->grid->removeColumn('pan_card');
+		$crud->grid->removeColumn('aadhar_card');
+		$crud->grid->removeColumn('driving_license');
+		$crud->grid->removeColumn('action');
+		$crud->grid->removeColumn('delete');
+		$crud->grid->removeColumn('document_narration');
+		$crud->grid->removeColumn('cheque_deposite_receipt_image_id');
+		$crud->grid->removeColumn('dd_deposite_receipt_image_id');
 	}
 
 	function page_payNow($page){
