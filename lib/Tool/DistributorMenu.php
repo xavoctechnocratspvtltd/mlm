@@ -39,7 +39,7 @@ class Tool_DistributorMenu extends \xepan\cms\View_Tool{
 		});
 
 		$cl->template->trySet('distributor_name',$distributor['name']);
-		$cl->template->trySet('distributor_dp',($distributor['image']?:"websites/dsmarketing/www/img/100.svg"));
+		$cl->template->trySet('distributor_dp',($distributor['image']?:"shared/apps/xavoc/mlm/templates/img/100.svg"));
 
 	}
 }
