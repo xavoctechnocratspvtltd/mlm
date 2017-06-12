@@ -5,7 +5,7 @@ namespace xavoc\mlm;
 
 class Model_Distributor extends \xepan\commerce\Model_Customer {
 
-	public $status = ['Active','Red','KitSelected','KitPaid','Green','InActive'];
+public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 	public $actions = [
 				'Red'=>['view','edit','delete'],
 				'KitSelected'=>['view','edit','delete','verifyPayment','Document'],
@@ -13,12 +13,14 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 				'Green'=>['view','edit','delete','Document'],
 				'Blocked'=>['view','edit','delete','Unblocked']
 				];
-
+				
 	public $acl_type= "ispmanager_distributor";
 
 
 	function init(){
 		parent::init();
+
+		$this->getElement('status')->defaultValue('Red');
 
 		$dist_j = $this->join('mlm_distributor.distributor_id');
 
