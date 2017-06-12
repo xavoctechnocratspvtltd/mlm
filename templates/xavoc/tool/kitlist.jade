@@ -13,7 +13,9 @@ div(id='{$_name}' class="{$class} row" style="{$style}")
         {$description}
         .row
           .col-md-12.col-sm-12.col-lg-12.col-xs-12
-            p.lead {$sale_price}
+            p.price
+              i.fa.fa-rupee &nbsp;
+              |{$sale_price}
           .col-md-12.col-sm-12.col-lg-12.col-xs-12
             {purchase_btn_wrapper}
             .xepan-commerce-item-purchase-button(data-xbikitid="{$id}" data-name="{$name}"){$purchase_btn}
