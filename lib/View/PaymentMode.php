@@ -22,6 +22,28 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 		}
 
 		if($distributor['kit_item_id']){
+			$t = $this->add('xavoc\mlm\Model_TopupHistory');
+			$t->addCondition('distributor_id',$distributor->id);
+			$t->setOrder('id','desc');
+			$t->tryLoadAny();
+			if($t->loaded()){
+				$d1 = strtotime($this->app->today);
+				$d2 = strtotime($t['created_at']);
+
+				$diff_secs = abs($d1 - $d2);
+	            $base_year = min(date("Y", $d1), date("Y", $d2));
+				$diff = mktime(0, 0, $diff_secs, 1, 1, $base_year);
+	            $days = date("j", $diff) - 1;
+
+	            $limit = $this->app->getConfig('update_topup_duration',30);
+				if($days > $limit){
+					$this->add('View_Warning')->set('Your duration for updating topup is expired ')->addClass('alert alert-warning');
+					return;
+				}
+			}
+
+			// $diff = date_diff(date('Y-m-d',strtotime($this->app->today)),date('Y-m-d',strtotime($t['created_at'])));
+
 			$this->add('View_Info')->set('you are updating your topup')->addClass('alert alert-info');
 		}
 
@@ -44,8 +66,10 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 
 		$online_pay_btn = $online_tab->add('Button')->set("pay via online")->addClass('btn btn-primary');
 		if($online_pay_btn->isClicked()){
+
 			$result = $this->placeOrder($this->kit_id);
 
+			// for online working based on hook so topup history called
 			if($result['status'] == "success"){
 				$url = $this->app->url($this->checkout_page,['order_id'=>$result['order_id'],'step'=>'payment','pay_now'=>true]);
 				$js_event = [
@@ -74,16 +98,23 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 		$cheque_form->addField('cheque_number')->validate('required');
 		$cheque_form->addField('DatePicker','cheque_date')->validate('required');
 
-		$cheque_form->setModel($attachment,['cheque_deposite_receipt_image_id']);
-		$cheque_form->addSubmit('Submit');
+		$field = $cheque_form->addField('Upload','cheque_deposite_receipt_image_id');
+		$field->setModel('xepan\filestore\File');
+		// $cheque_form->setModel($attachment,['cheque_deposite_receipt_image_id']);
+		$cheque_form->addSubmit('Submit')->addClass('btn btn-primary');
 		
 		if($cheque_form->isSubmitted()){
-			
-			$cheque_form->update();
+
+			if(!$cheque_form['cheque_deposite_receipt_image_id']) $cheque_form->error('cheque_deposite_receipt_image_id','must not be empty');
+			if(!$cheque_form['cheque_date']) $cheque_form->error('cheque_date','must not be empty');
+
+			$attachment['cheque_deposite_receipt_image_id'] = $cheque_form['cheque_deposite_receipt_image_id'];
+			$attachment->save();
 
 			$result = $this->placeOrder($kit_model->id);
 			if($result['status'] == "failed") throw new \Exception($result['message']);
 
+			// $cheque_form->update();
 			$distributor['payment_mode'] = "cheque";
 			$distributor['kit_id'] = $cheque_form['bank_name'];
 			$distributor['bank_name'] = $cheque_form['bank_name'];
@@ -105,11 +136,12 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 		$field->setModel('xepan\filestore\File');
 
 		// $dd_form->setModel($attachment,['dd_deposite_receipt_image_id']);
-		$dd_form->addSubmit('Submit');
+		$dd_form->addSubmit('Submit')->addClass('btn btn-primary');
 		if($dd_form->isSubmitted()){
-			if(!$form['dd_deposite_receipt_image_id']) $form->error('dd_deposite_receipt_image_id','must not be empty');
+			if(!$dd_form['dd_deposite_receipt_image_id']) $dd_form->error('dd_deposite_receipt_image_id','must not be empty');
+			if(!$dd_form['dd_date']) $dd_form->error('dd_date','must not be empty');
 			
-			$attachment['dd_deposite_receipt_image_id'] = $form['dd_deposite_receipt_image_id'];
+			$attachment['dd_deposite_receipt_image_id'] = $dd_form['dd_deposite_receipt_image_id'];
 			$attachment->save();
 			// $dd_form->update();
 			$result = $this->placeOrder($kit_model->id);
