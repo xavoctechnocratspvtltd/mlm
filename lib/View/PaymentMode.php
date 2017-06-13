@@ -73,6 +73,7 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 		$cheque_form->addField('bank_ifsc_code')->validate('required');
 		$cheque_form->addField('cheque_number')->validate('required');
 		$cheque_form->addField('DatePicker','cheque_date')->validate('required');
+
 		$cheque_form->setModel($attachment,['cheque_deposite_receipt_image_id']);
 		$cheque_form->addSubmit('Submit');
 		
@@ -80,7 +81,8 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 			
 			$cheque_form->update();
 
-			$result = $this->placeOrder($this->kit_id);
+			$result = $this->placeOrder($kit_model->id);
+			if($result['status'] == "failed") throw new \Exception($result['message']);
 
 			$distributor['payment_mode'] = "cheque";
 			$distributor['kit_id'] = $cheque_form['bank_name'];
@@ -98,11 +100,20 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 		$dd_form->addField('bank_ifsc_code')->validate('required');
 		$dd_form->addField('dd_number')->validate('required');
 		$dd_form->addField('DatePicker','dd_date')->validate('required');
-		$dd_form->setModel($attachment,['dd_deposite_receipt_image_id']);
+
+		$field = $dd_form->addField('Upload','dd_deposite_receipt_image_id');
+		$field->setModel('xepan\filestore\File');
+
+		// $dd_form->setModel($attachment,['dd_deposite_receipt_image_id']);
 		$dd_form->addSubmit('Submit');
 		if($dd_form->isSubmitted()){
-
-			$dd_form->update();
+			if(!$form['dd_deposite_receipt_image_id']) $form->error('dd_deposite_receipt_image_id','must not be empty');
+			
+			$attachment['dd_deposite_receipt_image_id'] = $form['dd_deposite_receipt_image_id'];
+			$attachment->save();
+			// $dd_form->update();
+			$result = $this->placeOrder($kit_model->id);
+			if($result['status'] == "failed") throw new \Exception($result['message']);
 
 			$distributor['payment_mode'] = "dd";
 			$distributor['bank_name'] = $dd_form['bank_name'];

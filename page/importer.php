@@ -63,15 +63,25 @@ class page_importer extends \xepan\base\Page {
 				$dis_having_not_kit = [];			
 				$kits = $this->add('xavoc\mlm\Model_Kit');
 				foreach ($kits as $key => $kit) {
-					$all_package[$kit['code']] = $kit['id'];
+					$all_package[$kit['code']] = [
+											'id'=>$kit['id'],
+											'bv'=>$kit['bv'],
+											'sv'=>$kit['sv'],
+											'pv'=>$kit['pv'],
+											'capping'=>$kit['capping']
+										];
 				}
 
 				$dis_id_mapping = [1=>$root_ds->id];
 				// old_plan_name => new package_code
 				$package_mapping = [
-								'Registration'=>'package1',
-								'801'=>'package2',
-								'1000'=>'package3',
+								// 'Registration'=>0,
+								'1000'=>'Package A1',
+								'7200'=>'Package C1',
+								'24000'=>'Package D1',
+								'120000'=>'Package D1',
+								'300000'=>'Package D1',
+								'480000'=>'Package D1'
 							];
 				$unused_data = [];
 				// throw new \Exception("Error Processing Request", 1);
@@ -108,7 +118,6 @@ class page_importer extends \xepan\base\Page {
 					$data['email'] = $old_dis['email'];
 
 					$data['created_at'] = date('Y-m-d H:i:s', strtotime($old_dis['joiningdate']));
-					$data['greened_on'] = date('Y-m-d H:i:s', strtotime($old_dis['topupeddate']));
 
 					$data['d_bank_name'] = $old_dis['bankname'];
 					$data['d_account_number'] = $old_dis['accountno'];
@@ -135,8 +144,24 @@ class page_importer extends \xepan\base\Page {
 						$data['side'] =  'B';
 
 						$kit_code = $package_mapping[trim($data['planname'])];
-						$kit_id =  isset($all_package[$kit_code])?$all_package[$kit_code]:0;
-						$data['kit_item_id'] = $kit_id;
+						
+						if(isset($all_package[$kit_code]) && $all_package[$kit_code]['id']){
+							$kit_array = $all_package[$kit_code];
+							$kit_id =  $kit_array['id'];
+
+							$data['kit_item_id'] = $kit_id;
+							$data['sv'] = $kit_array['sv'];
+							$data['pv'] = $kit_array['pv'];
+							$data['bv'] = $kit_array['bv'];
+							$data['capping'] = $kit_array['capping'];
+							$data['greened_on'] = date('Y-m-d H:i:s', strtotime($old_dis['topupeddate']));
+							$data['status'] = "Green";
+						}else{
+							$data['status'] = "Red";
+						}
+
+
+
 					// try{
 						$distributor = $this->add('xavoc\mlm\Model_Distributor');
 						$distributor->register($data);
