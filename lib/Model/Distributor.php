@@ -69,6 +69,7 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 		// monthly session
 		$dist_j->addField('month_self_bv')->type('int')->defaultValue(0);
 		$dist_j->addField('month_bv')->type('int')->defaultValue(0);
+		$dist_j->addField('total_month_bv')->type('int')->defaultValue(0);
 		$dist_j->addField('quarter_bv_saved')->type('int')->defaultValue(0);
 		$dist_j->addField('monthly_left_dp_mrp_diff')->type('int')->defaultValue(0);
 		$dist_j->addField('monthly_right_dp_mrp_diff')->type('int')->defaultValue(0);
@@ -160,6 +161,8 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 				throw $this->exception('You do not have rights to add distributor');
 			}
 
+			$introducer = $this->introducer();
+
 			if(!$this['sponsor_id']){
 				$this['sponsor_id'] = $this->findSponsor($introducer, $this['side'])->get('id');
 			}
@@ -199,9 +202,6 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 				}
 			}
 
-			if($introducer = $this->introducer()){
-				$this['introducer_path'] = $introducer->path() . '.'.$this['id'];
-			}
 			// if($this['greened_on']){
 			// 	$kit=$this->kit();
 			// 	$this->updateAnsestors($kit->getPV(),$kit->getBV());
@@ -229,6 +229,11 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 
 
 			$this->forget('leg');
+			
+			if($introducer = $this->introducer()){
+				$this['introducer_path'] = $introducer['introducer_path'] . '.'.$this['id'];
+				$this->save();
+			}
 
 			// $this->api->db->dsql()->table('xshop_memberdetails')->where('id',$this['customer_id'])->set('users_id',$this['user_id'])->update();
 		}
@@ -551,6 +556,11 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 		$this['bv'] = $kit['bv'];
 		$this['sv'] = $kit['sv'];
 
+		$this['month_self_bv'] = $this['month_self_bv']+$kit['bv'];
+		// $this['month_bv'] = $this['month_bv']+$kit['bv'];
+		// $this['total_month_bv'] = $this['total_month_bv']+$kit['bv'];
+		// $this['quarter_bv_saved'] = $this['quarter_bv_saved']+$kit['bv'];
+
 		$this->save();
 		
 		$this->updateAnsestorsSV($this['sv']);
@@ -580,6 +590,11 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 
 	function repurchase($bv){
 		$this['month_self_bv'] = $this['month_self_bv'] + $bv;
+		
+		// $this['month_bv'] = $this['month_bv'] + $bv;
+		// $this['total_month_bv'] = $this['total_month_bv'] + $bv;
+		// $this['quarter_bv_saved'] = $this['quarter_bv_saved'] + $bv;
+
 		$this->save();
 		$this->updateAnsestorsBV($bv);
 	}
@@ -625,7 +640,7 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 	}
 
 	function updateAnsestorsBV($bv_points){
-		// In introducer table
+		// Updates self record also
 		$path = $this['introducer_path'];
 
 		$q="
@@ -634,13 +649,14 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 				(SELECT 
 					id,
 					introducer_path,
-					LEFT('$path',LENGTH(introducer_path)) desired,
+					LEFT('$path',LENGTH(introducer_path)) desired
 				 FROM mlm_distributor 
 				 HAVING
 				 desired=introducer_path
 				 ) rights on rights.id = d.id
 				SET
 					month_bv = month_bv + $bv_points,
+					total_month_bv = total_month_bv + $bv_points,
 					quarter_bv_saved = quarter_bv_saved + $bv_points
 		";
 

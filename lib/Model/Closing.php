@@ -2,8 +2,9 @@
 
 namespace xavoc\mlm;
 
-class Model_Closing extends \xepan\hr\Model_Document {
-	
+class Model_Closing extends \xepan\base\Model_Table {
+	public $table ="mlm_closing";
+
 	public $status = ['All'];
 
 	public $actions = [
@@ -15,12 +16,11 @@ class Model_Closing extends \xepan\hr\Model_Document {
 	function init(){
 		parent::init();
 
-		$this->getElement('status')->defaultValue('All');
+		$this->addExpression('status','"All"');
 
-		$cls_j = $this->join('mlm_closing.closing_id');
-		$cls_j->addField('on_date')->type('datetime')->defaultValue($this->app->now);
-		$cls_j->addField('calculate_loyalty')->type('boolean')->defaultValue(false);
-		$this->getElement('type')->enum(['WeeklyClosing','MonthlyClosing']);
+		$this->addField('on_date')->type('datetime')->defaultValue($this->app->now);
+		$this->addField('calculate_loyalty')->type('boolean')->defaultValue(false);
+		$this->addField('type')->enum(['WeeklyClosing','MonthlyClosing']);
 		$this->hasMany('xavoc\mlm\Payout','closing_id');
 
 		$this->is([
@@ -132,7 +132,16 @@ class Model_Closing extends \xepan\hr\Model_Document {
 			UPDATE mlm_payout p
 			SET
 				p.generation_month_business = IFNULL((SELECT SUM(month_bv) FROM  mlm_distributor d WHERE p.distributor_id = d.introducer_id),0)
-				p.capped_month_business = IFNULL((SELECT SUM(month_bv) FROM  mlm_distributor d WHERE p.distributor_id = d.introducer_id),0)
+											+
+											IFNULL((SELECT month_self_bv FROM mlm_distributor d WHERE d.distributor_id=p.distributor_id) ,0)
+											,
+				p.generation_total_business = IFNULL((SELECT SUM(total_month_bv) FROM  mlm_distributor d WHERE p.distributor_id = d.introducer_id),0)
+											+
+											IFNULL((SELECT month_self_bv FROM mlm_distributor d WHERE d.distributor_id=p.distributor_id) ,0)
+											,
+				p.capped_total_business = 	IFNULL((SELECT SUM(total_month_bv) FROM  mlm_distributor d WHERE p.distributor_id = d.introducer_id),0)
+											+
+											IFNULL((SELECT month_self_bv FROM mlm_distributor d WHERE d.distributor_id=p.distributor_id) ,0)
 			WHERE
 				p.closing_date='$on_date';
 		";
@@ -146,39 +155,40 @@ class Model_Closing extends \xepan\hr\Model_Document {
 			$next_rank->addCondition('slab_percentage','>',$row['slab_percentage']);
 			$next_rank->tryLoadAny();
 			// if next rank available 
-			if($next_rank->loaded()){
+			if($next_rank->loaded() && $next_rank['required_60_percentage']){
 				// set capped_month_business = sum(monthbv/nextslab_target*.6 whicever is lesser)
 				$next_target = $next_rank['to_bv']*0.6;
 				$q="
 					UPDATE
 						mlm_payout p
+					JOIN mlm_distributor d on p.distributor_id=d.distributor_id
 					SET
-						p.capped_month_business = IFNULL((SELECT SUM(IF(month_bv<$next_target,month_bv,$next_target)) FROM  mlm_distributor d WHERE p.distributor_id = d.introducer_id),0)
+						p.capped_total_business = IFNULL((SELECT SUM(IF(total_month_bv<$next_target,total_month_bv,$next_target)) FROM  mlm_distributor d WHERE p.distributor_id = d.introducer_id),0)
+						+ IFNULL(d.month_self_bv ,0)
 					WHERE
+						d.current_rank_id = $rank_id AND
 						p.closing_date='$on_date';
 				";
 				$this->query($q);
-				// test if eligible for next rank
-					// set rank and slab percentage in payout and distributor as well
 			}
 
-			// give commission of actual month business as per slab rank percentage
 			$q = "
 				UPDATE
 					mlm_payout p
 					JOIN mlm_distributor d on p.distributor_id = d.distributor_id
 				SET 
-					p.rank = (select name from mlm_re_purchase_bonus_slab WHERE p.capped_month_business > from_bv AND p.capped_month_business <= to_bv),
-					p.slab_percentage = IFNULL((select slab_percentage from mlm_re_purchase_bonus_slab WHERE p.capped_month_business > from_bv AND p.capped_month_business <= to_bv),0),
+					p.rank = (select name from mlm_re_purchase_bonus_slab WHERE p.capped_total_business > from_bv AND p.capped_total_business <= to_bv),
+					p.slab_percentage = IFNULL((select slab_percentage from mlm_re_purchase_bonus_slab WHERE p.capped_total_business > from_bv AND p.capped_total_business <= to_bv),0),
 					d.current_rank = p.rank,
-					d.current_rank_id = (select id from mlm_re_purchase_bonus_slab WHERE p.capped_month_business > from_bv AND p.capped_month_business <= to_bv)
+					d.current_rank_id = (select id from mlm_re_purchase_bonus_slab WHERE p.capped_total_business > from_bv AND p.capped_total_business <= to_bv)
 				WHERE
 					(d.current_rank_id < $rank_id OR d.current_rank_id is null) AND
 					closing_date = '$on_date'
-			";
-
-			$this->query($q);
+				";
 		}
+		
+
+		$this->query($q);
 
 		// generate commission as per slab
 		$q="
@@ -194,7 +204,7 @@ class Model_Closing extends \xepan\hr\Model_Document {
 
 		if(!$this->app->getConfig('skipzero_for_testing',false)){
 			// set month bv =0
-			$q="UPDATE mlm_generation_business SET month_bv=0";
+			$q="UPDATE mlm_distributor SET month_bv=0";
 			$this->query($q);
 
 			$q="UPDATE mlm_distributor SET month_self_bv=0";
@@ -402,13 +412,13 @@ class Model_Closing extends \xepan\hr\Model_Document {
 				mlm_payout p
 				JOIN mlm_distributor d on p.distributor_id=d.distributor_id
 			SET
-				carried_amount = gross_payment,
+				p.carried_amount = gross_payment,
 				tds=0,
 				admin_charge=0,
 				net_payment = 0
 			WHERE
 				(
-					month_self_bv < 500 OR
+					p.month_self_bv < 500 OR
 					net_payment < 500 OR
 					d.is_document_verified = 0 OR
 					d.is_document_verified is null

@@ -82,7 +82,7 @@ class Controller_Setup extends \AbstractController {
 
 			$re_purchase_slab = [
 				['name'=>null,			'slab_percentage'=>0,	'from_bv'=>0, 		'to_bv'=>200		,'required_60_percentage'=>0],
-				['name'=>'Star',		'slab_percentage'=>5,	'from_bv'=>201, 	'to_bv'=>10000		,'required_60_percentage'=>1],
+				['name'=>'Star',		'slab_percentage'=>5,	'from_bv'=>201, 	'to_bv'=>10000		,'required_60_percentage'=>0],
 				['name'=>'Yellow Star',	'slab_percentage'=>10,	'from_bv'=>10001, 	'to_bv'=>35000		,'required_60_percentage'=>1],
 				['name'=>'Orange Star',	'slab_percentage'=>15,	'from_bv'=>35001, 	'to_bv'=>100000		,'required_60_percentage'=>1],
 				['name'=>'Red Star',	'slab_percentage'=>20,	'from_bv'=>100001, 	'to_bv'=>250000		,'required_60_percentage'=>1],
@@ -99,6 +99,7 @@ class Controller_Setup extends \AbstractController {
 				$slab['slab_percentage']=$row['slab_percentage'];
 				$slab['from_bv']=$row['from_bv'];
 				$slab['to_bv']=$row['to_bv'];
+				$slab['required_60_percentage']=$row['required_60_percentage'];
 				$slab->save();
 			}
 
@@ -180,6 +181,7 @@ class Controller_Setup extends \AbstractController {
 		$dis['user_id']=$user->id;
 		$dis['sponsor_id']=0;
 		$dis['introducer_id']=0;
+		$dis['introducer_path']='0';
 		$dis->save();
 
 	}
