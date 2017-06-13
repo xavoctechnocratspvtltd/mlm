@@ -11,7 +11,7 @@
  Target Server Version : 100118
  File Encoding         : utf-8
 
- Date: 06/12/2017 20:23:42 PM
+ Date: 06/13/2017 14:17:49 PM
 */
 
 SET NAMES utf8;
@@ -31,6 +31,7 @@ CREATE TABLE `mlm_attachment` (
   `driving_license_id` int(11) DEFAULT NULL,
   `document_narration` text,
   `payment_narration` text,
+  `office_receipt_image_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
@@ -45,7 +46,7 @@ CREATE TABLE `mlm_closing` (
   `type` varchar(20) DEFAULT NULL,
   `calculate_loyalty` tinyint(4) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
 
 -- ----------------------------
 --  Table structure for `mlm_distributor`
@@ -110,6 +111,8 @@ CREATE TABLE `mlm_distributor` (
   `d_bank_ifsc_code` varchar(255) DEFAULT NULL,
   `is_payment_verified` tinyint(4) DEFAULT NULL,
   `is_document_verified` tinyint(4) DEFAULT NULL,
+  `deposite_in_office_narration` text,
+  `sale_order_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `distributor_id` (`distributor_id`),
   KEY `sponsor_id` (`sponsor_id`),
@@ -120,7 +123,7 @@ CREATE TABLE `mlm_distributor` (
   KEY `greened_on` (`greened_on`),
   FULLTEXT KEY `path` (`path`),
   FULLTEXT KEY `introducer_path` (`introducer_path`)
-) ENGINE=InnoDB AUTO_INCREMENT=255 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=9733 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `mlm_generation_business`
@@ -133,12 +136,11 @@ CREATE TABLE `mlm_generation_business` (
   `introduced_path` text,
   `bv_sum` bigint(20) DEFAULT NULL,
   `month_bv` int(11) DEFAULT NULL,
-  `path_length` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `distributor_id` (`distributor_id`),
   KEY `introduced_id` (`introduced_id`),
   FULLTEXT KEY `introduced_path` (`introduced_path`)
-) ENGINE=InnoDB AUTO_INCREMENT=197 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=9306 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `mlm_generation_income_slab`
@@ -159,7 +161,7 @@ CREATE TABLE `mlm_generation_income_slab` (
   `generation_10` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `rank_id` (`rank_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `mlm_loyalti_bonus_slab`
@@ -172,7 +174,7 @@ CREATE TABLE `mlm_loyalti_bonus_slab` (
   `turnover_criteria` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `rank_id` (`rank_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `mlm_payout`
@@ -216,7 +218,7 @@ CREATE TABLE `mlm_payout` (
   KEY `distributor_id` (`distributor_id`),
   KEY `closing_date` (`closing_date`),
   KEY `closing_id` (`closing_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=107 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=175 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `mlm_re_purchase_bonus_slab`
@@ -229,15 +231,11 @@ CREATE TABLE `mlm_re_purchase_bonus_slab` (
   `from_bv` int(11) DEFAULT NULL,
   `to_bv` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8;
 
-
--- alert table and new query
-ALTER TABLE `mlm_attachment` ADD `office_receipt_image_id` INT(11) NULL;
-ALTER TABLE `mlm_distributor` ADD `deposite_in_office_narration` text;
-ALTER TABLE `mlm_distributor` ADD `sale_order_id` INT(11) NULL;
-
-
+-- ----------------------------
+--  Table structure for `mlm_topup_history`
+-- ----------------------------
 DROP TABLE IF EXISTS `mlm_topup_history`;
 CREATE TABLE `mlm_topup_history` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -261,7 +259,6 @@ CREATE TABLE `mlm_topup_history` (
   KEY `fk_cheque_deposite_receipt_image_id` (`cheque_deposite_receipt_image_id`),
   KEY `fk_dd_deposite_receipt_image_id` (`dd_deposite_receipt_image_id`),
   KEY `fk_office_receipt_image_id` (`office_receipt_image_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
-
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 SET FOREIGN_KEY_CHECKS = 1;
