@@ -11,7 +11,7 @@
  Target Server Version : 100118
  File Encoding         : utf-8
 
- Date: 06/13/2017 23:15:35 PM
+ Date: 06/14/2017 02:24:40 AM
 */
 
 SET NAMES utf8;
@@ -46,7 +46,7 @@ CREATE TABLE `mlm_closing` (
   `type` varchar(20) DEFAULT NULL,
   `calculate_loyalty` tinyint(4) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB AUTO_INCREMENT=82 DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
 
 -- ----------------------------
 --  Table structure for `mlm_distributor`
@@ -84,6 +84,7 @@ CREATE TABLE `mlm_distributor` (
   `total_left_sv` int(11) DEFAULT NULL,
   `total_right_sv` int(11) DEFAULT NULL,
   `month_self_bv` int(11) DEFAULT NULL,
+  `total_self_bv` int(11) DEFAULT NULL,
   `month_bv` int(11) DEFAULT NULL,
   `total_month_bv` int(11) DEFAULT NULL,
   `monthly_left_dp_mrp_diff` decimal(10,2) DEFAULT NULL,
@@ -106,7 +107,6 @@ CREATE TABLE `mlm_distributor` (
   `dd_number` int(11) DEFAULT NULL,
   `cheque_date` datetime DEFAULT NULL,
   `dd_date` datetime DEFAULT NULL,
-  `current_rank` varchar(20) DEFAULT NULL,
   `current_rank_id` int(11) DEFAULT NULL,
   `d_account_number` varchar(255) DEFAULT NULL,
   `d_bank_name` varchar(255) DEFAULT NULL,
@@ -125,7 +125,7 @@ CREATE TABLE `mlm_distributor` (
   KEY `greened_on` (`greened_on`),
   FULLTEXT KEY `path` (`path`),
   FULLTEXT KEY `introducer_path` (`introducer_path`)
-) ENGINE=InnoDB AUTO_INCREMENT=10094 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10251 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `mlm_generation_business`
@@ -142,7 +142,7 @@ CREATE TABLE `mlm_generation_business` (
   KEY `distributor_id` (`distributor_id`),
   KEY `introduced_id` (`introduced_id`),
   FULLTEXT KEY `introduced_path` (`introduced_path`)
-) ENGINE=InnoDB AUTO_INCREMENT=9618 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=9750 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `mlm_generation_income_slab`
@@ -218,7 +218,7 @@ CREATE TABLE `mlm_payout` (
   KEY `distributor_id` (`distributor_id`),
   KEY `closing_date` (`closing_date`),
   KEY `closing_id` (`closing_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=455 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=742 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `mlm_re_purchase_bonus_slab`
@@ -260,6 +260,6 @@ CREATE TABLE `mlm_topup_history` (
   KEY `fk_cheque_deposite_receipt_image_id` (`cheque_deposite_receipt_image_id`),
   KEY `fk_dd_deposite_receipt_image_id` (`dd_deposite_receipt_image_id`),
   KEY `fk_office_receipt_image_id` (`office_receipt_image_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=227 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=359 DEFAULT CHARSET=latin1;
 
 SET FOREIGN_KEY_CHECKS = 1;
