@@ -105,9 +105,9 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 		$dist_j->addField('dd_number');
 		$dist_j->addField('cheque_date');
 		$dist_j->addField('dd_date');
-		$dist_j->addField('is_payment_verified')->type('boolean');
+		$dist_j->addField('is_payment_verified')->type('boolean')->defaultValue(fasle);
 		// $dist_j->addField('current_rank');
-		$dist_j->addField('is_document_verified')->type('boolean');
+		$dist_j->addField('is_document_verified')->type('boolean')->defaultValue(false);
 		
 		$this->hasMany('xavoc\mlm\GenerationBusiness','distributor_id');
 		$this->hasMany('xavoc\mlm\Attachment','distributor_id');

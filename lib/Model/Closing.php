@@ -438,7 +438,8 @@ class Model_Closing extends \xepan\hr\Model_Document {
 				(
 					month_self_bv < 500 OR
 					net_payment < 500 OR
-					d.is_document_verified = 0
+					d.is_document_verified = 0 OR
+					d.is_document_verified is null
 				) AND
 
 				closing_date='$on_date'
