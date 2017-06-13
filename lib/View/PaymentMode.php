@@ -22,25 +22,25 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 		}
 
 		if($distributor['kit_item_id']){
-			$t = $this->add('xavoc\mlm\Model_TopupHistory');
-			$t->addCondition('distributor_id',$distributor->id);
-			$t->setOrder('id','desc');
-			$t->tryLoadAny();
-			if($t->loaded()){
-				$d1 = strtotime($this->app->today);
-				$d2 = strtotime($t['created_at']);
+			// $t = $this->add('xavoc\mlm\Model_TopupHistory');
+			// $t->addCondition('distributor_id',$distributor->id);
+			// $t->setOrder('id','desc');
+			// $t->tryLoadAny();
+			// if($t->loaded()){
+			// 	$d1 = strtotime($this->app->today);
+			// 	$d2 = strtotime($t['created_at']);
 
-				$diff_secs = abs($d1 - $d2);
-	            $base_year = min(date("Y", $d1), date("Y", $d2));
-				$diff = mktime(0, 0, $diff_secs, 1, 1, $base_year);
-	            $days = date("j", $diff) - 1;
+			// 	$diff_secs = abs($d1 - $d2);
+	  //           $base_year = min(date("Y", $d1), date("Y", $d2));
+			// 	$diff = mktime(0, 0, $diff_secs, 1, 1, $base_year);
+	  //           $days = date("j", $diff) - 1;
 
-	            $limit = $this->app->getConfig('update_topup_duration',30);
-				if($days > $limit){
-					$this->add('View_Warning')->set('Your duration for updating topup is expired ')->addClass('alert alert-warning');
-					return;
-				}
-			}
+	  //           $limit = $this->app->getConfig('update_topup_duration',30);
+			// 	if($days > $limit){
+			// 		$this->add('View_Warning')->set('Your duration for updating topup is expired ')->addClass('alert alert-warning');
+			// 		return;
+			// 	}
+			// }
 
 			// $diff = date_diff(date('Y-m-d',strtotime($this->app->today)),date('Y-m-d',strtotime($t['created_at'])));
 
