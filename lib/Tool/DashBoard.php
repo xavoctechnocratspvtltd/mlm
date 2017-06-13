@@ -36,9 +36,9 @@ class Tool_DashBoard extends \xepan\cms\View_Tool{
 		$card_options = ['header'=>'Weekly Pair','theme'=>'orange','title'=>$distributor['week_pairs']?:0];
 		$col1->add('xavoc\mlm\View_Card',['options'=>$card_options]);
 
-		$card_options = ['header'=>'Total Left Downline Members','theme'=>'blue','title'=>$distributor['total_left_sv']?:0];
+		$card_options = ['header'=>'Total Left Downline SV','theme'=>'blue','title'=>$distributor['total_left_sv']?:0];
 		$col2->add('xavoc\mlm\View_Card',['options'=>$card_options]);
-		$card_options = ['header'=>'Total Right Downline Members','theme'=>'blue','title'=>$distributor['total_right_sv']?:0];
+		$card_options = ['header'=>'Total Right Downline SV','theme'=>'blue','title'=>$distributor['total_right_sv']?:0];
 		$col3->add('xavoc\mlm\View_Card',['options'=>$card_options]);
 
 	}
