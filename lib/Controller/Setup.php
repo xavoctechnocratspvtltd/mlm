@@ -74,7 +74,7 @@ class Controller_Setup extends \AbstractController {
 				$kit->set('name',$item['name'])
 					->set('pv',$item['pv'])
 					->set('bv',$item['bv'])
-					->set('sv',$this->importing_old_data?0:$item['sv'])
+					->set('sv',$item['sv'])
 					->set('capping',$item['capping'])
 					->set('introducer_income',$item['introducer_income'])
 					->save();

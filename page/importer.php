@@ -21,7 +21,7 @@ class page_importer extends \xepan\base\Page {
 		$view = $this->add('View')->addClass('alert');
 		if($_GET['total_dist'] OR $_GET['dis_having_not_kit']){
 			$msg = '<div class="alert bg bg-success">Total Distributor Import = '.$_GET['total_dist'].'</div>';
-			$msg .= '<div class="alert bg bg-danger">Distributor having no kit id = '.count($_GET['dis_having_not_kit']).'</div>';
+			$msg .= '<div class="alert bg bg-danger">Distributor having no kit id = '.$_GET['dis_having_not_kit'].'</div>';
 			
 			if( is_array($_GET['unused_data'])&& count($_GET['unused_data']) > 0){
 				$msg .= "Distributor not added = ".count($_GET['unused_data']);
@@ -63,7 +63,7 @@ class page_importer extends \xepan\base\Page {
 				$dis_having_not_kit = [];			
 				$kits = $this->add('xavoc\mlm\Model_Kit');
 				foreach ($kits as $key => $kit) {
-					$all_package[$kit['code']] = [
+					$all_package[$kit['sku']] = [
 											'id'=>$kit['id'],
 											'bv'=>$kit['bv'],
 											'sv'=>$kit['sv'],
@@ -143,7 +143,9 @@ class page_importer extends \xepan\base\Page {
 					else
 						$data['side'] =  'B';
 
-						$kit_code = $package_mapping[trim($data['planname'])];
+						$kit_code = $package_mapping[trim($old_dis['planname'])];
+
+						
 						
 						if(isset($all_package[$kit_code]) && $all_package[$kit_code]['id']){
 							$kit_array = $all_package[$kit_code];
@@ -158,6 +160,7 @@ class page_importer extends \xepan\base\Page {
 							$data['status'] = "Green";
 						}else{
 							$data['status'] = "Red";
+							$dis_having_not_kit[] = $distributor->id;
 						}
 
 
@@ -166,9 +169,6 @@ class page_importer extends \xepan\base\Page {
 						$distributor = $this->add('xavoc\mlm\Model_Distributor');
 						$distributor->register($data);
 						// $distributor->purchaseKit($kit_id);
-						if(!$kit_id){
-							$dis_having_not_kit[] = $distributor->id;
-						}
 
 						if(!isset($dis_id_mapping[$old_dis['Member_PrimaryKey']]))
 							$dis_id_mapping[$old_dis['Member_PrimaryKey']] = $distributor->id;
@@ -192,7 +192,7 @@ class page_importer extends \xepan\base\Page {
 			// echo "<pre>";
 			// print_r($dis_id_mapping);
 			// echo "</pre>";
-			$form->js(null,$view->js()->reload(['total_dist'=>$count,'dis_having_not_kit'=>$dis_having_not_kit,'mapping'=>$dis_id_mapping,'unused_data'=>$unused_data]))->univ()->successMessage('done')->execute();
+			$form->js(null,$view->js()->reload(['total_dist'=>$count,'dis_having_not_kit'=>count($dis_having_not_kit),'mapping'=>$dis_id_mapping,'unused_data'=>$unused_data]))->univ()->successMessage('done')->execute();
 		}
 	}
 

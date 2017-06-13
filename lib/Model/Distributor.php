@@ -728,7 +728,7 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 				->usePasswordEncryption('md5')
 				->addEncryptionHook($user);
 		
-		$user->addCondition('username',(isset($data['username'])?$data['username']:$data['first_name']."@dummy.com"));
+		$user->addCondition('username',(isset($data['username'])?$data['username']:$data['first_name']));
 		$user['password']= $data['password']?:'123456';
 		$user->save();
 
