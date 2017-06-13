@@ -25,6 +25,7 @@ class page_distributors extends \xepan\base\Page {
 					);
 		$crud->grid->addPaginator($ipp=50);
 		$crud->grid->removeColumn('attachment_icon');
+		$crud->grid->addQuickSearch(['name','user']);
 	}
 
 }
