@@ -14,8 +14,9 @@ class Model_RePurchaseBonusSlab extends \xepan\base\Model_Table {
 		$this->addField('slab_percentage')->type('int');
 		$this->addField('from_bv')->type('int');
 		$this->addField('to_bv')->type('int');
+		$this->addField('required_60_percentage')->type('boolean')->defaultValue(true);
 
-		$this->setOrder('to_bv','desc');
+		$this->setOrder('slab_percentage','asc');
 
 	}
 }

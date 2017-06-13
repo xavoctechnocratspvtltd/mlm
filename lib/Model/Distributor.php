@@ -68,6 +68,7 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 
 		// monthly session
 		$dist_j->addField('month_self_bv')->type('int')->defaultValue(0);
+		$dist_j->addField('month_bv')->type('int')->defaultValue(0);
 		$dist_j->addField('quarter_bv_saved')->type('int')->defaultValue(0);
 		$dist_j->addField('monthly_left_dp_mrp_diff')->type('int')->defaultValue(0);
 		$dist_j->addField('monthly_right_dp_mrp_diff')->type('int')->defaultValue(0);
@@ -159,10 +160,6 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 				throw $this->exception('You do not have rights to add distributor');
 			}
 
-			if($introducer = $this->introducer()){
-				$this['introducer_path'] = $introducer->path() . $this['side'];
-			}
-
 			if(!$this['sponsor_id']){
 				$this['sponsor_id'] = $this->findSponsor($introducer, $this['side'])->get('id');
 			}
@@ -201,6 +198,10 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 					
 				}
 			}
+
+			if($introducer = $this->introducer()){
+				$this['introducer_path'] = $introducer->path() . '.'.$this['id'];
+			}
 			// if($this['greened_on']){
 			// 	$kit=$this->kit();
 			// 	$this->updateAnsestors($kit->getPV(),$kit->getBV());
@@ -221,7 +222,8 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 				$bv_table->addCondition('introduced_id',$this->id);
 				$bv_table->addCondition('distributor_id',$this['introducer_id']);
 				$bv_table->tryLoadAny();
-				$bv_table['introduced_path'] = $this['path'];
+				// $bv_table['introduced_path'] = $this['path'];
+				$bv_table['introduced_path'] = $this['introducer_path'];
 				$bv_table->save();
 			}
 
@@ -624,39 +626,24 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 
 	function updateAnsestorsBV($bv_points){
 		// In introducer table
-		$path = $this['path'];
+		$path = $this['introducer_path'];
 
-		$q="
-				UPDATE mlm_generation_business t1
-				JOIN 
-				(
-					select 
-						distributor_id, max(length(introduced_path)) ml
-					from  
-						mlm_generation_business 
-					WHERE
-						LEFT ( '$path' , LENGTH( introduced_path )) = introduced_path
-					GROUP BY distributor_id
-				) t2 on t1.distributor_id=t2.distributor_id
-				SET
-					bv_sum = bv_sum + $bv_points,
-					month_bv = month_bv + $bv_points
-				WHERE
-						LEFT ( '$path' , LENGTH( t1.introduced_path )) = t1.introduced_path
-						AND ml = LENGTH( t1.introduced_path )
-
-		";
-		$this->api->db->dsql($this->api->db->dsql()->expr($q))->execute();
-
-
-		$path = $this['path'];
 		$q="
 				UPDATE mlm_distributor d
+				Inner Join 
+				(SELECT 
+					id,
+					introducer_path,
+					LEFT('$path',LENGTH(introducer_path)) desired,
+				 FROM mlm_distributor 
+				 HAVING
+				 desired=introducer_path
+				 ) rights on rights.id = d.id
 				SET
+					month_bv = month_bv + $bv_points,
 					quarter_bv_saved = quarter_bv_saved + $bv_points
-				WHERE 
-					LEFT('$path',LENGTH(path)) = path;
 		";
+
 		$this->api->db->dsql($this->api->db->dsql()->expr($q))->execute();
 
 	}

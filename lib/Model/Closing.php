@@ -126,80 +126,52 @@ class Model_Closing extends \xepan\hr\Model_Document {
 	function monthlyClosing($closing_id,$on_date,$calculate_loyalty=false){
 		if(!$on_date) $on_date = $this->app->now;
 		$this->weeklyClosing($closing_id,$on_date);
-		// add re-purchase bonus & generation income to this payout rows
-		// update distributor with A/B legs from bv table ((max) & (All-max))
-		$q="UPDATE 
-				mlm_payout p
-				JOIN mlm_distributor d on p.distributor_id = d.distributor_id
-			SET 
-				generation_a_business = IFNULL((select max(bv_sum) from mlm_generation_business bv_table where bv_table.distributor_id = p.distributor_id ),0),
-				generation_b_business = IFNULL(((select sum(bv_sum) from mlm_generation_business bv_table where bv_table.distributor_id = d.distributor_id ) - (select max(bv_sum) from mlm_generation_business bv_table where bv_table.distributor_id = d.distributor_id )),0),
-				generation_month_business = IFNULL((SELECT sum(month_bv) from mlm_generation_business bv_table WHERE bv_table.distributor_id = d.distributor_id)  ,0) + IFNULL(d.month_self_bv,0)
-			WHERE 
-				d.greened_on is not null AND
-				closing_date = '$on_date'
 
-				";
-		$this->query($q);
-
-		// save actual business before 60-40 and adding self bv in weeker leg
-
-			
-			$q="UPDATE 
-					mlm_payout p
-				SET 
-					actual_generation_a_business = generation_a_business,
-					actual_generation_b_business = generation_b_business
-				WHERE 
-					closing_date = '$on_date'
-					";
-			$this->query($q);
-
-		// what if 60% ratio is not maintained ?? 
-		// TODO
-
-		// add self bv in weeker leg
+		// update month generation bv = sum(month_bv) of my intros
 		$q="
-			UPDATE
-				mlm_payout p 
+			UPDATE mlm_payout p
 			SET
-				generation_a_business = generation_a_business + (IF(generation_a_business <= generation_b_business AND generation_b_business > 0 ,month_self_bv,0)),
-				generation_b_business = generation_b_business + (IF(generation_b_business <  generation_a_business,month_self_bv,0))
+				p.generation_month_business = IFNULL((SELECT SUM(month_bv) FROM  mlm_distributor d WHERE p.distributor_id = d.introducer_id),0)
+				p.capped_month_business = IFNULL((SELECT SUM(month_bv) FROM  mlm_distributor d WHERE p.distributor_id = d.introducer_id),0)
 			WHERE
-				closing_date = '$on_date'
+				p.closing_date='$on_date';
 		";
 		$this->query($q);
 
-		// if any leg is above 60% cap it to 60% business
-
-		if($this->app->getConfig('include_60_40',true)){
-			$q="
-				UPDATE
-					mlm_payout p
-				SET
-					generation_a_business = IF(generation_a_business > ((generation_a_business+generation_b_business)*60/100),((generation_a_business+generation_b_business)*60/100),generation_a_business),
-					generation_b_business = IF(generation_b_business > ((generation_a_business+generation_b_business)*60/100),((generation_a_business+generation_b_business)*60/100),generation_b_business)
-				WHERE
-					closing_date='$on_date'
-			";
-			$this->query($q);
-		}
-
-		// update rank 
-		// TODO : Do not degrade rank due to this 60:40.. maintain hiegher rank
 		$ranks = $this->add('xavoc\mlm\Model_RePurchaseBonusSlab');
-
 		foreach ($ranks as $row) {
 			$rank_id = $row->id;
+			// try to get next rank first
+			$next_rank = $this->add('xavoc\mlm\Model_RePurchaseBonusSlab');
+			$next_rank->addCondition('slab_percentage','>',$row['slab_percentage']);
+			$next_rank->tryLoadAny();
+			// if next rank available 
+			if($next_rank->loaded()){
+				// set capped_month_business = sum(monthbv/nextslab_target*.6 whicever is lesser)
+				$next_target = $next_rank['to_bv']*0.6;
+				$q="
+					UPDATE
+						mlm_payout p
+					SET
+						p.capped_month_business = IFNULL((SELECT SUM(IF(month_bv<$next_target,month_bv,$next_target)) FROM  mlm_distributor d WHERE p.distributor_id = d.introducer_id),0)
+					WHERE
+						p.closing_date='$on_date';
+				";
+				$this->query($q);
+				// test if eligible for next rank
+					// set rank and slab percentage in payout and distributor as well
+			}
+
+			// give commission of actual month business as per slab rank percentage
 			$q = "
 				UPDATE
 					mlm_payout p
 					JOIN mlm_distributor d on p.distributor_id = d.distributor_id
 				SET 
-					p.rank = (select name from mlm_re_purchase_bonus_slab WHERE p.generation_month_business > from_bv AND p.generation_month_business <= to_bv),
-					p.slab_percentage = IFNULL((select slab_percentage from mlm_re_purchase_bonus_slab WHERE p.generation_month_business > from_bv AND p.generation_month_business <= to_bv),0),
+					p.rank = (select name from mlm_re_purchase_bonus_slab WHERE p.capped_month_business > from_bv AND p.capped_month_business <= to_bv),
+					p.slab_percentage = IFNULL((select slab_percentage from mlm_re_purchase_bonus_slab WHERE p.capped_month_business > from_bv AND p.capped_month_business <= to_bv),0),
 					d.current_rank = p.rank,
-					d.current_rank_id = (select id from mlm_re_purchase_bonus_slab WHERE p.generation_month_business > from_bv AND p.generation_month_business <= to_bv)
+					d.current_rank_id = (select id from mlm_re_purchase_bonus_slab WHERE p.capped_month_business > from_bv AND p.capped_month_business <= to_bv)
 				WHERE
 					(d.current_rank_id < $rank_id OR d.current_rank_id is null) AND
 					closing_date = '$on_date'

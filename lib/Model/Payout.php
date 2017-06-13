@@ -20,11 +20,8 @@ class Model_Payout extends \xepan\base\Model_Table {
 		$this->addField('rank');
 		$this->addField('slab_percentage')->type('number');
 
-		$this->addField('actual_generation_a_business')->type('int');
-		$this->addField('actual_generation_b_business')->type('int');
-		$this->addField('generation_a_business')->type('int');
-		$this->addField('generation_b_business')->type('int');
 		$this->addField('generation_month_business')->type('int');
+		$this->addField('capped_month_business')->type('int');
 		$this->addField('re_purchase_income_gross')->type('int');
 
 		$this->addField('repurchase_bonus')->type('money');

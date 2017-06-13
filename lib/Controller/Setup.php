@@ -81,15 +81,15 @@ class Controller_Setup extends \AbstractController {
 			}
 
 			$re_purchase_slab = [
-				['name'=>null,			'slab_percentage'=>0,	'from_bv'=>0, 		'to_bv'=>200],
-				['name'=>'Star',		'slab_percentage'=>5,	'from_bv'=>201, 	'to_bv'=>10000],
-				['name'=>'Yellow Star',	'slab_percentage'=>10,	'from_bv'=>10001, 	'to_bv'=>35000],
-				['name'=>'Orange Star',	'slab_percentage'=>15,	'from_bv'=>35001, 	'to_bv'=>100000],
-				['name'=>'Red Star',	'slab_percentage'=>20,	'from_bv'=>100001, 	'to_bv'=>250000],
-				['name'=>'Purpule Star','slab_percentage'=>25,	'from_bv'=>250001, 	'to_bv'=>500000],
-				['name'=>'Green Star',	'slab_percentage'=>30,	'from_bv'=>500001, 	'to_bv'=>2500000],
-				['name'=>'Brown Star',	'slab_percentage'=>35,	'from_bv'=>2500001, 'to_bv'=>5000000],
-				['name'=>'Blue Star',	'slab_percentage'=>40,	'from_bv'=>5000001, 'to_bv'=>5000000000],
+				['name'=>null,			'slab_percentage'=>0,	'from_bv'=>0, 		'to_bv'=>200		,'required_60_percentage'=>0],
+				['name'=>'Star',		'slab_percentage'=>5,	'from_bv'=>201, 	'to_bv'=>10000		,'required_60_percentage'=>1],
+				['name'=>'Yellow Star',	'slab_percentage'=>10,	'from_bv'=>10001, 	'to_bv'=>35000		,'required_60_percentage'=>1],
+				['name'=>'Orange Star',	'slab_percentage'=>15,	'from_bv'=>35001, 	'to_bv'=>100000		,'required_60_percentage'=>1],
+				['name'=>'Red Star',	'slab_percentage'=>20,	'from_bv'=>100001, 	'to_bv'=>250000		,'required_60_percentage'=>1],
+				['name'=>'Purpule Star','slab_percentage'=>25,	'from_bv'=>250001, 	'to_bv'=>500000		,'required_60_percentage'=>1],
+				['name'=>'Green Star',	'slab_percentage'=>30,	'from_bv'=>500001, 	'to_bv'=>2500000	,'required_60_percentage'=>1],
+				['name'=>'Brown Star',	'slab_percentage'=>35,	'from_bv'=>2500001, 'to_bv'=>5000000	,'required_60_percentage'=>1],
+				['name'=>'Blue Star',	'slab_percentage'=>40,	'from_bv'=>5000001, 'to_bv'=>5000000000	,'required_60_percentage'=>1],
 			];
 
 			foreach ($re_purchase_slab as $row) {
