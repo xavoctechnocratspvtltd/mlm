@@ -561,18 +561,19 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 	}
 
 	function updateTopupHistoryAttachment(){
-		
+
 		$attch = $this->add('xavoc\mlm\Model_Attachment');
-		$attch->loadBy('distributor_id',$this->id);
+		$attch->addCondition('distributor_id',$this->id);
+		$attch->tryLoadAny();
 
 		$t = $this->add('xavoc\mlm\Model_TopupHistory');
 		$t->addCondition('distributor_id',$this->id);
 		$t->setOrder('id','desc');
 		$t->tryLoadAny();
 
-		$t['cheque_deposite_receipt_image_id'] = $attch['cheque_deposite_receipt_image_id'];
-		$t['dd_deposite_receipt_image_id'] = $attch['dd_deposite_receipt_image_id'];
-		$t['office_receipt_image_id'] = $attch['office_receipt_image_id'];
+		$t['cheque_deposite_receipt_image_id'] = $attch['cheque_deposite_receipt_image_id']?:0;
+		$t['dd_deposite_receipt_image_id'] = $attch['dd_deposite_receipt_image_id']?:0;
+		$t['office_receipt_image_id'] = $attch['office_receipt_image_id']?:0;
 		$t->save();
 	}
 

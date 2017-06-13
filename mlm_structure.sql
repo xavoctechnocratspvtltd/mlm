@@ -232,8 +232,11 @@ CREATE TABLE `mlm_re_purchase_bonus_slab` (
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 
 
-
+-- alert table and new query
 ALTER TABLE `mlm_attachment` ADD `office_receipt_image_id` INT(11) NULL;
+ALTER TABLE `mlm_distributor` ADD `deposite_in_office_narration` text;
+ALTER TABLE `mlm_distributor` ADD `sale_order_id` INT(11) NULL;
+
 
 DROP TABLE IF EXISTS `mlm_topup_history`;
 CREATE TABLE `mlm_topup_history` (
