@@ -29,7 +29,7 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 
 		$dist_j->hasOne('xavoc\mlm\Left','left_id')->display(['form'=>'xepan\base\DropDownNormal']);
 		$dist_j->hasOne('xavoc\mlm\Right','right_id')->display(['form'=>'xepan\base\DropDownNormal']);
-		$dist_j->hasOne('xavoc\mlm\RePurchaseBonusSlab','current_rank_id');
+		$dist_j->hasOne('xavoc\mlm\RePurchaseBonusSlab','current_rank_id')->defaultValue($this->add('xavoc\mlm\Model_RePurchaseBonusSlab')->loadBy('slab_percentage',0)->get('id'));
 
 		$dist_j->addField('path')->type('text');
 		$dist_j->addField('introducer_path')->type('text');
@@ -68,6 +68,7 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 
 		// monthly session
 		$dist_j->addField('month_self_bv')->type('int')->defaultValue(0);
+		$dist_j->addField('total_self_bv')->type('int')->defaultValue(0);
 		$dist_j->addField('month_bv')->type('int')->defaultValue(0);
 		$dist_j->addField('total_month_bv')->type('int')->defaultValue(0);
 		$dist_j->addField('quarter_bv_saved')->type('int')->defaultValue(0);
@@ -557,6 +558,7 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 		$this['sv'] = $kit['sv'];
 
 		$this['month_self_bv'] = $this['month_self_bv']+$kit['bv'];
+		$this['total_self_bv'] = $this['total_self_bv']+$kit['bv'];
 		// $this['month_bv'] = $this['month_bv']+$kit['bv'];
 		// $this['total_month_bv'] = $this['total_month_bv']+$kit['bv'];
 		// $this['quarter_bv_saved'] = $this['quarter_bv_saved']+$kit['bv'];
@@ -590,6 +592,7 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 
 	function repurchase($bv){
 		$this['month_self_bv'] = $this['month_self_bv'] + $bv;
+		$this['total_self_bv'] = $this['total_self_bv'] + $bv;
 		
 		// $this['month_bv'] = $this['month_bv'] + $bv;
 		// $this['total_month_bv'] = $this['total_month_bv'] + $bv;

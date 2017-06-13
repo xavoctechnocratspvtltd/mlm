@@ -137,38 +137,56 @@ class Model_Closing extends \xepan\base\Model_Table {
 											,
 				p.generation_total_business = IFNULL((SELECT SUM(total_month_bv) FROM  mlm_distributor d WHERE p.distributor_id = d.introducer_id),0)
 											+
-											IFNULL((SELECT month_self_bv FROM mlm_distributor d WHERE d.distributor_id=p.distributor_id) ,0)
+											IFNULL((SELECT total_self_bv FROM mlm_distributor d WHERE d.distributor_id=p.distributor_id) ,0)
 											,
 				p.capped_total_business = 	IFNULL((SELECT SUM(total_month_bv) FROM  mlm_distributor d WHERE p.distributor_id = d.introducer_id),0)
 											+
-											IFNULL((SELECT month_self_bv FROM mlm_distributor d WHERE d.distributor_id=p.distributor_id) ,0)
+											IFNULL((SELECT total_self_bv FROM mlm_distributor d WHERE d.distributor_id=p.distributor_id) ,0)
 			WHERE
 				p.closing_date='$on_date';
 		";
 		$this->query($q);
 
+		$debug_60_40=false;
+
+		// use of tempp to check if some rank is already failed
+		$this->query('UPDATE mlm_distributor SET temp=0');
+
 		$ranks = $this->add('xavoc\mlm\Model_RePurchaseBonusSlab');
+		$previous_rank=0;
 		foreach ($ranks as $row) {
 			$rank_id = $row->id;
+			$rank_name = $row['name'];
+			$rank_slab_percentage = $row['slab_percentage'];
+			$rank_from_bv = $row['from_bv'];
 			// try to get next rank first
 			$next_rank = $this->add('xavoc\mlm\Model_RePurchaseBonusSlab');
 			$next_rank->addCondition('slab_percentage','>',$row['slab_percentage']);
 			$next_rank->tryLoadAny();
+			if($debug_60_40) echo "checking $rank_name ($rank_id) - $rank_slab_percentage % <br/>";
+			if($debug_60_40) echo $next_rank['slab_percentage'].'<br/>';
 			// if next rank available 
-			if($next_rank->loaded() && $next_rank['required_60_percentage']){
+			if($next_rank->loaded() && $next_rank['required_60_percentage'] && $this->app->getConfig('include_60_40',true)){
 				// set capped_month_business = sum(monthbv/nextslab_target*.6 whicever is lesser)
-				$next_target = $next_rank['to_bv']*0.6;
+				if($debug_60_40) echo "in capping test</br/>";
+				$next_target = $next_rank['from_bv']*0.6;
+				$next_from = $next_rank['from_bv'];
+				$next_to = $next_rank['to_bv'];
 				$q="
 					UPDATE
 						mlm_payout p
 					JOIN mlm_distributor d on p.distributor_id=d.distributor_id
 					SET
 						p.capped_total_business = IFNULL((SELECT SUM(IF(total_month_bv<$next_target,total_month_bv,$next_target)) FROM  mlm_distributor d WHERE p.distributor_id = d.introducer_id),0)
-						+ IFNULL(d.month_self_bv ,0)
+						+ IFNULL(IF(d.total_self_bv<$next_target,d.total_self_bv,$next_target) ,0)
 					WHERE
-						d.current_rank_id = $rank_id AND
+						d.current_rank_id = $previous_rank AND
+						p.capped_total_business >= $rank_from_bv AND
 						p.closing_date='$on_date';
 				";
+
+				if($debug_60_40) echo $q .'<br/>';
+
 				$this->query($q);
 			}
 
@@ -177,18 +195,22 @@ class Model_Closing extends \xepan\base\Model_Table {
 					mlm_payout p
 					JOIN mlm_distributor d on p.distributor_id = d.distributor_id
 				SET 
-					p.rank = (select name from mlm_re_purchase_bonus_slab WHERE p.capped_total_business > from_bv AND p.capped_total_business <= to_bv),
-					p.slab_percentage = IFNULL((select slab_percentage from mlm_re_purchase_bonus_slab WHERE p.capped_total_business > from_bv AND p.capped_total_business <= to_bv),0),
-					d.current_rank = p.rank,
-					d.current_rank_id = (select id from mlm_re_purchase_bonus_slab WHERE p.capped_total_business > from_bv AND p.capped_total_business <= to_bv)
+					p.rank = '$rank_name',
+					p.slab_percentage = $rank_slab_percentage,
+					d.current_rank_id = $rank_id
 				WHERE
-					(d.current_rank_id < $rank_id OR d.current_rank_id is null) AND
+					p.capped_total_business >= $rank_from_bv AND
 					closing_date = '$on_date'
 				";
+			if($debug_60_40) echo $q.'<br/>';
+
+			$this->query($q);
+
+			$previous_rank= $rank_id;
 		}
 		
+		// if($debug_60_40) exit;
 
-		$this->query($q);
 
 		// generate commission as per slab
 		$q="
@@ -233,6 +255,19 @@ class Model_Closing extends \xepan\base\Model_Table {
 				closing_date = '$on_date'
 		";
 
+		$this->query($q);
+
+		// make negative difference to zero ??? Is this okay.. I doubt
+		// but doing as company said .. but this is totally looks business of loss
+		$q="
+			UPDATE
+				mlm_payout
+			SET
+				repurchase_bonus=0
+			WHERE
+				repurchase_bonus < 0 AND
+				closing_date = '$on_date'
+		";
 		$this->query($q);
 
 		if(!$this->app->getConfig('skipzero_for_testing',false)){
