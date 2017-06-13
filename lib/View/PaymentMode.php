@@ -109,6 +109,9 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 			if(!$cheque_form['cheque_date']) $cheque_form->error('cheque_date','must not be empty');
 
 			$attachment['cheque_deposite_receipt_image_id'] = $cheque_form['cheque_deposite_receipt_image_id'];
+			$attachment['dd_deposite_receipt_image_id'] = 0;
+			$attachment['office_receipt_image_id'] = 0;
+
 			$attachment->save();
 
 			$result = $this->placeOrder($kit_model->id);
@@ -142,6 +145,9 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 			if(!$dd_form['dd_date']) $dd_form->error('dd_date','must not be empty');
 			
 			$attachment['dd_deposite_receipt_image_id'] = $dd_form['dd_deposite_receipt_image_id'];
+			$attachment['cheque_deposite_receipt_image_id'] = 0;
+			$attachment['office_receipt_image_id'] = 0;
+
 			$attachment->save();
 			// $dd_form->update();
 			$result = $this->placeOrder($kit_model->id);
@@ -169,6 +175,8 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 			if(!$form['office_receipt_image_id']) $form->error('office_receipt_image_id','must not be empty');
 
 			$attachment['office_receipt_image_id'] = $form['office_receipt_image_id'];
+			$attachment['dd_deposite_receipt_image_id'] = 0;
+			$attachment['cheque_deposite_receipt_image_id'] = 0;
 			$attachment->save();
 
 			$result = $this->placeOrder($kit_model->id);
