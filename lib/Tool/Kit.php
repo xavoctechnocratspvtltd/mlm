@@ -22,7 +22,6 @@ class Tool_Kit extends \xepan\cms\View_Tool{
 
 		$this->addClass('ds-kitlist main-box');
 		$layout_template = "kitlist";
-		$this->complete_lister = $cl = $this->add('CompleteLister',null,null,['xavoc/tool/'.$layout_template]);
 
 		// check distributor
 		if($this->options['check_distributor']){
@@ -32,11 +31,12 @@ class Tool_Kit extends \xepan\cms\View_Tool{
 				return "distributor not found";
 			}
 			if($distributor['kit_item_id'] ){
-				$cl->add('View',null,'heading')->set("Update Your Topup")->addClass('text-center bg bg-info');
+				$this->add('View')->set("Update Your Topup")->addClass('text-center bg bg-info');
 			}
 		}
 
 
+		$this->complete_lister = $cl = $this->add('CompleteLister',null,null,['xavoc/tool/'.$layout_template]);
 		$kit_model = $this->add('xavoc\mlm\Model_Kit');
 		$kit_model->addCondition('status','Published');
 
