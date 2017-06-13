@@ -428,6 +428,7 @@ class Model_Closing extends \xepan\hr\Model_Document {
 		$q="
 			UPDATE
 				mlm_payout p
+				JOIN mlm_distributor d on p.distributor_id=d.distributor_id
 			SET
 				carried_amount = gross_payment,
 				tds=0,
@@ -436,7 +437,9 @@ class Model_Closing extends \xepan\hr\Model_Document {
 			WHERE
 				(
 					month_self_bv < 500 OR
-					net_payment < 500
+					net_payment < 500 OR
+					d.is_document_verified = 0 OR
+					d.is_document_verified is null
 				) AND
 
 				closing_date='$on_date'

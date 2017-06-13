@@ -496,6 +496,7 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 		$this->app->employee
 		->addActivity("Distributor ".$this['name']." purchase a kit( ".$this['kit_item']." ) and waiting for payment verification")
 		->notifyWhoCan(['PaymentVerified'],'KitPaid',$this);
+		
 		$this->save();
 
 		$this->updateTopupHistory();
