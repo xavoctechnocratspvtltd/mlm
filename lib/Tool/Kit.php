@@ -21,6 +21,8 @@ class Tool_Kit extends \xepan\cms\View_Tool{
 		parent::init();
 
 		$this->addClass('ds-kitlist main-box');
+		$layout_template = "kitlist";
+		$this->complete_lister = $cl = $this->add('CompleteLister',null,null,['xavoc/tool/'.$layout_template]);
 
 		// check distributor
 		if($this->options['check_distributor']){
@@ -29,10 +31,8 @@ class Tool_Kit extends \xepan\cms\View_Tool{
 			if(!$distributor->loaded()){
 				return "distributor not found";
 			}
-			if($distributor['kit_item_id']){
-				$this->add('View')->set("Kit Purchased");
-				$this->add('Button')->set('Go To DashBoard')->js('click')->redirect($this->app->url('dashboard'));
-				return;
+			if($distributor['kit_item_id'] ){
+				$cl->add('View',null,'heading')->set("Update Your Topup")->addClass('text-center bg bg-info');
 			}
 		}
 
@@ -40,8 +40,6 @@ class Tool_Kit extends \xepan\cms\View_Tool{
 		$kit_model = $this->add('xavoc\mlm\Model_Kit');
 		$kit_model->addCondition('status','Published');
 
-		$layout_template = "kitlist";
-		$this->complete_lister = $cl = $this->add('CompleteLister',null,null,['xavoc/tool/'.$layout_template]);
 		$cl->setModel($kit_model);
 		$paginator = $cl->add('Paginator',['ipp'=>$this->options['paginator_set_rows_per_page']]);
 		$paginator->setRowsPerPage($this->options['paginator_set_rows_per_page']);
