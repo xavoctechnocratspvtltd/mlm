@@ -8,14 +8,6 @@ namespace xavoc\mlm;
 */
 class Model_Distributor_Actions extends \xavoc\mlm\Model_Distributor
 {
-	public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
-	public $actions = [
-				'Red'=>['view','edit','delete'],
-				'KitSelected'=>['view','edit','delete','verifyPayment','verifyDocument','Document'],
-				'KitPaid'=>['view','edit','delete','verifyPayment','verifyDocument','markGreen'],
-				'Green'=>['view','edit','delete','Document','verifyDocument'],
-				'Blocked'=>['view','edit','delete','Unblocked']
-				];
 	
 	function init(){
 		parent::init();

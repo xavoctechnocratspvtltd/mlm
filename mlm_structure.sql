@@ -231,4 +231,37 @@ CREATE TABLE `mlm_re_purchase_bonus_slab` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 
+
+-- alert table and new query
+ALTER TABLE `mlm_attachment` ADD `office_receipt_image_id` INT(11) NULL;
+ALTER TABLE `mlm_distributor` ADD `deposite_in_office_narration` text;
+ALTER TABLE `mlm_distributor` ADD `sale_order_id` INT(11) NULL;
+
+
+DROP TABLE IF EXISTS `mlm_topup_history`;
+CREATE TABLE `mlm_topup_history` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `distributor_id` int(11) DEFAULT NULL,
+  `kit_item_id` int(11) DEFAULT NULL,
+  `bv` varchar(255) DEFAULT NULL,
+  `pv` varchar(255) DEFAULT NULL,
+  `sv` varchar(255) DEFAULT NULL,
+  `capping` varchar(255) DEFAULT NULL,
+  `cheque_deposite_receipt_image_id` int(10) unsigned DEFAULT NULL,
+  `dd_deposite_receipt_image_id` int(10) unsigned DEFAULT NULL,
+  `office_receipt_image_id` int(10) unsigned DEFAULT NULL,
+  `payment_narration` text,
+  `created_at` datetime DEFAULT NULL,
+  `sale_order_id` varchar(255) DEFAULT NULL,
+  `introduction_income` varchar(255) DEFAULT NULL,
+  `sale_price` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_distributor_id` (`distributor_id`),
+  KEY `fk_kit_item_id` (`kit_item_id`),
+  KEY `fk_cheque_deposite_receipt_image_id` (`cheque_deposite_receipt_image_id`),
+  KEY `fk_dd_deposite_receipt_image_id` (`dd_deposite_receipt_image_id`),
+  KEY `fk_office_receipt_image_id` (`office_receipt_image_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
+
+
 SET FOREIGN_KEY_CHECKS = 1;

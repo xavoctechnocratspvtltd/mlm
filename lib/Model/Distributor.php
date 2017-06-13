@@ -8,9 +8,9 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 	public $actions = [
 				'Red'=>['view','edit','delete'],
-				'KitSelected'=>['view','edit','delete','verifyPayment','Document'],
-				'KitPaid'=>['view','edit','delete','verifyPayment','markGreen'],
-				'Green'=>['view','edit','delete','Document'],
+				'KitSelected'=>['view','edit','delete','verifyPayment','verifyDocument','Document'],
+				'KitPaid'=>['view','edit','delete','verifyPayment','verifyDocument','markGreen'],
+				'Green'=>['view','edit','delete','Document','verifyDocument'],
 				'Blocked'=>['view','edit','delete','Unblocked']
 				];
 				
@@ -94,7 +94,7 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 
 		// payment mode fields
 		// for online payment
-		$dist_j->addField('payment_mode')->enum(['online','cash','cheque','dd','deposite_in_franchies']);
+		$dist_j->addField('payment_mode')->enum(['online','cash','cheque','dd','deposite_in_franchies','deposite_in_company']);
 		$dist_j->addField('transaction_reference');
 		$dist_j->addField('transaction_detail');
 		// cash field
@@ -106,9 +106,11 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 		$dist_j->addField('cheque_date');
 		$dist_j->addField('dd_date');
 		$dist_j->addField('is_payment_verified')->type('boolean')->defaultValue(false);
+		$dist_j->addField('deposite_in_office_narration')->type('text');
 		// $dist_j->addField('current_rank');
-		$dist_j->addField('is_document_verified')->type('boolean')->defaultValue(false);
-		
+		$dist_j->addField('is_document_verified')->type('boolean');
+		$dist_j->addField('sale_order_id');
+
 		$this->hasMany('xavoc\mlm\GenerationBusiness','distributor_id');
 		$this->hasMany('xavoc\mlm\Attachment','distributor_id');
 		
@@ -488,14 +490,38 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 
 		$this['kit_item_id']= $kit_id;
 		$this['status'] = "KitSelected";
-
+		
 		$this->app->employee
 		->addActivity("Distributor ".$this['name']." purchase a kit( ".$this['kit_item']." ) and waiting for payment verification")
 		->notifyWhoCan(['PaymentVerified'],'KitPaid',$this);
 		
 		$this->save();
+
+		$this->updateTopupHistory();
 	}
 
+	function updateTopupHistory(){
+			
+		$kit = $this->add('xavoc\mlm\Model_Kit')->load($this['kit_item_id']);
+
+		$top_his = $this->add('xavoc\mlm\Model_TopupHistory');
+
+		$top_his['distributor_id'] = $this['id'];
+		$top_his['kit_item_id'] = $this['kit_item_id'];
+		$top_his['sale_order_id'] = $this['sale_order_id'];
+
+		$top_his['bv'] = $this['bv'];
+		$top_his['pv'] = $this['pv'];
+		$top_his['sv'] = $this['sv'];
+		$top_his['capping'] = $this['capping'];
+		$top_his['introduction_income'] = $kit['introduction_income'];
+		$top_his['sale_price'] = $kit['sale_price'];
+
+		// $top_his['cheque_deposite_receipt_image_id'] = $this->attachment['cheque_deposite_receipt_image_id'];
+		// $top_his['dd_deposite_receipt_image_id'] = $this->attachment['dd_deposite_receipt_image_id'];
+		// $top_his['office_receipt_image_id'] = $this->attachment['office_receipt_image_id'];
+		$top_his->save();
+	}
 	function kitPaid(){
 		$this['status'] = "KitPaid";
 
@@ -528,7 +554,26 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 		$this->updateAnsestorsSV($this['sv']);
 		$this->updateAnsestorsBV($this['bv']);
 		if($introducer  = $this->introducer()) $introducer->addSessionIntro($kit['introducer_income']);
+		
+		$this->updateTopupHistoryAttachment();
 		$this->sendMailGreenDistributor();
+	}
+
+	function updateTopupHistoryAttachment(){
+
+		$attch = $this->add('xavoc\mlm\Model_Attachment');
+		$attch->addCondition('distributor_id',$this->id);
+		$attch->tryLoadAny();
+
+		$t = $this->add('xavoc\mlm\Model_TopupHistory');
+		$t->addCondition('distributor_id',$this->id);
+		$t->setOrder('id','desc');
+		$t->tryLoadAny();
+
+		$t['cheque_deposite_receipt_image_id'] = $attch['cheque_deposite_receipt_image_id']?:0;
+		$t['dd_deposite_receipt_image_id'] = $attch['dd_deposite_receipt_image_id']?:0;
+		$t['office_receipt_image_id'] = $attch['office_receipt_image_id']?:0;
+		$t->save();
 	}
 
 	function repurchase($bv){

@@ -13,7 +13,7 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 			$this->add('View_Warning')->set('kit id not found')->addClass('alert alert-warning');
 		}
 
-		$kit_model = $this->add('xavoc\mlm\Model_Kit')->load($this->kit_id);
+		$this->kit_model = $kit_model = $this->add('xavoc\mlm\Model_Kit')->load($this->kit_id);
 
 		$this->distributor = $distributor = $this->add('xavoc\mlm\Model_Distributor');
 		$distributor->loadLoggedIn();
@@ -22,16 +22,25 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 		}
 
 		if($distributor['kit_item_id']){
-			$this->add('View_Info')->set('you have a kit or you purchased it');
-			return;
+			$this->add('View_Info')->set('you are updating your topup')->addClass('alert alert-info');
+		}
+
+		$this->attachment = $attachment = $this->add('xavoc\mlm\Model_Attachment');
+		$attachment->addCondition('distributor_id',$distributor->id);
+		$attachment->setOrder('id','desc');
+		$attachment->tryLoadAny();
+
+		if($attachment->count()->getOne() > 1){
+			$this->add('View')->set('more the two attachment row found, some thing wrong')->addClass('alert alert-danger');
+			return ;
 		}
 
 		$tabs = $this->add('Tabs');
 		$online_tab = $tabs->addTab('Online');
-		$cash_tab = $tabs->addTab('Cash');
+		// $cash_tab = $tabs->addTab('Cash');
 		$cheque_tab = $tabs->addTab('Cheque');
 		$dd_tab = $tabs->addTab('Demand Draft');
-		$df_tab = $tabs->addTab('Deposite in Franchies');
+		$df_tab = $tabs->addTab('Deposite in Franchies \ Company');
 
 		$online_pay_btn = $online_tab->add('Button')->set("pay via online")->addClass('btn btn-primary');
 		if($online_pay_btn->isClicked()){
@@ -49,29 +58,31 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 			}
 		}
 
-		$cash_form = $cash_tab->add('Form');
-		$cash_form->addSubmit('Due');
-		if($cash_form->isSubmitted()){
+		// $cash_form = $cash_tab->add('Form');
+		// $cash_form->addSubmit('Due');
+		// if($cash_form->isSubmitted()){
 
-			$distributor['payment_mode'] = "cash";
-			$distributor->purchaseKit($kit_model);
+		// 	$distributor['payment_mode'] = "cash";
+		// 	$distributor->purchaseKit($kit_model);
 
-			$cash_form->js(null,$cash_form->js()->univ()->closeDialog())->univ()->errorMessage('Cash Deposite')->execute();
-		}
-
-		$attachment = $this->add('xavoc\mlm\Model_Attachment');
-		$attachment->addCondition('distributor_id',$distributor->id);
+		// 	$cash_form->js(null,$cash_form->js()->univ()->closeDialog())->univ()->errorMessage('Cash Deposite')->execute();
+		// }
 
 		$cheque_form = $cheque_tab->add('Form');
 		$cheque_form->addField('bank_name')->validate('required');
 		$cheque_form->addField('bank_ifsc_code')->validate('required');
 		$cheque_form->addField('cheque_number')->validate('required');
 		$cheque_form->addField('DatePicker','cheque_date')->validate('required');
+
 		$cheque_form->setModel($attachment,['cheque_deposite_receipt_image_id']);
 		$cheque_form->addSubmit('Submit');
 		
 		if($cheque_form->isSubmitted()){
+			
 			$cheque_form->update();
+
+			$result = $this->placeOrder($kit_model->id);
+			if($result['status'] == "failed") throw new \Exception($result['message']);
 
 			$distributor['payment_mode'] = "cheque";
 			$distributor['kit_id'] = $cheque_form['bank_name'];
@@ -85,15 +96,24 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 		}
 
 		$dd_form = $dd_tab->add('Form');
-		$dd_form->addField('bank_name');
-		$dd_form->addField('bank_ifsc_code');
-		$dd_form->addField('dd_number');
-		$dd_form->addField('DatePicker','dd_date');
-		$dd_form->setModel($attachment,['dd_deposite_receipt_image_id']);
+		$dd_form->addField('bank_name')->validate('required');
+		$dd_form->addField('bank_ifsc_code')->validate('required');
+		$dd_form->addField('dd_number')->validate('required');
+		$dd_form->addField('DatePicker','dd_date')->validate('required');
+
+		$field = $dd_form->addField('Upload','dd_deposite_receipt_image_id');
+		$field->setModel('xepan\filestore\File');
+
+		// $dd_form->setModel($attachment,['dd_deposite_receipt_image_id']);
 		$dd_form->addSubmit('Submit');
 		if($dd_form->isSubmitted()){
-
-			$dd_form->update();
+			if(!$form['dd_deposite_receipt_image_id']) $form->error('dd_deposite_receipt_image_id','must not be empty');
+			
+			$attachment['dd_deposite_receipt_image_id'] = $form['dd_deposite_receipt_image_id'];
+			$attachment->save();
+			// $dd_form->update();
+			$result = $this->placeOrder($kit_model->id);
+			if($result['status'] == "failed") throw new \Exception($result['message']);
 
 			$distributor['payment_mode'] = "dd";
 			$distributor['bank_name'] = $dd_form['bank_name'];
@@ -102,28 +122,56 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 			$distributor['cheque_date'] = $dd_form['cheque_date'];
 			$distributor->purchaseKit($kit_model);
 
-			$dd_form->js(null,$dd->js()->univ()->closeDialog())->univ()->successMessage('DD detail submitted')->execute();
+			$dd_form->js(null,$dd_form->js()->univ()->closeDialog())->univ()->successMessage('DD detail submitted')->execute();
 		}
 
+		$form = $df_tab->add('Form');
+		$field = $form->addField('Upload','office_receipt_image_id');
+		$field->setModel('xepan\filestore\File');
+
+		$form->addField('text','narration');
+		$form->addField('checkbox','deposite_in_company');
+		$form->addSubmit('Submit')->addClass('btn btn-primary');
+
+		if($form->isSubmitted()){
+			if(!$form['office_receipt_image_id']) $form->error('office_receipt_image_id','must not be empty');
+
+			$attachment['office_receipt_image_id'] = $form['office_receipt_image_id'];
+			$attachment->save();
+
+			$result = $this->placeOrder($kit_model->id);
+			if($result['status'] == "failed") throw new \Exception($result['message']);
+			
+			$distributor['payment_mode'] = $form['deposite_in_company']?'deposite_in_company':'deposite_in_franchies';
+			$distributor['deposite_in_office_narration'] = $form['narration'];
+			$distributor['sale_order_id'] = $result['order_id'];
+			$distributor->purchaseKit($kit_model);
+			
+			$form->js(null,$form->js()->univ()->closeDialog())->univ()->successMessage('Detail Submitted')->execute();
+		}
 	}
+	
 
 	function placeOrder($kit_id){
-
-		$result = ['status'=>'failed','message'=>'some thing gone wrong'];
+		
+		$updating_kit = true;
+		if($this->distributor['kit_item_id']) $updating_kit = true;
+				
+		$result = ['status'=>'failed','message'=>'some thing went wrong'];
 
 		$kit_model = $this->add('xavoc\mlm\Model_Kit');
 		$kit_model->tryLoad($kit_id);
 		if(!$kit_model->loaded())
 			throw new \Exception("kit not found", 1);
 			
-		$distributor = $this->add('xavoc\mlm\Model_Distributor');
-		$distributor->loadLoggedIn();
-
+		// $distributor = $this->add('xavoc\mlm\Model_Distributor');
+		// $distributor->loadLoggedIn();
+		$distributor = $this->distributor;
 		// return to login page
 		if(!$distributor->loaded()){
 			return ['status'=>'failed','message'=>'distributor not loaded'];
 		}
-
+		
 		try{
 
 			//Load Default TNC
@@ -168,10 +216,20 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 				$tax_percentage = 0;
 			}
 
+
+			$sale_price = $kit_model['sale_price'];
+			if($updating_kit){
+				$t = $this->add('xavoc\mlm\Model_TopupHistory');
+				$t->addCondition('distributor_id',$distributor->id);
+				$t->setOrder('id','desc');
+				$t->tryLoadAny();
+				$sale_price = $sale_price - $t['sale_price'];
+			}
+
 			$qty_unit_id = $kit_model['qty_unit_id'];
 			$item = [
 				'item_id'=>$kit_model->id,
-				'price'=>$kit_model['sale_price'],
+				'price'=>$sale_price,
 				'quantity' => 1,
 				'taxation_id' => $taxation_id,
 				'tax_percentage' => $tax_percentage,

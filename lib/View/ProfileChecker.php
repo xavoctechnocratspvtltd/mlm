@@ -42,7 +42,9 @@ class View_ProfileChecker extends \xepan\cms\View_Tool{
 		if(!$distributor['kit_item_id']){
 			$this->add('Button',null,'kit_info')->set('Purchase Kit Now')->addClass('btn btn-warning btn-block alert')->js('click')->univ()->redirect($this->app->url($this->options['kit_purchase_page']));
 		}else{
-			$this->add('View_Box',null,'kit_info')->setHTML('<i class="glyphicon glyphicon-ok"></i> Your Startup Package is <b>'.$distributor['kit_item']."</b>")->addClass('alert alert-success');
+			$view_box = $this->add('View',null,'kit_info');
+			$view_box->add('Button')->set('Update Topup')->addClass('btn btn-warning btn-sm')->js('click')->univ()->redirect($this->app->url($this->options['kit_purchase_page']));
+			$view_box->setHTML('<i class="glyphicon glyphicon-ok"></i> Your Topup is <b>'.$distributor['kit_item']."</b><br/>")->addClass('alert alert-success');
 		}
 		
 		if(!$distributor['attachment_count']){

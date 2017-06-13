@@ -18,7 +18,11 @@ class Model_Attachment extends \xepan\base\Model_Table {
 		
 		$this->add('xepan\filestore\Field_Image','cheque_deposite_receipt_image_id');//->caption('Upload Your Aadhar Card');
 		$this->add('xepan\filestore\Field_Image','dd_deposite_receipt_image_id');//->caption('Upload Your Aadhar Card');
+		$this->add('xepan\filestore\Field_Image','office_receipt_image_id');//->caption('Upload Your Aadhar Card');
+			
+		// payment narration is used in verify payment process
 		$this->addField('payment_narration')->type('text');
+
 
 	}
 }
