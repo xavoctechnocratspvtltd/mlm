@@ -104,7 +104,7 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 			$distributor['cheque_date'] = $cheque_form['cheque_date'];
 			$distributor->purchaseKit($kit_model);
 
-			$cheque_form->js(null,$cheque_form->js()->univ()->closeDialog())->univ()->successMessage('cheque detail submitted')->execute();
+			$cheque_form->js(null,$cheque_form->js()->redirect($this->app->url('dashboard')))->univ()->successMessage('cheque detail submitted')->execute();
 		}
 
 		$dd_form = $dd_tab->add('Form');
@@ -138,7 +138,7 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 			$distributor['cheque_date'] = $dd_form['cheque_date'];
 			$distributor->purchaseKit($kit_model);
 
-			$dd_form->js(null,$dd_form->js()->univ()->closeDialog())->univ()->successMessage('DD detail submitted')->execute();
+			$dd_form->js(null,$dd_form->js()->redirect($this->app->url('dashboard')))->univ()->successMessage('DD detail submitted')->execute();
 		}
 
 		$form = $df_tab->add('Form');
@@ -165,7 +165,8 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 			$distributor['sale_order_id'] = $result['order_id'];
 			$distributor->purchaseKit($kit_model);
 			
-			$form->js(null,$form->js()->univ()->closeDialog())->univ()->successMessage('Detail Submitted')->execute();
+			// $form->js()->redirect($this->app->url('dashb'))
+			$form->js(null,$form->js()->redirect($this->app->url('dashboard')))->univ()->successMessage('Detail Submitted')->execute();
 		}
 	}
 	
