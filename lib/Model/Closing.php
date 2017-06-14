@@ -110,8 +110,8 @@ class Model_Closing extends \xepan\base\Model_Table {
 		// copy all distributors in here
 		$q="
 			INSERT INTO mlm_payout
-						(id, closing_id, distributor_id,closing_date,previous_carried_amount, binary_income, introduction_amount, retail_profit,slab_percentage,month_self_bv,generation_income,loyalty_bonus,gross_payment,tds, net_payment,  carried_amount)
-				SELECT 	  0,$closing_id,distributor_id,'$on_date'  ,carried_amount         , week_pairs   , weekly_intros_amount,         0   ,          0    ,month_self_bv,      0          ,       0     ,     0       , 0 ,     0      ,        0       FROM mlm_distributor WHERE greened_on is not null
+						(id, closing_id, distributor_id,closing_date,previous_carried_amount, binary_income, introduction_amount, retail_profit		      ,slab_percentage,month_self_bv,generation_income,loyalty_bonus,gross_payment,tds, net_payment,  carried_amount)
+				SELECT 	  0,$closing_id,distributor_id,'$on_date'  ,carried_amount         , week_pairs   , weekly_intros_amount, monthly_retail_profie   ,          0    ,month_self_bv,      0          ,       0     ,     0       , 0 ,     0      ,        0       FROM mlm_distributor WHERE greened_on is not null
 		";
 		$this->query($q);
 
@@ -491,6 +491,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 		";
 		$this->query($q);
 
+
 	}
 
 	function resetMonthData($on_date=null){
@@ -499,6 +500,8 @@ class Model_Closing extends \xepan\base\Model_Table {
 		// like month_self_bv if greened_on is not null
 		$this->resetWeekData($on_date);
 		
+		$q="UPDATE mlm_distributor SET monthly_retail_profie=0";
+		$this->query($q);
 	}
 
 	function doClosing($type='daily',$on_date=null, $calculate_loyalty=false){
