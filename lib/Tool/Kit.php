@@ -39,6 +39,14 @@ class Tool_Kit extends \xepan\cms\View_Tool{
 		$this->complete_lister = $cl = $this->add('CompleteLister',null,null,['xavoc/tool/'.$layout_template]);
 		$kit_model = $this->add('xavoc\mlm\Model_Kit');
 		$kit_model->addCondition('status','Published');
+		if($distributor['kit_item_id']){
+			$last_kit = $this->add('xepan\mlm\Model_TopupHistory')
+						->addCondition('distributor_id',$distributor->id)
+						->setOrder('id','desc')
+						->tryLoadAny()
+						;
+			$kit_model->addCondition('Capping' > $last_kit['capping']);
+		}
 
 		$cl->setModel($kit_model);
 		$paginator = $cl->add('Paginator',['ipp'=>$this->options['paginator_set_rows_per_page']]);
