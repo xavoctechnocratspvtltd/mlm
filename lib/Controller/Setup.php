@@ -11,15 +11,18 @@ class Controller_Setup extends \AbstractController {
 		// truncate 
 		// contact, employee, customer, distributor, kit item, specification etc tables
 		// add new default employee
-		
+			
+		$this->add('xepan\commerce\Model_QSP_Master')->each(function($m){
+			$m->delete();
+		});
 
 		$this->add('xavoc\mlm\Model_Distributor')->each(function($m){
 			$m->delete();
 		});
-
+		
 		$this->add('xavoc\mlm\Model_Payout')->deleteAll();
 		$this->add('xavoc\mlm\Model_Closing')->deleteAll();		
-
+		
 		if($this->remove_everything){
 
 			$item =$this->add('xepan\commerce\Model_Item')->each(function($m){
@@ -52,7 +55,7 @@ class Controller_Setup extends \AbstractController {
 			$unit_group = $this->add('xepan\commerce\Model_UnitGroup')->addCondition('name','Count')->tryLoadAny()->save();
 
 			$unit = $this->add('xepan\commerce\Model_Unit')
-				->addCondition('unit_group',$unit_group->id)
+				->addCondition('unit_group_id',$unit_group->id)
 				->addCondition('name','Nos')
 				->tryLoadAny()->save();
 
@@ -207,10 +210,9 @@ class Controller_Setup extends \AbstractController {
 		$dis->tryLoadAny();
 		$dis['first_name']="Company";
 		$dis['user_id']=$user->id;
-		$dis['sponsor_id']=0;
-		$dis['introducer_id']=0;
+		$dis['sponsor_id'] = '0';
+		$dis['introducer_id'] = '0';
 		$dis['introducer_path']='0';
 		$dis->save();
-
 	}
 }
