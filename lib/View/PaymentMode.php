@@ -77,7 +77,7 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 		$cheque_form->addField('DatePicker','cheque_date')->validate('required');
 
 		$field = $cheque_form->addField('Upload','cheque_deposite_receipt_image_id');
-		$field->setModel('xepan\filestore\File');
+		$field->setModel('xepan\filestore\Image');
 		// $cheque_form->setModel($attachment,['cheque_deposite_receipt_image_id']);
 		$cheque_form->addSubmit('Submit')->addClass('btn btn-primary');
 		
@@ -114,7 +114,7 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 		$dd_form->addField('DatePicker','dd_date')->validate('required');
 
 		$field = $dd_form->addField('Upload','dd_deposite_receipt_image_id');
-		$field->setModel('xepan\filestore\File');
+		$field->setModel('xepan\filestore\Image');
 
 		// $dd_form->setModel($attachment,['dd_deposite_receipt_image_id']);
 		$dd_form->addSubmit('Submit')->addClass('btn btn-primary');
@@ -143,7 +143,7 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 
 		$form = $df_tab->add('Form');
 		$field = $form->addField('Upload','office_receipt_image_id');
-		$field->setModel('xepan\filestore\File');
+		$field->setModel('xepan\filestore\Image');
 
 		$form->addField('text','narration');
 		$form->addField('checkbox','deposite_in_company');
@@ -198,22 +198,28 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 			$tnc_id = $tnc->loaded()?$tnc['id']:0;
 			$tnc_text = $tnc['content']?$tnc['content']:"not defined";
 
+			$country_id = $distributor['billing_country_id']?:$distributor['country_id']?:0;
+			$state_id = $distributor['billing_state_id']?:$distributor['state_id']?:0;
+			$city = $distributor['billing_city']?:$distributor['city']?:"not defined";
+			$address = $distributor['billing_address']?:$distributor['address']?:"not defined";
+			$pincode = $distributor['billing_pincode']?:$distributor['pin_code']?:"not defined";
+
 			$master_detail = [
 							'contact_id' => $distributor->id,
 							'currency_id' => $distributor['currency_id']?$customer['currency_id']:$this->app->epan->default_currency->get('id'),
 							'nominal_id' => 0,
-							'billing_country_id'=> $distributor['billing_country_id']?:"0",
-							'billing_state_id'=> $distributor['billing_state_id']?:"0",
-							'billing_name'=> $distributor['billing_name']?:"not defined",
-							'billing_address'=> $distributor['billing_address']?:"not defined",
-							'billing_city'=> $distributor['billing_city']?:"not defined",
-							'billing_pincode'=> $distributor['billing_pincode']?:"not defined",
-							'shipping_country_id'=> $distributor['shipping_country_id']?:0,
-							'shipping_state_id'=> $distributor['shipping_state_id']?:0,
-							'shipping_name'=> $distributor['shipping_name']?:"not defined(name)",
-							'shipping_address'=> $distributor['shipping_address']?:"not defined",
-							'shipping_city'=> $distributor['shipping_city']?:"not defined",
-							'shipping_pincode'=> $distributor['shipping_pincode']?:"not defined",
+							'billing_country_id'=> $country_id,
+							'billing_state_id'=> $state_id,
+							'billing_name'=> $distributor['name'],
+							'billing_address'=> $address,
+							'billing_city'=> $city,
+							'billing_pincode'=> $pincode,
+							'shipping_country_id'=> $country_id,
+							'shipping_state_id'=> $state_id,
+							'shipping_name'=> $distributor['name'],
+							'shipping_address'=> $address,
+							'shipping_city'=> $city,
+							'shipping_pincode'=> $pincode,
 							'is_shipping_inclusive_tax'=> 0,
 							'is_express_shipping'=> 0,
 							'narration'=> null,
