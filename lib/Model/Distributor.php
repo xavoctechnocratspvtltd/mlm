@@ -24,12 +24,12 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 
 		$dist_j = $this->join('mlm_distributor.distributor_id');
 
-		$dist_j->hasOne('xavoc\mlm\Sponsor','sponsor_id')->display(['form'=>'xepan\base\Basic']);
-		$dist_j->hasOne('xavoc\mlm\Introducer','introducer_id')->display(['form'=>'xepan\base\Basic']);
+		$dist_j->hasOne('xavoc\mlm\Sponsor','sponsor_id')->display(['form'=>'xepan\base\Basic'])->defaultValue(0);
+		$dist_j->hasOne('xavoc\mlm\Introducer','introducer_id')->display(['form'=>'xepan\base\Basic'])->defaultValue(0);
 
 		$dist_j->hasOne('xavoc\mlm\Left','left_id')->display(['form'=>'xepan\base\DropDownNormal']);
 		$dist_j->hasOne('xavoc\mlm\Right','right_id')->display(['form'=>'xepan\base\DropDownNormal']);
-		$dist_j->hasOne('xavoc\mlm\RePurchaseBonusSlab','current_rank_id')->defaultValue($this->add('xavoc\mlm\Model_RePurchaseBonusSlab')->loadBy('slab_percentage',0)->get('id'));
+		$dist_j->hasOne('xavoc\mlm\RePurchaseBonusSlab','current_rank_id')->defaultValue($this->add('xavoc\mlm\Model_RePurchaseBonusSlab')->tryLoadBy('slab_percentage',0)->get('id'));
 
 		$dist_j->addField('path')->type('text');
 		$dist_j->addField('introducer_path')->type('text');
@@ -115,6 +115,7 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 
 		$this->hasMany('xavoc\mlm\GenerationBusiness','distributor_id');
 		$this->hasMany('xavoc\mlm\Attachment','distributor_id');
+		$this->hasMany('xavoc\mlm\TopupHistory','distributor_id');
 		
 		$this->addHook('beforeSave',array($this,'beforeSaveDistributor'),[],1);
 		$this->addHook('afterSave',array($this,'afterSaveDistributor'));
@@ -474,15 +475,17 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 	}
 
 	function beforeDeleteDistributor(){
+
 		$user_id = $this['user_id'];
 		if($user_id){
 			$this->addHook('afterDelete',function($m)use($user_id){
 				$this->add('xepan\base\Model_User')->tryLoad($user_id)->tryDelete();
 			});
 		}
-
+		
 		$this->ref('xavoc\mlm\GenerationBusiness')->deleteAll();
 
+		$this->ref('xavoc\mlm\TopupHistory')->deleteAll();
 	}
 
 	function afterInsert($obj){
@@ -516,11 +519,11 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 		$top_his['distributor_id'] = $this['id'];
 		$top_his['kit_item_id'] = $this['kit_item_id'];
 		$top_his['sale_order_id'] = $this['sale_order_id'];
-
-		$top_his['bv'] = $this['bv'];
-		$top_his['pv'] = $this['pv'];
-		$top_his['sv'] = $this['sv'];
-		$top_his['capping'] = $this['capping'];
+		
+		$top_his['pv'] = $kit['pv'];
+		$top_his['bv'] = $kit['bv'];
+		$top_his['sv'] = $kit['sv'];
+		$top_his['capping'] = $kit['capping'];
 		$top_his['introduction_income'] = $kit['introduction_income'];
 		$top_his['sale_price'] = $kit['sale_price'];
 
