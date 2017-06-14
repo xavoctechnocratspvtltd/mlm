@@ -22,28 +22,6 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 		}
 
 		if($distributor['kit_item_id']){
-			// $t = $this->add('xavoc\mlm\Model_TopupHistory');
-			// $t->addCondition('distributor_id',$distributor->id);
-			// $t->setOrder('id','desc');
-			// $t->tryLoadAny();
-			// if($t->loaded()){
-			// 	$d1 = strtotime($this->app->today);
-			// 	$d2 = strtotime($t['created_at']);
-
-			// 	$diff_secs = abs($d1 - $d2);
-	  //           $base_year = min(date("Y", $d1), date("Y", $d2));
-			// 	$diff = mktime(0, 0, $diff_secs, 1, 1, $base_year);
-	  //           $days = date("j", $diff) - 1;
-
-	  //           $limit = $this->app->getConfig('update_topup_duration',30);
-			// 	if($days > $limit){
-			// 		$this->add('View_Warning')->set('Your duration for updating topup is expired ')->addClass('alert alert-warning');
-			// 		return;
-			// 	}
-			// }
-
-			// $diff = date_diff(date('Y-m-d',strtotime($this->app->today)),date('Y-m-d',strtotime($t['created_at'])));
-
 			$this->add('View_Info')->set('you are updating your topup')->addClass('alert alert-info');
 		}
 
@@ -99,7 +77,7 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 		$cheque_form->addField('DatePicker','cheque_date')->validate('required');
 
 		$field = $cheque_form->addField('Upload','cheque_deposite_receipt_image_id');
-		$field->setModel('xepan\filestore\File');
+		$field->setModel('xepan\filestore\Image');
 		// $cheque_form->setModel($attachment,['cheque_deposite_receipt_image_id']);
 		$cheque_form->addSubmit('Submit')->addClass('btn btn-primary');
 		
@@ -126,7 +104,7 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 			$distributor['cheque_date'] = $cheque_form['cheque_date'];
 			$distributor->purchaseKit($kit_model);
 
-			$cheque_form->js(null,$cheque_form->js()->univ()->closeDialog())->univ()->successMessage('cheque detail submitted')->execute();
+			$cheque_form->js(null,$cheque_form->js()->redirect($this->app->url('dashboard')))->univ()->successMessage('cheque detail submitted')->execute();
 		}
 
 		$dd_form = $dd_tab->add('Form');
@@ -136,7 +114,7 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 		$dd_form->addField('DatePicker','dd_date')->validate('required');
 
 		$field = $dd_form->addField('Upload','dd_deposite_receipt_image_id');
-		$field->setModel('xepan\filestore\File');
+		$field->setModel('xepan\filestore\Image');
 
 		// $dd_form->setModel($attachment,['dd_deposite_receipt_image_id']);
 		$dd_form->addSubmit('Submit')->addClass('btn btn-primary');
@@ -160,12 +138,12 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 			$distributor['cheque_date'] = $dd_form['cheque_date'];
 			$distributor->purchaseKit($kit_model);
 
-			$dd_form->js(null,$dd_form->js()->univ()->closeDialog())->univ()->successMessage('DD detail submitted')->execute();
+			$dd_form->js(null,$dd_form->js()->redirect($this->app->url('dashboard')))->univ()->successMessage('DD detail submitted')->execute();
 		}
 
 		$form = $df_tab->add('Form');
 		$field = $form->addField('Upload','office_receipt_image_id');
-		$field->setModel('xepan\filestore\File');
+		$field->setModel('xepan\filestore\Image');
 
 		$form->addField('text','narration');
 		$form->addField('checkbox','deposite_in_company');
@@ -187,14 +165,15 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 			$distributor['sale_order_id'] = $result['order_id'];
 			$distributor->purchaseKit($kit_model);
 			
-			$form->js(null,$form->js()->univ()->closeDialog())->univ()->successMessage('Detail Submitted')->execute();
+			// $form->js()->redirect($this->app->url('dashb'))
+			$form->js(null,$form->js()->redirect($this->app->url('dashboard')))->univ()->successMessage('Detail Submitted')->execute();
 		}
 	}
 	
 
 	function placeOrder($kit_id){
 		
-		$updating_kit = true;
+		$updating_kit = false;
 		if($this->distributor['kit_item_id']) $updating_kit = true;
 				
 		$result = ['status'=>'failed','message'=>'some thing went wrong'];
@@ -219,22 +198,28 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 			$tnc_id = $tnc->loaded()?$tnc['id']:0;
 			$tnc_text = $tnc['content']?$tnc['content']:"not defined";
 
+			$country_id = $distributor['billing_country_id']?:$distributor['country_id']?:0;
+			$state_id = $distributor['billing_state_id']?:$distributor['state_id']?:0;
+			$city = $distributor['billing_city']?:$distributor['city']?:"not defined";
+			$address = $distributor['billing_address']?:$distributor['address']?:"not defined";
+			$pincode = $distributor['billing_pincode']?:$distributor['pin_code']?:"not defined";
+
 			$master_detail = [
 							'contact_id' => $distributor->id,
 							'currency_id' => $distributor['currency_id']?$customer['currency_id']:$this->app->epan->default_currency->get('id'),
 							'nominal_id' => 0,
-							'billing_country_id'=> $distributor['billing_country_id']?:"0",
-							'billing_state_id'=> $distributor['billing_state_id']?:"0",
-							'billing_name'=> $distributor['billing_name']?:"not defined",
-							'billing_address'=> $distributor['billing_address']?:"not defined",
-							'billing_city'=> $distributor['billing_city']?:"not defined",
-							'billing_pincode'=> $distributor['billing_pincode']?:"not defined",
-							'shipping_country_id'=> $distributor['shipping_country_id']?:0,
-							'shipping_state_id'=> $distributor['shipping_state_id']?:0,
-							'shipping_name'=> $distributor['shipping_name']?:"not defined(name)",
-							'shipping_address'=> $distributor['shipping_address']?:"not defined",
-							'shipping_city'=> $distributor['shipping_city']?:"not defined",
-							'shipping_pincode'=> $distributor['shipping_pincode']?:"not defined",
+							'billing_country_id'=> $country_id,
+							'billing_state_id'=> $state_id,
+							'billing_name'=> $distributor['name'],
+							'billing_address'=> $address,
+							'billing_city'=> $city,
+							'billing_pincode'=> $pincode,
+							'shipping_country_id'=> $country_id,
+							'shipping_state_id'=> $state_id,
+							'shipping_name'=> $distributor['name'],
+							'shipping_address'=> $address,
+							'shipping_city'=> $city,
+							'shipping_pincode'=> $pincode,
 							'is_shipping_inclusive_tax'=> 0,
 							'is_express_shipping'=> 0,
 							'narration'=> null,
@@ -259,31 +244,27 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 
 			$sale_price = $kit_model['sale_price'];
 			if($updating_kit){
-				// $t = $this->add('xavoc\mlm\Model_TopupHistory');
-				// $t->addCondition('distributor_id',$distributor->id);
-				// $t->setOrder('id','desc');
-				// $t->tryLoadAny();
-				// if($t->loaded()){
-				// 	$d1 = strtotime($this->app->today);
-				// 	$d2 = strtotime($t['created_at']);
-
-				// 	$diff_secs = abs($d1 - $d2);
-		  //           $base_year = min(date("Y", $d1), date("Y", $d2));
-				// 	$diff = mktime(0, 0, $diff_secs, 1, 1, $base_year);
-		  //           $days = date("j", $diff) - 1;
-
-		  //           $limit = $this->app->getConfig('update_topup_duration',30);
-				// 	if($days > $limit){
-				// 		$this->add('View_Warning')->set('Your duration for updating topup is expired ')->addClass('alert alert-warning');
-				// 		return;
-				// 	}
-				// }
-				
 				$t = $this->add('xavoc\mlm\Model_TopupHistory');
 				$t->addCondition('distributor_id',$distributor->id);
 				$t->setOrder('id','desc');
 				$t->tryLoadAny();
-				$sale_price = $sale_price - $t['sale_price'];
+				if($t->loaded()){
+					$d1 = strtotime($this->app->today);
+					$d2 = strtotime($t['created_at']);
+
+					$diff_secs = abs($d1 - $d2);
+		            $base_year = min(date("Y", $d1), date("Y", $d2));
+					$diff = mktime(0, 0, $diff_secs, 1, 1, $base_year);
+		            $days_diff = date("j", $diff) - 1;
+		            $limit = $this->app->getConfig('update_topup_duration',30);
+					// 30 > 20
+					// 30 > 40
+					if($limit > $days_diff){
+						$sale_price = $sale_price - $t['sale_price'];
+						if($sale_price < 0)
+							$sale_price = 0;
+					}
+				}
 			}
 
 			$qty_unit_id = $kit_model['qty_unit_id'];

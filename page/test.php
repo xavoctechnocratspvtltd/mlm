@@ -24,9 +24,10 @@ class page_test extends \xepan\base\Page {
 			$form->js(null,$v->js()->reload())->univ()->successMessage("send ")->execute();
 		}
 
-		$grid = $this->add('Grid');
-		$grid->setModel($this->add('xavoc\mlm\Model_Distributor_Genology'));
+		// $grid = $this->add('Grid');
+		// $grid->setModel($this->add('xavoc\mlm\Model_Distributor_Genology'));
 
+		$this->add('CRUD')->setModel('xavoc\mlm\Model_Attachment');
 
 	}
 }

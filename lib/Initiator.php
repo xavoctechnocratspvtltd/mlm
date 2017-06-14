@@ -38,6 +38,14 @@ class Initiator extends \Controller_Addon {
     }
 
     function setup_frontend(){
+
+       $this->app->addHook('login_panel_user_loggedin',function($app,$user){
+            $m = $this->add('xavoc\mlm\Model_Distributor');
+            $m->loadLoggedIn();
+            if($m->loaded()){
+                $this->app->redirect($this->app->url('dashboard'));
+            }
+       });
         
         $this->app->exportFrontEndTool('xavoc\mlm\Tool_Register','MLM');
       
@@ -55,5 +63,4 @@ class Initiator extends \Controller_Addon {
 	        $this->app->exportFrontEndTool('xavoc\mlm\Tool_DistributorMenu','MLM');
         return $this;
     }
-
 }

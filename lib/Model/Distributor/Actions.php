@@ -45,13 +45,13 @@ class Model_Distributor_Actions extends \xavoc\mlm\Model_Distributor
 		}
 		$attachment = $page->add('xavoc\mlm\Model_Attachment')->addCondition('distributor_id',$this->id);
 		$attachment->tryLoadAny();
-
 		$form = $page->add('Form');
 		$form->addField('payment_mode')->set($this['payment_mode'])->setAttr('disabled',true);
 
 		$col = $form->add('Columns')->addClass('row');
-		$col1 = $col->addColumn(6)->addClass('col-md-6 col-sm-12 col-lg-6 col-xs-12');
-		$col2 = $col->addColumn(6)->addClass('col-md-6 col-sm-12 col-lg-6 col-xs-12');
+		$col1 = $col->addColumn(4)->addClass('col-md-4 col-sm-12 col-lg-4 col-xs-12');
+		$col2 = $col->addColumn(4)->addClass('col-md-4 col-sm-12 col-lg-4 col-xs-12');
+		$col3 = $col->addColumn(4)->addClass('col-md-4 col-sm-12 col-lg-4 col-xs-12');
 
 		$col1->add('View_Info')->addClass('alert alert-info')->set('Online Transaction Detail');
 		$col1->addField('online_transaction_reference')->set($this['transaction_reference'])->setAttr('disabled',true);
@@ -69,6 +69,12 @@ class Model_Distributor_Actions extends \xavoc\mlm\Model_Distributor
 		
 		if($attachment['dd_deposite_receipt_image_id'])
 			$col2->add('View')->addClass('col-lg-6 col-md-6 col-sm-12 col-xs-12')->setHtml('<label>DD Deposite Receipt Image</label><br/><a target="_blank" style="width:200px;" href="'.$attachment['dd_deposite_receipt_image'].'"><img style="width:200px;" src="'.$attachment['dd_deposite_receipt_image'].'"/></a>');
+
+		$col3->add('View_Info')->addClass('alert alert-info')->set('Office/ franchise Deposite');
+		$col3->addField('text','deposite_in_office_narration')->set($this['deposite_in_office_narration'])->setAttr('disabled',true);			
+
+		if($attachment['office_receipt_image_id'])
+			$col3->add('View')->addClass('col-lg-12 col-md-12 col-sm-12 col-xs-12')->setHtml('<label>Office / Franchise Deposite Receipt Image</label><br/><a target="_blank" style="width:200px;" href="'.$attachment['office_receipt_image'].'"><img style="width:200px;" src="'.$attachment['office_receipt_image'].'"/></a>');		
 
 		$form->setModel($attachment,['payment_narration']);
 		$form->addSubmit('Verify Payment')->addClass('btn btn-primary btn-block');
