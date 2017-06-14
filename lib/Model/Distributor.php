@@ -72,8 +72,7 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 		$dist_j->addField('month_bv')->type('int')->defaultValue(0);
 		$dist_j->addField('total_month_bv')->type('int')->defaultValue(0);
 		$dist_j->addField('quarter_bv_saved')->type('int')->defaultValue(0);
-		$dist_j->addField('monthly_left_dp_mrp_diff')->type('int')->defaultValue(0);
-		$dist_j->addField('monthly_right_dp_mrp_diff')->type('int')->defaultValue(0);
+		$dist_j->addField('monthly_retail_profie')->type('int')->defaultValue(0);
 		
 		// ==== Moved to payout to maintain history as much as possible ====
 		// $dist_j->addField('rank');
