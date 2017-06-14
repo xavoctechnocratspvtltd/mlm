@@ -229,8 +229,30 @@ class Model_Closing extends \xepan\base\Model_Table {
 
 			$previous_rank= $rank_id;
 		}
+
+		$this->query("UPDATE mlm_payout SET effective_business = capped_total_business WHERE closing_date='$on_date'");
 		
 		// if($debug_60_40) exit;
+		// $q="
+		// 	UPDATE
+		// 		mlm_payout p 
+		// 		JOIN mlm_distributor d on p.distributor_id=d.distributor_id
+		// 	SET
+		// 		effective_business = IFNULL((
+		// 						select 
+		// 							sum(intros_payout.generation_month_business) 
+		// 						from 
+		// 							(select * from mlm_payout where closing_date='$on_date') intros_payout 
+		// 						JOIN mlm_distributor intros on intros_payout.distributor_id=intros.distributor_id 
+		// 						WHERE 
+		// 							intros_payout.slab_percentage > p.slab_percentage AND
+		// 							intros.introducer_id=p.distributor_id
+		// 						),0)
+								
+		// 	WHERE 
+		// 		p.closing_date='$on_date'
+		// ";
+		// $this->query($q);
 
 
 		// generate commission as per slab
@@ -238,7 +260,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 			UPDATE 
 				mlm_payout
 			SET 
-				re_purchase_income_gross = (generation_month_business)* slab_percentage/100
+				re_purchase_income_gross = (effective_business)* slab_percentage/100
 			WHERE
 				closing_date = '$on_date'
 
@@ -253,6 +275,19 @@ class Model_Closing extends \xepan\base\Model_Table {
 			$q="UPDATE mlm_distributor SET month_self_bv=0";
 			$this->query($q);
 		}
+
+
+		$this->query('UPDATE mlm_distributor SET temp=0');
+		$q="
+			UPDATE 
+				mlm_distributor d 
+			JOIN mlm_payout p  on d.distributor_id = p.distributor_id 
+			SET 
+				temp = p.re_purchase_income_gross
+			WHERE
+				p.closing_date='$on_date'
+			";
+		$this->query($q);
 
 		// find difference from introducer downline path
 		$q="
@@ -271,6 +306,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 										JOIN mlm_distributor intros  on intros.distributor_id = intros_payout.distributor_id
 										WHERE
 											intros.introducer_id = d.distributor_id 
+										AND intros.temp < p.re_purchase_income_gross
 									),0)
 			WHERE
 				closing_date = '$on_date'
