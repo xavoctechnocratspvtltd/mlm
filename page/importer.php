@@ -124,7 +124,7 @@ class page_importer extends \xepan\base\Page {
 					$data['d_bank_ifsc_code'] = $old_dis['ifsccode'];
 					$data['pan_no'] = $old_dis['panno'];
 
-					$data['username'] = $old_dis['Member_Username'].rand(1,1000);
+					$data['username'] = $old_dis['Member_Username'];
 					$data['password'] = $old_dis['password'];
 
 					if($old_dis['leftpoint'] > $old_dis['rightpoint']){
