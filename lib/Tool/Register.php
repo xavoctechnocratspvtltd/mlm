@@ -38,9 +38,13 @@ class Tool_Register extends \xepan\cms\View_Tool{
 
 		$form->addField('username')->validate('required|email');
 		$form->addField('password','password')->validate('required');	
+		$form->addField('password','retype_password')->validate('required');	
 		$form->addSubmit('Register')->addClass(' btn btn-primary btn-block');
 		
 		if($form->isSubmitted()){
+
+			if($form['password'] !== $form['retype_password'])
+				$form->displayError('retype_password','Password Not Match');
 
 			try{
 				$this->api->db->beginTransaction();
