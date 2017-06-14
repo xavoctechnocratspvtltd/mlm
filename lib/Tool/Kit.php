@@ -22,7 +22,7 @@ class Tool_Kit extends \xepan\cms\View_Tool{
 
 		$this->addClass('ds-kitlist main-box');
 		$layout_template = "kitlist";
-
+		
 		// check distributor
 		if($this->options['check_distributor']){
 			$this->distributor = $distributor = $this->add('xavoc\mlm\Model_Distributor');
@@ -36,18 +36,23 @@ class Tool_Kit extends \xepan\cms\View_Tool{
 		}
 
 
-		$this->complete_lister = $cl = $this->add('CompleteLister',null,null,['xavoc/tool/'.$layout_template]);
 		$kit_model = $this->add('xavoc\mlm\Model_Kit');
+		$kit_model->addExpression('capping_int')->set(function($m,$q){
+			return $q->expr('CAST([0] AS SIGNED)',[$m->getElement('capping')]);
+		});
+
 		$kit_model->addCondition('status','Published');
+
 		if($distributor['kit_item_id']){
-			$last_kit = $this->add('xepan\mlm\Model_TopupHistory')
+			$last_kit = $this->add('xavoc\mlm\Model_TopupHistory')
 						->addCondition('distributor_id',$distributor->id)
 						->setOrder('id','desc')
 						->tryLoadAny()
 						;
-			$kit_model->addCondition('Capping' > $last_kit['capping']);
+			$kit_model->addCondition('capping_int','>',$last_kit['capping']);
 		}
 
+		$this->complete_lister = $cl = $this->add('CompleteLister',null,null,['xavoc/tool/'.$layout_template]);
 		$cl->setModel($kit_model);
 		$paginator = $cl->add('Paginator',['ipp'=>$this->options['paginator_set_rows_per_page']]);
 		$paginator->setRowsPerPage($this->options['paginator_set_rows_per_page']);
@@ -60,8 +65,7 @@ class Tool_Kit extends \xepan\cms\View_Tool{
 		}
 
 		$cl->add('xepan\cms\Controller_Tool_Optionhelper',['options'=>$this->options,'model'=>$kit_model]);
-
-
+		
 		$vp = $this->add('VirtualPage');
 		$vp->set(function($vp){
 			$vp->app->stickyGET('kit_id');
