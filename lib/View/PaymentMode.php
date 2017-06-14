@@ -150,7 +150,7 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 		$form->addSubmit('Submit')->addClass('btn btn-primary');
 
 		if($form->isSubmitted()){
-			if(!$form['office_receipt_image_id']) $form->error('office_receipt_image_id','must not be empty');
+			// if(!$form['office_receipt_image_id']) $form->error('office_receipt_image_id','must not be empty');
 
 			$attachment['office_receipt_image_id'] = $form['office_receipt_image_id'];
 			$attachment['dd_deposite_receipt_image_id'] = 0;
