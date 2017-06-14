@@ -11,7 +11,7 @@
  Target Server Version : 100118
  File Encoding         : utf-8
 
- Date: 06/14/2017 11:04:25 AM
+ Date: 06/14/2017 11:12:37 AM
 */
 
 SET NAMES utf8;
@@ -61,7 +61,7 @@ CREATE TABLE `mlm_distributor` (
   `right_id` int(11) DEFAULT NULL,
   `pin_id` int(11) DEFAULT NULL,
   `path` text,
-  `introducer_path` text,
+  `introducer_path` longtext,
   `side` varchar(2) DEFAULT NULL,
   `kit_item_id` int(11) DEFAULT NULL,
   `capping` int(11) DEFAULT NULL,

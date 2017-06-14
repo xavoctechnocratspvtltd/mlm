@@ -29,7 +29,7 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 
 		$dist_j->hasOne('xavoc\mlm\Left','left_id')->display(['form'=>'xepan\base\DropDownNormal']);
 		$dist_j->hasOne('xavoc\mlm\Right','right_id')->display(['form'=>'xepan\base\DropDownNormal']);
-		$dist_j->hasOne('xavoc\mlm\RePurchaseBonusSlab','current_rank_id')->defaultValue($this->add('xavoc\mlm\Model_RePurchaseBonusSlab')->loadBy('slab_percentage',0)->get('id'));
+		$dist_j->hasOne('xavoc\mlm\RePurchaseBonusSlab','current_rank_id')->defaultValue($this->add('xavoc\mlm\Model_RePurchaseBonusSlab')->tryLoadBy('slab_percentage',0)->get('id'));
 
 		$dist_j->addField('path')->type('text');
 		$dist_j->addField('introducer_path')->type('text');
@@ -558,9 +558,10 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 
 		$this['month_self_bv'] = $this['month_self_bv']+$kit['bv'];
 		$this['total_self_bv'] = $this['total_self_bv']+$kit['bv'];
-		// $this['month_bv'] = $this['month_bv']+$kit['bv'];
-		// $this['total_month_bv'] = $this['total_month_bv']+$kit['bv'];
-		// $this['quarter_bv_saved'] = $this['quarter_bv_saved']+$kit['bv'];
+
+		if($this->app->getConfig('retail_profit_on_kit_purchase',false)){
+			$this['monthly_retail_profie'] = $this['monthly_retail_profie'] + ($kit['sale_price'] - $kit['dp']);
+		}
 
 		$this->save();
 		

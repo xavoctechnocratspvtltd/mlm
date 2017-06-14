@@ -81,6 +81,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 			SET
 				day_pairs = IF(day_left_sv > day_right_sv, day_right_sv ,day_left_sv ),
 				day_pairs = IF(day_left_sv = day_right_sv AND day_left_sv <> 0 AND day_left_sv <= capping, day_pairs - $pair_pv ,day_pairs),
+				day_pairs = day_pairs*10/100,
 				day_pairs = IF(day_pairs >= capping, capping, day_pairs),
 				week_pairs = week_pairs + day_pairs
 			WHERE greened_on is not null
@@ -110,9 +111,11 @@ class Model_Closing extends \xepan\base\Model_Table {
 		// copy all distributors in here
 		$q="
 			INSERT INTO mlm_payout
-						(id, closing_id, distributor_id,closing_date,previous_carried_amount, binary_income, introduction_amount, retail_profit		      ,slab_percentage,month_self_bv,generation_income,loyalty_bonus,gross_payment,tds, net_payment,  carried_amount)
-				SELECT 	  0,$closing_id,distributor_id,'$on_date'  ,carried_amount         , week_pairs   , weekly_intros_amount, monthly_retail_profie   ,          0    ,month_self_bv,      0          ,       0     ,     0       , 0 ,     0      ,        0       FROM mlm_distributor WHERE greened_on is not null
+						(id, closing_id, distributor_id,closing_date,previous_carried_amount, binary_income, introduction_amount, retail_profit,slab_percentage,month_self_bv,generation_income,loyalty_bonus,gross_payment,tds, net_payment,  carried_amount)
+				SELECT 	  0,$closing_id,distributor_id,'$on_date'  ,carried_amount         , week_pairs   , weekly_intros_amount,      0       ,          0    ,month_self_bv,      0          ,       0     ,     0       , 0 ,     0      ,        0       FROM mlm_distributor 
 		";
+				// WHERE greened_on is not null
+
 		$this->query($q);
 
 		// make weekly figures zero
@@ -126,6 +129,24 @@ class Model_Closing extends \xepan\base\Model_Table {
 	function monthlyClosing($closing_id,$on_date,$calculate_loyalty=false){
 		if(!$on_date) $on_date = $this->app->now;
 		$this->weeklyClosing($closing_id,$on_date);
+
+		// retail_profit 
+
+		$q="
+			UPDATE
+				mlm_payout p
+			JOIN mlm_distributor d on p.distributor_id=d.distributor_id
+			SET
+				p.retail_profit = d.monthly_retail_profie
+			WHERE
+				p.closing_date = '$on_date'
+		";
+		$this->query($q);
+
+		// reset in distributor table
+		$q="UPDATE mlm_distributor SET monthly_retail_profie=0";
+		$this->query($q);
+
 
 		// update month generation bv = sum(month_bv) of my intros
 		$q="
@@ -178,7 +199,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 					JOIN mlm_distributor d on p.distributor_id=d.distributor_id
 					SET
 						p.capped_total_business = IFNULL((SELECT SUM(IF(total_month_bv<$next_target,total_month_bv,$next_target)) FROM  mlm_distributor d WHERE p.distributor_id = d.introducer_id),0)
-						+ IFNULL(IF(d.total_self_bv<$next_target,d.total_self_bv,$next_target) ,0)
+						+ IFNULL(d.total_self_bv,0)
 					WHERE
 						d.current_rank_id = $previous_rank AND
 						p.capped_total_business >= $rank_from_bv AND
@@ -259,16 +280,18 @@ class Model_Closing extends \xepan\base\Model_Table {
 
 		// make negative difference to zero ??? Is this okay.. I doubt
 		// but doing as company said .. but this is totally looks business of loss
-		$q="
-			UPDATE
-				mlm_payout
-			SET
-				repurchase_bonus=0
-			WHERE
-				repurchase_bonus < 0 AND
-				closing_date = '$on_date'
-		";
-		$this->query($q);
+		if($this->app->getConfig('make_negative_difference_to_zero',true)){
+			$q="
+				UPDATE
+					mlm_payout
+				SET
+					repurchase_bonus=0
+				WHERE
+					repurchase_bonus < 0 AND
+					closing_date = '$on_date'
+			";
+			$this->query($q);
+		}
 
 		if(!$this->app->getConfig('skipzero_for_testing',false)){
 			// Generation Income
@@ -276,35 +299,61 @@ class Model_Closing extends \xepan\base\Model_Table {
 			$this->query("UPDATE mlm_distributor d JOIN mlm_payout p  ON d.distributor_id = p.distributor_id SET d.temp=p.repurchase_bonus WHERE p.closing_date='$on_date'");
 		}
 
+
+		/*
+		SELECT 
+p.distributor_id,
+(	select 
+		sum(repurchase_bonus) 
+	from (select * from mlm_payout) pi 
+	join mlm_distributor d1 on pi.distributor_id=d1.distributor_id
+	join mlm_distributor d2 on d1.introducer_id = d2.distributor_id
+-- 	join mlm_distributor d3 on d2.introducer_id = d1.distributor_id
+	where d2.introducer_id = d.distributor_id
+)
+
+from 
+	mlm_payout p
+	JOIN mlm_distributor d on p.distributor_id=d.distributor_id
+WHERE
+	
+	d.current_rank_id >= 30
+AND	p.closing_date = "2017-05-18 00:00:00"	
+
+		*/
 		$slabs = $this->add('xavoc\mlm\Model_GenerationIncomeSlab');
 		foreach ($slabs as $row) {
 			
 			$field='generation_';
 			$rank=$row['name'];
+			$rank_id= $row['rank_id'];
 			
 			for($i=1;$i<=7;$i++){
 				$ques="";
-				$ques = str_pad($ques, $i,'_');
 				$per = $row[$field.$i];
 				if($row[$field.$i]>0){
 					$q="
 						UPDATE 
-							mlm_payout p
-						JOIN mlm_distributor d on p.distributor_id=d.distributor_id
-						SET
-							generation_income_$i = 
-												IFNULL((
-													SELECT 
-														SUM(temp) as repurchase_bonus 
-													FROM
-														mlm_distributor intros 
-													WHERE
-														intros.introducer_path like CONCAT(d.path,'$ques')
-												)*$per/100,0)
+						mlm_payout p
+					JOIN mlm_distributor d on p.distributor_id= d.distributor_id
+					SET
+					p.generation_income_$i = 
+						(	
+						SELECT 
+							IFNULL(sum(repurchase_bonus)*$per/100 ,0)
+						FROM (select * from mlm_payout) pi
+						JOIN mlm_distributor d1 on pi.distributor_id=d1.distributor_id
+						"; 
+						for ($j=2; $j <= $i; $j++) { 
+							$q.=(" join mlm_distributor d$j on d$j.distributor_id=d".($j-1).".introducer_id ");
+						}
+						$q.="
+							where d$i.introducer_id = d.distributor_id
+						)
 						WHERE
-							p.rank = '$rank' AND
-							closing_date='$on_date'
-					";
+							d.current_rank_id = $rank_id
+							AND	p.closing_date = '$on_date'	
+						";
 					// echo $q.'<br/>';
 					$this->query($q);
 					
@@ -464,18 +513,20 @@ class Model_Closing extends \xepan\base\Model_Table {
 		$this->query($q);
 
 		// add this carried amount in distributor for previous_carried_amount for next closing
-		$q="
-			UPDATE
-				mlm_distributor d
-			JOIN mlm_payout p on d.distributor_id = p.distributor_id
-			SET
-				d.carried_amount = d.carried_amount + p.carried_amount
-			WHERE
-				p.carried_amount is not null AND 
-				p.carried_amount > 0 AND
-				p.closing_date='$on_date'
-		";
-		$this->query($q);
+		if($this->app->getConfig('remove_zero_income',true)){
+			$q="
+				UPDATE
+					mlm_distributor d
+				JOIN mlm_payout p on d.distributor_id = p.distributor_id
+				SET
+					d.carried_amount = d.carried_amount + p.carried_amount
+				WHERE
+					p.carried_amount is not null AND 
+					p.carried_amount > 0 AND
+					p.closing_date='$on_date'
+			";
+			$this->query($q);
+		}
 
 		// non green not in payout but how to carry paris
 		// non min purchase persons amount or min payout amount to carryied .. make tds admin etc zero 
@@ -499,9 +550,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 		// set fields zero in distributor 
 		// like month_self_bv if greened_on is not null
 		$this->resetWeekData($on_date);
-		
-		$q="UPDATE mlm_distributor SET monthly_retail_profie=0";
-		$this->query($q);
+	
 	}
 
 	function doClosing($type='daily',$on_date=null, $calculate_loyalty=false){
