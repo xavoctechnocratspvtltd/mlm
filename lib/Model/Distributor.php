@@ -545,8 +545,8 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 	function markGreen($on_date=null){
 		if(!$on_date) $on_date =  $this->app->now;
 		
-		if($this['greened_on'])
-			throw $this->exception('Distributor has already been green on '. $this['greened_on']);
+		// if($this['greened_on'])
+		// 	throw $this->exception('Distributor has already been green on '. $this['greened_on']);
 		
 		$this['greened_on'] = $on_date;
 		$this['status'] = "Green";
@@ -561,9 +561,10 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 
 		$this['month_self_bv'] = $this['month_self_bv']+$kit['bv'];
 		$this['total_self_bv'] = $this['total_self_bv']+$kit['bv'];
-		// $this['month_bv'] = $this['month_bv']+$kit['bv'];
-		// $this['total_month_bv'] = $this['total_month_bv']+$kit['bv'];
-		// $this['quarter_bv_saved'] = $this['quarter_bv_saved']+$kit['bv'];
+
+		if($this->app->getConfig('retail_profit_on_kit_purchase',false)){
+			$this['monthly_retail_profie'] = $this['monthly_retail_profie'] + ($kit['sale_price'] - $kit['dp']);
+		}
 
 		$this->save();
 		
