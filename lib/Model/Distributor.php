@@ -7,7 +7,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 	public $actions = [
-				'Red'=>['view','edit','delete'],
+				'Red'=>['view','edit','delete','adminVerify'],
 				'KitSelected'=>['view','edit','delete','verifyPayment','verifyDocument','Document'],
 				'KitPaid'=>['view','edit','delete','verifyPayment','verifyDocument','markGreen'],
 				'Green'=>['view','edit','delete','Document','verifyDocument'],
@@ -25,7 +25,7 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 		$dist_j = $this->join('mlm_distributor.distributor_id');
 
 		$dist_j->hasOne('xavoc\mlm\Sponsor','sponsor_id')->display(['form'=>'xepan\base\Basic'])->defaultValue(0);
-		$dist_j->hasOne('xavoc\mlm\Introducer','introducer_id')->display(['form'=>'xepan\base\Basic'])->defaultValue(0);
+		$dist_j->hasOne('xavoc\mlm\Introducer','introducer_id','distributor_name_with_username')->display(['form'=>'xepan\base\Basic'])->defaultValue(0);
 
 		$dist_j->hasOne('xavoc\mlm\Left','left_id')->display(['form'=>'xepan\base\DropDownNormal']);
 		$dist_j->hasOne('xavoc\mlm\Right','right_id')->display(['form'=>'xepan\base\DropDownNormal']);

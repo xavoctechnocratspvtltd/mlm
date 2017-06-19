@@ -56,16 +56,16 @@ class Tool_Profile extends \xepan\cms\View_Tool{
 		// profile 
 		$col = $profile_tab->add('Columns');
 		$left = $col->addColumn(8);
-		$pro_fields = ['first_name','last_name','dob','country_id','state_id','city','address','pin_code','image_id','image'];
+		$pro_fields = ['dob','country_id','state_id','city','address','pin_code','image_id','image'];
 		$form = $left->add('Form');
-		
+		$form->add('View')->setHtml("<strong>Name: </strong><br/> ".$distributor['first_name']." ".$distributor['last_name']);
 		// $f_c = $form->add('Columns');
 		// $a = $f_c->addColumn('4');
 		// $b = $f_c->addColumn('4');
 		// $c = $f_c->addColumn('4');
 		$form->setLayout(['view/form/profile']);
 		$form->setModel($distributor,$pro_fields);
-
+		// $form->getElement('dob')->setAttr('disabled',true);
 		// $img_view = $form->add('View')->setHtml('<img src="'.$distributor['image'].'"/>');
 		// $img_field= $form->getElement('image_id');
 		// $img_field->js('change',$img_view->js()->reload());
