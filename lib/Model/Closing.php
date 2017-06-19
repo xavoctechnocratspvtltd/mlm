@@ -20,7 +20,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 
 		$this->addField('on_date')->type('datetime')->defaultValue($this->app->now);
 		$this->addField('calculate_loyalty')->type('boolean')->defaultValue(false);
-		$this->addField('type')->enum(['WeeklyClosing','MonthlyClosing']);
+		$this->addField('type')->enum(['DailyClosing','WeeklyClosing','MonthlyClosing']);
 		$this->hasMany('xavoc\mlm\Payout','closing_id');
 
 		$this->is([
@@ -36,6 +36,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 	function beforeSave(){
 		$back_date_closing = $this->add('xavoc\mlm\Model_Closing');
 		$back_date_closing->addCondition('on_date','>=',$this['on_date']);
+		$back_date_closing->addCondition('type',$this['type']);
 		$back_date_closing->tryLoadAny();
 
 		if($back_date_closing->loaded()){
@@ -50,6 +51,9 @@ class Model_Closing extends \xepan\base\Model_Table {
 		}
 
 		switch ($this['type']) {
+			case 'DailyClosing':			
+				$this->dailyClosing($this['on_date']);
+				break;
 			case 'WeeklyClosing':
 				$this->weeklyClosing($this->id,$this['on_date']);
 				$this->calculatePayment($this['on_date']);
@@ -71,7 +75,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 	function dailyClosing($on_date){
 		if(!$on_date) $on_date = $this->app->now;
 
-		$pair_pv = '200'; //tail pv
+		$pair_pv = '1000'; //tail pv
 		// $admin_charge = $config['admin_charge'];
 		// $min_payout = $config['minimum_payout_amount'];
 
@@ -614,6 +618,9 @@ AND	p.closing_date = "2017-05-18 00:00:00"
 	}
 
 	function payoutsheet(){
+		if($this['type']=='DailyClosing'){
+			$this->app->js()->univ()->errorMessage('No Payout for Daily closing')->execute();
+		}
 		$this->app->redirect($this->app->url('xavoc_dm_payout',['closing_id'=>$this->id]));
 	}
 }

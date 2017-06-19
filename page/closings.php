@@ -9,11 +9,20 @@ class page_closings extends \xepan\base\Page {
 	function init(){
 		parent::init();
 
-		$crud = $this->add('xepan\hr\CRUD');
-		$crud->setModel('xavoc\mlm\Model_Closing');
-		if($crud->isEditing()){
-			$crud->form->getElement('type')->setEmptyText('Please Select Closing type');
-		}
+		$tabs = $this->add('Tabs');
+		$dt = $tabs->addTab('Daily');
+		$wt = $tabs->addTab('Weekly');
+		$mt = $tabs->addTab('Monthly');
+
+		$crud = $dt->add('xepan\hr\CRUD',['allow_del'=>false,'allow_edit'=>false]);
+		$crud->setModel('xavoc\mlm\Model_Closing_Daily');
+
+		$crud = $wt->add('xepan\hr\CRUD',['allow_del'=>false,'allow_edit'=>false]);
+		$crud->setModel('xavoc\mlm\Model_Closing_Weekly');
+
+		$crud = $mt->add('xepan\hr\CRUD',['allow_del'=>false,'allow_edit'=>false]);
+		$crud->setModel('xavoc\mlm\Model_Closing_Monthly');
+
 	}
 
 }
