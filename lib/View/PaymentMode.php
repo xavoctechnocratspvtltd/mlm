@@ -35,6 +35,13 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 			return ;
 		}
 
+		// check kyc address is complete
+		if(!$distributor['country_id'] AND !$distributor['state_id'] AND !$distributor['city'] AND $distributor['address']){
+			$v = $this->add("View")->addClass('alert alert-danger')->set('first update kyc detai, like addess, city, state and country');
+			$this->add('Button')->addClass('btn btn-danger')->set('Go To Setting Page')->js('click')->univ()->redirect($this->app->url('setting'));
+			return ;
+		}
+
 		$tabs = $this->add('Tabs');
 		$online_tab = $tabs->addTab('Online');
 		// $cash_tab = $tabs->addTab('Cash');
