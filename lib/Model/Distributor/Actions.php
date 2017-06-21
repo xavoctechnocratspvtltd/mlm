@@ -13,6 +13,7 @@ class Model_Distributor_Actions extends \xavoc\mlm\Model_Distributor
 		parent::init();
 
 		$this->getElement('status')->defaultValue('Red');
+		$this->addExpression('distributor_name')->set($this->dsql()->expr('CONCAT([0]," :: ",[1])',[$this->getElement('name'),$this->getElement('user')]))->sortable(true);
 	}
 
 	function RedPay(){
