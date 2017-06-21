@@ -157,6 +157,10 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 	function beforeSaveDistributor(){
 		if(!$this->loaded()){
 			// Its New Entry
+			if($this->app->getConfig('new_registration_stopped',true)){
+				throw $this->exception('New registration are stopped due to maintenance','ValidityCheck')->setField('username');
+			}
+			
 			$dist= $this->add('xavoc\mlm\Model_Distributor')->loadLoggedIn();
 			if(!($dist OR $this->api->auth->model->isSuperUser())){
 				throw $this->exception('You do not have rights to add distributor');
@@ -175,10 +179,6 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 				$this['path'] = $sponsor->path() . $this['side'];
 				$this->memorize('leg',$this['side']);
 				$this->memorize('raw_password',$this['password']);
-			}
-		}else{
-			if($this->app->getConfig('new_registration_stopped',true)){
-				throw $this->exception('New registration are stopped due to maintenance','ValidityCheck')->setField('username');
 			}
 		}
 	}
