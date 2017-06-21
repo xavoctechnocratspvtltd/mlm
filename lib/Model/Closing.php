@@ -36,7 +36,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 	function beforeSave(){
 
 		if(!$this->app->getConfig('enable_closing',false)){
-			throw new \Exception("Training is not enable for safty reasons", 1);
+			throw new \Exception("Closing is disabled for safty reasons", 1);
 			
 		}
 
