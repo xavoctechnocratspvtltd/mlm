@@ -49,7 +49,11 @@ class Tool_Kit extends \xepan\cms\View_Tool{
 						->setOrder('id','desc')
 						->tryLoadAny()
 						;
-			$kit_model->addCondition('capping_int','>',$last_kit['capping']);
+			if($last_kit->loaded())
+				$kit_model->addCondition('capping_int','>',$last_kit['capping']);
+			else{
+				$kit_model->addCondition('capping_int','>',$distributor['capping']);
+			}
 		}
 
 		$this->complete_lister = $cl = $this->add('CompleteLister',null,null,['xavoc/tool/'.$layout_template]);
