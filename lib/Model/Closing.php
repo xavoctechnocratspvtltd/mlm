@@ -34,6 +34,12 @@ class Model_Closing extends \xepan\base\Model_Table {
 	}
 
 	function beforeSave(){
+
+		if(!$this->app->getConfig('enable_closing',false)){
+			throw new \Exception("Training is not enable for safty reasons", 1);
+			
+		}
+
 		$back_date_closing = $this->add('xavoc\mlm\Model_Closing');
 		$back_date_closing->addCondition('on_date','>=',$this['on_date']);
 		$back_date_closing->addCondition('type',$this['type']);
