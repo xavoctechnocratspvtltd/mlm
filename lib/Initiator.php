@@ -62,6 +62,7 @@ class Initiator extends \Controller_Addon {
         $this->app->exportFrontEndTool('xavoc\mlm\Tool_MenuBar','MLM');
         $this->app->exportFrontEndTool('xavoc\mlm\Tool_DistributorMenu','MLM');
         $this->app->exportFrontEndTool('xavoc\mlm\Tool_MyOrder','MLM');
+        $this->app->exportFrontEndTool('xavoc\mlm\Tool_GenerationTree','MLM');
         return $this;
     }
 }
