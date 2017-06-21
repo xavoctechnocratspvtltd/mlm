@@ -93,6 +93,7 @@ class View_GenologyStandard extends \View{
 					<div class='atk-box-small'>Gen Business: ".$model['generation_business']."</div>
 					<div class='atk-box-small'>Month Self BV: ".$model['month_self_bv']."</div>
 					<div class='atk-box-small atk-swatch-green'>Session Intros: ".$model['session_intros_amount']." /-</div>
+					<div class='atk-box-small atk-swatch-green'>Total Month Bv: ".$model['total_month_bv']."</div>
 					<div class='atk-box-small atk-size-mega atk-swatch-green'>Downline</div>
 					<table border='1' width='100%'>
 						<tr>
