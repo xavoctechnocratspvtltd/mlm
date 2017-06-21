@@ -176,6 +176,10 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 				$this->memorize('leg',$this['side']);
 				$this->memorize('raw_password',$this['password']);
 			}
+		}else{
+			if($this->app->getConfig('new_registration_stopped',true)){
+				throw $this->exception('New registration are stopped due to maintenance','ValidityCheck')->setField('username');
+			}
 		}
 	}
 
@@ -548,7 +552,7 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 
 	function markGreen($on_date=null){
 
-		if($this->app->getConfig('makr_green_stopped',true)){
+		if($this->app->getConfig('mark_green_stopped',true)){
 			throw new \Exception("Mark Green is stopped due to maintenance", 1);
 		}
 
