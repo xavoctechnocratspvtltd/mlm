@@ -21,6 +21,9 @@ class page_Tester extends \xepan\base\Page_Tester{
 		ini_set('memory_limit', '2048M');
         set_time_limit(0);
         gc_enable();
+        if($this->app->getConfig('in_production',true)){
+        	throw new \Exception("Cannot run test cases in production system", 1);	
+        }
 		parent::init();
 		
 	}

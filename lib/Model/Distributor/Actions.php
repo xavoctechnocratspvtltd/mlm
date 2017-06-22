@@ -13,6 +13,7 @@ class Model_Distributor_Actions extends \xavoc\mlm\Model_Distributor
 		parent::init();
 
 		$this->getElement('status')->defaultValue('Red');
+		$this->addExpression('distributor_name')->set($this->dsql()->expr('CONCAT([0]," :: ",[1])',[$this->getElement('name'),$this->getElement('user')]))->sortable(true);
 	}
 
 	function RedPay(){
@@ -186,6 +187,44 @@ class Model_Distributor_Actions extends \xavoc\mlm\Model_Distributor
 			$this['is_document_verified'] = true;
 			$this->save();
 			$this->app->page_action_result = $form->js(null,$form->js()->closest('.dialog')->dialog('close'))->univ()->successMessage('Document Verified');
+		}
+	}
+
+	function page_adminVerify($page){
+		$model = $this->add('xavoc\mlm\Model_Kit');
+		$model->title_field = "kit_with_price";
+		$model->addExpression('kit_with_price')->set(function($m,$q){
+			return $q->expr('CONCAT([0]," :: ",[1]," ::",[2])',
+									[
+										$m->getElement('name'),
+										$m->getElement('sku'),
+										$m->getElement('sale_price')
+									]
+				);
+		});
+		// $page->add('Grid')->setModel($model,['kit_with_price','sale_price']);
+		$form = $page->add('Form');
+		$kit_field = $form->addField('DropDown','kit');
+		$kit_field->setModel($model);
+		$kit_field->validate('required');
+
+		$form->addSubmit('Admin Verified And Mark Green')->addClass('btn btn-success');
+		if($form->isSubmitted()){
+
+			$attachment = $this->add('xavoc\mlm\Model_Attachment')->addCondition('distributor_id',$this->id)
+					->tryLoadAny()
+					->save();
+			$kit_model = $this->add('xavoc\mlm\Model_Kit')->load($form['kit']);
+
+			// $result = $this->placeOrder($kit_model->id);
+			// if($result['status'] == "failed") throw new \Exception($result['message']);
+
+			// $cheque_form->update();
+			$this['payment_mode'] = "deposite_in_company";
+			$this['deposite_in_office_narration'] = "Admin Verified And Mark Green By System Admin";
+			$this->purchaseKit($kit_model);
+			$this->markGreen();
+			$this->app->page_action_result = $form->js(null,$form->js()->closest('.dialog')->dialog('close'))->univ()->successMessage('Verified and Green');
 		}
 	}
 }

@@ -5,7 +5,7 @@ namespace xavoc\mlm;
 /**
 * 
 */
-class Tool_Wallet extends \xepan\cms\View_Tool{
+class Tool_MyOrder extends \xepan\cms\View_Tool{
 	public $options = [''];
 
 	function init(){

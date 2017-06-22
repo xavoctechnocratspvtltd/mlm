@@ -71,7 +71,13 @@ class Tool_Profile extends \xepan\cms\View_Tool{
 		// $img_field->js('change',$img_view->js()->reload());
 
 		$country_field = $form->getElement('country_id');
+		$country_field->validate('required');
+		
 		$state_field = $form->getElement('state_id');
+		$state_field->validate('required');
+		$form->getElement('city')->validate('required');
+		$form->getElement('address')->validate('required');
+		$form->getElement('pin_code')->validate('required');
 
 		if($_GET['country_id']){
 			$state_field->getModel()->addCondition('country_id',$_GET['country_id']);

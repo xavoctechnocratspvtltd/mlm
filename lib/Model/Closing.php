@@ -20,7 +20,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 
 		$this->addField('on_date')->type('datetime')->defaultValue($this->app->now);
 		$this->addField('calculate_loyalty')->type('boolean')->defaultValue(false);
-		$this->addField('type')->enum(['WeeklyClosing','MonthlyClosing']);
+		$this->addField('type')->enum(['DailyClosing','WeeklyClosing','MonthlyClosing']);
 		$this->hasMany('xavoc\mlm\Payout','closing_id');
 
 		$this->is([
@@ -34,8 +34,15 @@ class Model_Closing extends \xepan\base\Model_Table {
 	}
 
 	function beforeSave(){
+
+		if(!$this->app->getConfig('enable_closing',false)){
+			throw new \Exception("Closing is disabled for safty reasons", 1);
+			
+		}
+
 		$back_date_closing = $this->add('xavoc\mlm\Model_Closing');
 		$back_date_closing->addCondition('on_date','>=',$this['on_date']);
+		$back_date_closing->addCondition('type',$this['type']);
 		$back_date_closing->tryLoadAny();
 
 		if($back_date_closing->loaded()){
@@ -50,6 +57,9 @@ class Model_Closing extends \xepan\base\Model_Table {
 		}
 
 		switch ($this['type']) {
+			case 'DailyClosing':			
+				$this->dailyClosing($this['on_date']);
+				break;
 			case 'WeeklyClosing':
 				$this->weeklyClosing($this->id,$this['on_date']);
 				$this->calculatePayment($this['on_date']);
@@ -71,7 +81,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 	function dailyClosing($on_date){
 		if(!$on_date) $on_date = $this->app->now;
 
-		$pair_pv = '200'; //tail pv
+		$pair_pv = '1000'; //tail pv
 		// $admin_charge = $config['admin_charge'];
 		// $min_payout = $config['minimum_payout_amount'];
 
@@ -103,20 +113,26 @@ class Model_Closing extends \xepan\base\Model_Table {
 		
 	}
 
+	function getCurrentData($closing_id, $on_date){
+		if(!$on_date) $on_date = $this->app->now;
+		
+		// copy all distributors in here
+		$q="
+			INSERT INTO mlm_payout
+						(id, closing_id, distributor_id,sponsor_id, introducer_id,closing_date,previous_carried_amount, binary_income, introduction_amount, retail_profit,slab_percentage,month_self_bv,generation_income,loyalty_bonus,gross_payment,tds, net_payment,  carried_amount)
+				SELECT 	  0,$closing_id,distributor_id, sponsor_id, introducer_id,'$on_date'  ,carried_amount         , week_pairs   , weekly_intros_amount,      0       ,          0    ,month_self_bv,      0          ,       0     ,     0       , 0 ,     0      ,        0       FROM mlm_distributor 
+		";
+				// WHERE greened_on is not null
+
+		$this->query($q);
+	}
+
 	function weeklyClosing($closing_id,$on_date){
 		if(!$on_date) $on_date = $this->app->now;
 		$this->dailyClosing($on_date);
 		// move data to payout table
 
-		// copy all distributors in here
-		$q="
-			INSERT INTO mlm_payout
-						(id, closing_id, distributor_id,closing_date,previous_carried_amount, binary_income, introduction_amount, retail_profit,slab_percentage,month_self_bv,generation_income,loyalty_bonus,gross_payment,tds, net_payment,  carried_amount)
-				SELECT 	  0,$closing_id,distributor_id,'$on_date'  ,carried_amount         , week_pairs   , weekly_intros_amount,      0       ,          0    ,month_self_bv,      0          ,       0     ,     0       , 0 ,     0      ,        0       FROM mlm_distributor 
-		";
-				// WHERE greened_on is not null
-
-		$this->query($q);
+		$this->getCurrentData($closing_id, $on_date);
 
 		// make weekly figures zero
 		if(!$this->app->getConfig('skipzero_for_testing',false)){
@@ -128,7 +144,8 @@ class Model_Closing extends \xepan\base\Model_Table {
 
 	function monthlyClosing($closing_id,$on_date,$calculate_loyalty=false){
 		if(!$on_date) $on_date = $this->app->now;
-		$this->weeklyClosing($closing_id,$on_date);
+
+		$this->getCurrentData($closing_id, $on_date);
 
 		// retail_profit 
 
@@ -233,29 +250,28 @@ class Model_Closing extends \xepan\base\Model_Table {
 		$this->query("UPDATE mlm_payout SET effective_business = capped_total_business WHERE closing_date='$on_date'");
 		
 		// if($debug_60_40) exit;
-		// $q="
-		// 	UPDATE
-		// 		mlm_payout p 
-		// 		JOIN mlm_distributor d on p.distributor_id=d.distributor_id
-		// 	SET
-		// 		effective_business = IFNULL((
-		// 						select 
-		// 							sum(intros_payout.generation_month_business) 
-		// 						from 
-		// 							(select * from mlm_payout where closing_date='$on_date') intros_payout 
-		// 						JOIN mlm_distributor intros on intros_payout.distributor_id=intros.distributor_id 
-		// 						WHERE 
-		// 							intros_payout.slab_percentage > p.slab_percentage AND
-		// 							intros.introducer_id=p.distributor_id
-		// 						),0)
+		
+		// EFFECTIVE BUSINESS
+		// find effective business by subtracting business of my intros that are from more or equal to my slab
+
+		$q="
+			UPDATE
+				mlm_payout p 
+			SET
+				effective_business = p.generation_month_business - IFNULL((
+								select 
+									sum(intros_payout.generation_month_business) 
+								from 
+									(select * from mlm_payout WHERE closing_date='$on_date' ) intros_payout WHERE intros_payout.introducer_id=p.distributor_id and intros_payout.slab_percentage >= p.slab_percentage
+								),0)
 								
-		// 	WHERE 
-		// 		p.closing_date='$on_date'
-		// ";
-		// $this->query($q);
+			WHERE 
+				p.closing_date='$on_date'
+		";
+		$this->query($q);
 
-
-		// generate commission as per slab
+		// GENERATION_INCOME GROSS
+		// generate commission as per slab and effective business
 		$q="
 			UPDATE 
 				mlm_payout
@@ -276,24 +292,10 @@ class Model_Closing extends \xepan\base\Model_Table {
 			$this->query($q);
 		}
 
-
-		$this->query('UPDATE mlm_distributor SET temp=0');
-		$q="
-			UPDATE 
-				mlm_distributor d 
-			JOIN mlm_payout p  on d.distributor_id = p.distributor_id 
-			SET 
-				temp = p.re_purchase_income_gross
-			WHERE
-				p.closing_date='$on_date'
-			";
-		$this->query($q);
-
 		// find difference from introducer downline path
 		$q="
 			UPDATE
 				mlm_payout p 
-				JOIN mlm_distributor d on p.distributor_id=d.distributor_id
 			SET
 				p.repurchase_bonus = 
 									p.re_purchase_income_gross 
@@ -302,12 +304,8 @@ class Model_Closing extends \xepan\base\Model_Table {
 										SELECT 
 											SUM(re_purchase_income_gross)
 										FROM 
-											(select * from mlm_payout where closing_date = '$on_date' ) intros_payout 
-										JOIN mlm_distributor intros  on intros.distributor_id = intros_payout.distributor_id
-										WHERE
-											intros.introducer_id = d.distributor_id 
-										AND intros.temp < p.re_purchase_income_gross
-									),0)
+											(select * from mlm_payout WHERE closing_date='$on_date' ) intros_payout WHERE intros_payout.introducer_id=p.distributor_id and intros_payout.slab_percentage < p.slab_percentage)
+											,0)
 			WHERE
 				closing_date = '$on_date'
 		";
@@ -626,6 +624,9 @@ AND	p.closing_date = "2017-05-18 00:00:00"
 	}
 
 	function payoutsheet(){
+		if($this['type']=='DailyClosing'){
+			$this->app->js()->univ()->errorMessage('No Payout for Daily closing')->execute();
+		}
 		$this->app->redirect($this->app->url('xavoc_dm_payout',['closing_id'=>$this->id]));
 	}
 }

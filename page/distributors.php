@@ -21,11 +21,11 @@ class page_distributors extends \xepan\base\Page {
 		$dis_action_m->add('xavoc\mlm\Controller_SideBarStatusFilter');
 		$crud->setModel($dis_action_m,
 						[''],
-						['name','user','side','sponsor','introducer','joining_date','email','mobile_number']
+						['distributor_name','side','sponsor','introducer','joining_date','email','mobile_number']
 					);
 		$crud->grid->addPaginator($ipp=50);
 		$crud->grid->removeColumn('attachment_icon');
-		$crud->grid->addQuickSearch(['name','user']);
+		$crud->grid->addQuickSearch(['distributor_name']);
 	}
 
 }

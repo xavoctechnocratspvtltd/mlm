@@ -1,0 +1,11 @@
+div(id='{$_name}' class="{$class}" style="{$style}")
+	{generation_list}
+	ul
+		{rows}{row}
+		li(data-id='{$id}')
+			a(href="{$url}") {$user}
+			small {$name}
+			div
+				{$nested_generation}
+		{/}{/}
+	{/}
