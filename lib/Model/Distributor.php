@@ -763,14 +763,20 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 		return ($this['path'] == 0)?true:false;
 	}
 
+	// function page_repurchaseOrder($page){
+	// 	$page->add('View')->set('Order Created update with product');
+	// 	$sale_order = $this->repurchaseOrder();
+	// 	// return $this->app->page_action_result = $this->app->js()->univ()->location($this->app->url("xepan_commerce_quickqsp",['document_type'=>'SalesOrder','action'=>'edit','document_id'=>$sale_order->id]));
+	// 	// return $this->app->page_action_result = $this->app->js(true,$page->js()->univ()->closeDialog())->univ()->successMessage('Done');
+	// }
+
 	function repurchaseOrder(){
 		$master_detail = $this->getQSPMasterDetail();
 		$qsp_master = $this->add('xepan\commerce\Model_QSP_Master');
 		$sale_order = $qsp_master->createQSPMaster($master_detail,'SalesOrder');
-		$url = $this->app->url('xepan_commerce_quickqsp',['document_type'=>'SalesOrder','action'=>'edit','document_id'=>$sale_order->id]);
-		$this->app->redirect($url);
+		$this->app->db->commit();
+		$this->app->js()->univ()->newWindow($this->app->url("xepan_commerce_quickqsp",['document_type'=>'SalesOrder','action'=>'edit','document_id'=>$sale_order->id]),'saleorder')->execute();
 	}
-
 	/*
 	* return array of master detail 
 	*/
@@ -789,6 +795,7 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 		$city = $this['billing_city']?:$this['city']?:"not defined";
 		$address = $this['billing_address']?:$this['address']?:"not defined";
 		$pincode = $this['billing_pincode']?:$this['pin_code']?:"not defined";
+
 
 		$master_detail = [
 						'contact_id' => $this->id,
