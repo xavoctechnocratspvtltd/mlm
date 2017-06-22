@@ -9,6 +9,6 @@ class Form_Field_BDate extends \Form_Field_DatePicker {
         if($diff['years']<18)
             $this->displayFieldError('Applicant age must be above 18 years');
 
-        return parent::validate();
+        return parent::validate('required');
     }
 }
