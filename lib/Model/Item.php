@@ -80,18 +80,18 @@ class Model_Item extends \xepan\commerce\Model_Item {
 		$this->addCondition('ii_customfield_generic_id',$specification->fieldQuery('id'));
 
 		// DP distributor point
-		$specification = $this->add('xepan\commerce\Model_Item_Specification');
-		$specification->addCondition('name','DP');
+		// $specification = $this->add('xepan\commerce\Model_Item_Specification');
+		// $specification->addCondition('name','DP');
 		
-		$spec_assos_j1 = $this->join('customfield_association.item_id',null,null,'dp_j');
-		$spec_assos_j1->addField('dp_customfield_generic_id','customfield_generic_id');
-		$spec_assos_j1->addField('dp_status','status')->defaultValue('Active')->system(true);
+		// $spec_assos_j1 = $this->join('customfield_association.item_id',null,null,'dp_j');
+		// $spec_assos_j1->addField('dp_customfield_generic_id','customfield_generic_id');
+		// $spec_assos_j1->addField('dp_status','status')->defaultValue('Active')->system(true);
 
-		$spec_value_j1 = $spec_assos_j1->join('customfield_value.customfield_association_id',null,null,'dp_value_j');
-		$spec_value_j1->addField('dp','name');//->display(array('form'=>'Readonly'));
-		$spec_value_j1->addField('dp_value_status','status')->defaultValue('Active')->system(true);//->display(array('form'=>'Readonly'));
+		// $spec_value_j1 = $spec_assos_j1->join('customfield_value.customfield_association_id',null,null,'dp_value_j');
+		// $spec_value_j1->addField('dp','name');//->display(array('form'=>'Readonly'));
+		// $spec_value_j1->addField('dp_value_status','status')->defaultValue('Active')->system(true);//->display(array('form'=>'Readonly'));
 		
-		$this->addCondition('dp_customfield_generic_id',$specification->fieldQuery('id'));
+		// $this->addCondition('dp_customfield_generic_id',$specification->fieldQuery('id'));
 
 		$this->getElement('status')->defaultValue('Published');
 	}
