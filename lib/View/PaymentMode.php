@@ -213,7 +213,7 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 
 			$master_detail = [
 							'contact_id' => $distributor->id,
-							'currency_id' => $distributor['currency_id']?$customer['currency_id']:$this->app->epan->default_currency->get('id'),
+							'currency_id' => $distributor['currency_id']?$distributor['currency_id']:$this->app->epan->default_currency->get('id'),
 							'nominal_id' => 0,
 							'billing_country_id'=> $country_id,
 							'billing_state_id'=> $state_id,

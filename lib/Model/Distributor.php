@@ -7,13 +7,13 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 	public $actions = [
-				'Red'=>['view','edit','delete','adminVerify'],
-				'KitSelected'=>['view','edit','delete','verifyPayment','verifyDocument','Document'],
-				'KitPaid'=>['view','edit','delete','verifyPayment','verifyDocument','markGreen'],
-				'Green'=>['view','edit','delete','Document','verifyDocument'],
-				'Blocked'=>['view','edit','delete','Unblocked']
-				];
-				
+				'Red'=>['view','edit','delete','adminVerify','repurchaseOrder'],
+				'KitSelected'=>['view','edit','delete','verifyPayment','verifyDocument','Document','repurchaseOrder'],
+				'KitPaid'=>['view','edit','delete','verifyPayment','verifyDocument','markGreen','repurchaseOrder'],
+				'Green'=>['view','edit','delete','Document','verifyDocument','repurchaseOrder'],
+				'Blocked'=>['view','edit','delete','Unblocked','repurchaseOrder']
+			];
+	
 	public $acl_type= "ispmanager_distributor";
 
 
@@ -749,4 +749,62 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 	function isRoot(){
 		return ($this['path'] == 0)?true:false;
 	}
+
+	function repurchaseOrder(){
+		$master_detail = $this->getQSPMasterDetail();
+		$qsp_master = $this->add('xepan\commerce\Model_QSP_Master');
+		$sale_order = $qsp_master->createQSPMaster($master_detail,'SalesOrder');
+		$url = $this->app->url('xepan_commerce_quickqsp',['document_type'=>'SalesOrder','action'=>'edit','document_id'=>$sale_order->id]);
+		$this->app->redirect($url);
+	}
+
+	/*
+	* return array of master detail 
+	*/
+	function getQSPMasterDetail(){
+
+		if(!$this->loaded()) $this->Exception("distributor must loaded")
+										->addMoreInfo('at function getQSPMasterDetail');
+		
+		//Load Default TNC
+		$tnc = $this->add('xepan\commerce\Model_TNC')->addCondition('is_default_for_sale_order',true)->setLimit(1)->tryLoadAny();
+		$tnc_id = $tnc->loaded()?$tnc['id']:0;
+		$tnc_text = $tnc['content']?$tnc['content']:"not defined";
+
+		$country_id = $this['billing_country_id']?:$this['country_id']?:0;
+		$state_id = $this['billing_state_id']?:$this['state_id']?:0;
+		$city = $this['billing_city']?:$this['city']?:"not defined";
+		$address = $this['billing_address']?:$this['address']?:"not defined";
+		$pincode = $this['billing_pincode']?:$this['pin_code']?:"not defined";
+
+		$master_detail = [
+						'contact_id' => $this->id,
+						'currency_id' => $this['currency_id']?$this['currency_id']:$this->app->epan->default_currency->get('id'),
+						'nominal_id' => 0,
+						'billing_country_id'=> $country_id,
+						'billing_state_id'=> $state_id,
+						'billing_name'=> $this['name'],
+						'billing_address'=> $address,
+						'billing_city'=> $city,
+						'billing_pincode'=> $pincode,
+						'shipping_country_id'=> $country_id,
+						'shipping_state_id'=> $state_id,
+						'shipping_name'=> $this['name'],
+						'shipping_address'=> $address,
+						'shipping_city'=> $city,
+						'shipping_pincode'=> $pincode,
+						'is_shipping_inclusive_tax'=> 0,
+						'is_express_shipping'=> 0,
+						'narration'=> null,
+						'round_amount'=> 0,
+						'discount_amount'=> 0,
+						'exchange_rate' => $this->app->epan->default_currency['value'],
+						'tnc_id'=>$tnc_id,
+						'tnc_text'=> $tnc_text,
+						'status' => "OnlineUnpaid"
+					];
+
+		return $master_detail;
+	}
+
 } 
