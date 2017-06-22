@@ -157,6 +157,10 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 	function beforeSaveDistributor(){
 		if(!$this->loaded()){
 			// Its New Entry
+			if($this->app->getConfig('new_registration_stopped',true)){
+				throw $this->exception('New registration are stopped due to maintenance','ValidityCheck')->setField('username');
+			}
+			
 			$dist= $this->add('xavoc\mlm\Model_Distributor')->loadLoggedIn();
 			if(!($dist OR $this->api->auth->model->isSuperUser())){
 				throw $this->exception('You do not have rights to add distributor');
@@ -494,6 +498,10 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 
 	function purchaseKit($kit){
 
+		if($this->app->getConfig('purchase_kit_stopped',true)){
+			throw new \Exception("Kit purchase is stopped due to maintenance", 1);
+		}
+
 		$kit_id = $kit;
 		if($kit instanceof \xavoc\mlm\Model_Kit)
 			$kit_id = $kit->id;
@@ -501,9 +509,9 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 		$this['kit_item_id']= $kit_id;
 		$this['status'] = "KitSelected";
 		
-		$this->app->employee
-		->addActivity("Distributor ".$this['name']." purchase a kit( ".$this['kit_item']." ) and waiting for payment verification")
-		->notifyWhoCan(['PaymentVerified'],'KitPaid',$this);
+		// $this->app->employee
+		// ->addActivity("Distributor ".$this['name']." purchase a kit( ".$this['kit_item']." ) and waiting for payment verification")
+		// ->notifyWhoCan(['PaymentVerified'],'KitPaid',$this);
 		
 		$this->save();
 
@@ -535,14 +543,19 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 	function kitPaid(){
 		$this['status'] = "KitPaid";
 
-		$this->app->employee
-		->addActivity("Distributor ".$this['name']." purchase a kit( ".$this['kit_item']." ) and waiting for payment verification")
-		->notifyWhoCan(['PaymentVerified'],'KitPaid',$this);
+		// $this->app->employee
+		// ->addActivity("Distributor ".$this['name']." purchase a kit( ".$this['kit_item']." ) and waiting for payment verification")
+		// ->notifyWhoCan(['PaymentVerified'],'KitPaid',$this);
 		
 		$this->save();	
 	}
 
 	function markGreen($on_date=null){
+
+		if($this->app->getConfig('mark_green_stopped',true)){
+			throw new \Exception("Mark Green is stopped due to maintenance", 1);
+		}
+
 		if(!$on_date) $on_date =  $this->app->now;
 		
 		// if($this['greened_on'])
