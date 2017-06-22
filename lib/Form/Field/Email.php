@@ -15,6 +15,6 @@ class Form_Field_Email extends \Form_Field_Line {
                 $this->displayFieldError('Please input a valid email address');
 
         }
-        return parent::validate();
+        return parent::validate('required');
     }
 }
