@@ -75,7 +75,7 @@ class page_config extends \xepan\base\Page{
 		$f->addField('line','topup_mail_subject')->set($welcome_model['topup_mail_subject']);
 		$f->addField('xepan\base\RichText','topup_mail_content')->set($welcome_model['topup_mail_content']);
 		$f->addField('text','topup_sms_content')->set($welcome_model['topup_sms_content']);
-
+		$f->addSubmit('Update')->addClass('btn btn-primary');
 		if($f->isSubmitted()){
 
 			$welcome_model['welcome_mail_subject'] = $f['welcome_mail_subject'];	
