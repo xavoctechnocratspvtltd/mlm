@@ -509,9 +509,9 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 		$this['kit_item_id']= $kit_id;
 		$this['status'] = "KitSelected";
 		
-		$this->app->employee
-		->addActivity("Distributor ".$this['name']." purchase a kit( ".$this['kit_item']." ) and waiting for payment verification")
-		->notifyWhoCan(['PaymentVerified'],'KitPaid',$this);
+		// $this->app->employee
+		// ->addActivity("Distributor ".$this['name']." purchase a kit( ".$this['kit_item']." ) and waiting for payment verification")
+		// ->notifyWhoCan(['PaymentVerified'],'KitPaid',$this);
 		
 		$this->save();
 
@@ -543,9 +543,9 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 	function kitPaid(){
 		$this['status'] = "KitPaid";
 
-		$this->app->employee
-		->addActivity("Distributor ".$this['name']." purchase a kit( ".$this['kit_item']." ) and waiting for payment verification")
-		->notifyWhoCan(['PaymentVerified'],'KitPaid',$this);
+		// $this->app->employee
+		// ->addActivity("Distributor ".$this['name']." purchase a kit( ".$this['kit_item']." ) and waiting for payment verification")
+		// ->notifyWhoCan(['PaymentVerified'],'KitPaid',$this);
 		
 		$this->save();	
 	}
