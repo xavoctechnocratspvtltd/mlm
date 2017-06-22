@@ -41,51 +41,83 @@ class Model_Distributor_Actions extends \xavoc\mlm\Model_Distributor
 
 	function page_verifyPayment($page){
 		
-		if($this['is_payment_verified']){
-			$page->add('View_Warning')->set('payment is already verifed')->addClass('alert alert-danger');
+		$tab = $page->add('Tabs');
+		$repurchase_tab = $tab->addTab('Repurchase Payment ');
+
+		if(in_array($this['status'], ['kitSelected','KitPaid'])){
+			$kit_veri = $tab->addTab('Kit Payment Verification');
+
+			if($this['is_payment_verified']){
+				$kit_veri->add('View_Warning')->set('payment is already verifed')->addClass('alert alert-danger');
+			}
+			$attachment = $kit_veri->add('xavoc\mlm\Model_Attachment')->addCondition('distributor_id',$this->id);
+			$attachment->tryLoadAny();
+			$form = $kit_veri->add('Form');
+			$form->addField('payment_mode')->set($this['payment_mode'])->setAttr('disabled',true);
+
+			$col = $form->add('Columns')->addClass('row');
+			$col1 = $col->addColumn(4)->addClass('col-md-4 col-sm-12 col-lg-4 col-xs-12');
+			$col2 = $col->addColumn(4)->addClass('col-md-4 col-sm-12 col-lg-4 col-xs-12');
+			$col3 = $col->addColumn(4)->addClass('col-md-4 col-sm-12 col-lg-4 col-xs-12');
+
+			$col1->add('View_Info')->addClass('alert alert-info')->set('Online Transaction Detail');
+			$col1->addField('online_transaction_reference')->set($this['transaction_reference'])->setAttr('disabled',true);
+			$col1->addField('online_transaction_detail')->set($this['transaction_detail'])->setAttr('disabled',true);
+
+			$col2->add('View_Info')->addClass('alert alert-info')->set('Bank Transaction Detail');
+			$col2->addField('bank_name')->set($this['bank_name'])->setAttr('disabled',true);
+			$col2->addField('bank_ifsc_code')->set($this['bank_ifsc_code'])->setAttr('disabled',true);
+			$col2->addField('cheque_number')->set($this['cheque_number'])->setAttr('disabled',true);
+			$col2->addField('dd_number')->set($this['dd_number'])->setAttr('disabled',true);
+			$col2->addField('dd_date')->set($this['dd_date'])->setAttr('disabled',true);
+
+			if($attachment['cheque_deposite_receipt_image_id'])
+				$col2->add('View')->addClass('col-lg-6 col-md-6 col-sm-12 col-xs-12')->setHtml('<label>Cheque Deposite Receipt Image</label><br/><a target="_blank" style="width:200px;" href="'.$attachment['cheque_deposite_receipt_image'].'"><img style="width:200px;" src="'.$attachment['cheque_deposite_receipt_image'].'"/></a>');
+			
+			if($attachment['dd_deposite_receipt_image_id'])
+				$col2->add('View')->addClass('col-lg-6 col-md-6 col-sm-12 col-xs-12')->setHtml('<label>DD Deposite Receipt Image</label><br/><a target="_blank" style="width:200px;" href="'.$attachment['dd_deposite_receipt_image'].'"><img style="width:200px;" src="'.$attachment['dd_deposite_receipt_image'].'"/></a>');
+
+			$col3->add('View_Info')->addClass('alert alert-info')->set('Office/ franchise Deposite');
+			$col3->addField('text','deposite_in_office_narration')->set($this['deposite_in_office_narration'])->setAttr('disabled',true);			
+
+			if($attachment['office_receipt_image_id'])
+				$col3->add('View')->addClass('col-lg-12 col-md-12 col-sm-12 col-xs-12')->setHtml('<label>Office / Franchise Deposite Receipt Image</label><br/><a target="_blank" style="width:200px;" href="'.$attachment['office_receipt_image'].'"><img style="width:200px;" src="'.$attachment['office_receipt_image'].'"/></a>');		
+
+			$form->setModel($attachment,['payment_narration']);
+			$form->addSubmit('Verify Payment')->addClass('btn btn-primary btn-block');
+
+			if($form->isSubmitted()){
+				$form->update();
+				$this['is_payment_verified'] = true;
+				$this->markGreen();
+				$this->app->page_action_result = $form->js(null,$form->js()->closest('.dialog')->dialog('close'))->univ()->successMessage('payment verified and marked green');
+			}
 		}
-		$attachment = $page->add('xavoc\mlm\Model_Attachment')->addCondition('distributor_id',$this->id);
-		$attachment->tryLoadAny();
-		$form = $page->add('Form');
-		$form->addField('payment_mode')->set($this['payment_mode'])->setAttr('disabled',true);
 
-		$col = $form->add('Columns')->addClass('row');
-		$col1 = $col->addColumn(4)->addClass('col-md-4 col-sm-12 col-lg-4 col-xs-12');
-		$col2 = $col->addColumn(4)->addClass('col-md-4 col-sm-12 col-lg-4 col-xs-12');
-		$col3 = $col->addColumn(4)->addClass('col-md-4 col-sm-12 col-lg-4 col-xs-12');
+		$sale_order = $this->add('xavoc\mlm\Model_SalesOrder');
+		$sale_order->addCondition('contact_id',$this->id);
+		$sale_order->addCondition('status','<>','Completed');
 
-		$col1->add('View_Info')->addClass('alert alert-info')->set('Online Transaction Detail');
-		$col1->addField('online_transaction_reference')->set($this['transaction_reference'])->setAttr('disabled',true);
-		$col1->addField('online_transaction_detail')->set($this['transaction_detail'])->setAttr('disabled',true);
+		$repurchase_tab->add('View')->set('Distributor id='.$this->id);
 
-		$col2->add('View_Info')->addClass('alert alert-info')->set('Bank Transaction Detail');
-		$col2->addField('bank_name')->set($this['bank_name'])->setAttr('disabled',true);
-		$col2->addField('bank_ifsc_code')->set($this['bank_ifsc_code'])->setAttr('disabled',true);
-		$col2->addField('cheque_number')->set($this['cheque_number'])->setAttr('disabled',true);
-		$col2->addField('dd_number')->set($this['dd_number'])->setAttr('disabled',true);
-		$col2->addField('dd_date')->set($this['dd_date'])->setAttr('disabled',true);
-
-		if($attachment['cheque_deposite_receipt_image_id'])
-			$col2->add('View')->addClass('col-lg-6 col-md-6 col-sm-12 col-xs-12')->setHtml('<label>Cheque Deposite Receipt Image</label><br/><a target="_blank" style="width:200px;" href="'.$attachment['cheque_deposite_receipt_image'].'"><img style="width:200px;" src="'.$attachment['cheque_deposite_receipt_image'].'"/></a>');
+		$grid = $repurchase_tab->add('xepan\base\Grid');
+		$grid->setModel($sale_order,['document_no','status','net_amount']);
 		
-		if($attachment['dd_deposite_receipt_image_id'])
-			$col2->add('View')->addClass('col-lg-6 col-md-6 col-sm-12 col-xs-12')->setHtml('<label>DD Deposite Receipt Image</label><br/><a target="_blank" style="width:200px;" href="'.$attachment['dd_deposite_receipt_image'].'"><img style="width:200px;" src="'.$attachment['dd_deposite_receipt_image'].'"/></a>');
+		$grid->addColumn('verify');
+		$grid->addMethod('format_verify',function($grid,$field){
+			$grid->current_row_html[$field] = "<button class='ds-repurchase-verify-btn' data-orderid='".$grid->model->id."'>Verify</button>";
+		});
+		$grid->addFormatter('verify','verify');
 
-		$col3->add('View_Info')->addClass('alert alert-info')->set('Office/ franchise Deposite');
-		$col3->addField('text','deposite_in_office_narration')->set($this['deposite_in_office_narration'])->setAttr('disabled',true);			
-
-		if($attachment['office_receipt_image_id'])
-			$col3->add('View')->addClass('col-lg-12 col-md-12 col-sm-12 col-xs-12')->setHtml('<label>Office / Franchise Deposite Receipt Image</label><br/><a target="_blank" style="width:200px;" href="'.$attachment['office_receipt_image'].'"><img style="width:200px;" src="'.$attachment['office_receipt_image'].'"/></a>');		
-
-		$form->setModel($attachment,['payment_narration']);
-		$form->addSubmit('Verify Payment')->addClass('btn btn-primary btn-block');
-
-		if($form->isSubmitted()){
-			$form->update();
-			$this['is_payment_verified'] = true;
-			$this->markGreen();
-			$this->app->page_action_result = $form->js(null,$form->js()->closest('.dialog')->dialog('close'))->univ()->successMessage('payment verified and marked green');
-		}
+		$url = $this->app->url(null,['cut_object'=>$grid->name]);
+		$grid->on('click','.ds-repurchase-verify-btn',function($js,$data)curl){
+			$order_id = $data['orderid'];
+			if($order_id){
+				$sale_order = $this->add('xavoc\mlm\Model_SalesOrder')->load($order_id);
+				$sale_order->verifyRepurchasePayment();
+			}
+			return $this->js()->reload($url);
+		});
 	}
 
 	function page_Document($page){
