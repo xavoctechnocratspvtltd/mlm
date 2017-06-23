@@ -69,32 +69,32 @@ class Controller_Setup extends \AbstractController {
 			}
 
 			$item_array=[
-						['name'=>'Health Care Product','code'=> 'Package A1','pv'=>'0','bv'=>'200','sv'=>'1000','capping'=>'5000','introducer_income'=>'50','sale_price'=>'1250','qty_unit_id'=>$unit->id],
-						['name'=>'Health Care Product','code'=> 'Package A2','pv'=>'0','bv'=>'200','sv'=>'1000','capping'=>'5000','introducer_income'=>'50','sale_price'=>'1250','qty_unit_id'=>$unit->id],
-						['name'=>'Health Care Product','code'=> 'Package A3','pv'=>'0','bv'=>'200','sv'=>'1000','capping'=>'5000','introducer_income'=>'50','sale_price'=>'1250','qty_unit_id'=>$unit->id],
-						['name'=>'Health Care Product','code'=> 'Package A4','pv'=>'0','bv'=>'200','sv'=>'1000','capping'=>'5000','introducer_income'=>'50','sale_price'=>'1250','qty_unit_id'=>$unit->id],
-						['name'=>'Health Care Product','code'=> 'Package A5','pv'=>'0','bv'=>'200','sv'=>'1000','capping'=>'5000','introducer_income'=>'50','sale_price'=>'1250','qty_unit_id'=>$unit->id],
-						['name'=>'Health Care Product','code'=> 'Package A6','pv'=>'0','bv'=>'200','sv'=>'1000','capping'=>'5000','introducer_income'=>'50','sale_price'=>'1250','qty_unit_id'=>$unit->id],
-						['name'=>'Health Care Product','code'=> 'Package A7','pv'=>'0','bv'=>'200','sv'=>'1000','capping'=>'5000','introducer_income'=>'50','sale_price'=>'1250','qty_unit_id'=>$unit->id],
-						['name'=>'Health Care Product','code'=> 'Package A8','pv'=>'0','bv'=>'200','sv'=>'1000','capping'=>'5000','introducer_income'=>'50','sale_price'=>'1250','qty_unit_id'=>$unit->id],
-						['name'=>'Health Care Product','code'=> 'Package A9','pv'=>'0','bv'=>'200','sv'=>'1000','capping'=>'5000','introducer_income'=>'50','sale_price'=>'1250','qty_unit_id'=>$unit->id],
-						['name'=>'Health Care Product','code'=> 'Package A10','pv'=>'0','bv'=>'200','sv'=>'1000','capping'=>'5000','introducer_income'=>'50','sale_price'=>'1250','qty_unit_id'=>$unit->id],
-						['name'=>'Health Care Product','code'=> 'Package A11','pv'=>'0','bv'=>'200','sv'=>'1000','capping'=>'5000','introducer_income'=>'50','sale_price'=>'1250','qty_unit_id'=>$unit->id],
-						['name'=>'DS Tobak Kit','code'=> 'Package A12','pv'=>'0','bv'=>'200','sv'=>'1000','capping'=>'5000','introducer_income'=>'50','sale_price'=>'1250','qty_unit_id'=>$unit->id],
-						['name'=>'DS Alco Kit','code'=> 'Package A13','pv'=>'0','bv'=>'200','sv'=>'1000','capping'=>'5000','introducer_income'=>'50','sale_price'=>'1250','qty_unit_id'=>$unit->id],
+						['name'=>'Health Care Product','code'=> 'Package A1','pv'=>'0','bv'=>'200','sv'=>'1000','capping'=>'5000','introducer_income'=>'50','sale_price'=>'1250','dp'=>1250,'qty_unit_id'=>$unit->id],
+						['name'=>'Health Care Product','code'=> 'Package A2','pv'=>'0','bv'=>'200','sv'=>'1000','capping'=>'5000','introducer_income'=>'50','sale_price'=>'1250','dp'=>1250,'qty_unit_id'=>$unit->id],
+						['name'=>'Health Care Product','code'=> 'Package A3','pv'=>'0','bv'=>'200','sv'=>'1000','capping'=>'5000','introducer_income'=>'50','sale_price'=>'1250','dp'=>1250,'qty_unit_id'=>$unit->id],
+						['name'=>'Health Care Product','code'=> 'Package A4','pv'=>'0','bv'=>'200','sv'=>'1000','capping'=>'5000','introducer_income'=>'50','sale_price'=>'1250','dp'=>1250,'qty_unit_id'=>$unit->id],
+						['name'=>'Health Care Product','code'=> 'Package A5','pv'=>'0','bv'=>'200','sv'=>'1000','capping'=>'5000','introducer_income'=>'50','sale_price'=>'1250','dp'=>1250,'qty_unit_id'=>$unit->id],
+						['name'=>'Health Care Product','code'=> 'Package A6','pv'=>'0','bv'=>'200','sv'=>'1000','capping'=>'5000','introducer_income'=>'50','sale_price'=>'1250','dp'=>1250,'qty_unit_id'=>$unit->id],
+						['name'=>'Health Care Product','code'=> 'Package A7','pv'=>'0','bv'=>'200','sv'=>'1000','capping'=>'5000','introducer_income'=>'50','sale_price'=>'1250','dp'=>1250,'qty_unit_id'=>$unit->id],
+						['name'=>'Health Care Product','code'=> 'Package A8','pv'=>'0','bv'=>'200','sv'=>'1000','capping'=>'5000','introducer_income'=>'50','sale_price'=>'1250','dp'=>1250,'qty_unit_id'=>$unit->id],
+						['name'=>'Health Care Product','code'=> 'Package A9','pv'=>'0','bv'=>'200','sv'=>'1000','capping'=>'5000','introducer_income'=>'50','sale_price'=>'1250','dp'=>1250,'qty_unit_id'=>$unit->id],
+						['name'=>'Health Care Product','code'=> 'Package A10','pv'=>'0','bv'=>'200','sv'=>'1000','capping'=>'5000','introducer_income'=>'50','sale_price'=>'1250','dp'=>1250,'qty_unit_id'=>$unit->id],
+						['name'=>'Health Care Product','code'=> 'Package A11','pv'=>'0','bv'=>'200','sv'=>'1000','capping'=>'5000','introducer_income'=>'50','sale_price'=>'1250','dp'=>1250,'qty_unit_id'=>$unit->id],
+						['name'=>'DS Tobak Kit','code'=> 'Package A12','pv'=>'0','bv'=>'200','sv'=>'1000','capping'=>'5000','introducer_income'=>'50','sale_price'=>'1250','dp'=>1250,'qty_unit_id'=>$unit->id],
+						['name'=>'DS Alco Kit','code'=> 'Package A13','pv'=>'0','bv'=>'200','sv'=>'1000','capping'=>'5000','introducer_income'=>'50','sale_price'=>'1250','dp'=>1250,'qty_unit_id'=>$unit->id],
 
-						['name'=>'Male/Female Immune Kit','code'=> 'Package B1','pv'=>'0','bv'=>'700','sv'=>'3000','capping'=>'10000','introducer_income'=>'150','sale_price'=>'3600','qty_unit_id'=>$unit->id],
-						['name'=>'Child Immune Kit','code'=> 'Package B2','pv'=>'0','bv'=>'700','sv'=>'3000','capping'=>'10000','introducer_income'=>'150','sale_price'=>'3600','qty_unit_id'=>$unit->id],
-						['name'=>'Remove Tobacco Addiction kit','code'=> 'Package B3','pv'=>'0','bv'=>'700','sv'=>'3000','capping'=>'10000','introducer_income'=>'150','sale_price'=>'3600','qty_unit_id'=>$unit->id],
-						['name'=>'Remove Alcohol Addiction kit','code'=> 'Package B4','pv'=>'0','bv'=>'700','sv'=>'3000','capping'=>'10000','introducer_income'=>'150','sale_price'=>'3600','qty_unit_id'=>$unit->id],
-						['name'=>'Hair Treatment kit','code'=> 'Package B5','pv'=>'0','bv'=>'700','sv'=>'3000','capping'=>'10000','introducer_income'=>'150','sale_price'=>'3600','qty_unit_id'=>$unit->id],
-						['name'=>'Skin Treatment kit','code'=> 'Package B6','pv'=>'0','bv'=>'700','sv'=>'3000','capping'=>'10000','introducer_income'=>'150','sale_price'=>'3600','qty_unit_id'=>$unit->id],
-						['name'=>'Joint Care kit','code'=> 'Package B7','pv'=>'0','bv'=>'700','sv'=>'3000','capping'=>'10000','introducer_income'=>'150','sale_price'=>'3600','qty_unit_id'=>$unit->id],
+						['name'=>'Male/Female Immune Kit','code'=> 'Package B1','pv'=>'0','bv'=>'700','sv'=>'3000','capping'=>'10000','introducer_income'=>'150','sale_price'=>'3600','dp'=>3600,'qty_unit_id'=>$unit->id],
+						['name'=>'Child Immune Kit','code'=> 'Package B2','pv'=>'0','bv'=>'700','sv'=>'3000','capping'=>'10000','introducer_income'=>'150','sale_price'=>'3600','dp'=>3600,'qty_unit_id'=>$unit->id],
+						['name'=>'Remove Tobacco Addiction kit','code'=> 'Package B3','pv'=>'0','bv'=>'700','sv'=>'3000','capping'=>'10000','introducer_income'=>'150','sale_price'=>'3600','dp'=>3600,'qty_unit_id'=>$unit->id],
+						['name'=>'Remove Alcohol Addiction kit','code'=> 'Package B4','pv'=>'0','bv'=>'700','sv'=>'3000','capping'=>'10000','introducer_income'=>'150','sale_price'=>'3600','dp'=>3600,'qty_unit_id'=>$unit->id],
+						['name'=>'Hair Treatment kit','code'=> 'Package B5','pv'=>'0','bv'=>'700','sv'=>'3000','capping'=>'10000','introducer_income'=>'150','sale_price'=>'3600','dp'=>3600,'qty_unit_id'=>$unit->id],
+						['name'=>'Skin Treatment kit','code'=> 'Package B6','pv'=>'0','bv'=>'700','sv'=>'3000','capping'=>'10000','introducer_income'=>'150','sale_price'=>'3600','dp'=>3600,'qty_unit_id'=>$unit->id],
+						['name'=>'Joint Care kit','code'=> 'Package B7','pv'=>'0','bv'=>'700','sv'=>'3000','capping'=>'10000','introducer_income'=>'150','sale_price'=>'3600','dp'=>3600,'qty_unit_id'=>$unit->id],
 
-						['name'=>'General Health Care Kit','code'=> 'Package C1','pv'=>'0','bv'=>'1500','sv'=>'6000','capping'=>'15000','introducer_income'=>'300','sale_price'=>'7200','qty_unit_id'=>$unit->id],
-						['name'=>'DS Promotional Kit','code'=> 'Package C2','pv'=>'0','bv'=>'1500','sv'=>'6000','capping'=>'15000','introducer_income'=>'300','sale_price'=>'7200','qty_unit_id'=>$unit->id],
+						['name'=>'General Health Care Kit','code'=> 'Package C1','pv'=>'0','bv'=>'1500','sv'=>'6000','capping'=>'15000','introducer_income'=>'300','sale_price'=>'7200','dp'=>7200,'qty_unit_id'=>$unit->id],
+						['name'=>'DS Promotional Kit','code'=> 'Package C2','pv'=>'0','bv'=>'1500','sv'=>'6000','capping'=>'15000','introducer_income'=>'300','sale_price'=>'7200','dp'=>7200,'qty_unit_id'=>$unit->id],
 
-						['name'=>'DS King-Size Product Kit','code'=> 'Package D1','pv'=>'0','bv'=>'3200','sv'=>'12000','capping'=>'25000','introducer_income'=>'600','sale_price'=>'14500','qty_unit_id'=>$unit->id]
+						['name'=>'DS King-Size Product Kit','code'=> 'Package D1','pv'=>'0','bv'=>'3200','sv'=>'12000','capping'=>'25000','introducer_income'=>'600','sale_price'=>'14500','dp'=>14500,'qty_unit_id'=>$unit->id]
 			];
 			foreach ($item_array as $item) {
 				$kit = $this->add('xavoc\mlm\Model_Kit')
