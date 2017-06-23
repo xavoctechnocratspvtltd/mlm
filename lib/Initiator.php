@@ -16,16 +16,25 @@ class Initiator extends \Controller_Addon {
         $m->addItem(['Kit Management','icon'=>'fa fa-check-square-o'],'xavoc_dm_kits');
         $m->addItem(['Repurchase Product','icon'=>'fa fa-check-square-o'],'xavoc_dm_repurchase');
         $m->addItem(['Distributors','icon'=>'fa fa-check-square-o'],'xavoc_dm_distributors');
-        $m->addItem(['Orders','icon'=>'fa fa-check-square-o'],'xavoc_dm_order');
+        $m->addItem(['Orders','icon'=>'fa fa-check-square-o'],'xavoc_dm_salesorder');
         $m->addItem(['Closings','icon'=>'fa fa-check-square-o'],'xavoc_dm_closings');
         $m->addItem(['Configuration','icon'=>'fa fa-check-square-o'],'xavoc_dm_config');
 
         $this->addAppFunctions();
 
         $this->app->addHook('invoice_paid',function($app,$invoice){
-            return $this->app->js()->univ()->successMessage('invoice paid todo hook');
-            // $m = $this->add('xavoc\mlm\Model_Distributor');
-            // $m->load($invoice['contact_id']);
+            $distributor = $this->add('xavoc\mlm\Model_Distributor');
+            $distributor->load($invoice['contact_id']);
+            foreach ($invoice->items() as $oi) {
+                $item = $this->add('xavoc\mlm\Model_Item')->load($oi['item_id']);
+                if($item['is_package']){
+                    // if kit then update SV
+                    $distributor->updateAnsestorsSV($item['sv']);
+                }else{
+                    // update bv
+                    $distributor->repurchase($item['bv']);
+                }
+            }
         });
 
         return $this;
@@ -47,13 +56,28 @@ class Initiator extends \Controller_Addon {
 
     function setup_frontend(){
 
-       $this->app->addHook('login_panel_user_loggedin',function($app,$user){
+        $this->app->addHook('login_panel_user_loggedin',function($app,$user){
             $m = $this->add('xavoc\mlm\Model_Distributor');
             $m->loadLoggedIn();
             if($m->loaded()){
                 $this->app->redirect($this->app->url('dashboard'));
             }
-       });
+        });
+        
+        $this->app->addHook('invoice_paid',function($app,$invoice){
+            $distributor = $this->add('xavoc\mlm\Model_Distributor');
+            $distributor->load($invoice['contact_id']);
+            foreach ($invoice->items() as $oi) {
+                $item = $this->add('xavoc\mlm\Model_Item')->load($oi['item_id']);
+                if($item['is_package']){
+                    // if kit then update SV
+                    $distributor->updateAnsestorsSV($item['sv']);
+                }else{
+                    // update bv
+                    $distributor->repurchase($item['bv']);
+                }
+            }
+        });
         
         $this->app->exportFrontEndTool('xavoc\mlm\Tool_Register','MLM');
       

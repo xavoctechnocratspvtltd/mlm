@@ -824,7 +824,7 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 						'exchange_rate' => $this->app->epan->default_currency['value'],
 						'tnc_id'=>$tnc_id,
 						'tnc_text'=> $tnc_text,
-						'status' => "OnlineUnpaid"
+						'status' => "Draft"
 					];
 
 		return $master_detail;
