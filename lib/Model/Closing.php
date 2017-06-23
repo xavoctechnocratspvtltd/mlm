@@ -540,6 +540,12 @@ class Model_Closing extends \xepan\base\Model_Table {
 					net_payment < 500 OR
 					d.is_document_verified = 0 OR
 					d.is_document_verified is null
+					/*
+					OR left self introduction count < 1
+					OR right self introduction count < 1
+					*/
+					OR (select count(distributor_id) from mlm_distributor li where li.introducer_id = d.distributor_id and li.path like concat(d.path,'A%')) < 1
+					OR (select count(distributor_id) from mlm_distributor ri where ri.introducer_id = d.distributor_id and ri.path like concat(d.path,'B%')) < 1
 				) AND
 
 				closing_date='$on_date'
