@@ -85,6 +85,10 @@ class Model_Closing extends \xepan\base\Model_Table {
 		// $admin_charge = $config['admin_charge'];
 		// $min_payout = $config['minimum_payout_amount'];
 
+		//  null may give problem ... remove it
+		$this->query("UPDATE mlm_distributor set day_left_sv=0 WHERE day_left_sv is null");
+		$this->query("UPDATE mlm_distributor set day_right_sv=0 WHERE day_right_sv is null");
+
 		// calculate Pairs
 		$q="
 			UPDATE mlm_distributor
@@ -105,8 +109,8 @@ class Model_Closing extends \xepan\base\Model_Table {
 			SET
 				d.temp=0,
 				d.temp = IF(d.day_left_sv = d.day_right_sv AND d.day_left_sv > 0, d.day_left_sv - $pair_pv, IF(d.day_left_sv > d.day_right_sv,d.day_right_sv,d.day_left_sv)),
-				d.day_left_sv = d.day_left_sv - d.temp,
-				d.day_right_sv = d.day_right_sv - d.temp
+				d.day_left_sv = IFNULL(d.day_left_sv - d.temp,0),
+				d.day_right_sv = IFNULL(d.day_right_sv - d.temp,0)
 			WHERE greened_on is not null
 		";
 		$this->query($q);
@@ -551,18 +555,30 @@ class Model_Closing extends \xepan\base\Model_Table {
 		$this->query($q);
 
 		// add this carried amount in distributor for previous_carried_amount for next closing
+		$q="
+			UPDATE
+				mlm_distributor d
+			JOIN mlm_payout p on d.distributor_id = p.distributor_id
+			SET
+				d.carried_amount = d.carried_amount + p.carried_amount
+			WHERE
+				p.carried_amount is not null AND 
+				p.carried_amount > 0 AND
+				p.closing_date='$on_date'
+		";
+		$this->query($q);
+
 		if($this->app->getConfig('remove_zero_income',true)){
 			$q="
-				UPDATE
-					mlm_distributor d
-				JOIN mlm_payout p on d.distributor_id = p.distributor_id
-				SET
-					d.carried_amount = d.carried_amount + p.carried_amount
+				DELETE p
+					FROM
+					mlm_payout p
 				WHERE
-					p.carried_amount is not null AND 
-					p.carried_amount > 0 AND
-					p.closing_date='$on_date'
+					p.closing_date='$on_date' AND 
+					p.net_payment = 0 and 
+					p.carried_amount = 0
 			";
+
 			$this->query($q);
 		}
 
@@ -639,17 +655,28 @@ class Model_Closing extends \xepan\base\Model_Table {
 		$this->query($q);
 
 		// add this carried amount in distributor for previous_carried_amount for next closing
+		$q="
+			UPDATE
+				mlm_distributor d
+			JOIN mlm_payout p on d.distributor_id = p.distributor_id
+			SET
+				d.carried_amount = d.carried_amount + p.carried_amount
+			WHERE
+				p.carried_amount is not null AND 
+				p.carried_amount > 0 AND
+				p.closing_date='$on_date'
+		";
+		$this->query($q);
+
 		if($this->app->getConfig('remove_zero_income',true)){
 			$q="
-				UPDATE
-					mlm_distributor d
-				JOIN mlm_payout p on d.distributor_id = p.distributor_id
-				SET
-					d.carried_amount = d.carried_amount + p.carried_amount
+				DELETE p
+					FROM
+					mlm_payout p
 				WHERE
-					p.carried_amount is not null AND 
-					p.carried_amount > 0 AND
-					p.closing_date='$on_date'
+					p.closing_date='$on_date' AND 
+					p.net_payment = 0 and 
+					p.carried_amount = 0
 			";
 			$this->query($q);
 		}
