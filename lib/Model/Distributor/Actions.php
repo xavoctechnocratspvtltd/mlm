@@ -98,7 +98,7 @@ class Model_Distributor_Actions extends \xavoc\mlm\Model_Distributor
 		$sale_order->addCondition('contact_id',$this->id);
 		$sale_order->addCondition('status','<>','Completed');
 
-		$repurchase_tab->add('View')->set('Distributor id='.$this->id);
+		// $repurchase_tab->add('View')->set('Distributor id='.$this->id);
 
 		$grid = $repurchase_tab->add('xepan\base\Grid');
 		$grid->setModel($sale_order,['document_no','status','net_amount']);
@@ -109,15 +109,17 @@ class Model_Distributor_Actions extends \xavoc\mlm\Model_Distributor
 		});
 		$grid->addFormatter('verify','verify');
 
-		$url = $this->app->url(null,['cut_object'=>$grid->name]);
-		$grid->on('click','.ds-repurchase-verify-btn',function($js,$data)curl){
+		$grid_url = $this->api->url(null,['cut_object'=>$grid->name]);
+
+		$grid->on('click','.ds-repurchase-verify-btn',function($js,$data)use($grid_url,$grid){
 			$order_id = $data['orderid'];
 			if($order_id){
 				$sale_order = $this->add('xavoc\mlm\Model_SalesOrder')->load($order_id);
 				$sale_order->verifyRepurchasePayment();
 			}
-			return $this->js()->reload($url);
+			return $grid->js()->reload(null,null,$grid_url);
 		});
+
 	}
 
 	function page_Document($page){
