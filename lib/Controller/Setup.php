@@ -60,7 +60,7 @@ class Controller_Setup extends \AbstractController {
 				->tryLoadAny()->save();
 
 			// add default specifications
-			$specfic_array=['BV','SV','PV','Capping','Introduction Income'];
+			$specfic_array=['BV','SV','PV','Capping','Introduction Income','DP'];
 			foreach ($specfic_array as $sp) {
 				$this->add('xepan\commerce\Model_Item_Specification')
 						->addCondition('name',$sp)
