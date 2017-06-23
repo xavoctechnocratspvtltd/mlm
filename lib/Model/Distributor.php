@@ -5,7 +5,7 @@ namespace xavoc\mlm;
 
 class Model_Distributor extends \xepan\commerce\Model_Customer {
 
-public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
+	public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 	public $actions = [
 				'Red'=>['view','edit','delete','adminVerify','repurchaseOrder','verifyPayment'],
 				'KitSelected'=>['view','edit','delete','verifyPayment','verifyDocument','Document','repurchaseOrder'],
@@ -132,7 +132,7 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 					);
 		}
 
-		$this->setOrder('greened_on','desc');
+		// $this->setOrder('greened_on','desc');
 		$this->getElement('created_at')->caption('Joining date');
 
 		/*
@@ -636,8 +636,8 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 				 next_char = 'A' AND desired=path
 				 ) lefts on lefts.id = d.id
 				SET
-					day_left_sv = day_left_sv + $sv_points,
-					total_left_sv = total_left_sv + $sv_points
+					day_left_sv = IFNULL(day_left_sv,0) + $sv_points,
+					total_left_sv = IFNULL(total_left_sv,0) + $sv_points
 		";
 		$this->api->db->dsql($this->api->db->dsql()->expr($q))->execute();
 
@@ -654,8 +654,8 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 				 next_char = 'B' AND desired=path
 				 ) rights on rights.id = d.id
 				SET
-					day_right_sv = day_right_sv + $sv_points,
-					total_right_sv = total_right_sv + $sv_points
+					day_right_sv = IFNULL(day_right_sv,0) + $sv_points,
+					total_right_sv = IFNULL(total_right_sv,0) + $sv_points
 		";
 
 		$this->api->db->dsql($this->api->db->dsql()->expr($q))->execute();
@@ -677,9 +677,9 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 				 desired=introducer_path
 				 ) rights on rights.id = d.id
 				SET
-					month_bv = month_bv + $bv_points,
-					total_month_bv = total_month_bv + $bv_points,
-					quarter_bv_saved = quarter_bv_saved + $bv_points
+					month_bv = IFNULL(month_bv,0) + $bv_points,
+					total_month_bv = IFNULL(total_month_bv,0) + $bv_points,
+					quarter_bv_saved = IFNULL(quarter_bv_saved,0) + $bv_points
 		";
 
 		$this->api->db->dsql($this->api->db->dsql()->expr($q))->execute();
