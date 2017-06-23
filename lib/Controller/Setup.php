@@ -104,6 +104,7 @@ class Controller_Setup extends \AbstractController {
 					->set('pv',$item['pv'])
 					->set('bv',$item['bv'])
 					->set('sv',$item['sv'])
+					->set('dp',$item['dp'])
 					->set('capping',$item['capping'])
 					->set('introducer_income',$item['introducer_income'])
 					->set('sale_price',$item['sale_price'])
