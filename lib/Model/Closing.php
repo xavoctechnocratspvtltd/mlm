@@ -62,13 +62,13 @@ class Model_Closing extends \xepan\base\Model_Table {
 				break;
 			case 'WeeklyClosing':
 				$this->weeklyClosing($this->id,$this['on_date']);
-				$this->calculatePayment($this['on_date']);
+				$this->calculateWeeklyPayment($this['on_date']);
 				$this->resetWeekData($this['on_date']);
 				break;
 
 			case 'MonthlyClosing':
 				$this->monthlyClosing($this->id,$this['on_date'],$this['calculate_loyalty']);
-				$this->calculatePayment($this['on_date']);
+				$this->calculateMonthlyPayment($this['on_date']);
 				$this->resetMonthData($this['on_date']);
 				break;
 			
@@ -484,7 +484,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 	// $this->addField('net_payment')->type('datetime');
 	// $this->addField('carried_amount')->type('datetime');
 
-	function calculatePayment($on_date=null){
+	function calculateWeeklyPayment($on_date=null){
 		if(!$on_date) $on_date = $this->app->now;
 		// calculate payment tds deduction carry forward etc. inclusing previous carried amount
 		// set and save carried_amount to distributor
@@ -541,11 +541,97 @@ class Model_Closing extends \xepan\base\Model_Table {
 					d.is_document_verified = 0 OR
 					d.is_document_verified is null
 					/*
-					OR left self introduction count < 1
-					OR right self introduction count < 1
-					*/
 					OR (select count(distributor_id) from mlm_distributor li where li.introducer_id = d.distributor_id and li.path like concat(d.path,'A%')) < 1
 					OR (select count(distributor_id) from mlm_distributor ri where ri.introducer_id = d.distributor_id and ri.path like concat(d.path,'B%')) < 1
+					*/
+				) AND
+
+				closing_date='$on_date'
+		";
+		$this->query($q);
+
+		// add this carried amount in distributor for previous_carried_amount for next closing
+		if($this->app->getConfig('remove_zero_income',true)){
+			$q="
+				UPDATE
+					mlm_distributor d
+				JOIN mlm_payout p on d.distributor_id = p.distributor_id
+				SET
+					d.carried_amount = d.carried_amount + p.carried_amount
+				WHERE
+					p.carried_amount is not null AND 
+					p.carried_amount > 0 AND
+					p.closing_date='$on_date'
+			";
+			$this->query($q);
+		}
+
+		// non green not in payout but how to carry paris
+		// non min purchase persons amount or min payout amount to carryied .. make tds admin etc zero 
+		// put this in distributor carried amount field
+
+	}
+
+	function calculateMonthlyPayment($on_date=null){
+		if(!$on_date) $on_date = $this->app->now;
+		// calculate payment tds deduction carry forward etc. inclusing previous carried amount
+		// set and save carried_amount to distributor
+
+		$q="
+			UPDATE
+				mlm_payout p
+			JOIN mlm_distributor d on p.distributor_id=d.distributor_id
+			SET 
+				gross_payment = previous_carried_amount + binary_income + introduction_amount + retail_profit + repurchase_bonus + generation_income + loyalty_bonus + leadership_bonus
+			WHERE closing_date='$on_date'";
+		$this->query($q);
+
+		// set tds and admin
+		$q="
+			UPDATE
+				mlm_payout p
+			JOIN mlm_distributor d on p.distributor_id=d.distributor_id
+			JOIN customer c on c.contact_id = d.distributor_id
+			SET 
+				tds = IF(c.pan_no <> '' AND c.pan_no is not null,gross_payment*5/100,gross_payment*20/100),
+				admin_charge = gross_payment*5/100
+			WHERE closing_date='$on_date'";
+		$this->query($q);
+
+		// set net amount
+		$q="
+			UPDATE
+				mlm_payout p
+			JOIN mlm_distributor d on p.distributor_id=d.distributor_id
+			JOIN customer c on c.contact_id = d.distributor_id
+			SET 
+				net_payment = gross_payment - ( tds + admin_charge )
+			WHERE closing_date='$on_date'";
+		$this->query($q);
+
+
+		// Carry forward condition ..
+		// TODO min self purchase and payout from config
+
+		$q="
+			UPDATE
+				mlm_payout p
+				JOIN mlm_distributor d on p.distributor_id=d.distributor_id
+			SET
+				p.carried_amount = gross_payment,
+				tds=0,
+				admin_charge=0,
+				net_payment = 0
+			WHERE
+				(
+					p.month_self_bv < 500 OR
+					net_payment < 500 OR
+					d.is_document_verified = 0 OR
+					d.is_document_verified is null
+					/*
+					OR (select count(distributor_id) from mlm_distributor li where li.introducer_id = d.distributor_id and li.path like concat(d.path,'A%')) < 1
+					OR (select count(distributor_id) from mlm_distributor ri where ri.introducer_id = d.distributor_id and ri.path like concat(d.path,'B%')) < 1
+					*/
 				) AND
 
 				closing_date='$on_date'
