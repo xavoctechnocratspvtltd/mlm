@@ -292,7 +292,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 			$this->query($q);
 		}
 
-		// find difference from introducer downline path
+		// find difference from introducer downline path only rfom those who are  on smalled slab _percentage then distributor
 		$q="
 			UPDATE
 				mlm_payout p 
@@ -336,23 +336,23 @@ class Model_Closing extends \xepan\base\Model_Table {
 
 		/*
 		SELECT 
-p.distributor_id,
-(	select 
-		sum(repurchase_bonus) 
-	from (select * from mlm_payout) pi 
-	join mlm_distributor d1 on pi.distributor_id=d1.distributor_id
-	join mlm_distributor d2 on d1.introducer_id = d2.distributor_id
--- 	join mlm_distributor d3 on d2.introducer_id = d1.distributor_id
-	where d2.introducer_id = d.distributor_id
-)
+		p.distributor_id,
+		(	select 
+				sum(repurchase_bonus) 
+			from (select * from mlm_payout) pi 
+			join mlm_distributor d1 on pi.distributor_id=d1.distributor_id
+			join mlm_distributor d2 on d1.introducer_id = d2.distributor_id
+		-- 	join mlm_distributor d3 on d2.introducer_id = d1.distributor_id
+			where d2.introducer_id = d.distributor_id
+		)
 
-from 
-	mlm_payout p
-	JOIN mlm_distributor d on p.distributor_id=d.distributor_id
-WHERE
-	
-	d.current_rank_id >= 30
-AND	p.closing_date = "2017-05-18 00:00:00"	
+		from 
+			mlm_payout p
+			JOIN mlm_distributor d on p.distributor_id=d.distributor_id
+		WHERE
+			
+			d.current_rank_id >= 30
+		AND	p.closing_date = "2017-05-18 00:00:00"	
 
 		*/
 		$slabs = $this->add('xavoc\mlm\Model_GenerationIncomeSlab');
