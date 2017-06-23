@@ -150,7 +150,7 @@ class page_importer extends \xepan\base\Page {
 						$first_june = strtotime('2017-06-1 00:00:00');
 						$created_at = strtotime($data['created_at']);
 
-						if(isset($all_package[$kit_code]) && $all_package[$kit_code]['id'] && ($first_june > $created_at) ){
+						if(isset($all_package[$kit_code]) && $all_package[$kit_code]['id'] && ($created_at < $first_june) ){
 							$kit_array = $all_package[$kit_code];
 							$kit_id =  $kit_array['id'];
 
