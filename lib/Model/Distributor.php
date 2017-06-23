@@ -606,7 +606,7 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 		$t->save();
 	}
 
-	function repurchase($bv){
+	function repurchase($bv,$sv=0){
 		$this['month_self_bv'] = $this['month_self_bv'] + $bv;
 		$this['total_self_bv'] = $this['total_self_bv'] + $bv;
 		
@@ -616,6 +616,9 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 
 		$this->save();
 		$this->updateAnsestorsBV($bv);
+		if($sv){
+			$this->updateAnsestorsSV($sv);
+		}
 	}
 
 	function updateAnsestorsSV($sv_points){
