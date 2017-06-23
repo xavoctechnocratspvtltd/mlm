@@ -94,31 +94,7 @@ class Model_Distributor_Actions extends \xavoc\mlm\Model_Distributor
 			}
 		}
 
-		$sale_order = $this->add('xavoc\mlm\Model_SalesOrder');
-		$sale_order->addCondition('contact_id',$this->id);
-		$sale_order->addCondition('status','<>','Completed');
-
-		// $repurchase_tab->add('View')->set('Distributor id='.$this->id);
-
-		$grid = $repurchase_tab->add('xepan\base\Grid');
-		$grid->setModel($sale_order,['document_no','status','net_amount']);
-		
-		$grid->addColumn('verify');
-		$grid->addMethod('format_verify',function($grid,$field){
-			$grid->current_row_html[$field] = "<button class='ds-repurchase-verify-btn' data-orderid='".$grid->model->id."'>Verify</button>";
-		});
-		$grid->addFormatter('verify','verify');
-
-		$grid_url = $this->api->url(null,['cut_object'=>$grid->name]);
-
-		$grid->on('click','.ds-repurchase-verify-btn',function($js,$data)use($grid_url,$grid){
-			$order_id = $data['orderid'];
-			if($order_id){
-				$sale_order = $this->add('xavoc\mlm\Model_SalesOrder')->load($order_id);
-				$sale_order->verifyRepurchasePayment();
-			}
-			return $grid->js()->reload(null,null,$grid_url);
-		});
+		$repurchase_tab->add('xavoc\mlm\View_RepurchaseOrder',['options'=>['distributor_id'=>$this->id]]);
 
 	}
 

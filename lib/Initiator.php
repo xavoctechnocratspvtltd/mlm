@@ -16,7 +16,7 @@ class Initiator extends \Controller_Addon {
         $m->addItem(['Kit Management','icon'=>'fa fa-check-square-o'],'xavoc_dm_kits');
         $m->addItem(['Repurchase Product','icon'=>'fa fa-check-square-o'],'xavoc_dm_repurchase');
         $m->addItem(['Distributors','icon'=>'fa fa-check-square-o'],'xavoc_dm_distributors');
-        $m->addItem(['Orders','icon'=>'fa fa-check-square-o'],'xavoc_dm_order');
+        $m->addItem(['Orders','icon'=>'fa fa-check-square-o'],'xavoc_dm_salesorder');
         $m->addItem(['Closings','icon'=>'fa fa-check-square-o'],'xavoc_dm_closings');
         $m->addItem(['Configuration','icon'=>'fa fa-check-square-o'],'xavoc_dm_config');
 
