@@ -52,7 +52,7 @@ class View_GenologyStandard extends \View{
 
 		if($form->isSubmitted()){
 			$model = $this->add('xavoc\mlm\Model_Distributor_Genology')
-						->addCondition([['user',$form['username']],['name','like','%'.$form['username'].'%']])
+						->addCondition([['user',$form['username']],['name','like','%'.$form['username'].'%'],['id',$form['username']]])
 						->tryLoadAny();
 			if(!$model->loaded())
 				$form->displayError('username','No, User found with this username');
