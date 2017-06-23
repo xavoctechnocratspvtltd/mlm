@@ -13,6 +13,6 @@ class Form_Field_MobileNumber extends \Form_Field_Line {
 				throw $this->displayFieldError("Must start with 9, 8 or 7");
 			}
         }
-        return parent::validate();
+        return parent::validate('required');
     }
 }

@@ -21,7 +21,7 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 		parent::init();
 
 		$this->getElement('status')->defaultValue('Red');
-
+		$this->getElement('pan_no')->display(array('form'=>'xavoc\mlm\PanNumber'));
 		$dist_j = $this->join('mlm_distributor.distributor_id');
 
 		$dist_j->hasOne('xavoc\mlm\Sponsor','sponsor_id')->display(['form'=>'xepan\base\Basic'])->defaultValue(0);
@@ -40,9 +40,9 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 		$dist_j->addField('pv')->type('int')->system(true)->defaultValue(0);
 		$dist_j->addField('bv')->type('int')->system(true)->defaultValue(0);
 		$dist_j->addField('sv')->type('int')->system(true)->defaultValue(0);
-		$dist_j->addField('email');
-		$dist_j->addField('mobile_number');
-		$dist_j->addField('dob')->type('date')->caption('Date of Birth');
+		$dist_j->addField('email')->display(array('form'=>'xavoc\mlm\Email'));
+		$dist_j->addField('mobile_number')->display(array('form'=>'xavoc\mlm\MobileNumber'));
+		$dist_j->addField('dob')->type('date')->display(array('form'=>'xavoc\mlm\BDate'))->caption('Date of Birth');
 		// $dist_j->addField('IFCS_Code')->mandatory("IFSC Code is required")->display(array('form'=>'xavoc\mlm\AlphaNumeric'))->caption('IFSC Code');
 		// $dist_j->addField('branch_name')->caption('Branch')->mandatory("Branch name is required")->display(array('form'=>'\xavoc\mlm\Alpha'));//->system(true);
 		$dist_j->addField('kyc_no')->mandatory("KYC no is required")->caption('KYC no.');

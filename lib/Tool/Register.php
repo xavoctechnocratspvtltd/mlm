@@ -24,6 +24,7 @@ class Tool_Register extends \xepan\cms\View_Tool{
 		$form->setModel('xavoc\mlm\Distributor',$form_field);
 		
 		foreach ($form_field as $key => $name) {
+			if(in_array($name, ['pan_no'])) continue;
 			$form->getElement($name)->validate('required');
 		}
 		
@@ -36,7 +37,7 @@ class Tool_Register extends \xepan\cms\View_Tool{
 		// $country_field->js('change',$form->js()->atk4_form('reloadField','state_id',[$this->app->url(null,['cut_object'=>$state_field->name]),'country_id'=>$country_field->js()->val()]));
 		
 
-		$form->addField('username')->validate('required|email');
+		$form->addField('username')->validate('required');
 		$form->addField('password','password')->validate('required');	
 		$form->addField('password','retype_password')->validate('required');	
 		$form->addSubmit('Register')->addClass(' btn btn-primary btn-block');
