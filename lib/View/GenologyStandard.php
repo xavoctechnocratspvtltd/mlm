@@ -51,7 +51,9 @@ class View_GenologyStandard extends \View{
 		$user_field->afterField()->add('Button')->set(array(' ','icon'=>'search fa fa-search'));
 
 		if($form->isSubmitted()){
-			$model = $this->add('xavoc\mlm\Model_Distributor_Genology')->tryLoadBy('user',$form['username']);
+			$model = $this->add('xavoc\mlm\Model_Distributor_Genology')
+						->addCondition([['user',$form['username']],['name','like','%'.$form['username'].'%']])
+						->tryLoadAny();
 			if(!$model->loaded())
 				$form->displayError('username','No, User found with this username');
 			if(!$this->api->auth->model->isSuperUser()){
