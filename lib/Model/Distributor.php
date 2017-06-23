@@ -7,11 +7,11 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 	public $actions = [
-				'Red'=>['view','edit','delete','adminVerify','repurchaseOrder'],
+				'Red'=>['view','edit','delete','adminVerify','repurchaseOrder','verifyPayment'],
 				'KitSelected'=>['view','edit','delete','verifyPayment','verifyDocument','Document','repurchaseOrder'],
 				'KitPaid'=>['view','edit','delete','verifyPayment','verifyDocument','markGreen','repurchaseOrder'],
-				'Green'=>['view','edit','delete','Document','verifyDocument','repurchaseOrder'],
-				'Blocked'=>['view','edit','delete','Unblocked','repurchaseOrder']
+				'Green'=>['view','edit','delete','Document','verifyDocument','repurchaseOrder','verifyPayment'],
+				'Blocked'=>['view','edit','delete','Unblocked','repurchaseOrder','verifyPayment']
 			];
 	
 	public $acl_type= "ispmanager_distributor";

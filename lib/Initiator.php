@@ -22,6 +22,12 @@ class Initiator extends \Controller_Addon {
 
         $this->addAppFunctions();
 
+        $this->app->addHook('invoice_paid',function($app,$invoice){
+            return $this->app->js()->univ()->successMessage('invoice paid todo hook');
+            // $m = $this->add('xavoc\mlm\Model_Distributor');
+            // $m->load($invoice['contact_id']);
+        });
+
         return $this;
     }
 
