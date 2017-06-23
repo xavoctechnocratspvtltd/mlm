@@ -42,9 +42,8 @@ class Model_Distributor_Actions extends \xavoc\mlm\Model_Distributor
 	function page_verifyPayment($page){
 		
 		$tab = $page->add('Tabs');
-		$repurchase_tab = $tab->addTab('Repurchase Payment ');
 
-		if(in_array($this['status'], ['kitSelected','KitPaid'])){
+		if(in_array($this['status'], ['KitSelected','kitSelected','KitPaid','kitPaid'])){
 			$kit_veri = $tab->addTab('Kit Payment Verification');
 
 			if($this['is_payment_verified']){
@@ -94,6 +93,7 @@ class Model_Distributor_Actions extends \xavoc\mlm\Model_Distributor
 			}
 		}
 
+		$repurchase_tab = $tab->addTab('Repurchase Payment');
 		$repurchase_tab->add('xavoc\mlm\View_RepurchaseOrder',['options'=>['distributor_id'=>$this->id]]);
 
 	}
