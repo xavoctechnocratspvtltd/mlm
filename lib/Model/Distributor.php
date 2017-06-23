@@ -35,7 +35,8 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 		$dist_j->addField('introducer_path')->type('text');
 		$dist_j->addField('side')->enum(['A','B'])->display(['form'=>'xepan\base\DropDownNormal']);
 
-		$dist_j->hasOne('xavoc\mlm\Kit','kit_item_id')->defaultValue(null)->caption('Startup Package');
+		$dist_j->addField('kit_item_id')->defaultValue(null)->caption('Startup Package');
+		// $dist_j->hasOne('xavoc\mlm\Kit','kit_item_id')->defaultValue(null)->caption('Startup Package');
 		$dist_j->addField('capping')->type('int')->system(true)->defaultValue(0);
 		$dist_j->addField('pv')->type('int')->system(true)->defaultValue(0);
 		$dist_j->addField('bv')->type('int')->system(true)->defaultValue(0);
@@ -710,7 +711,7 @@ public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 
 	function kit(){
 		if($this['kit_item_id'])
-			return $this->ref('kit_item_id');
+			return $this->add('xavoc\mlm\Model_Kit')->load($this['kit_item_id']);
 		return false;
 	}
 
