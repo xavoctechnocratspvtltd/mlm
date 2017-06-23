@@ -146,8 +146,11 @@ class page_importer extends \xepan\base\Page {
 						$kit_code = $package_mapping[trim($old_dis['planname'])];
 
 						
-						
-						if(isset($all_package[$kit_code]) && $all_package[$kit_code]['id']){
+						$before_1st_june = false;
+						$first_june = strtotime('2017-06-1 00:00:00');
+						$created_at = strtotime($data['created_at']);
+
+						if(isset($all_package[$kit_code]) && $all_package[$kit_code]['id'] && ($first_june > $created_at) ){
 							$kit_array = $all_package[$kit_code];
 							$kit_id =  $kit_array['id'];
 
@@ -156,8 +159,11 @@ class page_importer extends \xepan\base\Page {
 							$data['pv'] = $kit_array['pv'];
 							$data['bv'] = $kit_array['bv'];
 							$data['capping'] = $kit_array['capping'];
+							$data['status'] = "Green";
+
 							$data['greened_on'] = date('Y-m-d H:i:s', strtotime($old_dis['topupeddate']));
 							$data['status'] = "Green";
+							$before_1st_june = true;
 						}else{
 							$data['status'] = "Red";
 							$dis_having_not_kit[] = $distributor->id;
@@ -168,7 +174,10 @@ class page_importer extends \xepan\base\Page {
 					// try{
 						$distributor = $this->add('xavoc\mlm\Model_Distributor');
 						$distributor->register($data);
-						// $distributor->purchaseKit($kit_id);
+						if($before_1st_june){
+							$distributor->purchaseKit($kit_id);
+							$distributor->markGreen($data['greened_on']);
+						}
 
 						if(!isset($dis_id_mapping[$old_dis['Member_PrimaryKey']]))
 							$dis_id_mapping[$old_dis['Member_PrimaryKey']] = $distributor->id;
