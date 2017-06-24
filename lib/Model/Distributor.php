@@ -775,12 +775,21 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 	// }
 
 	function repurchaseOrder(){
-		$master_detail = $this->getQSPMasterDetail();
-		$qsp_master = $this->add('xepan\commerce\Model_QSP_Master');
-		$sale_order = $qsp_master->createQSPMaster($master_detail,'SalesOrder');
-		$this->app->db->commit();
-		$this->app->js()->univ()->newWindow($this->app->url("xepan_commerce_quickqsp",['document_type'=>'SalesOrder','action'=>'edit','document_id'=>$sale_order->id]),'saleorder')->execute();
+
+		try{
+			// $this->api->db->beginTransaction();
+			$master_detail = $this->getQSPMasterDetail();
+			$qsp_master = $this->add('xepan\commerce\Model_QSP_Master');
+			$sale_order = $qsp_master->createQSPMaster($master_detail,'SalesOrder');
+			$this->app->db->commit();
+			$this->app->js()->univ()->newWindow($this->app->url("xepan_commerce_quickqsp",['document_type'=>'SalesOrder','action'=>'edit','document_id'=>$sale_order->id]),'saleorder')->execute();
+		}catch(\Exception $e){
+			// $this->api->db->rollback();
+			$this->app->js()->univ()->errorMessage($e->getMessage()." or Update Contact Detail")->execute();
+		}
+		
 	}
+
 	/*
 	* return array of master detail 
 	*/
