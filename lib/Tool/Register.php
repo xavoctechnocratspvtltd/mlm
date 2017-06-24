@@ -18,6 +18,8 @@ class Tool_Register extends \xepan\cms\View_Tool{
 	function init(){
 		parent::init();
 
+		if($this->owner instanceof \AbstractController) return;
+
 		$form_field = ['introducer_id','side','first_name','last_name','dob','email','mobile_number','pan_no','country_id','state_id','city','pin_code','address'];
 		$form = $this->add('Form');
 		$form->setLayout(['view/form/registration']);

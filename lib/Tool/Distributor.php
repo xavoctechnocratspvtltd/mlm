@@ -13,6 +13,7 @@ class Tool_Distributor extends \xepan\cms\View_Tool{
 	function init(){
 		parent::init();
 
+		if($this->owner instanceof \AbstractController) return;
 
 		$this->add('View_Info')->set('Distributor Tool');
 

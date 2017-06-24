@@ -11,6 +11,8 @@ class Tool_Profile extends \xepan\cms\View_Tool{
 	function init(){
 		parent::init();
 
+		if($this->owner instanceof \AbstractController) return;
+
 		$this->addClass('main-box');
 		$this->app->stickyGET('country_id');
 

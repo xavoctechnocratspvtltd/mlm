@@ -16,6 +16,9 @@ class Tool_MenuBar extends \xepan\cms\View_Tool{
 
 	function init(){
 		parent::init();
+
+		if($this->owner instanceof \AbstractController) return;
+
 		if($this->options['custom_template']){
 			$path = getcwd()."/websites/".$this->app->current_website_name."/www/view/tool/".$this->options['custom_template'].".html";
 			if(!file_exists($path)){

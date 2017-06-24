@@ -710,8 +710,13 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 	}
 
 	function kit(){
-		if($this['kit_item_id'])
-			return $this->add('xavoc\mlm\Model_Kit')->load($this['kit_item_id']);
+		if($this['kit_item_id']){
+			if($k=$this->app->recall('k_'.$this['kit_item_id'],false)){
+				$k = $this->add('xavoc\mlm\Model_Kit')->load($this['kit_item_id']);
+				$this->app->memorize('k_'.$this['kit_item_id'],$k);
+			}
+			return $k;
+		}
 		return false;
 	}
 
