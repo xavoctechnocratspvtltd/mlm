@@ -9,7 +9,7 @@
       <!-- Collect the nav links, forms, and other content for toggling-->
       <div id="bs-example-navbar-collapse-1" class="collapse navbar-collapse">{category_list}
         <ul class="nav navbar-nav">{rows}{row}
-          <li data-id="{$id}" class="dropdown mega-dropdown"><a href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle">{name}Products{/} </a>{$child_category}</li>{/row}{/rows}{/category_list}
+          <li data-id="{$id}" class="dropdown mega-dropdown"><a href="{$sub_url}" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle">{name}Products{/} </a>{$child_category}</li>{/row}{/rows}{/category_list}
         </ul>{child_cat_lister}
         {$Content}		
         <ul class="dropdown-menu mega-dropdown-menu">{rows}{row}
