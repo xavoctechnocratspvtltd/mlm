@@ -16,9 +16,9 @@ class page_distributors extends \xepan\base\Page {
 					];
 
 		$dis_action_m = $this->add('xavoc\mlm\Model_Distributor_Actions');
+		$dis_action_m->add('xavoc\mlm\Controller_SideBarStatusFilter');
 		
 		$crud = $this->add('xepan\hr\CRUD',['status_color'=>$status_color,'allow_del'=>false, 'allow_add'=>false]);
-		$dis_action_m->add('xavoc\mlm\Controller_SideBarStatusFilter');
 		$crud->setModel($dis_action_m,
 						['country_id','state_id','address','city','pin_code'],
 						['distributor_name','side','sponsor','introducer','joining_date','email','mobile_number']
@@ -44,7 +44,7 @@ class page_distributors extends \xepan\base\Page {
 		$sale_order = $this->add('xavoc\mlm\Model_SalesOrder');
 		$sale_order->load($document_id);
 
-		$grid->setModel($sale_order->items());
+		$grid->setModel($sale_order->items(),['item','item_id','is_package','price','quantity','discount','total_amount']);
 
 	}
 

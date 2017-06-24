@@ -17,6 +17,16 @@ class Model_SalesOrder extends \xepan\commerce\Model_SalesOrder {
 				// 'Returned'=>['view','edit','delete','manage_attachments']
 	];
 
+	function init(){
+		parent::init();
+
+		$this->addExpression('is_topup_included')->set(function($m,$q){
+			return $q->expr('IFNULL([0],0)',[$m->refSQL('xavoc\mlm\Model_QSPDetail')->sum('is_package')]);
+		});
+
+		$this->hasMany('xavoc\mlm\Model_QSPDetail','qsp_master_id');
+	}
+
 	function verifyRepurchasePayment(){
 		if(!$this->loaded()) $this->throw('sale ordre model not loaded')->addMoreInfo('in mlm sale order');
 		// mark order invoice and paid invoice

@@ -14,6 +14,7 @@ class View_RepurchaseOrder extends \View{
 		if($this->options['distributor_id'])
 			$sale_order->addCondition('contact_id',$this->options['distributor_id']);
 
+		$sale_order->addCondition('is_topup_included',0);
 		$sale_order->addCondition('status','<>','Completed');
 		$sale_order->addExpression('items')->set($sale_order->refSQL('Details')->count());
 
