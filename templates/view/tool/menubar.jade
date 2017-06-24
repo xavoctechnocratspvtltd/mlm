@@ -97,14 +97,18 @@ style.
 
 script.
 	$(document).ready(function(){
-		$(".dropdown").hover(            
+		$(".dropdown").hover(
 			function() {
 				$('.dropdown-menu', this).not('.in .dropdown-menu').stop(true,true).slideDown("400");
-				$(this).toggleClass('open');        
+				$(this).toggleClass('open');
 			},
 			function() {
 				$('.dropdown-menu', this).not('.in .dropdown-menu').stop(true,true).slideUp("400");
-				$(this).toggleClass('open');       
+				$(this).toggleClass('open');
 			}
 		);
+
+		$('.dropdown').click(function(){
+			$.univ().location($(this).find('a').attr('href'));
+		});
 	});
