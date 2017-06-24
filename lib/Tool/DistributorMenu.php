@@ -7,6 +7,7 @@ class Tool_DistributorMenu extends \xepan\cms\View_Tool{
 
 	function init(){
 		parent::init();
+		if($this->owner instanceof \AbstractController) return;
 
 		$this->distributor = $distributor = $this->add('xavoc\mlm\Model_Distributor');
 		$distributor->addExpression('attachment_count')->set(function($m,$q){

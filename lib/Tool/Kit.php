@@ -20,6 +20,8 @@ class Tool_Kit extends \xepan\cms\View_Tool{
 	function init(){
 		parent::init();
 
+		if($this->owner instanceof \AbstractController) return;
+
 		$this->addClass('ds-kitlist main-box');
 		$layout_template = "kitlist";
 		
