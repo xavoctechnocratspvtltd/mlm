@@ -1,0 +1,15 @@
+.xepan-tool-options(id='{$_name}' style="display:none" for-xepan-component='xavoc/mlm/Tool_FranchisesDashboard')
+	.xepan-cms-group-panel.clearfix
+		h3.collapsed(data-toggle='collapse', data-target='#collapse-carousel', aria-expanded='false')
+			span Franchises Dashboard
+		#collapse-carousel.xepan-cms-tools-bar-panel.row-fluid.collapse.in
+			.panel-body
+script(type='text/javascript').
+	$('\\#{$_name} [data-attr]').on('change',function(){
+		$(current_selected_component).attr($(this).data('attr'),$(this).val());
+	});
+	$('\\#{$_name}').on('show',function(event){
+		$('\\#{$_name} [data-attr]').each(function(index,value){
+			$(this).val($(current_selected_component).attr($(this).data('attr')));
+		});
+	});
