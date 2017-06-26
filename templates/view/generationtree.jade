@@ -2,8 +2,9 @@ div(id='{$_name}' class="{$class}" style="{$style}")
 	{generation_list}
 	ul
 		{rows}{row}
-		li(data-id='{$id}')
+		li
 			a(href="{$url}") {$user}
+				i.fa.fa-user
 			small {$name}
 			div
 				{$nested_generation}

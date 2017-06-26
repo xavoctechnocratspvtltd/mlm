@@ -12,7 +12,6 @@ class Tool_GenerationTree extends \xepan\cms\View_Tool{
 						'generation-show-info-on'=>"hover"
 	];
 
-	public $distributor = null ;
 	public $start_distributor = null ;
 	public $start_id = null ;
 	public $level = 5 ;

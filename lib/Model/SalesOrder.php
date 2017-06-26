@@ -6,16 +6,24 @@ class Model_SalesOrder extends \xepan\commerce\Model_SalesOrder {
 	public $table_alias =  'mlm_sale_order';
 	public $status = ['Draft','Submitted','Redesign','Approved','InProgress','Canceled','Completed','Dispatched','OnlineUnpaid'];
 	public $actions = [
+
 	'Draft'=>['view','edit','delete','manage_attachments','verifyRepurchasePayment'],
-	// 'Submitted'=>['view','edit','delete','approve','redesign','manage_attachments','print_document','verifyRepurchasePayment'],
-	// 'Approved'=>['view','edit','delete','inprogress','send','manage_attachments','createInvoice','print_document'],
-	// 'InProgress'=>['view','edit','delete','cancel','complete','manage_attachments','send'],
+	'Submitted'=>['view','edit','delete','approve','redesign','manage_attachments','print_document','verifyRepurchasePayment'],
+	'Approved'=>['view','edit','delete','inprogress','send','manage_attachments','createInvoice','print_document'],
+	'InProgress'=>['view','edit','delete','cancel','complete','manage_attachments','send'],
 	'Canceled'=>['view','edit','delete','redraft','manage_attachments'],
 	'Completed'=>['view','edit','delete','manage_attachments','createInvoice','print_document','send'],
 	'OnlineUnpaid'=>['view','edit','delete','approve','createInvoice','manage_attachments','print_document','send','verifyRepurchasePayment'],
-	// 'Redesign'=>['view','edit','delete','submit','manage_attachments']
-				// 'Returned'=>['view','edit','delete','manage_attachments']
+	'Redesign'=>['view','edit','delete','submit','manage_attachments']
 	];
+	/*
+		['Draft'] => no used
+		['Submitted'] => if online then invoice paid for this order else no invoice only order submitted
+		['Approved'] => not used
+		['InProgress'] => not used
+		['completed'] => only dispatched
+		['onlineUnpaid'] => order confirmed but could not be paid
+	*/
 
 	function init(){
 		parent::init();
