@@ -95,7 +95,7 @@ class Model_Distributor_Actions extends \xavoc\mlm\Model_Distributor
 
 		$repurchase_tab = $tab->addTab('Repurchase Payment');
 		$repurchase_tab->add('xavoc\mlm\View_RepurchaseOrder',['options'=>['distributor_id'=>$this->id]]);
-
+		
 	}
 
 	function page_Document($page){
@@ -237,4 +237,10 @@ class Model_Distributor_Actions extends \xavoc\mlm\Model_Distributor
 			$this->app->page_action_result = $form->js(null,$form->js()->closest('.dialog')->dialog('close'))->univ()->successMessage('Verified and Green');
 		}
 	}
+
+	function page_topup($page){
+
+		$page->add('xavoc\mlm\View_Topup',['distributor'=>$this]);
+	}
+	
 }

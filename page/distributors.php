@@ -44,7 +44,7 @@ class page_distributors extends \xepan\base\Page {
 		$sale_order = $this->add('xavoc\mlm\Model_SalesOrder');
 		$sale_order->load($document_id);
 
-		$grid->setModel($sale_order->items(),['item','item_id','is_package','price','quantity','discount','total_amount']);
+		$grid->setModel($sale_order->items(),['item','is_package','price','quantity','total_amount']);
 
 	}
 

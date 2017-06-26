@@ -31,6 +31,14 @@ class Model_SalesOrder extends \xepan\commerce\Model_SalesOrder {
 		$this->addExpression('is_topup_included')->set(function($m,$q){
 			return $q->expr('IFNULL([0],0)',[$m->refSQL('xavoc\mlm\Model_QSPDetail')->sum('is_package')]);
 		});
+		
+		$this->addExpression('items')->set($this->refSQL('Details')->count());
+		$this->addExpression('invoice_detail')->set(function($m,$q){
+			$in = $m->add('xepan\commerce\Model_SalesInvoice');
+			$in->addCondition('related_qsp_master_id',$q->getField('id'));
+
+			return $q->expr("CONCAT(IFNULL([0],'0'),'-',IFNULL([1],'none'))",[$in->fieldQuery('id'),$in->fieldQuery('status')]);
+		})->caption('Invoice/Status');
 
 		$this->hasMany('xavoc\mlm\Model_QSPDetail','qsp_master_id');
 	}

@@ -7,11 +7,11 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 	public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 	public $actions = [
-				'Red'=>['view','edit','delete','adminVerify','repurchaseOrder','verifyPayment'],
-				'KitSelected'=>['view','edit','delete','verifyPayment','verifyDocument','Document','repurchaseOrder'],
-				'KitPaid'=>['view','edit','delete','verifyPayment','verifyDocument','markGreen','repurchaseOrder'],
-				'Green'=>['view','edit','delete','Document','verifyDocument','repurchaseOrder','verifyPayment'],
-				'Blocked'=>['view','edit','delete','Unblocked','repurchaseOrder','verifyPayment']
+				'Red'=>['view','edit','delete','adminVerify','repurchaseOrder','verifyPayment','topup'],
+				'KitSelected'=>['view','edit','delete','verifyPayment','verifyDocument','Document','repurchaseOrder','topup'],
+				'KitPaid'=>['view','edit','delete','verifyPayment','verifyDocument','markGreen','repurchaseOrder','topup'],
+				'Green'=>['view','edit','delete','Document','verifyDocument','repurchaseOrder','verifyPayment','topup'],
+				'Blocked'=>['view','edit','delete','Unblocked','repurchaseOrder','verifyPayment','topup']
 			];
 	
 	public $acl_type= "ispmanager_distributor";
@@ -711,10 +711,10 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 	function kit(){
 		if($this['kit_item_id']){
-			if($k=$this->app->recall('k_'.$this['kit_item_id'],false)){
+			// if($k=$this->app->recall('k_'.$this['kit_item_id'],false)){
 				$k = $this->add('xavoc\mlm\Model_Kit')->load($this['kit_item_id']);
-				$this->app->memorize('k_'.$this['kit_item_id'],$k);
-			}
+				// $this->app->memorize('k_'.$this['kit_item_id'],$k);
+			// }
 			return $k;
 		}
 		return false;
