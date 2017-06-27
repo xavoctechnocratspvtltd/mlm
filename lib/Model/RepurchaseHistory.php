@@ -22,6 +22,7 @@ class Model_RepurchaseHistory extends \xepan\base\Model_Table {
 		$this->add('xepan\filestore\Field_Image','cheque_deposite_receipt_image_id');
 		$this->add('xepan\filestore\Field_Image','dd_deposite_receipt_image_id');
 		$this->add('xepan\filestore\Field_Image','office_receipt_image_id');
+		
 		$this->addField('payment_narration')->type('text');
 		$this->addField('created_at')->type('datetime')->defaultValue($this->app->now);
 		$this->addField('online_transaction_reference');

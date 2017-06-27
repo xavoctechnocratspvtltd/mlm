@@ -8,6 +8,8 @@ class Tool_FranchisesOrder extends \xepan\cms\View_Tool{
 	function init(){
 		parent::init();
 		
+		if($this->owner instanceof \AbstractController) return;
+		
 		$sale_order = $this->add('xavoc\mlm\Model_SalesOrder');
 		$this->addClass('main-box');
 		$grid = $this->add('xepan\base\Grid');
