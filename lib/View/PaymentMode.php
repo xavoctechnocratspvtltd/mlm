@@ -22,8 +22,16 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 		}
 
 		if($distributor['kit_item_id']){
-			$this->add('View_Info')->set('you are updating your topup')->addClass('alert alert-info');
+			
+			if($distributor->isTopupPaymentDue()){
+				$this->add('View')->set("your last topup is under verification process, for re-topup cancle order now");
+				return;				
+			}else{
+				$this->add('View_Info')->set('you are updating your topup')->addClass('alert alert-info');
+			}
+
 		}
+
 
 		$this->attachment = $attachment = $this->add('xavoc\mlm\Model_Attachment');
 		$attachment->addCondition('distributor_id',$distributor->id);
@@ -109,7 +117,7 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 			$distributor['bank_ifsc_code'] = $cheque_form['bank_ifsc_code'];
 			$distributor['cheque_number'] = $cheque_form['cheque_number'];
 			$distributor['cheque_date'] = $cheque_form['cheque_date'];
-			$distributor->purchaseKit($kit_model);
+			// $distributor->purchaseKit($kit_model);
 
 			$cheque_form->js(null,$cheque_form->js()->redirect($this->app->url('dashboard')))->univ()->successMessage('cheque detail submitted')->execute();
 		}
@@ -143,7 +151,7 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 			$distributor['bank_ifsc_code'] = $dd_form['bank_ifsc_code'];
 			$distributor['cheque_number'] = $dd_form['cheque_number'];
 			$distributor['cheque_date'] = $dd_form['cheque_date'];
-			$distributor->purchaseKit($kit_model);
+			// $distributor->purchaseKit($kit_model);
 
 			$dd_form->js(null,$dd_form->js()->redirect($this->app->url('dashboard')))->univ()->successMessage('DD detail submitted')->execute();
 		}
@@ -170,7 +178,7 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 			$distributor['payment_mode'] = $form['deposite_in_company']?'deposite_in_company':'deposite_in_franchies';
 			$distributor['deposite_in_office_narration'] = $form['narration'];
 			$distributor['sale_order_id'] = $result['order_id'];
-			$distributor->purchaseKit($kit_model);
+			// $distributor->purchaseKit($kit_model);
 			
 			// $form->js()->redirect($this->app->url('dashb'))
 			$form->js(null,$form->js()->redirect($this->app->url('dashboard')))->univ()->successMessage('Detail Submitted')->execute();
