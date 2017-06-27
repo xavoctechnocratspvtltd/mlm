@@ -928,4 +928,16 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		// }		
 
 	}
+
+	function isTopupPaymentDue(){
+		if(!$this->loaded()) throw new \Exception("model must loaded", 1);
+		
+		$sale_order = $this->add('xavoc\mlm\Model_SalesOrder');
+		$sale_order->addCondition('contact_id',$this->id);
+		$sale_order->addCondition('is_topup_included',true);
+		$sale_order->addCondition('invoice_detail','0-none');
+		$sale_order->addCondition('status','<>','Completed');
+		
+		return $sale_order->count()->getOne();
+	}
 } 
