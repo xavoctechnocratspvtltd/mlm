@@ -8,8 +8,8 @@ class Grid_Order extends \Grid{
 		parent::init();
 
 		$add_topup_btn = $this->addButton('Admin Topup')->addClass('btn btn-primary');
+		$add_topup_btn->js('click')->univ()->frameURL('Add New Topup',$this->app->url('xavoc_dm_orderaction',['actiontype'=>'payment','distributor_id'=>$this->distributor->id]));
 
-		
 		$this->on('click','.do-ds-order',function($js,$data){
 			$label = "Order Payment Verification";
 			if($data['actiontype'] == 'dispatch')

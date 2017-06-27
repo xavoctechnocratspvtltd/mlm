@@ -590,7 +590,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		$this->updateAnsestorsBV($this['bv']);
 		if($introducer  = $this->introducer()) $introducer->addSessionIntro($kit['introducer_income']);
 		
-		$this->updateTopupHistoryAttachment();
+		// $this->updateTopupHistoryAttachment();
 		$this->sendMailGreenDistributor();
 	}
 

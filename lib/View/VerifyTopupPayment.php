@@ -10,7 +10,7 @@ class View_VerifyTopupPayment extends \View{
 	function init(){
 		parent::init();
 
-		if(!$this->orderid) throw new \Exception("order not found");
+		// if(!$this->orderid) throw new \Exception("order not found");
 		if(!$this->distributor_id) throw new \Exception("distributor not found");
 		
 		$distributor = $this->add('xavoc\mlm\Model_Distributor')->load($this->distributor_id);
@@ -20,6 +20,7 @@ class View_VerifyTopupPayment extends \View{
 			$order_model->load($this->orderid);
 
 
+		// $item = $this->add('xavoc\mlm\Model_Kit');
 		$item = $this->add('xepan\commerce\Model_Item');
 		$item->title_field = "kit_with_price";
 		$item->addExpression('kit_with_price')->set(function($m,$q){
@@ -31,7 +32,7 @@ class View_VerifyTopupPayment extends \View{
 									]
 				);
 		});
-		$item->addExpression('is_package',true);
+		$item->addCondition('is_package',true);
 
 		$form = $this->add('Form');
 		
@@ -41,30 +42,36 @@ class View_VerifyTopupPayment extends \View{
 			$form->add("View")->set($item['kit_with_price'])->addClass('alert alert-info');
 			$form->addField('hidden','kit')->set($item->id);
 		}else{
+
+			// $item->addExpression('capping_int')->set(function($m,$q){
+			// 	return $q->expr('CAST([0] AS SIGNED)',[$m->getElement('capping')]);
+			// });
+			// $item->addCondition('status','Published');
+
+			// if($distributor['kit_item_id']){
+			// 	$last_kit = $this->add('xavoc\mlm\Model_TopupHistory')
+			// 				->addCondition('distributor_id',$distributor->id)
+			// 				->setOrder('id','desc')
+			// 				->tryLoadAny()
+			// 				;
+			// 	if($last_kit->loaded())
+			// 		$item->addCondition('capping_int','>',$last_kit['capping']);
+			// }
 			$form->addField('DropDown','kit')->validate('required')->setModel($item);
 		}
-
-		// $attachment = $this->add('xavoc\mlm\Model_Attachment')
-		// 				->addCondition('distributor_id',$distributor->id);
-		// $attachment->tryLoadAny();
 		
 		$topup_history = $this->add('xavoc\mlm\Model_TopupHistory');
-		$topup_history->addCondition('sale_order_id',$order_model->id);
 		$topup_history->addCondition('distributor_id',$distributor->id);
-		$topup_history->tryLoadAny();
+		
+		if($order_model->loaded()){
+			$topup_history->addCondition('sale_order_id',$order_model->id);
+			$topup_history->tryLoadAny();
+		}
+		
 
 		$payment_mode_field = $form->addField('DropDown','payment_mode')
 					->setValueList(['online'=>'Online','cheque'=>'Cheque','dd'=>'DD','deposite_in_franchies'=>'Deposite in Franchises','deposite_in_company'=>'Deposite in company'])
 					->set($topup_history['payment_mode']);
-
-		// $form->addField('online_transaction_reference')->setAttr('disabled',true)->set($topup_history['transaction_reference']);
-		// $form->addField('online_transaction_detail')->setAttr('disabled',true)->set($topup_history['transaction_detail']);
-			
-		// $form->addField('bank_name')->set($topup_history['bank_name']);
-		// $form->addField('bank_ifsc_code')->set($topup_history['bank_ifsc_code']);
-		// $form->addField('cheque_number')->set($topup_history['cheque_number']);
-		// $form->addField('dd_number')->set($topup_history['dd_number']);
-		// $form->addField('DatePicker','deposite_date')->set($topup_history['dd_date']);
 
 		$form->setModel($topup_history,[
 								'online_transaction_reference',
@@ -105,33 +112,39 @@ class View_VerifyTopupPayment extends \View{
 			
 			try{
 				$this->app->db->beginTransaction();
-				// update attachment info
-				$form->model['is_payment_verified'] = true;
-				$form->update();
 				
-				// $distributor['online_transaction_reference'] = $form['online_transaction_reference'];
-				// $distributor['online_transaction_detail'] = $form['online_transaction_detail'];
-				// $distributor['bank_name'] = $form['bank_name'];
-				// $distributor['bank_ifsc_code'] = $form['bank_ifsc_code'];
-				// $distributor['cheque_number'] = $form['cheque_number'];
-				// $distributor['dd_number'] = $form['dd_number'];
-				// $distributor['dd_date'] = $form['dd_date'];
-				// $distributor['payment_mode']= $form['payment_mode'];
-
 				$distributor['is_payment_verified'] = true;
 
 				$distributor->save();
-				if($order_model->loaded())
+				if($order_model->loaded()){
 					$order_model->invoice()->paid();
+					$form->model['sale_order_id'] = $order_model->id;
+					$form->model['is_payment_verified'] = true;
+					$form->update();
+				}
 				else{
 					// create order on dehalf of kit
-					$order = $distributor->placeTopupOrder($form['kit']);
-					$order->invoice()->paid();
+					$result = $distributor->placeTopupOrder($form['kit']);
+					$order_id = $result['master_detail']['id'];
+					
+					$payment_detail = $form->get();					
+					$payment_detail['is_payment_verified'] = true;
+					$distributor->purchaseKit($form['kit']);
+					$distributor->updateTopupHistory($form['kit'],$order_id,$form['payment_mode'],$payment_detail);
+					
+					$order_model = $this->add('xepan\commerce\Model_SalesOrder');
+					$order_model->load($result['master_detail']['id']);
+					$order_model->invoice()->paid();
 				}
 				
+				// update topup attachment
+
 				$this->app->db->commit();
 			}catch(\Exception $e){
+				
 				$this->app->db->rollback();
+				throw $e;
+				
 				$form->js(null,$form->js()->closest('.dialog')->dialog('close'))->univ()->errorMessage($e->getMessage()." , something wrong")->execute();
 			}
 			
