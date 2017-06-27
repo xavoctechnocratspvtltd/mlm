@@ -30,7 +30,14 @@ class View_GenerationTree extends \View{
 		$distributor->loadLoggedIn();
 
 		if($this->api->stickyGET('start_id')){
-			$this->start_id = $_GET['start_id'];
+			if(!is_numeric($_GET['start_id'])){
+				$this->start_id = $this->add('xavoc\mlm\Model_Distributor')
+							->addCondition([['user',$_GET['start_id']],['name','like','%'.$_GET['start_id'].'%'],['id',$_GET['start_id']]])
+							->tryLoadAny()
+							->get('id');
+			}else{
+				$this->start_id = $_GET['start_id'];
+			}
 		}
 
 		if(!$this->start_id){
@@ -51,7 +58,7 @@ class View_GenerationTree extends \View{
 		
 		$a=$this->add('xavoc\mlm\Model_Distributor');
 		$a->load($this->start_id);
-		$this->template->trySet('sponsor_id',$a['sponsor_id']);
+		$this->template->trySet('introducer_id',$a['introducer_id']);
 		$this->template->trySet('url',$this->app->url());
 
 
@@ -63,7 +70,7 @@ class View_GenerationTree extends \View{
 		$m->load($id);
 		$clr=($m['geened_on']) ? "folder_green.gif" : "folder_blue.gif";
 		$title = $this->getTitle($m);
-		$this->js(true,"addNode($id,$parent_id,'".$m['name']." [".$m['side']."]', '$clr','$title')");
+		$this->js(true,"addNode($id,$parent_id,'".$m['name']." [".$m['user']."]', '$clr','$title')");
 
 		$distributor = $this->add('xavoc\mlm\Model_Distributor');
 		$distributor->addCondition('introducer_id',$m->id);

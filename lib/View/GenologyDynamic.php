@@ -15,7 +15,7 @@ class View_GenologyDynamic extends \View{
 	public $distributor = null ;
 	public $start_distributor = null ;
 	public $start_id = null ;
-	public $level = 6 ;
+	public $level = 1 ;
 
 	function init(){
 		parent::init();
@@ -24,11 +24,20 @@ class View_GenologyDynamic extends \View{
 			return "please login with distributor id";
 		}
 
+		$this->level = $this->options['genology-depth-of-tree'];
+
 		$this->distributor = $distributor = $this->add('xavoc\mlm\Model_Distributor_Genology');
 		$distributor->loadLoggedIn();
 
 		if($this->api->stickyGET('start_id')){
-			$this->start_id = $_GET['start_id'];
+			if(!is_numeric($_GET['start_id'])){
+				$this->start_id = $this->add('xavoc\mlm\Model_Distributor')
+							->addCondition([['user',$_GET['start_id']],['name','like','%'.$_GET['start_id'].'%'],['id',$_GET['start_id']]])
+							->tryLoadAny()
+							->get('id');
+			}else{
+				$this->start_id = $_GET['start_id'];
+			}
 		}
 
 		if(!$this->start_id){
@@ -60,7 +69,7 @@ class View_GenologyDynamic extends \View{
 		$m->load($id);
 		$clr=($m['greened_on']) ? "folder_green.gif" : "folder_red.gif";
 		$title= $this->getTitle($m);
-		$this->js(true,"addNode($id,$parent_id,'".$m['name']." [".$m['side']."]', '$clr','$title')");
+		$this->js(true,"addNode($id,$parent_id,'".$m['name']." [".$m['user']."]', '$clr','$title')");
 		if($m['left_id'])
 			$this->drawNode($id,$m['left_id'],$depth-1);
 		else if($depth-1 > 0)
