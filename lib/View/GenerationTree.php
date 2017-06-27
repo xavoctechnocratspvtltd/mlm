@@ -69,7 +69,7 @@ class View_GenerationTree extends \View{
 		if($depth == 0 ) return;
 		$m=$this->add('xavoc\mlm\Model_Distributor');
 		$m->load($id);
-		$clr=($m['geened_on']) ? "folder_green.gif" : "folder_blue.gif";
+		$clr=($m['greened_on']) ? "folder_green.gif" : "folder_blue.gif";
 		$title = $this->getTitle($m);
 		$this->js(true,"addNode($id,$parent_id,'".$m['name']." <br/> [".$m['user']."]', '$clr','$title')");
 
