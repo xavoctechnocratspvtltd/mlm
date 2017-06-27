@@ -69,7 +69,7 @@ class View_GenologyDynamic extends \View{
 		$m->load($id);
 		$clr=($m['greened_on']) ? "folder_green.gif" : "folder_red.gif";
 		$title= $this->getTitle($m);
-		$this->js(true,"addNode($id,$parent_id,'".$m['name']." [".$m['user']."]', '$clr','$title')");
+		$this->js(true,"addNode($id,$parent_id,'".$m['name']." <br/> [".$m['user']."]', '$clr','$title')");
 		if($m['left_id'])
 			$this->drawNode($id,$m['left_id'],$depth-1);
 		else if($depth-1 > 0)
