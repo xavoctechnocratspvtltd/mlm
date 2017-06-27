@@ -610,7 +610,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		$t['bank_name'] = $this['bank_name'];
 		$t['bank_ifsc_code'] = $this['bank_ifsc_code'];
 		$t['cheque_number'] = $this['cheque_number'];
-		$t['dd_number'] = $this['dd_number']
+		$t['dd_number'] = $this['dd_number'];
 		$t['dd_date'] = $this['dd_date'];
 		$t['payment_mode'] = $this['payment_mode'];
 		
