@@ -25,16 +25,20 @@ class Initiator extends \Controller_Addon {
         $this->app->addHook('invoice_paid',function($app,$invoice){
             $distributor = $this->add('xavoc\mlm\Model_Distributor');
             $distributor->load($invoice['contact_id']);
+            $total_bv = 0;
             foreach ($invoice->items() as $oi) {
                 $item = $this->add('xavoc\mlm\Model_Item')->load($oi['item_id']);
                 if($item['is_package']){
                     // if kit then update SV
-                    $distributor->updateAnsestorsSV($item['sv']);
+                    $distributor->purchaseKit($item['id']);
+                    $distributor->markGreen();
+                    // $distributor->updateAnsestorsSV($item['sv']);
                 }else{
-                    // update bv
-                    $distributor->repurchase($item['bv']);
+                    $total_bv += $item['bv'];
                 }
             }
+            if($total_bv > 0)
+                $distributor->repurchase($total_bv);
         });
 
         return $this;

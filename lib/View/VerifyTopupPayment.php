@@ -52,38 +52,68 @@ class View_VerifyTopupPayment extends \View{
 					->setValueList(['online'=>'Online','cheque'=>'Cheque','dd'=>'DD','deposite_in_franchies'=>'Deposite in Franchises','deposite_in_company'=>'Deposite in company'])
 					->set($distributor['payment_mode']);
 
-		$form->addField('online_transaction_reference')->set($distributor['transaction_reference'])->setAttr('disabled',true);
-		$form->addField('online_transaction_detail')->set($distributor['transaction_detail'])->setAttr('disabled',true);
-		
+		$form->addField('online_transaction_reference')->setAttr('disabled',true)->set($distributor['transaction_reference']);
+		$form->addField('online_transaction_detail')->setAttr('disabled',true)->set($distributor['transaction_detail']);
+			
 		$form->addField('bank_name')->set($distributor['bank_name']);
 		$form->addField('bank_ifsc_code')->set($distributor['bank_ifsc_code']);
 		$form->addField('cheque_number')->set($distributor['cheque_number']);
 		$form->addField('dd_number')->set($distributor['dd_number']);
-		$form->addField('dd_date')->set($distributor['dd_date']);
+		$form->addField('DatePicker','dd_date')->set($distributor['dd_date']);
 
 		$form->setModel($attachment,['payment_narration','cheque_deposite_receipt_image_id','dd_deposite_receipt_image_id','office_receipt_image_id']);
 
-		$payment_mode_field->js(true)->univ()->bindConditionalShow([
+		$mandatory_field_set = [
 					'online'=>['online_transaction_detail','online_transaction_reference'],
 					'cheque'=>['bank_name','bank_ifsc_code','cheque_number','cheque_deposite_receipt_image_id'],
 					'dd'=>['bank_name','bank_ifsc_code','dd_number','dd_date','dd_deposite_receipt_image_id'],
 					'deposite_in_company'=>['payment_narration','office_receipt_image_id'],
 					'deposite_in_franchies'=>['payment_narration','office_receipt_image_id']
-				],'div.atk-form-row');
+				];
+
+		$payment_mode_field->js(true)->univ()->bindConditionalShow($mandatory_field_set,'div.atk-form-row');
 
 		$form->addSubmit('Verify Payment')->addClass('btn btn-primary');
 		if($form->isSubmitted()){
-			$form->update();
+			// validation check info
+			$required_field = $mandatory_field_set[$form['payment_mode']];
+			foreach ($required_field as $key => $field_name) {
+				if(!$form[$field_name]){
+					$form->error($field_name,'must not be empty');
+					break;
+				}
+			}
+			
+			try{
+				$this->app->db->beginTransaction();
+				// update attachment info
+				$form->update();
 
-			$distributor['is_payment_verified'] = true;
-			$distributor->save();
-			if($order_model->loaded())
-				$order_model->invoice()->paid();
+				$distributor['online_transaction_reference'] = $form['online_transaction_reference'];
+				$distributor['online_transaction_detail'] = $form['online_transaction_detail'];
+				$distributor['bank_name'] = $form['bank_name'];
+				$distributor['bank_ifsc_code'] = $form['bank_ifsc_code'];
+				$distributor['cheque_number'] = $form['cheque_number'];
+				$distributor['dd_number'] = $form['dd_number'];
+				$distributor['dd_date'] = $form['dd_date'];
+				$distributor['payment_mode']= $form['payment_mode'];
 
-			// create order on dehalf of kit
+				$distributor['is_payment_verified'] = true;
+				$distributor->save();
+				if($order_model->loaded())
+					$order_model->invoice()->paid();
+				else{
+					// create order on dehalf of kit
+					$order = $distributor->placeTopupOrder($form['kit']);
+					$order->invoice()->paid();
+				}
 
-			// $distributor->markGreen();
-			// $distributor->purchaseKit($form['kit']);
+				$this->app->db->commit();
+			}catch(\Exception $e){
+				$this->app->db->rollback();
+				$form->js(null,$form->js()->closest('.dialog')->dialog('close'))->univ()->errorMessage($e->getMessage()." , something wrong")->execute();
+			}
+			
 			$form->js(null,$form->js()->closest('.dialog')->dialog('close'))->univ()->successMessage('payment verified and marked green')->execute();
 		}
 

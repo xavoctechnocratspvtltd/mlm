@@ -26,6 +26,15 @@ class Model_TopupHistory extends \xepan\base\Model_Table {
 		$this->addField('payment_narration')->type('text');
 		$this->addField('created_at')->type('datetime')->defaultValue($this->app->now);
 
+		$this->addField('online_transaction_reference');
+		$this->addField('online_transaction_detail')->type('text');
+		$this->addField('bank_name');
+		$this->addField('bank_ifsc_code');
+		$this->addField('cheque_number');
+		$this->addField('dd_number');
+		$this->addField('dd_date')->type('datetime');
+		$this->addField('payment_mode');
+
 		$this->add('dynamic_model/Controller_AutoCreator');
 	}
 }

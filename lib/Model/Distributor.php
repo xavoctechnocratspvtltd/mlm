@@ -604,6 +604,16 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		$t['cheque_deposite_receipt_image_id'] = $attch['cheque_deposite_receipt_image_id']?:0;
 		$t['dd_deposite_receipt_image_id'] = $attch['dd_deposite_receipt_image_id']?:0;
 		$t['office_receipt_image_id'] = $attch['office_receipt_image_id']?:0;
+
+		$t['online_transaction_reference'] = $this['online_transaction_reference'];
+		$t['online_transaction_detail'] = $this['online_transaction_detail'];
+		$t['bank_name'] = $this['bank_name'];
+		$t['bank_ifsc_code'] = $this['bank_ifsc_code'];
+		$t['cheque_number'] = $this['cheque_number'];
+		$t['dd_number'] = $this['dd_number']
+		$t['dd_date'] = $this['dd_date'];
+		$t['payment_mode'] = $this['payment_mode'];
+		
 		$t->save();
 	}
 
@@ -798,7 +808,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 	/*
 	* return array of master detail 
 	*/
-	function getQSPMasterDetail(){
+	function getQSPMasterDetail($status="Submitted"){
 
 		if(!$this->loaded()) $this->Exception("distributor must loaded")
 										->addMoreInfo('at function getQSPMasterDetail');
@@ -839,10 +849,83 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 						'exchange_rate' => $this->app->epan->default_currency['value'],
 						'tnc_id'=>$tnc_id,
 						'tnc_text'=> $tnc_text,
-						'status' => "Draft"
+						'status' => $status
 					];
 
 		return $master_detail;
 	}
 
+	function getQSPDetail($item_id){
+		$item_model = $this->add('xepan\commerce\Model_Item');
+		$item_model->tryLoad($item_id);
+
+		if(!$item_model->loaded())
+			throw new \Exception("item not found, at getQSPDetail", 1);
+
+		$taxation = $item_model->applicableTaxation();
+		if($taxation instanceof \xepan\commerce\Model_Taxation){
+			$taxation_id = $taxation->id;
+			$tax_percentage = $taxation['percentage'];
+		}else{
+			$taxation_id = 0;
+			$tax_percentage = 0;
+		}
+
+		$sale_price = $item_model['sale_price'];
+
+		$qty_unit_id = $item_model['qty_unit_id'];
+		$item = [
+			'item_id'=>$item_model->id,
+			'price'=>$sale_price,
+			'quantity' => 1,
+			'taxation_id' => $taxation_id,
+			'tax_percentage' => $tax_percentage,
+			'narration'=>null,
+			'extra_info'=>"{}",
+			'shipping_charge'=>0,
+			'shipping_duration'=>0,
+			'express_shipping_charge'=>0,
+			'express_shipping_duration'=>null,
+			'qty_unit_id'=>$qty_unit_id,
+			'discount'=>0
+		];
+		
+		return $item;
+	}
+
+	function placeTopupOrder($kit_id){
+
+		// $updating_kit = false;
+		// if($this['kit_item_id']) $updating_kit = true;
+
+		$master_detail = $this->getQSPMasterDetail();
+		$detail_data[] = $this->getQSPDetail($kit_id);
+
+		return $this->add('xepan\commerce\Model_QSP_Master')->createQSP($master_detail,$detail_data,'SalesOrder');
+		// not required
+		// if($updating_kit){
+		// 	$t = $this->add('xavoc\mlm\Model_TopupHistory');
+		// 	$t->addCondition('distributor_id',$distributor->id);
+		// 	$t->setOrder('id','desc');
+		// 	$t->tryLoadAny();
+		// 	if($t->loaded()){
+		// 		$d1 = strtotime($this->app->today);
+		// 		$d2 = strtotime($t['created_at']);
+
+		// 		$diff_secs = abs($d1 - $d2);
+	 //            $base_year = min(date("Y", $d1), date("Y", $d2));
+		// 		$diff = mktime(0, 0, $diff_secs, 1, 1, $base_year);
+	 //            $days_diff = date("j", $diff) - 1;
+	 //            $limit = $this->app->getConfig('update_topup_duration',30);
+		// 		// 30 > 20
+		// 		// 30 > 40
+		// 		if($limit > $days_diff){
+		// 			$sale_price = $sale_price - $t['sale_price'];
+		// 			if($sale_price < 0)
+		// 				$sale_price = 0;
+		// 		}
+		// 	}
+		// }		
+
+	}
 } 
