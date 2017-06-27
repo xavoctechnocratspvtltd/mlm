@@ -938,6 +938,42 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 	}
 
+	function placeRepurchaseOrder(){
+		if(!$this->loaded()) throw new \Exception("distributor model must loaded");
+		
+		$master_detail = $this->getQSPMasterDetail();
+
+		$temp_oi = $this->add('xavoc\mlm\Model_TemporaryRepurchaseItem');
+		$temp_oi->addCondition('distributor_id',$this->id);
+		$detail_data = [];
+		foreach ($temp_oi as $oi) {
+			$item_detail = $this->getQSPDetail($oi['item_id']);
+			$item_detail['price'] = $oi['price'];
+			$item_detail['quantity'] = $oi['quantity'];
+
+			$detail_data[] = $item_detail;
+		}
+
+		return $this->add('xepan\commerce\Model_QSP_Master')->createQSP($master_detail,$detail_data,'SalesOrder');
+	}
+
+	function updateRepurchaseHistory($order_id,$payment_mode,$payment_detail,$related_customer_id=0){
+
+		$re_his = $this->add('xavoc\mlm\Model_RepurchaseHistory');
+		$re_his->addCondition('distributor_id',$this['id']);
+		$re_his->addCondition('sale_order_id',$order_id);
+		if($related_customer_id)
+			$re_his->addCondition('related_customer_id',$related_customer_id);
+
+		$re_his->tryLoadAny();
+		
+		$re_his['payment_mode'] = $payment_mode;
+		foreach ($payment_detail as $key => $value) {
+			$re_his[$key] = $value;
+		}
+		$re_his->save();
+	}
+
 	function isTopupPaymentDue(){
 		if(!$this->loaded()) throw new \Exception("model must loaded", 1);
 		

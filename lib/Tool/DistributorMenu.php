@@ -23,6 +23,7 @@ class Tool_DistributorMenu extends \xepan\cms\View_Tool{
 				['key'=>'dashboard','name'=>'Dashboard'],
 				['key'=>'panelregistration', 'name'=>'Registration'],
 				['key'=>'genology','name'=>'Genology'],
+				['key'=>'repurchase','name'=>'Repurchase'],
 				['key'=>'mypayouts','name'=>'My Payouts'],
 				['key'=>'mywallet','name'=>'My Wallet'],
 				['key'=>'myorder','name'=>'My Orders'],
