@@ -56,6 +56,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 
 		// weekly session
+		$dist_j->addField('monthly_green_intros')->type('int')->defaultValue(0);
 		$dist_j->addField('weekly_intros_amount')->type('money')->defaultValue(0);
 		$dist_j->addField('total_intros_amount')->type('money')->defaultValue(0);
 
@@ -588,7 +589,11 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		
 		$this->updateAnsestorsSV($this['sv']);
 		$this->updateAnsestorsBV($this['bv']);
-		if($introducer  = $this->introducer()) $introducer->addSessionIntro($kit['introducer_income']);
+		if($introducer  = $this->introducer()){
+			$introducer->addSessionIntro($kit['introducer_income']);
+			$introducer['monthly_green_intros'] = $introducer['monthly_green_intros']+1;
+			$introducer->save();
+		}
 		
 		// $this->updateTopupHistoryAttachment();
 		$this->sendMailGreenDistributor();
