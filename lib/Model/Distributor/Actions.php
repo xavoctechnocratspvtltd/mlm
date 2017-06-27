@@ -239,8 +239,10 @@ class Model_Distributor_Actions extends \xavoc\mlm\Model_Distributor
 	}
 
 	function page_topup($page){
-
 		$page->add('xavoc\mlm\View_Topup',['distributor'=>$this]);
 	}
 	
+	function page_repurchase($page){
+		$page->add('xavoc\mlm\View_Repurchase',['distributor'=>$this]);
+	}	
 }

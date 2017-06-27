@@ -7,11 +7,11 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 	public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 	public $actions = [
-				'Red'=>['view','edit','delete','adminVerify','repurchaseOrder','verifyPayment','topup'],
-				'KitSelected'=>['view','edit','delete','verifyPayment','verifyDocument','Document','repurchaseOrder','topup'],
-				'KitPaid'=>['view','edit','delete','verifyPayment','verifyDocument','markGreen','repurchaseOrder','topup'],
-				'Green'=>['view','edit','delete','Document','verifyDocument','repurchaseOrder','verifyPayment','topup'],
-				'Blocked'=>['view','edit','delete','Unblocked','repurchaseOrder','verifyPayment','topup']
+				'Red'=>['view','edit','delete','adminVerify','repurchaseOrder','verifyPayment','topup','repurchase'],
+				'KitSelected'=>['view','edit','delete','verifyPayment','verifyDocument','Document','repurchaseOrder','topup','repurchase'],
+				'KitPaid'=>['view','edit','delete','verifyPayment','verifyDocument','markGreen','repurchaseOrder','topup','repurchase'],
+				'Green'=>['view','edit','delete','Document','verifyDocument','repurchaseOrder','verifyPayment','topup','repurchase'],
+				'Blocked'=>['view','edit','delete','Unblocked','repurchaseOrder','verifyPayment']
 			];
 	
 	public $acl_type= "ispmanager_distributor";

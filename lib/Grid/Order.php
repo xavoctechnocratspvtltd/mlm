@@ -15,14 +15,14 @@ class Grid_Order extends \Grid{
 			if($data['actiontype'] == 'dispatch')
 				$label = "Order Dispatch";
 
-			return $js->univ()->frameURL($label,$this->app->url('xavoc_dm_orderaction',['actiontype'=>$data['actiontype'],'orderid'=>$data['orderid'],'distributor_id'=>$this->distributor->id]));
+			return $js->univ()->frameURL($label,$this->app->url('xavoc_dm_orderaction',['actiontype'=>$data['actiontype'],'istopuporder'=>$data['istopuporder'],'orderid'=>$data['orderid'],'distributor_id'=>$this->distributor->id]));
 		});
 
 	}
 
 	function formatRow(){
 		if(str_replace(" ", "", $this->model['invoice_detail']) == "0-none"){
-			$this->current_row_html['invoice_detail'] = '<button class="btn btn-info do-ds-order" data-actiontype="payment" data-orderid="'.$this->model->id.'">Verify Payment</button>';
+			$this->current_row_html['invoice_detail'] = '<button class="btn btn-info do-ds-order" data-actiontype="payment" data-orderid="'.$this->model->id.'" data-istopuporder="'.$this->model['is_topup_included'].'">Verify Payment</button>';
 		}else{
 			$this->current_row_html['invoice_detail'] = '<div class="label label-success">'.$this->model['invoice_detail'].'</div>';
 		}

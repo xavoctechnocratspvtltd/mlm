@@ -6,20 +6,33 @@ namespace xavoc\mlm;
 class page_orderaction extends \Page {
 	public $title = "Order";
 	public $manage = "topup";
+
 	function init(){
 		parent::init();
 
-		$this->app->stickyGET('actiontype');
-		$this->app->stickyGET('orderid');
-		$this->app->stickyGET('distributor_id');
+		$actiontype = $this->app->stickyGET('actiontype');
+		$orderid = $this->app->stickyGET('orderid');
+		$distributor_id = $this->app->stickyGET('distributor_id');
+		$istopuporder = $this->app->stickyGET('istopuporder')?:0;
 
-		$action = $_GET['actiontype']?:"payment";
+		$action = $actiontype?:"payment";
 
-		if($action == "payment"){
+		if($action == "payment" && $istopuporder){
+			// topup payment verification
 			$this->add('xavoc/mlm/View_VerifyTopupPayment',['orderid'=>$_GET['orderid'],'distributor_id'=>$_GET['distributor_id']]);
-		}else{
-			$this->add('View')->set("dispatch view - ".$_GET['orderid']);
+		
+		}elseif($action == "payment" && !$istopuporder){
+			// repurchase payment verification
+			$this->add('xavoc/mlm/View_VerifyRepurchasePayment',['orderid'=>$_GET['orderid'],'distributor_id'=>$_GET['distributor_id']]);
+		
+		}elseif($action == "dispatch" && $istopuporder){
+
+			$this->add('View')->set("topup dispatch view - ".$_GET['orderid']);
+		
+		}elseif($action == "dispatch" && !$istopuporder){
+			$this->add('View')->set("repurchase dispatch view - ".$_GET['orderid']);
 		}
+
 
 	}
 }
