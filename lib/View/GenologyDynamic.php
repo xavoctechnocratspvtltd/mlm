@@ -15,7 +15,7 @@ class View_GenologyDynamic extends \View{
 	public $distributor = null ;
 	public $start_distributor = null ;
 	public $start_id = null ;
-	public $level = 5 ;
+	public $level = 6 ;
 
 	function init(){
 		parent::init();
@@ -45,7 +45,6 @@ class View_GenologyDynamic extends \View{
 		$this->drawNode(-1,$this->start_id,$this->level);
 		$this->js(true,"displayTree()");
 		$this->js(true)->_load('xtooltip');
-		$this->js(true)->_selector('.main_div')->xtooltip();
 		
 		$a=$this->add('xavoc\mlm\Model_Distributor');
 		$a->load($this->start_id);
@@ -59,23 +58,27 @@ class View_GenologyDynamic extends \View{
 		if($depth == 0 ) return;
 		$m=$this->add('xavoc\mlm\Model_Distributor');
 		$m->load($id);
-		$clr=($m['geened_on']) ? "folder_green.gif" : "folder_blue.gif";
-		$title= "11";//$this->getTitle($m);
+		$clr=($m['greened_on']) ? "folder_green.gif" : "folder_red.gif";
+		$title= $this->getTitle($m);
 		$this->js(true,"addNode($id,$parent_id,'".$m['name']." [".$m['side']."]', '$clr','$title')");
-		if($m['left_id'] <> null)
+		if($m['left_id'])
 			$this->drawNode($id,$m['left_id'],$depth-1);
 		else if($depth-1 > 0)
 			$this->js(true,"addNode(-${id}0001,$id,'A','question.gif')");
-		if($m['right_id'] <> null)
+		if($m['right_id'])
 			$this->drawNode($id,$m['right_id'],$depth-1);
-		else if($depth-1 > 0)
-			$this->js(true,"addNode(-${id}0002,$id,'B','question.gif')");
+		// else if($depth-1 > 0)
+		// 	$this->js(true,"addNode(-${id}0002,$id,'B','question.gif')");
 		$m->unload();
 		$m->destroy();
 	}
 
 	function getTitle($model){
-		return 
+		if($model['greened_on'] !== null)
+			$greened_on_date = date("d M Y", strtotime($model['greened_on']));
+		else
+			$greened_on_date = "--/---/----";
+		$str= 
 				$model['name'].
 				"<br/>Jn: ". date("d M Y", strtotime($model['created_at'])). 
 				"<br/>Gr: ". $greened_on_date. 
@@ -116,6 +119,9 @@ class View_GenologyDynamic extends \View{
 						</tr>
 					</table>
 					";
+		$str= str_replace("'", "\'", $str);
+		$str= str_replace("\n", "", $str);
+		return $str;
 	}
 	// function render(){
 		// $this->js(true,"addNode(-1,0,'".$a['name']."')");
