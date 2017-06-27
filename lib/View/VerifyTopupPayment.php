@@ -44,29 +44,48 @@ class View_VerifyTopupPayment extends \View{
 			$form->addField('DropDown','kit')->validate('required')->setModel($item);
 		}
 
-		$attachment = $this->add('xavoc\mlm\Model_Attachment')
-						->addCondition('distributor_id',$distributor->id);
-		$attachment->tryLoadAny();
+		// $attachment = $this->add('xavoc\mlm\Model_Attachment')
+		// 				->addCondition('distributor_id',$distributor->id);
+		// $attachment->tryLoadAny();
 		
+		$topup_history = $this->add('xavoc\mlm\Model_TopupHistory');
+		$topup_history->addCondition('sale_order_id',$order_model->id);
+		$topup_history->addCondition('distributor_id',$distributor->id);
+		$topup_history->tryLoadAny();
+
 		$payment_mode_field = $form->addField('DropDown','payment_mode')
 					->setValueList(['online'=>'Online','cheque'=>'Cheque','dd'=>'DD','deposite_in_franchies'=>'Deposite in Franchises','deposite_in_company'=>'Deposite in company'])
-					->set($distributor['payment_mode']);
+					->set($topup_history['payment_mode']);
 
-		$form->addField('online_transaction_reference')->setAttr('disabled',true)->set($distributor['transaction_reference']);
-		$form->addField('online_transaction_detail')->setAttr('disabled',true)->set($distributor['transaction_detail']);
+		// $form->addField('online_transaction_reference')->setAttr('disabled',true)->set($topup_history['transaction_reference']);
+		// $form->addField('online_transaction_detail')->setAttr('disabled',true)->set($topup_history['transaction_detail']);
 			
-		$form->addField('bank_name')->set($distributor['bank_name']);
-		$form->addField('bank_ifsc_code')->set($distributor['bank_ifsc_code']);
-		$form->addField('cheque_number')->set($distributor['cheque_number']);
-		$form->addField('dd_number')->set($distributor['dd_number']);
-		$form->addField('DatePicker','dd_date')->set($distributor['dd_date']);
+		// $form->addField('bank_name')->set($topup_history['bank_name']);
+		// $form->addField('bank_ifsc_code')->set($topup_history['bank_ifsc_code']);
+		// $form->addField('cheque_number')->set($topup_history['cheque_number']);
+		// $form->addField('dd_number')->set($topup_history['dd_number']);
+		// $form->addField('DatePicker','deposite_date')->set($topup_history['dd_date']);
 
-		$form->setModel($attachment,['payment_narration','cheque_deposite_receipt_image_id','dd_deposite_receipt_image_id','office_receipt_image_id']);
+		$form->setModel($topup_history,[
+								'online_transaction_reference',
+								'online_transaction_detail',
+								'bank_name',
+								'bank_ifsc_code',
+								'cheque_number',
+								'dd_number',
+								'cheque_date',
+								'dd_date',
+								'deposite_date',
+								'payment_narration',
+								'cheque_deposite_receipt_image_id',
+								'dd_deposite_receipt_image_id',
+								'office_receipt_image_id'
+						]);
 
 		$mandatory_field_set = [
 					'online'=>['online_transaction_detail','online_transaction_reference'],
-					'cheque'=>['bank_name','bank_ifsc_code','cheque_number','cheque_deposite_receipt_image_id'],
-					'dd'=>['bank_name','bank_ifsc_code','dd_number','dd_date','dd_deposite_receipt_image_id'],
+					'cheque'=>['bank_name','bank_ifsc_code','cheque_number','cheque_date','deposite_date','cheque_deposite_receipt_image_id'],
+					'dd'=>['bank_name','bank_ifsc_code','dd_number','dd_date','deposite_date','dd_deposite_receipt_image_id'],
 					'deposite_in_company'=>['payment_narration','office_receipt_image_id'],
 					'deposite_in_franchies'=>['payment_narration','office_receipt_image_id']
 				];
@@ -87,18 +106,20 @@ class View_VerifyTopupPayment extends \View{
 			try{
 				$this->app->db->beginTransaction();
 				// update attachment info
+				$form->model['is_payment_verified'] = true;
 				$form->update();
-
-				$distributor['online_transaction_reference'] = $form['online_transaction_reference'];
-				$distributor['online_transaction_detail'] = $form['online_transaction_detail'];
-				$distributor['bank_name'] = $form['bank_name'];
-				$distributor['bank_ifsc_code'] = $form['bank_ifsc_code'];
-				$distributor['cheque_number'] = $form['cheque_number'];
-				$distributor['dd_number'] = $form['dd_number'];
-				$distributor['dd_date'] = $form['dd_date'];
-				$distributor['payment_mode']= $form['payment_mode'];
+				
+				// $distributor['online_transaction_reference'] = $form['online_transaction_reference'];
+				// $distributor['online_transaction_detail'] = $form['online_transaction_detail'];
+				// $distributor['bank_name'] = $form['bank_name'];
+				// $distributor['bank_ifsc_code'] = $form['bank_ifsc_code'];
+				// $distributor['cheque_number'] = $form['cheque_number'];
+				// $distributor['dd_number'] = $form['dd_number'];
+				// $distributor['dd_date'] = $form['dd_date'];
+				// $distributor['payment_mode']= $form['payment_mode'];
 
 				$distributor['is_payment_verified'] = true;
+
 				$distributor->save();
 				if($order_model->loaded())
 					$order_model->invoice()->paid();
@@ -107,7 +128,7 @@ class View_VerifyTopupPayment extends \View{
 					$order = $distributor->placeTopupOrder($form['kit']);
 					$order->invoice()->paid();
 				}
-
+				
 				$this->app->db->commit();
 			}catch(\Exception $e){
 				$this->app->db->rollback();

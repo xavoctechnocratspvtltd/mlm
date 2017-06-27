@@ -516,19 +516,21 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		
 		$this->save();
 
-		$this->updateTopupHistory();
+		// $this->updateTopupHistory();
 	}
 
-	function updateTopupHistory(){
-			
-		$kit = $this->add('xavoc\mlm\Model_Kit')->load($this['kit_item_id']);
+	function updateTopupHistory($kit_id,$sale_order_id,$payment_mode,$payment_detail){
+								
+		$kit = $this->add('xavoc\mlm\Model_Kit')->load($kit_id);
+		
+		if(!$sale_order_id) throw new \Exception("order id must defiend");
 
 		$top_his = $this->add('xavoc\mlm\Model_TopupHistory');
+		$top_his->addCondition('distributor_id',$this['id']);
+		$top_his->addCondition('kit_item_id',$kit_id);
+		$top_his->addCondition('sale_order_id',$sale_order_id);
+		$top_his->tryLoadAny();
 
-		$top_his['distributor_id'] = $this['id'];
-		$top_his['kit_item_id'] = $this['kit_item_id'];
-		$top_his['sale_order_id'] = $this['sale_order_id'];
-		
 		$top_his['pv'] = $kit['pv'];
 		$top_his['bv'] = $kit['bv'];
 		$top_his['sv'] = $kit['sv'];
@@ -536,9 +538,11 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		$top_his['introduction_income'] = $kit['introduction_income'];
 		$top_his['sale_price'] = $kit['sale_price'];
 
-		// $top_his['cheque_deposite_receipt_image_id'] = $this->attachment['cheque_deposite_receipt_image_id'];
-		// $top_his['dd_deposite_receipt_image_id'] = $this->attachment['dd_deposite_receipt_image_id'];
-		// $top_his['office_receipt_image_id'] = $this->attachment['office_receipt_image_id'];
+		// $payment_modes = ['online','cash','cheque','dd','deposite_in_franchies','deposite_in_company'];
+		$top_his['payment_mode'] = $payment_mode;
+		foreach ($payment_detail as $key => $value) {
+			$top_his[$key] = $value;
+		}
 		$top_his->save();
 	}
 	function kitPaid(){
@@ -937,7 +941,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		$sale_order->addCondition('is_topup_included',true);
 		$sale_order->addCondition('invoice_detail','0-none');
 		$sale_order->addCondition('status','<>','Completed');
-		
+
 		return $sale_order->count()->getOne();
 	}
 } 

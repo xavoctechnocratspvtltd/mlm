@@ -22,14 +22,12 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 		}
 
 		if($distributor['kit_item_id']){
-			
-			if($distributor->isTopupPaymentDue()){
-				$this->add('View')->set("your last topup is under verification process, for re-topup cancle order now");
-				return;				
-			}else{
-				$this->add('View_Info')->set('you are updating your topup')->addClass('alert alert-info');
-			}
-
+			$this->add('View_Info')->set('you are updating your topup')->addClass('alert alert-info');
+			// if($distributor->isTopupPaymentDue()){
+			// 	$this->add('View')->set("your last topup is under verification process, for re-topup cancle order now");
+			// 	return;				
+			// }else{
+			// }
 		}
 
 
@@ -55,7 +53,7 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 		// $cash_tab = $tabs->addTab('Cash');
 		$cheque_tab = $tabs->addTab('Cheque');
 		$dd_tab = $tabs->addTab('Demand Draft');
-		$df_tab = $tabs->addTab('Deposite in Franchies \ Company');
+		$df_tab = $tabs->addTab('Deposite in Franchises \ Company');
 
 		$online_pay_btn = $online_tab->add('Button')->set("pay via online")->addClass('btn btn-primary');
 		if($online_pay_btn->isClicked()){
@@ -167,22 +165,37 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 		if($form->isSubmitted()){
 			// if(!$form['office_receipt_image_id']) $form->error('office_receipt_image_id','must not be empty');
 
-			$attachment['office_receipt_image_id'] = $form['office_receipt_image_id'];
-			$attachment['dd_deposite_receipt_image_id'] = 0;
-			$attachment['cheque_deposite_receipt_image_id'] = 0;
-			$attachment->save();
+			// $attachment['office_receipt_image_id'] = $form['office_receipt_image_id'];
+			// $attachment['dd_deposite_receipt_image_id'] = 0;
+			// $attachment['cheque_deposite_receipt_image_id'] = 0;
+			// $attachment->save();
+			try{
+				$this->app->db->beginTransaction();
 
-			$result = $this->placeOrder($kit_model->id);
-			if($result['status'] == "failed") throw new \Exception($result['message']);
-			
-			$distributor['payment_mode'] = $form['deposite_in_company']?'deposite_in_company':'deposite_in_franchies';
-			$distributor['deposite_in_office_narration'] = $form['narration'];
-			$distributor['sale_order_id'] = $result['order_id'];
-			// $distributor->purchaseKit($kit_model);
-			
-			// $form->js()->redirect($this->app->url('dashb'))
-			$form->js(null,$form->js()->redirect($this->app->url('dashboard')))->univ()->successMessage('Detail Submitted')->execute();
-		}
+				$result = $this->placeOrder($kit_model->id);
+				if($result['status'] == "failed") throw new \Exception($result['message']);
+				
+				// $distributor['deposite_in_office_narration'] = $form['narration'];
+				// $distributor['sale_order_id'] = $result['order_id'];
+				$payment_mode = $form['deposite_in_company']?'deposite_in_company':'deposite_in_franchies';
+				$payment_detail = [
+							'office_receipt_image_id' => $form['office_receipt_image_id'],
+							'dd_deposite_receipt_image_id' => 0,
+							'cheque_deposite_receipt_image_id' => 0,
+							'payment_narration' => $form['narration']
+						];
+
+				$distributor->purchaseKit($kit_model->id);
+				$distributor->updateTopupHistory($kit_model->id,$result['order_id'],$payment_mode,$payment_detail);
+				
+				$this->app->db->commit();
+				}catch(\Exception $e){
+					$this->app->db->rollback();
+					$form->js()->univ()->errorMessage($e->getMessage())->execute();
+				}
+						
+				$form->js(null,$form->js()->redirect($this->app->url('dashboard')))->univ()->successMessage('Detail Submitted')->execute();
+			}
 	}
 	
 
