@@ -8,8 +8,8 @@ namespace xavoc\mlm;
 class View_GenerationTree extends \View{
 	
 	public $options = [
-						'genology-depth-of-tree'=> 5,
-						'genology-show-info-on'=>"hover"
+						'generation-depth-of-tree'=> 3,
+						'generation-show-info-on'=>"hover"
 	];
 
 	public $distributor = null ;
@@ -20,15 +20,26 @@ class View_GenerationTree extends \View{
 	function init(){
 		parent::init();
 
+		$this->js()->_load('xtooltip');
+
 		if($this->app->auth->model->isSuperUser()){
 			return "please login with distributor id";
 		}
+
+		$this->level = $this->options['generation-depth-of-tree'];
 
 		$this->distributor = $distributor = $this->add('xavoc\mlm\Model_Distributor_Genology');
 		$distributor->loadLoggedIn();
 
 		if($this->api->stickyGET('start_id')){
-			$this->start_id = $_GET['start_id'];
+			if(!is_numeric($_GET['start_id'])){
+				$this->start_id = $this->add('xavoc\mlm\Model_Distributor')
+							->addCondition([['user',$_GET['start_id']],['name','like','%'.$_GET['start_id'].'%'],['id',$_GET['start_id']]])
+							->tryLoadAny()
+							->get('id');
+			}else{
+				$this->start_id = $_GET['start_id'];
+			}
 		}
 
 		if(!$this->start_id){
@@ -45,11 +56,10 @@ class View_GenerationTree extends \View{
 		$this->drawNode(-1,$this->start_id,$this->level);
 		$this->js(true,"displayTree()");
 		$this->js(true)->_load('xtooltip');
-		$this->js(true)->_selector('.main_div')->xtooltip();
 		
 		$a=$this->add('xavoc\mlm\Model_Distributor');
 		$a->load($this->start_id);
-		$this->template->trySet('sponsor_id',$a['sponsor_id']);
+		$this->template->trySet('introducer_id',$a['introducer_id']);
 		$this->template->trySet('url',$this->app->url());
 
 
@@ -60,8 +70,8 @@ class View_GenerationTree extends \View{
 		$m=$this->add('xavoc\mlm\Model_Distributor');
 		$m->load($id);
 		$clr=($m['geened_on']) ? "folder_green.gif" : "folder_blue.gif";
-		$title = "11";//$this->getTitle($m);
-		$this->js(true,"addNode($id,$parent_id,'".$m['name']." [".$m['side']."]', '$clr','$title')");
+		$title = $this->getTitle($m);
+		$this->js(true,"addNode($id,$parent_id,'".$m['name']." <br/> [".$m['user']."]', '$clr','$title')");
 
 		$distributor = $this->add('xavoc\mlm\Model_Distributor');
 		$distributor->addCondition('introducer_id',$m->id);
@@ -82,11 +92,15 @@ class View_GenerationTree extends \View{
 	}
 
 	function getTitle($model){
-		return 
+		if($model['greened_on'] !== null)
+			$greened_on_date = date("d M Y", strtotime($model['greened_on']));
+		else
+			$greened_on_date = "--/---/----";
+		$str=  
 				$model['name'].
 				"<br/>Jn: ". date("d M Y", strtotime($model['created_at'])). 
 				"<br/>Gr: ". $greened_on_date. 
-				"<br/>Kit: ". $model['kit_item'] ." SV(".$model['sv'].")"."BV(".$model['bv'].")".
+				"<br/>Kit: ". ($model['kit_item']?:'') ." SV(".$model['sv'].")"."BV(".$model['bv'].")".
 				"<br/>Intro: ". $model['introducer'] .
 				"<br/><table border='1' width='100%'>
 					<tr>
@@ -123,6 +137,9 @@ class View_GenerationTree extends \View{
 						</tr>
 					</table>
 					";
+		$str= str_replace("'", "\'", $str);
+		$str= str_replace("\n", "", $str);
+		return $str;
 	}
 	// function render(){
 		// $this->js(true,"addNode(-1,0,'".$a['name']."')");
@@ -135,7 +152,7 @@ class View_GenerationTree extends \View{
 		// parent::render();
 	// }
 	function defaultTemplate(){
-		return array('xavoc/tool/genology-new-tree');
+		return array('xavoc/tool/generation-new-tree');
 	}
 }
 						

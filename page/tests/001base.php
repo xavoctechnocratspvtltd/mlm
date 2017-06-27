@@ -64,7 +64,8 @@ class page_tests_001base extends page_Tester {
         // 'kit-GowravIntro1'=>'Package C1',
         // 'green-ShyamIntro2'=>'2017-06-02',
         // 'green-GowravIntro1'=>'2017-06-02',
-        // 'closing-daily'=>'2017-05-08'
+        'closing-daily'=>'2017-05-08',
+        'closing-weekly'=>'2017-05-08',
         'closing-monthly-2'=>'2017-05-18'
         ];
         $x = $this->process($data,'test_company_record');

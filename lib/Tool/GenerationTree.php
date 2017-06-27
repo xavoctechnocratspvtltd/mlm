@@ -8,13 +8,9 @@ namespace xavoc\mlm;
 class Tool_GenerationTree extends \xepan\cms\View_Tool{
 	
 	public $options = [
-						'generation-depth-of-tree'=> 5,
+						'generation-depth-of-tree'=> 4,
 						'generation-show-info-on'=>"hover"
 	];
-
-	public $start_distributor = null ;
-	public $start_id = null ;
-	public $level = 5 ;
 
 	function init(){
 		parent::init();
