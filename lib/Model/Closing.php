@@ -93,7 +93,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 				day_pairs = day_pairs*10/100,
 				day_pairs = IF(day_pairs >= capping, capping, day_pairs),
 				week_pairs = week_pairs + day_pairs
-			WHERE greened_on is not null
+			/*WHERE greened_on is not null*/
 		";
 		$this->query($q);
 
@@ -106,7 +106,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 				d.temp = IF(d.day_left_sv = d.day_right_sv AND d.day_left_sv > 0, d.day_left_sv - $pair_pv, IF(d.day_left_sv > d.day_right_sv,d.day_right_sv,d.day_left_sv)),
 				d.day_left_sv = IFNULL(d.day_left_sv - d.temp,0),
 				d.day_right_sv = IFNULL(d.day_right_sv - d.temp,0)
-			WHERE greened_on is not null
+			/*WHERE greened_on is not null*/
 		";
 		$this->query($q);
 		
