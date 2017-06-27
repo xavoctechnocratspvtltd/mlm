@@ -8,8 +8,8 @@ namespace xavoc\mlm;
 class View_GenerationTree extends \View{
 	
 	public $options = [
-						'genology-depth-of-tree'=> 5,
-						'genology-show-info-on'=>"hover"
+						'generation-depth-of-tree'=> 3,
+						'generation-show-info-on'=>"hover"
 	];
 
 	public $distributor = null ;
@@ -25,6 +25,8 @@ class View_GenerationTree extends \View{
 		if($this->app->auth->model->isSuperUser()){
 			return "please login with distributor id";
 		}
+
+		$this->level = $this->options['generation-depth-of-tree'];
 
 		$this->distributor = $distributor = $this->add('xavoc\mlm\Model_Distributor_Genology');
 		$distributor->loadLoggedIn();
@@ -54,7 +56,6 @@ class View_GenerationTree extends \View{
 		$this->drawNode(-1,$this->start_id,$this->level);
 		$this->js(true,"displayTree()");
 		$this->js(true)->_load('xtooltip');
-		$this->js(true)->_selector('.main_div')->xtooltip();
 		
 		$a=$this->add('xavoc\mlm\Model_Distributor');
 		$a->load($this->start_id);
@@ -70,7 +71,7 @@ class View_GenerationTree extends \View{
 		$m->load($id);
 		$clr=($m['geened_on']) ? "folder_green.gif" : "folder_blue.gif";
 		$title = $this->getTitle($m);
-		$this->js(true,"addNode($id,$parent_id,'".$m['name']." [".$m['user']."]', '$clr','$title')");
+		$this->js(true,"addNode($id,$parent_id,'".$m['name']." <br/> [".$m['user']."]', '$clr','$title')");
 
 		$distributor = $this->add('xavoc\mlm\Model_Distributor');
 		$distributor->addCondition('introducer_id',$m->id);

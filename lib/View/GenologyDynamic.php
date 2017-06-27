@@ -8,7 +8,7 @@ namespace xavoc\mlm;
 class View_GenologyDynamic extends \View{
 	
 	public $options = [
-						'genology-depth-of-tree'=> 5,
+						'genology-depth-of-tree'=> 3,
 						'genology-show-info-on'=>"hover"
 	];
 

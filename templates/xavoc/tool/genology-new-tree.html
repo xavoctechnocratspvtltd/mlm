@@ -16,11 +16,13 @@
     function displayTree(){
         $("#treearea").empty().html(mytree.toString());
         $('.dtree table table').xtooltip();
+        mytree.openAll();
     }
 
 </script>
 
 <div align="center" class="ui-widget ui-corner-all">
+    {$Content}
     <div class="dtree ui-widget ui-corner-all" align="center" style="background-color:#E8F0E6; width:100%; height:400px; overflow:auto; background-position:center" id="treearea">
     </div>
     <div><a href='javascript:treeModify({$sponsor_id})'>Go UP</a></div>
