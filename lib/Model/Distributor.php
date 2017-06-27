@@ -939,6 +939,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		$master_detail = $this->getQSPMasterDetail();
 
 		$temp_oi = $this->add('xavoc\mlm\Model_TemporaryRepurchaseItem');
+		$temp_oi->addCondition('distributor_id',$this->id);
 		$detail_data = [];
 		foreach ($temp_oi as $oi) {
 			$item_detail = $this->getQSPDetail($oi['item_id']);
@@ -960,14 +961,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 			$re_his->addCondition('related_customer_id',$related_customer_id);
 
 		$re_his->tryLoadAny();
-
-		// $top_his['pv'] = $kit['pv'];
-		// $top_his['bv'] = $kit['bv'];
-		// $top_his['sv'] = $kit['sv'];
-		// $top_his['capping'] = $kit['capping'];
-		// $top_his['introduction_income'] = $kit['introduction_income'];
-		// $top_his['sale_price'] = $kit['sale_price'];
-
+		
 		$re_his['payment_mode'] = $payment_mode;
 		foreach ($payment_detail as $key => $value) {
 			$re_his[$key] = $value;
