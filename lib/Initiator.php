@@ -26,6 +26,7 @@ class Initiator extends \Controller_Addon {
             $distributor = $this->add('xavoc\mlm\Model_Distributor');
             $distributor->load($invoice['contact_id']);
             $total_bv = 0;
+            $total_sv = 0;
             foreach ($invoice->items() as $oi) {
                 $item = $this->add('xavoc\mlm\Model_Item')->load($oi['item_id']);
                 if($item['is_package']){
@@ -34,11 +35,12 @@ class Initiator extends \Controller_Addon {
                     $distributor->markGreen();
                     // $distributor->updateAnsestorsSV($item['sv']);
                 }else{
-                    $total_bv += $item['bv'];
+                    $total_bv += $item['bv']*$oi['quantity'];
+                    $total_sv += $item['sv']*$oi['quantity'];
                 }
             }
-            if($total_bv > 0)
-                $distributor->repurchase($total_bv);
+            if($total_bv > 0 || $total_sv > 0)
+                $distributor->repurchase($total_bv,$total_sv);
         });
 
         return $this;
