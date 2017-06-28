@@ -28,13 +28,18 @@ class Model_TopupHistory extends \xepan\base\Model_Table {
 
 		$this->addField('online_transaction_reference');
 		$this->addField('online_transaction_detail')->type('text');
+
 		$this->addField('bank_name');
 		$this->addField('bank_ifsc_code');
+
 		$this->addField('cheque_number');
-		$this->addField('dd_number');
-		$this->addField('deposite_date')->type('date');
 		$this->addField('cheque_date')->type('date');
+		
+		$this->addField('dd_number');
 		$this->addField('dd_date')->type('date');
+
+		$this->addField('deposite_date')->type('date');
+		
 		$this->addField('is_payment_verified')->type('boolean');
 
 		$this->addField('payment_mode')->enum(['online','cash','cheque','dd','deposite_in_franchies','deposite_in_company']);

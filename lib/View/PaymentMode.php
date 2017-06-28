@@ -57,37 +57,47 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 
 		$online_pay_btn = $online_tab->add('Button')->set("pay via online")->addClass('btn btn-primary');
 		if($online_pay_btn->isClicked()){
+			$order_id = 0;
+			$message = "";
+			try{
+				$this->app->db->beginTransaction();
 
-			$result = $this->placeOrder($this->kit_id);
+				$result = $this->placeOrder($this->kit_id);
+				$order_id = $result['order_id'];
+				$message = $result['message'];
+				$payment_mode = "online";
+				$payment_detail = [];
 
-			// for online working based on hook so topup history called
-			if($result['status'] == "success"){
-				$url = $this->app->url($this->checkout_page,['order_id'=>$result['order_id'],'step'=>'payment','pay_now'=>true]);
+				$distributor->updateTopupHistory($this->kit_id,$result['order_id'],$payment_mode,$payment_detail);
+
+				$this->app->db->commit();
+			}catch(\Exception $e){
+				$this->app->db->rollback();
+				$this->js()->univ()->errorMessage($e->getMessage())->execute();
+			}
+
+
+			if($order_id){
+				$url = $this->app->url($this->checkout_page,['order_id'=>$order_id,'step'=>'payment','pay_now'=>true]);
 				$js_event = [
 					$this->app->js()->univ()->redirect($url),
 					$this->app->js()->univ()->closeDialog()
-				]; 
-				return $this->js(null,$js_event)->univ()->successMessage($result['message'])->execute();
+				];
+				$this->js(null,$js_event)->univ()->successMessage($message)->execute();
 			}else{
-				return $this->js()->univ()->errorMessage($result['message'])->execute();
+				$this->js()->univ()->errorMessage($message." something wrong, server problem")->execute();
 			}
+			
 		}
 
-		// $cash_form = $cash_tab->add('Form');
-		// $cash_form->addSubmit('Due');
-		// if($cash_form->isSubmitted()){
-
-		// 	$distributor['payment_mode'] = "cash";
-		// 	$distributor->purchaseKit($kit_model);
-
-		// 	$cash_form->js(null,$cash_form->js()->univ()->closeDialog())->univ()->errorMessage('Cash Deposite')->execute();
-		// }
 
 		$cheque_form = $cheque_tab->add('Form');
 		$cheque_form->addField('bank_name')->validate('required');
 		$cheque_form->addField('bank_ifsc_code')->validate('required');
 		$cheque_form->addField('cheque_number')->validate('required');
 		$cheque_form->addField('DatePicker','cheque_date')->validate('required');
+		$cheque_form->addField('DatePicker','deposite_date')->validate('required');
+		$cheque_form->addField('text','narration');
 
 		$field = $cheque_form->addField('Upload','cheque_deposite_receipt_image_id');
 		$field->setModel('xepan\filestore\Image');
@@ -99,32 +109,44 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 			if(!$cheque_form['cheque_deposite_receipt_image_id']) $cheque_form->error('cheque_deposite_receipt_image_id','must not be empty');
 			if(!$cheque_form['cheque_date']) $cheque_form->error('cheque_date','must not be empty');
 
-			$attachment['cheque_deposite_receipt_image_id'] = $cheque_form['cheque_deposite_receipt_image_id'];
-			$attachment['dd_deposite_receipt_image_id'] = 0;
-			$attachment['office_receipt_image_id'] = 0;
+			try{
+				$this->app->db->beginTransaction();
 
-			$attachment->save();
+				$result = $this->placeOrder($kit_model->id);
+				if($result['status'] == "failed") throw new \Exception($result['message']);
+				
+				$payment_mode = "cheque";
+				$payment_detail = [
+							'office_receipt_image_id' => 0,
+							'dd_deposite_receipt_image_id' => 0,
+							'cheque_deposite_receipt_image_id' => $cheque_form['cheque_deposite_receipt_image_id'],
+							'payment_narration' => $cheque_form['narration'],
+							'bank_name' => $cheque_form['bank_name'],
+							'bank_ifsc_code' => $cheque_form['bank_ifsc_code'],
+							'cheque_number' => $cheque_form['cheque_number'],
+							'cheque_date' => $cheque_form['cheque_date'],
+							'deposite_date' => $cheque_form['deposite_date']
+						];
 
-			$result = $this->placeOrder($kit_model->id);
-			if($result['status'] == "failed") throw new \Exception($result['message']);
-
-			// $cheque_form->update();
-			$distributor['payment_mode'] = "cheque";
-			$distributor['kit_id'] = $cheque_form['bank_name'];
-			$distributor['bank_name'] = $cheque_form['bank_name'];
-			$distributor['bank_ifsc_code'] = $cheque_form['bank_ifsc_code'];
-			$distributor['cheque_number'] = $cheque_form['cheque_number'];
-			$distributor['cheque_date'] = $cheque_form['cheque_date'];
-			// $distributor->purchaseKit($kit_model);
-
-			$cheque_form->js(null,$cheque_form->js()->redirect($this->app->url('dashboard')))->univ()->successMessage('cheque detail submitted')->execute();
+				$distributor->purchaseKit($kit_model->id);
+				$distributor->updateTopupHistory($kit_model->id,$result['order_id'],$payment_mode,$payment_detail);
+				
+				$this->app->db->commit();
+			}catch(\Exception $e){
+				$this->app->db->rollback();
+				$cheque_form->js()->univ()->errorMessage($e->getMessage())->execute();
+			}
+			$cheque_form->js(null,$cheque_form->js()->redirect($this->app->url('dashboard')))->univ()->successMessage('Cheque Detail Submitted')->execute();		
 		}
 
+		// dd deposite in bank
 		$dd_form = $dd_tab->add('Form');
 		$dd_form->addField('bank_name')->validate('required');
 		$dd_form->addField('bank_ifsc_code')->validate('required');
 		$dd_form->addField('dd_number')->validate('required');
 		$dd_form->addField('DatePicker','dd_date')->validate('required');
+		$dd_form->addField('DatePicker','deposite_date')->validate('required');
+		$dd_form->addField('text','narration');
 
 		$field = $dd_form->addField('Upload','dd_deposite_receipt_image_id');
 		$field->setModel('xepan\filestore\Image');
@@ -132,28 +154,41 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 		// $dd_form->setModel($attachment,['dd_deposite_receipt_image_id']);
 		$dd_form->addSubmit('Submit')->addClass('btn btn-primary');
 		if($dd_form->isSubmitted()){
+
 			if(!$dd_form['dd_deposite_receipt_image_id']) $dd_form->error('dd_deposite_receipt_image_id','must not be empty');
 			if(!$dd_form['dd_date']) $dd_form->error('dd_date','must not be empty');
 			
-			$attachment['dd_deposite_receipt_image_id'] = $dd_form['dd_deposite_receipt_image_id'];
-			$attachment['cheque_deposite_receipt_image_id'] = 0;
-			$attachment['office_receipt_image_id'] = 0;
+			try{
+				$this->app->db->beginTransaction();
 
-			$attachment->save();
-			// $dd_form->update();
-			$result = $this->placeOrder($kit_model->id);
-			if($result['status'] == "failed") throw new \Exception($result['message']);
+				$result = $this->placeOrder($kit_model->id);
+				if($result['status'] == "failed") throw new \Exception($result['message']);
+				
+				$payment_mode = "dd";
+				$payment_detail = [
+							'office_receipt_image_id' => 0,
+							'dd_deposite_receipt_image_id' => $dd_form['dd_deposite_receipt_image_id'],
+							'cheque_deposite_receipt_image_id' => 0,
+							'payment_narration' => $dd_form['narration'],
+							'bank_name' => $dd_form['bank_name'],
+							'bank_ifsc_code' => $dd_form['bank_ifsc_code'],
+							'dd_number' => $dd_form['dd_number'],
+							'dd_date' => $dd_form['dd_date'],
+							'deposite_date' => $dd_form['deposite_date']
+						];
 
-			$distributor['payment_mode'] = "dd";
-			$distributor['bank_name'] = $dd_form['bank_name'];
-			$distributor['bank_ifsc_code'] = $dd_form['bank_ifsc_code'];
-			$distributor['cheque_number'] = $dd_form['cheque_number'];
-			$distributor['cheque_date'] = $dd_form['cheque_date'];
-			// $distributor->purchaseKit($kit_model);
-
-			$dd_form->js(null,$dd_form->js()->redirect($this->app->url('dashboard')))->univ()->successMessage('DD detail submitted')->execute();
+				$distributor->purchaseKit($kit_model->id);
+				$distributor->updateTopupHistory($kit_model->id,$result['order_id'],$payment_mode,$payment_detail);
+				
+				$this->app->db->commit();
+			}catch(\Exception $e){
+				$this->app->db->rollback();
+				$dd_form->js()->univ()->errorMessage($e->getMessage())->execute();
+			}
+			$dd_form->js(null,$dd_form->js()->redirect($this->app->url('dashboard')))->univ()->successMessage('DD Detail Submitted')->execute();
 		}
 
+		// deposite in company
 		$form = $df_tab->add('Form');
 		$field = $form->addField('Upload','office_receipt_image_id');
 		$field->setModel('xepan\filestore\Image');
@@ -163,12 +198,6 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 		$form->addSubmit('Submit')->addClass('btn btn-primary');
 
 		if($form->isSubmitted()){
-			// if(!$form['office_receipt_image_id']) $form->error('office_receipt_image_id','must not be empty');
-
-			// $attachment['office_receipt_image_id'] = $form['office_receipt_image_id'];
-			// $attachment['dd_deposite_receipt_image_id'] = 0;
-			// $attachment['cheque_deposite_receipt_image_id'] = 0;
-			// $attachment->save();
 			try{
 				$this->app->db->beginTransaction();
 
