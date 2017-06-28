@@ -23,10 +23,11 @@ class Tool_DistributorMenu extends \xepan\cms\View_Tool{
 				['key'=>'dashboard','name'=>'Dashboard'],
 				['key'=>'panelregistration', 'name'=>'Registration'],
 				['key'=>'genology','name'=>'Genology'],
+				['key'=>'generation','name'=>'Generation'],
 				['key'=>'repurchase','name'=>'Repurchase'],
 				['key'=>'mypayouts','name'=>'My Payouts'],
-				['key'=>'mywallet','name'=>'My Wallet'],
-				['key'=>'myorder','name'=>'My Orders'],
+				// ['key'=>'mywallet','name'=>'My Wallet'],
+				// ['key'=>'myorder','name'=>'My Orders'],
 				['key'=>'setting','name'=>'Settings'],
 			];
 
@@ -43,5 +44,7 @@ class Tool_DistributorMenu extends \xepan\cms\View_Tool{
 		$cl->template->trySet('distributor_name',$distributor['name']);
 		$cl->template->trySet('distributor_dp',($distributor['image']?:"shared/apps/xavoc/mlm/templates/img/profile.png"));
 
+		$cl->template->trySet('distributor_name',$distributor['name']);
+		$cl->template->trySet('user_name',$this->app->auth->model['username']);
 	}
 }
