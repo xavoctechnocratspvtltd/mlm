@@ -17,6 +17,8 @@ class Model_TemporaryRepurchaseItem extends \xepan\base\Model_Table {
 		$this->addField('quantity');
 		$this->addField('price')->defaultValue(0);
 
+		$this->addExpression('amount')->set('quantity*price');
+
 		$this->is([
 				'distributor_id|required',
 				'item_id|required',
