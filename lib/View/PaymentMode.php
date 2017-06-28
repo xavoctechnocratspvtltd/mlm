@@ -21,6 +21,14 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 			return "distributor not found";
 		}
 
+		// check address must not be empty
+		if(!$distributor['country_id'] OR !$distributor['state_id'] OR !$distributor['address'] OR !$distributor['city'] OR ! $distributor['pin_code']){
+			$v = $this->add('View')->addClass('alert alert-warning');
+			$v->add('View')->set("please update your country,state, address and profile");
+			$v->add('Button')->addClass('btn btn-warning')->set('Go To Setting')->js('click')->univ()->redirect('setting');
+			return;
+		}
+
 		if($distributor['kit_item_id']){
 			$this->add('View_Info')->set('you are updating your topup')->addClass('alert alert-info');
 			// if($distributor->isTopupPaymentDue()){

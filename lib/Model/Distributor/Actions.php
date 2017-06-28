@@ -239,10 +239,21 @@ class Model_Distributor_Actions extends \xavoc\mlm\Model_Distributor
 	}
 
 	function page_topup($page){
-		$page->add('xavoc\mlm\View_Topup',['distributor'=>$this]);
+		if(!$this['country_id'] OR !$this['state_id'] OR !$this['address'] OR !$this['city'] OR ! $this['pin_code']){
+			$v = $page->add('View')->addClass('alert alert-warning');
+			$v->add('View')->set("please update your country,state, address and profile");
+		}else{
+			$page->add('xavoc\mlm\View_Topup',['distributor'=>$this]);
+		}
+
 	}
 	
 	function page_repurchase($page){
-		$page->add('xavoc\mlm\View_Repurchase',['distributor'=>$this]);
+		if(!$this['country_id'] OR !$this['state_id'] OR !$this['address'] OR !$this['city'] OR ! $this['pin_code']){
+			$v = $page->add('View')->addClass('alert alert-warning');
+			$v->add('View')->set("please update your country,state, address and profile");
+		}else{
+			$page->add('xavoc\mlm\View_Repurchase',['distributor'=>$this]);
+		}			
 	}	
 }

@@ -17,6 +17,14 @@ class View_RepurchasePaymentMode extends \View{
 			return;
 		}
 
+		// check address must not be empty
+		if(!$distributor['country_id'] OR !$distributor['state_id'] OR !$distributor['address'] OR !$distributor['city'] OR ! $distributor['pin_code']){
+			$v = $this->add('View')->addClass('alert alert-warning');
+			$v->add('View')->set("please update your country,state, address and profile");
+			$v->add('Button')->addClass('btn btn-warning')->set('Go To Setting')->js('click')->univ()->redirect('setting');
+			return;
+		}
+
 		$tabs = $this->add('Tabs');
 		$df_tab = $tabs->addTab('Deposite in Franchises \ Company');
 		$dd_tab = $tabs->addTab('Demand Draft');
