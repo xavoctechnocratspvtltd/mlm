@@ -23,7 +23,7 @@ class View_Topup extends \View{
 		$order->addCondition('contact_id',$d_id);
 		$order->setOrder('id','desc');
 
-		$grid = $this->add('xavoc\mlm\Grid_Order',['distributor'=>$this->distributor]);
+		$grid = $this->add('xavoc\mlm\Grid_Order',['distributor'=>$this->distributor,'istopuporder'=>1]);
 		$grid->setModel($order,['document_no','net_amount','items','status','invoice_detail']);
 		$grid->addColumn('expander','orderitem');
 		$grid->addPaginator($ipp=3);
