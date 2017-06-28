@@ -32,7 +32,7 @@ class View_Cart extends \View{
 		$col2 = $col->addColumn(4)->addClass('col-lg-3 col-md-3 col-sm-12 col-xs-12');
 		$col3 = $col->addColumn(4)->addClass('col-lg-3 col-md-3 col-sm-12 col-xs-12');
 
-		$col1->add('View')->setHtml('<i class="glyphicon glyphicon-shopping-cart fa-3x text-info"></i> <i class="fa fa-2x">'.$total_cart_item."</i> - <i class='fa fa-rupee fa-2x text-success'> ".($temp->sum('price')->getOne()?:0)."</i>");
+		$col1->add('View')->setHtml('<i class="glyphicon glyphicon-shopping-cart fa-3x text-info"></i> <i class="fa fa-2x">'.$total_cart_item."</i> - <i class='fa fa-rupee fa-2x text-success'> ".($temp->sum($temp->getElement('amount'))->getOne()?:0)."</i>");
 		if($this->options['show_clear_btn']){
 			$clear_btn = $col2->add('Button')->setHtml('<b>Clear Cart</b>')->addClass('btn btn-danger btn-block');
 			if($clear_btn->isClicked()){
