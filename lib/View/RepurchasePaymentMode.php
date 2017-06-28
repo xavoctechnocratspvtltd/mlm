@@ -29,7 +29,7 @@ class View_RepurchasePaymentMode extends \View{
 		$df_tab = $tabs->addTab('Deposite in Franchises \ Company');
 		$dd_tab = $tabs->addTab('Demand Draft');
 		$cheque_tab = $tabs->addTab('Cheque');
-		$online_tab = $tabs->addTab('Pay Online');
+		// $online_tab = $tabs->addTab('Pay Online');
 
 		// deposite in company
 		$form = $df_tab->add('Form');
@@ -183,43 +183,42 @@ class View_RepurchasePaymentMode extends \View{
 		}
 
 		// pay via online process
-		$online_pay_btn = $online_tab->add('Button')->set("pay via online")->addClass('btn btn-primary');
-		if($online_pay_btn->isClicked()){
+		// $online_pay_btn = $online_tab->add('Button')->set("pay via online")->addClass('btn btn-primary');
+		// if($online_pay_btn->isClicked()){
 
-			$order_id = 0;
-			try{
-				$this->app->db->beginTransaction();
+		// 	$order_id = 0;
+		// 	try{
+		// 		$this->app->db->beginTransaction();
 
 				
-				$result = $distributor->placeRepurchaseOrder();
-				if(!isset($result['master_detail']['id']) OR !$result['master_detail']['id']) throw new \Exception("order not created");
-				$order_id = $result['master_detail']['id'];
+		// 		$result = $distributor->placeRepurchaseOrder();
+		// 		if(!isset($result['master_detail']['id']) OR !$result['master_detail']['id']) throw new \Exception("order not created");
+		// 		$order_id = $result['master_detail']['id'];
 
-				// delete temporary repurchase items
-				$temp_oi = $this->add('xavoc\mlm\Model_TemporaryRepurchaseItem');
-				$temp_oi->addCondition('distributor_id',$distributor->id);
-				$temp_oi->deleteAll();
-				$payment_mode = "online";
+		// 		// delete temporary repurchase items
+		// 		$temp_oi = $this->add('xavoc\mlm\Model_TemporaryRepurchaseItem');
+		// 		$temp_oi->addCondition('distributor_id',$distributor->id);
+		// 		$temp_oi->deleteAll();
+		// 		$payment_mode = "online";
 
-				$distributor->updateRepurchaseHistory($order_id,$payment_mode,[]);
+		// 		$distributor->updateRepurchaseHistory($order_id,$payment_mode,[]);
 
-				$this->app->db->commit();
-			}catch(\Exception $e){
-				$this->app->db->rollback();
-				$this->js()->univ()->errorMessage($e->getMessage())->execute();
-			}
+		// 		$this->app->db->commit();
+		// 	}catch(\Exception $e){
+		// 		$this->app->db->rollback();
+		// 		$this->js()->univ()->errorMessage($e->getMessage())->execute();
+		// 	}
 
-			if($order_id){
-				$url = $this->app->url($this->options['checkout_page'],['order_id'=>$order_id,'step'=>'payment','pay_now'=>true]);
-				$js_event = [
-					$this->app->js()->univ()->redirect($url),
-					$this->app->js()->univ()->closeDialog()
-				];
+		// 	if($order_id){
+		// 		$url = $this->app->url($this->options['checkout_page'],['order_id'=>$order_id,'step'=>'payment','pay_now'=>true]);
+		// 		$js_event = [
+		// 			$this->app->js()->univ()->redirect($url),
+		// 			$this->app->js()->univ()->closeDialog()
+		// 		];
 
-				$this->js(null,$js_event)->univ()->successMessage('redirecting to payment gateway ...')->execute();
-			}
-
-		}
+		// 		$this->js(null,$js_event)->univ()->successMessage('redirecting to payment gateway ...')->execute();
+		// 	}
+		// }
 
 
 	}
