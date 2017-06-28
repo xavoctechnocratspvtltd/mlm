@@ -102,7 +102,8 @@ class View_GenerationTree extends \View{
 				"<br/>Gr: ". $greened_on_date. 
 				"<br/>Kit: ". ($model['kit_item']?:'') ." SV(".$model['sv'].")"."BV(".$model['bv'].")".
 				"<br/>Intro: ". $model['introducer'] .
-				"<br/>Month Self BV: ". $model['month_self_bv'];
+				"<br/>Month Self BV: ". $model['month_self_bv'].
+				"<br/>Total Month BV: ". $model['total_month_bv'];
 				
 		$str= str_replace("'", "\'", $str);
 		$str= str_replace("\n", "", $str);
