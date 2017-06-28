@@ -91,13 +91,14 @@ class View_VerifyRepurchasePayment extends \View{
 				$form->error('payment_mode','must not be empty');
 
 			$required_field = $mandatory_field_set[$form['payment_mode']];
-			foreach ($required_field as $key => $field_name) {
-				if(!$form[$field_name]){
-					$form->error($field_name,'must not be empty');
-					break;
+			if($order_model->loaded()){
+				foreach ($required_field as $key => $field_name) {
+					if(!$form[$field_name] && $field_name != 'payment_narration'){
+						$form->error($field_name,'must not be empty');
+						break;
+					}
 				}
 			}
-
 			
 			try{
 				$this->app->db->beginTransaction();
