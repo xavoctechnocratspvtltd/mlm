@@ -1,0 +1,44 @@
+
+<div id="{$_name}" class="container xepan-grid main-box clearfix atk-table atk-table-zebra atk-table-bordered {$class}">{Pannel}
+  <header class="main-box-header clearfix atk-actions  {$class} ">
+    <div style="100%" class="filter-block">
+      <div class="pull-right">{$grid_buttons} </div>
+    </div>
+  </header>{/Pannel}
+  <div class="row">
+    <div class="main-box-body clearfix table-responsive">
+      <table style="width:100%" class="table table-bordered">{header}
+        <thead>{cols}{col}
+          <th>Product Name</th>
+          <th>Product Code</th>
+          <th>Price</th>
+          <th>Quantity</th>
+          <th>Total Amount</th>{/}{/}
+        </thead>{/}
+        {$subheader}
+        <tbody>{rows}{row}
+          <tr data-id="{$id}" class="{$odd_even}">{cols}
+            <td>{$name}</td>
+            <td>{$item_sku}</td>
+            <td>{$price}</td>
+            <td>{$quantity}</td>
+            <td>{$total_amount}	</td>{/}
+          </tr>{/}{/}
+          {not_found}
+          <div class="row">
+            <div role="alert" class="col-md-12 text-center alert alert-warning"><span class="icon-attention fa fa-exclamation-triangle"> &nbsp;{$not_found_message}</span></div>
+          </div>{/}
+        </tbody>{totals}
+        <tfoot>
+          <tr class="totals">
+            {cols}{col}
+            <td {$tdparam}>
+            {$content}
+            </td>
+            {/}{/}
+          </tr>
+        </tfoot>{/}
+      </table>{$Paginator}
+    </div>
+  </div>
+</div>

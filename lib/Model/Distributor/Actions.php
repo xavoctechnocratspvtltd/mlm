@@ -255,5 +255,27 @@ class Model_Distributor_Actions extends \xavoc\mlm\Model_Distributor
 		}else{
 			$page->add('xavoc\mlm\View_Repurchase',['distributor'=>$this]);
 		}			
-	}	
+	}
+
+	function page_changeName($page){
+		if(!$this['user_id']){
+			$page->add('View')->set("distributor user not found")->addClass('alert alert-danger');
+			return;
+		}
+		$user = $this->add('xepan\base\Model_User')->load($this['user_id']);
+
+		$form = $page->add('Form');
+		$form->addField('user_name')->set($user['username']);
+		$form->setModel($this,['first_name','last_name','country_id','state_id','city','address','pin_code','email','mobile_number','d_account_number','d_bank_name','d_bank_ifsc_code']);
+		
+		$form->addSubmit('update');
+		if($form->isSubmitted()){
+			$form->update();
+			$user['username'] = $form['user_name'];
+			$user->save();
+			$this->app->page_action_result = $form->js(null,$form->js()->closest('.dialog')->dialog('close'))->univ()->successMessage('Distributor detail updated');		
+		}
+
+	}
+
 }

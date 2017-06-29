@@ -20,8 +20,18 @@ class View_VerifyTopupPayment extends \View{
 			$order_model->load($this->orderid);
 
 
-		// $item = $this->add('xavoc\mlm\Model_Kit');
-		$item = $this->add('xepan\commerce\Model_Item');
+		$item = $this->add('xavoc\mlm\Model_Kit');
+		$item->addExpression('capping_int')->set(function($m,$q){
+			return $q->expr('CAST([0] AS SIGNED)',[$m->getElement('capping')]);
+		});
+		
+		$last_kit = $this->add('xavoc\mlm\Model_TopupHistory')
+						->addCondition('distributor_id',$distributor->id)
+						->setOrder('id','desc')
+						->tryLoadAny()
+						;
+
+		// $item = $this->add('xepan\commerce\Model_Item');
 		$item->title_field = "kit_with_price";
 		$item->addExpression('kit_with_price')->set(function($m,$q){
 			return $q->expr('CONCAT([0]," :: ",[1]," ::",[2])',
@@ -33,6 +43,8 @@ class View_VerifyTopupPayment extends \View{
 				);
 		});
 		$item->addCondition('is_package',true);
+		if($last_kit->loaded())
+			$item->addCondition('capping_int','>',$last_kit['capping']);
 
 		$form = $this->add('Form');
 		
@@ -101,12 +113,15 @@ class View_VerifyTopupPayment extends \View{
 
 		$form->addSubmit('Verify Payment')->addClass('btn btn-primary');
 		if($form->isSubmitted()){
+			
 			// validation check info
-			$required_field = $mandatory_field_set[$form['payment_mode']];
-			foreach ($required_field as $key => $field_name) {
-				if(!$form[$field_name]){
-					$form->error($field_name,'must not be empty');
-					break;
+			if($order_model->loaded()){
+				$required_field = $mandatory_field_set[$form['payment_mode']];
+				foreach ($required_field as $key => $field_name) {
+					if(!$form[$field_name] && $field_name != 'payment_narration'){
+						$form->error($field_name,'must not be empty');
+						break;
+					}
 				}
 			}
 			
@@ -143,12 +158,16 @@ class View_VerifyTopupPayment extends \View{
 			}catch(\Exception $e){
 				
 				$this->app->db->rollback();
-				throw $e;
-				
+
 				$form->js(null,$form->js()->closest('.dialog')->dialog('close'))->univ()->errorMessage($e->getMessage()." , something wrong")->execute();
 			}
 			
-			$form->js(null,$form->js()->closest('.dialog')->dialog('close'))->univ()->successMessage('payment verified and marked green')->execute();
+			$js_event = [
+					$form->js()->redirect('xavoc_dm_distributors')
+					// $form->js()->_selector('.dialog')->dialog('close')
+					// $(".ui-dialog-content").dialog("close");
+				];		
+			$form->js(null,$js_event)->univ()->successMessage('payment verified and marked green')->execute();
 		}
 
 	}

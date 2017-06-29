@@ -5,7 +5,7 @@ namespace xavoc\mlm;
 /**
 * 
 */
-class Tool_DistributorCheckout extends \xepan\cms\View_Tool{ 
+class Tool_DistributorCheckout extends \xavoc\mlm\Tool_Distributor{ 
 	public $options = [];
 
 	function init(){

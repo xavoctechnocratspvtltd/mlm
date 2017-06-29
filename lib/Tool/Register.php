@@ -6,7 +6,7 @@ namespace xavoc\mlm;
 /**
 * 
 */
-class Tool_Register extends \xepan\cms\View_Tool{
+class Tool_Register extends \xavoc\mlm\Tool_Distributor{
 	
 	public $options = [
 				'show_caption'=>true,

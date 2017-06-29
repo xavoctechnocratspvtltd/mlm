@@ -2,7 +2,7 @@
 
 namespace xavoc\mlm;
 
-class Tool_DistributorMenu extends \xepan\cms\View_Tool{ 
+class Tool_DistributorMenu extends \xavoc\mlm\Tool_Distributor{ 
 	public $options = ['login_page'=>'login'];
 
 	function init(){
@@ -16,7 +16,7 @@ class Tool_DistributorMenu extends \xepan\cms\View_Tool{
 
 		$distributor->loadLoggedIn();
 		if(!$distributor->loaded()){
-			return "distributor not found";
+			return;
 		}
 
 		$menu = [
@@ -27,7 +27,7 @@ class Tool_DistributorMenu extends \xepan\cms\View_Tool{
 				['key'=>'repurchase','name'=>'Repurchase'],
 				['key'=>'mypayouts','name'=>'My Payouts'],
 				// ['key'=>'mywallet','name'=>'My Wallet'],
-				// ['key'=>'myorder','name'=>'My Orders'],
+				['key'=>'myorder','name'=>'My Orders'],
 				['key'=>'setting','name'=>'Settings'],
 			];
 

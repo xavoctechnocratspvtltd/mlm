@@ -52,4 +52,75 @@ class Model_SalesOrder extends \xepan\commerce\Model_SalesOrder {
 		$sale_invoice->paid();
 		$this->complete();
 	}
+
+	function deleteOrder(){
+		
+		// delete invoice  and delete
+		// topup history
+		// delete repurchase history
+		// update repurchase with negative bv or sv
+		try{
+			$this->app->db->beginTransaction();
+
+			$temp_array = explode("-", $this['invoice_detail']);
+			if($temp_array[0] > 0){
+				$this->invoice()->delete();
+			}
+
+			if($this['is_topup_included']){
+				$th = $this->add('xavoc\mlm\Model_TopupHistory');
+				$th->addCondition('distributor_id',$this['contact_id']);
+				$th->addCondition([['sale_order_id',$this->id],['sale_order_id','<>',null]]);
+				$th->tryLoadAny()->delete();
+			}
+
+			if(!$this['is_topup_included']){
+				$rh = $this->add('xavoc\mlm\Model_RepurchaseHistory');
+				$rh->addCondition('distributor_id',$this['contact_id']);
+				$rh->addCondition([['sale_order_id',$this->id],['sale_order_id','<>',null]]);
+				$rh->tryLoadAny()->delete();
+			}
+
+			$total_bv = 0;
+			$total_sv = 0;
+			foreach ($this->items() as $oi) {
+		        $item = $this->add('xavoc\mlm\Model_Item')->load($oi['item_id']);
+				$total_bv += $item['bv']*$oi['quantity'];
+		        $total_sv += $item['sv']*$oi['quantity'];
+		    }
+
+		    if($total_bv > 0 || $total_sv > 0){
+		    	$dis = $this->add('xavoc\mlm\Model_Distributor');
+		    	$dis->load($this['contact_id']);
+		    	if($total_sv > 0){
+		    		$dis->updateAnsestorsSV(-1 * $total_sv);
+		    	}
+				
+				if($total_bv > 0){
+		    		$dis['month_self_bv'] = $dis['month_self_bv'] - $total_bv;
+					$dis['total_self_bv'] = $dis['total_self_bv'] - $total_bv;
+					
+					$th = $this->add('xavoc\mlm\Model_TopupHistory');
+					$th->addCondition('distributor_id',$this['contact_id']);
+					$th->setOrder('id','desc');
+					$th->tryLoadAny();
+					if($th->loaded()){ 
+						$dis['kit_item_id'] = $th['kit_item_id'];
+					}else{
+						$dis['kit_item_id'] = 0;
+					}
+					$dis->save();
+					$dis->updateAnsestorsBV(-1 * $total_bv);
+				}
+		    }
+			
+			$this->delete();
+			$this->app->db->commit();
+		}catch(\Exception $e){
+			$this->app->db->rollback();
+			throw $e;
+		}
+
+		return true;
+	}
 } 

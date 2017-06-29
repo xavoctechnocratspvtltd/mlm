@@ -57,46 +57,46 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 		}
 
 		$tabs = $this->add('Tabs');
-		$online_tab = $tabs->addTab('Online');
+		// $online_tab = $tabs->addTab('Online');
 		// $cash_tab = $tabs->addTab('Cash');
 		$cheque_tab = $tabs->addTab('Cheque');
 		$dd_tab = $tabs->addTab('Demand Draft');
 		$df_tab = $tabs->addTab('Deposite in Franchises \ Company');
 
-		$online_pay_btn = $online_tab->add('Button')->set("pay via online")->addClass('btn btn-primary');
-		if($online_pay_btn->isClicked()){
-			$order_id = 0;
-			$message = "";
-			try{
-				$this->app->db->beginTransaction();
+		// $online_pay_btn = $online_tab->add('Button')->set("pay via online")->addClass('btn btn-primary');
+		// if($online_pay_btn->isClicked()){
+		// 	$order_id = 0;
+		// 	$message = "";
+		// 	try{
+		// 		$this->app->db->beginTransaction();
 
-				$result = $this->placeOrder($this->kit_id);
-				$order_id = $result['order_id'];
-				$message = $result['message'];
-				$payment_mode = "online";
-				$payment_detail = [];
+		// 		$result = $this->placeOrder($this->kit_id);
+		// 		$order_id = $result['order_id'];
+		// 		$message = $result['message'];
+		// 		$payment_mode = "online";
+		// 		$payment_detail = [];
 
-				$distributor->updateTopupHistory($this->kit_id,$result['order_id'],$payment_mode,$payment_detail);
+		// 		$distributor->updateTopupHistory($this->kit_id,$result['order_id'],$payment_mode,$payment_detail);
 
-				$this->app->db->commit();
-			}catch(\Exception $e){
-				$this->app->db->rollback();
-				$this->js()->univ()->errorMessage($e->getMessage())->execute();
-			}
+		// 		$this->app->db->commit();
+		// 	}catch(\Exception $e){
+		// 		$this->app->db->rollback();
+		// 		$this->js()->univ()->errorMessage($e->getMessage())->execute();
+		// 	}
 
 
-			if($order_id){
-				$url = $this->app->url($this->checkout_page,['order_id'=>$order_id,'step'=>'payment','pay_now'=>true]);
-				$js_event = [
-					$this->app->js()->univ()->redirect($url),
-					$this->app->js()->univ()->closeDialog()
-				];
-				$this->js(null,$js_event)->univ()->successMessage($message)->execute();
-			}else{
-				$this->js()->univ()->errorMessage($message." something wrong, server problem")->execute();
-			}
+		// 	if($order_id){
+		// 		$url = $this->app->url($this->checkout_page,['order_id'=>$order_id,'step'=>'payment','pay_now'=>true]);
+		// 		$js_event = [
+		// 			$this->app->js()->univ()->redirect($url),
+		// 			$this->app->js()->univ()->closeDialog()
+		// 		];
+		// 		$this->js(null,$js_event)->univ()->successMessage($message)->execute();
+		// 	}else{
+		// 		$this->js()->univ()->errorMessage($message." something wrong, server problem")->execute();
+		// 	}
 			
-		}
+		// }
 
 
 		$cheque_form = $cheque_tab->add('Form');
@@ -202,7 +202,7 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 		$field->setModel('xepan\filestore\Image');
 
 		$form->addField('text','narration');
-		$form->addField('checkbox','deposite_in_company');
+		$form->addField('checkbox','deposite_in_company')->set(true);
 		$form->addSubmit('Submit')->addClass('btn btn-primary');
 
 		if($form->isSubmitted()){

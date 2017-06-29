@@ -1,0 +1,66 @@
+
+<div class="container">{order}
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="row">
+        <div class="col-xs-6">
+          <div class="invoice-title">
+            <h2>Order # <span class="text-primary">{$document_no}</span></h2>
+          </div>
+        </div>
+        <div class="col-xs-6">{inv_wrapper}
+          <div class="text-right"> 
+            <h4>Invoice No:<span class="text-success">{$invoice_no}</span></h4>
+            <h4>Invoice status:<span class="{$status_class}">{$invoice_status}</span></h4>
+          </div>{/inv_wrapper}
+          {$btn_wrapper}
+        </div>
+      </div>
+      <hr/>
+      <div class="row">
+        <div class="col-xs-6">
+          <address>
+            <h4>Distributor: <span class="text-info">{contact}John Smith{/}</span></h4>
+            <h4>Distributor ID: <span class="text-warning">{dis_user_id}John Smith{/}</span></h4><br/>    					{$address}
+          </address>
+        </div>
+        <div class="col-xs-6 text-right">
+          <address><strong>Order Date:</strong><br/>    					{order_date}March 7, 2014{/}<br/><br/></address>
+        </div>
+      </div>
+    </div>
+  </div>{/order}
+  {order_item}						
+  <div class="row">
+    <div class="col-md-12">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title"><strong>Order Details</strong></h3>
+        </div>
+        <div class="panel-body">
+          <div class="table-responsive">
+            <table class="table table-condensed">
+              <thead>
+                <tr>
+                  <td><strong>Item</strong></td>
+                  <td class="text-center"><strong>Price</strong></td>
+                  <td class="text-center"><strong>Quantity</strong></td>
+                  <td class="text-right"><strong>Totals</strong></td>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- foreach ($order->lineItems as $line) or some such thing here-->{rows}{row}
+                <tr>
+                  <td>{$name}</td>
+                  <td class="text-center">{$price}</td>
+                  <td class="text-center">{$quantity}</td>
+                  <td class="text-right">{$total_amount}</td>
+                </tr>{/row}{/rows}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>{/}								
+</div>
