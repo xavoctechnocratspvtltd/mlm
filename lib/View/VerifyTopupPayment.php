@@ -101,6 +101,7 @@ class View_VerifyTopupPayment extends \View{
 
 		$form->addSubmit('Verify Payment')->addClass('btn btn-primary');
 		if($form->isSubmitted()){
+			
 			// validation check info
 			if($order_model->loaded()){
 				$required_field = $mandatory_field_set[$form['payment_mode']];
@@ -145,12 +146,16 @@ class View_VerifyTopupPayment extends \View{
 			}catch(\Exception $e){
 				
 				$this->app->db->rollback();
-				throw $e;
-				
+
 				$form->js(null,$form->js()->closest('.dialog')->dialog('close'))->univ()->errorMessage($e->getMessage()." , something wrong")->execute();
 			}
 			
-			$form->js(null,$form->js()->closest('.dialog')->dialog('close'))->univ()->successMessage('payment verified and marked green')->execute();
+			$js_event = [
+					$form->js()->redirect('xavoc_dm_distributors')
+					// $form->js()->_selector('.dialog')->dialog('close')
+					// $(".ui-dialog-content").dialog("close");
+				];		
+			$form->js(null,$js_event)->univ()->successMessage('payment verified and marked green')->execute();
 		}
 
 	}
