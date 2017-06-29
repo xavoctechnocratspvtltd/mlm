@@ -2,7 +2,7 @@
 
 namespace xavoc\mlm;
 
-class Grid_Order extends \Grid{
+class Grid_Order extends \xepan\hr\Grid{
 	public $distributor;
 	function init(){
 		parent::init();
@@ -18,6 +18,18 @@ class Grid_Order extends \Grid{
 			return $js->univ()->frameURL($label,$this->app->url('xavoc_dm_orderaction',['actiontype'=>$data['actiontype'],'istopuporder'=>$data['istopuporder'],'orderid'=>$data['orderid'],'distributor_id'=>$this->distributor->id]));
 		});
 
+		$reload_url = $this->app->url(null,['cut_object'=>$this->name]);
+		$this->on('click','.do-ds-order-delete',function($js,$data)use($reload_url){
+			$result = $this->add('xavoc\mlm\Model_SalesOrder')
+				->load($data['orderid'])
+				->deleteOrder();
+			if($result){
+				return $this->js(null,$this->js()->univ()->successMessage('order deleted'))->reload(null,null,$reload_url);
+			}else{
+				return $this->js()->univ()->errorMessage("not deleted");
+			}
+		});
+		
 	}
 
 	function formatRow(){
@@ -32,6 +44,8 @@ class Grid_Order extends \Grid{
 		}else{
 			$this->current_row_html['status'] = $this->model['status'].'<br/><button class="btn btn-info do-ds-order" data-actiontype="dispatch" data-orderid="'.$this->model->id.'">Dispatch</button>';
 		}
+
+		$this->current_row_html['remove'] = '<button class="btn btn-danger do-ds-order-delete" data-orderid="'.$this->model->id.'" >Delete</button>';
 		parent::formatRow();
 	}
 }
