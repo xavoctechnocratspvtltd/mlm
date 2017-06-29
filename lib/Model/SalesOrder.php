@@ -99,6 +99,16 @@ class Model_SalesOrder extends \xepan\commerce\Model_SalesOrder {
 				if($total_bv > 0){
 		    		$dis['month_self_bv'] = $dis['month_self_bv'] - $total_bv;
 					$dis['total_self_bv'] = $dis['total_self_bv'] - $total_bv;
+					
+					$th = $this->add('xavoc\mlm\Model_TopupHistory');
+					$th->addCondition('distributor_id',$this['contact_id']);
+					$th->setOrder('id','desc');
+					$th->tryLoadAny();
+					if($th->loaded()){
+						$dis['kit_item_id'] = $th['kit_item_id'];
+					}else{
+						$dis['kit_item_id'] = 0;
+					}
 					$dis->save();
 					$dis->updateAnsestorsBV(-1 * $total_bv);
 				}
