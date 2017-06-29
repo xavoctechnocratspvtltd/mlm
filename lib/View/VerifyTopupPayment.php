@@ -20,8 +20,18 @@ class View_VerifyTopupPayment extends \View{
 			$order_model->load($this->orderid);
 
 
-		// $item = $this->add('xavoc\mlm\Model_Kit');
-		$item = $this->add('xepan\commerce\Model_Item');
+		$item = $this->add('xavoc\mlm\Model_Kit');
+		$item->addExpression('capping_int')->set(function($m,$q){
+			return $q->expr('CAST([0] AS SIGNED)',[$m->getElement('capping')]);
+		});
+		
+		$last_kit = $this->add('xavoc\mlm\Model_TopupHistory')
+						->addCondition('distributor_id',$distributor->id)
+						->setOrder('id','desc')
+						->tryLoadAny()
+						;
+
+		// $item = $this->add('xepan\commerce\Model_Item');
 		$item->title_field = "kit_with_price";
 		$item->addExpression('kit_with_price')->set(function($m,$q){
 			return $q->expr('CONCAT([0]," :: ",[1]," ::",[2])',
@@ -33,6 +43,8 @@ class View_VerifyTopupPayment extends \View{
 				);
 		});
 		$item->addCondition('is_package',true);
+		if($last_kit->loaded())
+			$item->addCondition('capping_int','>',$last_kit['capping']);
 
 		$form = $this->add('Form');
 		
