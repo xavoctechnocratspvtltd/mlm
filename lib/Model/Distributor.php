@@ -7,10 +7,10 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 	public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 	public $actions = [
-				'Red'=>['view','edit','delete','topup','repurchase','verifyDocument'],
-				'KitSelected'=>['view','edit','delete','topup','repurchase','verifyDocument'],
-				'KitPaid'=>['view','edit','delete','topup','repurchase','verifyDocument'],
-				'Green'=>['view','edit','delete','topup','repurchase','verifyDocument'],
+				'Red'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName'],
+				'KitSelected'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName'],
+				'KitPaid'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName'],
+				'Green'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName'],
 				'Blocked'=>['view','edit','delete','Unblocked']
 			];
 	
@@ -49,11 +49,10 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		$dist_j->addField('kyc_no')->mandatory("KYC no is required")->caption('KYC no.');
 		// $dist_j->add('xepan\filestore\Field_Image','kyc_id')->caption('KYC form');
 		// $dist_j->add('xepan\filestore\Field_Image','address_proof_id')->caption('Address proof');
-		$dist_j->addField('nominee_name')->mandatory("Nominee name is required")->display(array('form'=>'xavoc\mlm\Alpha'))->caption('Nominee name');
-		$dist_j->addField('relation_with_nominee')->enum(['Mother','Father','Wife','Other'])->mandatory("Relation with nominee is required")->caption('Relation with Nominee');//->system(true);
-		$dist_j->addField('nominee_email')->caption('Nominee email')->display(array('form'=>'xavoc\mlm\Email'));//->system(true);
-		$dist_j->addField('nominee_age')->mandatory("Nominee age is required")->display(array('form'=>'xavoc\mlm\Range'))->caption("Nominee age");
-
+		$dist_j->addField('nominee_name');
+		$dist_j->addField('relation_with_nominee')->enum(['Mother','Father','Wife','Brother','Sister','Other']);
+		$dist_j->addField('nominee_email')->caption('Nominee email')->display(array('form'=>'xavoc\mlm\Email'));
+		$dist_j->addField('nominee_age')->display(array('form'=>'xavoc\mlm\Range'));
 
 		// weekly session
 		$dist_j->addField('monthly_green_intros')->type('int')->defaultValue(0);
@@ -92,9 +91,9 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		$dist_j->addField('temp')->type('number')->system(true);
 
 		// distributor account detail
-		$dist_j->addField('d_account_number');
-		$dist_j->addField('d_bank_name');
-		$dist_j->addField('d_bank_ifsc_code');
+		$dist_j->addField('d_account_number')->caption('Account Number');
+		$dist_j->addField('d_bank_name')->caption('Bank Name');
+		$dist_j->addField('d_bank_ifsc_code')->caption('Bank IFSC Code');
 
 		// payment mode fields
 		// for online payment
