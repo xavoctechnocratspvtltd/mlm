@@ -17,6 +17,10 @@ class Tool_GenerationTree extends \xavoc\mlm\Tool_Distributor{
 
 		if($this->owner instanceof \AbstractController) return;
 
+		$d = $this->add('xavoc\mlm\Model_Distributor');
+		$d->loadLoggedIn();
+		if(!$d->loaded()) return;
+
 		$this->addClass('main-box');
 		$this->add('xavoc\mlm\View_GenerationTree',['options'=>$this->options]);
 
