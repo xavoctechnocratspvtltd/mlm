@@ -8,7 +8,7 @@ class View_VerifyRepurchasePayment extends \View{
 
 	function init(){
 		parent::init();
-
+		
 		if(!$this->distributor_id) throw new \Exception("distributor not found");
 		
 		$distributor = $this->add('xavoc\mlm\Model_Distributor')->load($this->distributor_id);
@@ -82,7 +82,7 @@ class View_VerifyRepurchasePayment extends \View{
 		$payment_mode_field->js(true)->univ()->bindConditionalShow($mandatory_field_set,'div.atk-form-row');
 		$form->addSubmit('varify payment')->addClasS('btn btn-primary btn-block');
 		if($form->isSubmitted()){
-			
+
 			if(!$order_model->loaded() && !$temp_model->count()->getOne()){
 				$form->js()->univ()->errorMessage('no one repurchase item found, first add repurchase item')->execute();
 			}
@@ -125,7 +125,12 @@ class View_VerifyRepurchasePayment extends \View{
 				throw $e;
 			}
 
-			$form->js(null,$form->js()->closest('.dialog')->dialog('close'))->univ()->successMessage('payment verified')->execute();
+			$js_event = [
+				$form->js()->_selector('.ds-order-grid')->trigger('reload'),
+				$form->js()->closest('.dialog')->dialog('close')
+			];
+
+			$form->js(null,$js_event)->univ()->successMessage('payment verified')->execute();
 		}
 
 

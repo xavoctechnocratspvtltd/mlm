@@ -7,8 +7,13 @@ class Grid_Order extends \xepan\hr\Grid{
 	function init(){
 		parent::init();
 
+		$this->addClass('ds-order-grid');
+		$this->js('reload')->reload();
+
 		$add_topup_btn = $this->addButton('Admin '.($this->istopuporder?'Topup':'Repurchase'))->addClass('btn btn-primary');
 		$add_topup_btn->js('click')->univ()->frameURL('Add New Topup',$this->app->url('xavoc_dm_orderaction',['actiontype'=>'payment','distributor_id'=>$this->distributor->id,'istopuporder'=>$this->istopuporder]));
+
+		$reload_url = $this->app->url(null,['cut_object'=>$this->name]);
 
 		$this->on('click','.do-ds-order',function($js,$data){
 			$label = "Order Payment Verification";
@@ -18,7 +23,6 @@ class Grid_Order extends \xepan\hr\Grid{
 			return $js->univ()->frameURL($label,$this->app->url('xavoc_dm_orderaction',['actiontype'=>$data['actiontype'],'istopuporder'=>$data['istopuporder'],'orderid'=>$data['orderid'],'distributor_id'=>$this->distributor->id]));
 		});
 
-		$reload_url = $this->app->url(null,['cut_object'=>$this->name]);
 		$this->on('click','.do-ds-order-delete',function($js,$data)use($reload_url){
 			$result = $this->add('xavoc\mlm\Model_SalesOrder')
 				->load($data['orderid'])
