@@ -5,7 +5,7 @@ namespace xavoc\mlm;
 /**
 * 
 */
-class Tool_Genology extends \xepan\cms\View_Tool{
+class Tool_Genology extends \xavoc\mlm\Tool_Distributor{
 	
 	public $options = [
 						'genology-depth-of-tree'=> 4,

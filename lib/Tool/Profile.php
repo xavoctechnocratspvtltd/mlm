@@ -5,7 +5,7 @@ namespace xavoc\mlm;
 /**
 * 
 */
-class Tool_Profile extends \xepan\cms\View_Tool{
+class Tool_Profile extends \xavoc\mlm\Tool_Distributor{
 	public $options = ['login_page'=>'login'];
 	
 	function init(){

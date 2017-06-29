@@ -5,7 +5,7 @@ namespace xavoc\mlm;
 /**
 * 
 */
-class Tool_GenerationTree extends \xepan\cms\View_Tool{
+class Tool_GenerationTree extends \xavoc\mlm\Tool_Distributor{
 	
 	public $options = [
 						'generation-depth-of-tree'=> 4,
