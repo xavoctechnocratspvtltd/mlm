@@ -1,0 +1,85 @@
+.container
+	{order}
+	.row
+		.col-xs-12
+			.row
+				.col-xs-6
+					.invoice-title
+						h2 Order # 
+							span.text-primary {$document_no}
+				.col-xs-6
+						{inv_wrapper}
+						.text-right 
+							h4|Invoice No:
+								span.text-success{$invoice_no}
+							h4|Invoice status:
+								span(class="{$status_class}"){$invoice_status}
+						{/inv_wrapper}
+						{$btn_wrapper}
+			hr
+			.row
+				.col-xs-6
+					address
+						h4 Distributor: 
+								span.text-info{contact}John Smith{/}
+						h4 Distributor ID: 
+								span.text-warning{dis_user_id}John Smith{/}
+						br
+						|     					{$address}
+				.col-xs-6.text-right
+					address
+						strong Order Date:
+						br
+						|     					{order_date}March 7, 2014{/}
+						br
+						br
+
+	{/order}
+	{order_item}						
+	.row
+		.col-md-12
+			.panel.panel-default
+				.panel-heading
+					h3.panel-title
+						strong Order Details
+				.panel-body
+					.table-responsive
+						table.table.table-condensed
+							thead
+								tr
+									td
+										strong Item
+									td.text-center
+										strong Price
+									td.text-center
+										strong Quantity
+									td.text-right
+										strong Totals
+							tbody
+								// foreach ($order->lineItems as $line) or some such thing here
+								{rows}{row}
+								tr
+									td {$name}
+									td.text-center {$price}
+									td.text-center {$quantity}
+									td.text-right {$total_amount}
+								{/row}{/rows}
+								//- tr
+								//- 	td.thick-line
+								//- 	td.thick-line
+								//- 	td.thick-line.text-center
+								//- 		strong Subtotal
+								//- 	td.thick-line.text-right $670.99
+								//- tr
+								//- 	td.no-line
+								//- 	td.no-line
+								//- 	td.no-line.text-center
+								//- 		strong Shipping
+								//- 	td.no-line.text-right $15
+								//- tr
+								//- 	td.no-line
+								//- 	td.no-line
+								//- 	td.no-line.text-center
+								//- 		strong Total
+								//- 	td.no-line.text-right $685.99
+	{/}								
