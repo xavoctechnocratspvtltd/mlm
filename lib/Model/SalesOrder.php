@@ -104,7 +104,7 @@ class Model_SalesOrder extends \xepan\commerce\Model_SalesOrder {
 					$th->addCondition('distributor_id',$this['contact_id']);
 					$th->setOrder('id','desc');
 					$th->tryLoadAny();
-					if($th->loaded()){
+					if($th->loaded()){ 
 						$dis['kit_item_id'] = $th['kit_item_id'];
 					}else{
 						$dis['kit_item_id'] = 0;
