@@ -27,7 +27,7 @@ class Tool_DistributorMenu extends \xavoc\mlm\Tool_Distributor{
 				['key'=>'repurchase','name'=>'Repurchase'],
 				['key'=>'mypayouts','name'=>'My Payouts'],
 				// ['key'=>'mywallet','name'=>'My Wallet'],
-				// ['key'=>'myorder','name'=>'My Orders'],
+				['key'=>'myorder','name'=>'My Orders'],
 				['key'=>'setting','name'=>'Settings'],
 			];
 
