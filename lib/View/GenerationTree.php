@@ -97,13 +97,17 @@ class View_GenerationTree extends \View{
 		else
 			$greened_on_date = "--/---/----";
 		$str=  
-				$model['name'].
+				$model['name']. " [".$model['id']."]".
 				"<br/>Jn: ". date("d M Y", strtotime($model['created_at'])). 
 				"<br/>Gr: ". $greened_on_date. 
 				"<br/>Kit: ". ($model['kit_item']?:'') ." SV(".$model['sv'].")"."BV(".$model['bv'].")".
 				"<br/>Intro: ". $model['introducer'] .
 				"<br/>Month Self BV: ". $model['month_self_bv'].
-				"<br/>Total Month BV: ". $model['total_month_bv'];
+				"<br/>Month BV: ". $model['month_bv'].
+				"<br/>Rank: ". $model['current_rank'].
+				"<br/>Slab Percentage: ". $model->ref('current_rank_id')->get('slab_percentage')
+				// "<br/>Slab Percentage: ". $model['temp']
+				;
 				
 		$str= str_replace("'", "\'", $str);
 		$str= str_replace("\n", "", $str);
