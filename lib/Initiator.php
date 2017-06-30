@@ -17,6 +17,7 @@ class Initiator extends \Controller_Addon {
         $m->addItem(['Repurchase Product','icon'=>'fa fa-check-square-o'],'xavoc_dm_repurchase');
         $m->addItem(['Distributors','icon'=>'fa fa-check-square-o'],'xavoc_dm_distributors');
         $m->addItem(['Orders','icon'=>'fa fa-check-square-o'],'xavoc_dm_salesorder');
+        $m->addItem(['Franchises','icon'=>'fa fa-check-square-o'],'xavoc_dm_franchise');
         $m->addItem(['Closings','icon'=>'fa fa-check-square-o'],'xavoc_dm_closings');
         $m->addItem(['Configuration','icon'=>'fa fa-check-square-o'],'xavoc_dm_config');
 
@@ -63,11 +64,18 @@ class Initiator extends \Controller_Addon {
     function setup_frontend(){
 
         $this->app->addHook('login_panel_user_loggedin',function($app,$user){
+            
+            $f_model = $this->add('xavoc\mlm\Model_Franchises');
+            $f_model->loadLoggedIn('Warehouse');
+            if($f_model->loaded())
+                $this->app->redirect($this->app->url('franchises_dashboard'));
+
             $m = $this->add('xavoc\mlm\Model_Distributor');
-            $m->loadLoggedIn();
+            $m->loadLoggedIn('Customer');
             if($m->loaded()){
                 $this->app->redirect($this->app->url('dashboard'));
             }
+
         });
         
         $this->app->addHook('invoice_paid',function($app,$invoice){
