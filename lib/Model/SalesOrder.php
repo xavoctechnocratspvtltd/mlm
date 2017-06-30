@@ -71,7 +71,11 @@ class Model_SalesOrder extends \xepan\commerce\Model_SalesOrder {
 			$closing->setOrder('id','desc');
 			$closing->tryLoadAny();
 			
-			if(strtotime($closing['on_date']) > strtotime($th['created_at'])){
+			$last_closing_date = 0;
+			if($closing->loaded())
+				$last_closing_date = strtotime($closing['on_date']);
+			
+			if($last_closing_date > strtotime($th['created_at'])){
 				throw new \Exception("you done a closing after topup, so cannot be delete");
 			}
 			
