@@ -36,7 +36,7 @@ class Tool_FranchisesMenu extends \xepan\cms\View_Tool{
 				$g->current_row_html['active_menu'] = "deactive";
 		});
 
-		$cl->template->trySet('franchises_name',$franchises['name']);
+		$cl->template->trySet('franchises_name',$franchises['username']);
 		$cl->template->trySet('franchises_dp',($franchises['image']?:"shared/apps/xavoc/mlm/templates/img/profile.png"));
 
 	}

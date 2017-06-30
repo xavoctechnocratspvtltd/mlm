@@ -11,7 +11,8 @@ class Model_TopupHistory extends \xepan\base\Model_Table {
 		parent::init();
 
 		$this->hasOne('xavoc\mlm\Model_Distributor','distributor_id');
-		$this->hasOne('xavoc\mlm\Model_Kit','kit_item_id');
+		// $this->hasOne('xavoc\mlm\Model_Kit','kit_item_id');
+		$this->addField('kit_item_id');
 		$this->addField('bv');
 		$this->addField('pv');
 		$this->addField('sv');

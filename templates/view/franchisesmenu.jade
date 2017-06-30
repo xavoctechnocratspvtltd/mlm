@@ -17,14 +17,14 @@ div(id="{$_name}" class="{$class} ds-distributor-navbar ds-navbar ds-franchises-
 						a(href='{$key}') {$name}
 					{/}{/}
 				ul.nav.navbar-nav.navbar-right
-					li.bg.bg-info(style="margin-top:5px;border-radius:5px 0px 0px 5px;") 
-						a(href="#") Franchises Panel
+					li.bg.bg-info(style="border-radius:5px 0px 0px 5px;") 
+						a(href="#" style="padding:10px;" class="text-center") Franchise Panel<br/>{$franchises_name}
 					li.bg.bg-info
 						a(href="#" style="padding:10px; box-shadow:inset 0px 0px 1px 2px #ccc;border-radius:50%;background:white;" title="{$franchises_name}")
 							img(src="{$franchises_dp}" style="max-height:60px;max-width:40px;height:40px;" class="ds-dp")
 					li
 						a(style="padding:10px;" href="logout")
-							div.btn.btn-danger()
+							div.btn.btn-danger
 								i.glyphicon.glyphicon-off
 								|&nbsp;Logout
 	{$Content}
