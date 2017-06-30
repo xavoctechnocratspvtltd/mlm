@@ -12,6 +12,8 @@ class Model_Closing extends \xepan\base\Model_Table {
 	];
 
 	public $acl_type = 'Closing';
+
+	public $generation_bonus=[];
 	
 	function init(){
 		parent::init();
@@ -351,6 +353,8 @@ class Model_Closing extends \xepan\base\Model_Table {
 			$previous_rank= $rank_id;
 		}
 
+		// ******************** OLD PATTERN OF 60-40 differnece ... to delete 
+		/*
 		$this->query("UPDATE mlm_payout SET effective_business = capped_total_business WHERE closing_date='$on_date'");
 		
 		// if($debug_60_40) exit;
@@ -387,15 +391,6 @@ class Model_Closing extends \xepan\base\Model_Table {
 		";
 		$this->query($q);
 
-		if(!$this->app->getConfig('skipzero_for_testing',false)){
-			// set month bv =0
-			$q="UPDATE mlm_distributor SET month_bv=0";
-			$this->query($q);
-
-			$q="UPDATE mlm_distributor SET month_self_bv=0";
-			$this->query($q);
-		}
-
 		// find difference from introducer downline path only rfom those who are  on smalled slab _percentage then distributor
 		$q="
 			UPDATE
@@ -415,6 +410,44 @@ class Model_Closing extends \xepan\base\Model_Table {
 		";
 
 		$this->query($q);
+		
+		*/
+
+		// ======= new 60-40 based business difference generation generation_bonus
+
+		$q="
+			UPDATE 
+				mlm_distributor d
+				JOIN mlm_payout p on p.distributor_id=d.distributor_id
+			SET
+				d.temp = p.slab_percentage
+			WHERE
+				p.closing_date='$on_date' 
+		";
+		$this->query($q);
+
+		$this->query("UPDATE mlm_distributor SET temp2=0");
+		$this->setGenerationBonus();
+		
+		$q="
+			UPDATE 
+				mlm_payout p
+				JOIN mlm_distributor d on p.distributor_id=d.distributor_id
+			SET
+				p.repurchase_bonus = d.temp2
+			WHERE
+			p.closing_date='$on_date'
+		";
+		$this->query($q);
+
+		if(!$this->app->getConfig('skipzero_for_testing',false)){
+			// set month bv =0
+			$q="UPDATE mlm_distributor SET month_bv=0";
+			$this->query($q);
+
+			$q="UPDATE mlm_distributor SET month_self_bv=0";
+			$this->query($q);
+		}
 
 		// make negative difference to zero ??? Is this okay.. I doubt
 		// but doing as company said .. but this is totally looks business of loss
@@ -753,8 +786,54 @@ class Model_Closing extends \xepan\base\Model_Table {
 		}
 	}
 
-	function query($q){
-		$this->api->db->dsql($this->api->db->dsql()->expr($q))->execute();
+	function setGenerationBonus($on_date=null){
+		if(!$on_date) $on_date = $this->app->today;
+
+		$q= "SELECT * from mlm_distributor WHERE month_self_bv > 0 ";
+		$bv_dist=$this->query($q,true);		
+		
+		foreach ($bv_dist as $d) {
+			$per = $d['temp']; // percentage
+			if(!isset($this->generation_bonus[$d['distributor_id']])) $this->generation_bonus[$d['distributor_id']] = 0;
+			$this->generation_bonus[$d['distributor_id']] = $this->generation_bonus[$d['distributor_id']] + ($d['month_self_bv'] * $per/100);
+			$this->query("UPDATE mlm_distributor SET temp2=".$this->generation_bonus[$d['distributor_id']]." WHERE distributor_id=".$d['distributor_id']);
+			$this->goUp($d,$per,$d['month_self_bv']);
+		}
+	}
+
+	function goUp($d,$per,$bv){
+
+		$d_path = $d['introducer_path'];
+		$q="
+				SELECT 
+					* 
+				FROM 
+					mlm_distributor d
+				WHERE
+					POSITION(d.introducer_path in '$d_path') > 0
+					AND d.introducer_path <> '$d_path'
+					AND d.temp > $per
+				ORDER BY length(d.introducer_path) desc
+				LIMIT 1 
+			";
+		$up_dist=$this->query($q,true);
+		$up_dist=$up_dist[0];
+
+		if(isset($up_dist['id'])){
+			if(!isset($this->generation_bonus[$up_dist['distributor_id']])) $this->generation_bonus[$up_dist['distributor_id']]=0;
+			$this->generation_bonus[$up_dist['distributor_id']] = $this->generation_bonus[$up_dist['distributor_id']] + ($bv * ($up_dist['temp'] - $per) /100); // percentage
+			$this->query("UPDATE mlm_distributor SET temp2=".$this->generation_bonus[$up_dist['distributor_id']]." WHERE distributor_id=".$up_dist['distributor_id']);
+			$this->goUp($up_dist,$up_dist['temp'],$bv);
+		}
+
+	}
+
+	function query($query, $gethash=false){
+		if($gethash){
+			return $this->app->db->dsql()->expr($query)->get();
+		}else{
+			return $this->app->db->dsql()->expr($query)->execute();
+		}
 	}
 
 	function payoutsheet(){
