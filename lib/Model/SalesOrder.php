@@ -62,22 +62,33 @@ class Model_SalesOrder extends \xepan\commerce\Model_SalesOrder {
 		try{
 			$this->app->db->beginTransaction();
 
+			$th = $this->add('xavoc\mlm\Model_TopupHistory');
+			$th->addCondition('distributor_id',$this['contact_id']);
+			$th->addCondition('sale_order_id',$this->id);
+			$th->tryLoadAny();
+
+			$closing = $this->add('xavoc\mlm\Model_Closing');
+			$closing->setOrder('id','desc');
+			$closing->tryLoadAny();
+			
+			if(strtotime($closing['on_date']) > strtotime($th['created_at'])){
+				throw new \Exception("you done a closing after topup, so cannot be delete");
+			}
+			
+			if($this['is_topup_included']){
+				$th->delete();
+			}
+
 			$temp_array = explode("-", $this['invoice_detail']);
 			if($temp_array[0] > 0){
 				$this->invoice()->delete();
 			}
 
-			if($this['is_topup_included']){
-				$th = $this->add('xavoc\mlm\Model_TopupHistory');
-				$th->addCondition('distributor_id',$this['contact_id']);
-				$th->addCondition([['sale_order_id',$this->id],['sale_order_id','<>',null]]);
-				$th->tryLoadAny()->delete();
-			}
 
 			if(!$this['is_topup_included']){
 				$rh = $this->add('xavoc\mlm\Model_RepurchaseHistory');
 				$rh->addCondition('distributor_id',$this['contact_id']);
-				$rh->addCondition([['sale_order_id',$this->id],['sale_order_id','<>',null]]);
+				$rh->addCondition('sale_order_id',$this->id);
 				$rh->tryLoadAny()->delete();
 			}
 
