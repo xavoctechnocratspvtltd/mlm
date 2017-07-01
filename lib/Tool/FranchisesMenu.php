@@ -10,15 +10,15 @@ class Tool_FranchisesMenu extends \xepan\cms\View_Tool{
 
 		if($this->owner instanceof \AbstractController) return;
 		
-		// $this->distributor = $distributor = $this->add('xavoc\mlm\Model_Distributor');
-		// $distributor->addExpression('attachment_count')->set(function($m,$q){
-		// 	return $q->expr('IFNULL([0],0)',[$m->refSQL('xavoc\mlm\Attachment')->count()]);
-		// });
-		$franchises = $this->app->auth->model;
-		// $distributor->loadLoggedIn();
-		// if(!$distributor->loaded()){
-		// 	return "distributor not found";
-		// }
+		$this->franchises = $franchises = $this->add('xavoc\mlm\Model_Franchises');
+		$franchises->loadLoggedIn();
+		$editor_user = $this->add('xepan\cms\Model_User_CMSEditor');
+		$editor_user->addCondition('user_id',$this->app->auth->model->id);
+		$editor_user->tryLoadAny();
+		
+		if(!$franchises->loaded() AND !$editor_user->loaded()){
+			$this->app->redirect('login');
+		}
 
 		$menu = [
 				['key'=>'franchises_dashboard','name'=>'Dashboard'],
