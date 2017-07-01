@@ -10,7 +10,7 @@ class Model_TemporaryRepurchaseItem extends \xepan\base\Model_Table {
 
 			
 		$this->hasOne('xavoc\mlm\Model_Distributor','distributor_id');
-		$this->hasOne('xepan\commerce\Model_Item','item_id');
+		$this->hasOne('xepan\commerce\Model_Item','item_id')->display(['form'=>'autocomplete/Basic']);
 
 		$this->addExpression('image')->set($this->refSQL('item_id')->fieldQuery('first_image'));
 
@@ -27,5 +27,16 @@ class Model_TemporaryRepurchaseItem extends \xepan\base\Model_Table {
 			]);
 
 		$this->add('dynamic_model/Controller_AutoCreator');
+
+		$this->addHook('beforeSave',$this);
 	}
+
+	function beforeSave(){
+		if(!$this['price']){
+			$kit = $this->add('xavoc\mlm\Model_Item')->load($this['item_id']);
+			$this['price'] = $kit['dp'];
+		}
+	}
+
+
 }

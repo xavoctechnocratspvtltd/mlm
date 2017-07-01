@@ -5,119 +5,107 @@ namespace xavoc\mlm;
 class Tool_FranchisesOrder extends \xepan\cms\View_Tool{
 	public $options = [];
 
-	public $order_id=0;
-	public $saleOrder;
-	public $v;
 	function init(){
 		parent::init();
 		
 		if($this->owner instanceof \AbstractController) return;
+
+		$this->addClass('main-box');
+		$this->app->stickyGET('distributor_id');
+		$this->app->stickyGET('r_dist_id');
+
+		$tab = $this->add('Tabs');
+		$topup_tab = $tab->addTab('Topup/Re-Topup');
+		$repurchase_tab = $tab->addTab('Repurchase');
+
+		// $item = $this->add('xepan\commerce\Model_Item');
+		$item = $this->add('xavoc\mlm\Model_Kit');
+		$item->getElement('pv')->destroy();
+		$item->getElement('bv')->destroy();
+		$item->getElement('sv')->destroy();
+		$item->getElement('introducer_income')->destroy();
+		$item->getElement('dp')->destroy();
+
+		$item->addExpression('capping_int')->set(function($m,$q){
+			return $q->expr('CAST([0] AS SIGNED)',[$m->getElement('capping')]);
+		});
+
+		$item->title_field = "kit_with_price";
+		$item->addExpression('kit_with_price')->set(function($m,$q){
+			return $q->expr('CONCAT([0]," :: ",[1]," ::",[2])',
+									[
+										$m->getElement('name'),
+										$m->getElement('sku'),
+										$m->getElement('sale_price')
+									]
+				);
+		});
+
+		$dist = $this->add('xavoc\mlm\Model_Distributor');
+		$dist->title_field = 'user';
+
+		$form = $topup_tab->add('Form');
+		$dist_field = $form->addField('autocomplete/Basic','distributor')->validate('required');
+		$dist_field->setModel($dist);
 		
-		$this->addClass('main-box franchises-order-verification');
-		$this->js('reload')->reload();
+		$kit_field = $form->addField('autocomplete/Basic','kit')->validate('required');
+		$kit_field->setModel($item);
 
-		$this->order_id = $o_id = $this->app->stickyGET('order_id');
+		$form->addField('text','payment_narration')->validate('required');
+
+		// autocomplete reload
+		$kit_field->send_other_fields = [$dist_field];
 		
-		$sale_order = $this->add('xavoc\mlm\Model_SalesOrder');
-		$sale_order->title_field = 'document_no';
-		if($o_id)
-			$this->saleOrder = $sale_order->load($o_id);
 
-		$this->v = $v = $this->add('View');
+		// autocomplete reload
+		if($dist_id = $_GET['o_'.$dist_field->name]){
+			$last_kit = $this->add('xavoc\mlm\Model_TopupHistory')
+				->addCondition('distributor_id',$dist_id)
+				->setOrder('id','desc')
+				->tryLoadAny();
+			$last_capping = 0;
+			if($last_kit->loaded())
+				$last_capping = $last_kit['capping'];
 
-		$f = $v->add('Form');
-		$field = $f->addField('autocomplete/Basic','order_no')->validate('required');
-		$field->setModel($sale_order);
-
-		$f->addSubmit('Get Detail')->addClass('btn btn-primary');
-		
-		if($f->isSubmitted()){
-			$js=[
-				$v->js()->reload(['order_id'=>$f['order_no']])
-			];
-			$f->js(null,$js)->execute();
+			$kit_field->getModel()->addCondition('capping_int','>',$last_capping);
 		}
+
+		$form->addSubmit('Topup Now')->addClass('btn btn-primary');
 		
-		if(!$sale_order->loaded()){
-			return;
+		if($form->isSubmitted()){
+
+			try{
+
+				$this->app->db->beginTransaction();
+
+				$distributor = $this->add('xavoc\mlm\Model_Distributor')->load($form['distributor']);
+
+				$result = $distributor->placeTopupOrder($form['kit']);
+				$order_id = $result['master_detail']['id'];
+				
+				$payment_detail['payment_narration'] = $form['payment_narration'];
+				$payment_detail['is_payment_verified'] = true;
+
+				$distributor->purchaseKit($form['kit']);
+				$distributor->updateTopupHistory($form['kit'],$order_id,"deposite_in_franchies",$payment_detail);
+				
+				$order_model = $this->add('xepan\commerce\Model_SalesOrder');
+				$order_model->load($order_id);
+				$order_model->invoice()->paid();
+				
+				$this->app->db->commit();
+			}catch(Exception $e){
+				$this->app->db->rollback();
+				throw $e;
+			}
+
+			$form->js(null,$form->js()->reload())->univ()->successMessage('distributor topuped successfully')->execute();
 		}
 
-		$order_view = $v->add('View',null,null,['view/franschises-order-item','order']);
-		$order_view->setModel($sale_order);
 
-		$contact = $sale_order->ref('contact_id');
-		// throw new \Exception($contact['user'], 1);
-		$inv = explode('-', $sale_order['invoice_detail']);
-		$inv_no = $inv[0];
-		$inv_status = $inv[1];
+		// repurchase
+		$repurchase_tab->add('xavoc\mlm\View_FranchisesRepurchase');
 
-		$order_view->template->trySet('order_date',date('M d,Y',strtotime($sale_order['created_at'])));
-		$order_view->template->trySet('dis_user_id',$contact['user']);
-		$order_view->template->trySet('invoice_no',$inv_no);
-		$order_view->template->trySet('invoice_status',$inv_status);
-
-		if($inv_status == "Paid"){
-			$order_view->template->trySet('status_class',"text-success");
-		}else{
-			$order_view->template->trySet('status_class',"text-danger");
-		}
-
-		$order_item = $this->add('xavoc\mlm\Model_QSPDetail');
-		$order_item->addCondition('qsp_master_id',$sale_order->id);
-
-		$cl = $v->add('CompleteLister',null,null,['view/franschises-order-item','order_item']);
-		$cl->setModel($order_item);
-		
-		$order_view->add('Button',null,'btn_wrapper')->set('Dispatch')->addClass('btn btn-warning  pull-right');
-		
-		if($inv_status != "Paid"){
-			$pay_now_btn = $order_view->add('Button',null,'btn_wrapper')->set('Pay Now')->addClass('btn btn-success  pull-right');
-			
-			$pay_now_btn->add('VirtualPage')
-				->bindEvent('Paid Payment of order '.$this->saleOrder['document_no'],'click')
-				->set(function($page){
-					$page->add('xavoc\mlm\View_FranchisesOrderPayment',['saleOrder'=>$this->saleOrder]);
-				});
-
-		}else{
-			$payment_detail_btn = $order_view->add('Button',null,'btn_wrapper')->set('Payment Detail')->addClass('btn btn-success  pull-right');
-			$payment_detail_btn->add('VirtualPage')
-				->bindEvent('Payment Detail of Odrer '.$this->saleOrder['document_no'],'click')
-				->set(function($page){
-
-					if($this->saleOrder['is_topup_included']){
-						$history = $this->add('xavoc\mlm\Model_TopupHistory');
-					}else{
-						$history = $this->add('xavoc\mlm\Model_RepurchaseHistory');
-					}
-
-					$history->addCondition('distributor_id',$this->saleOrder['contact_id']);
-					$history->addCondition('sale_order_id',$this->saleOrder->id);
-					$history->tryLoadAny();
-
-					$mandatory_field_set = [
-						'online'=>['online_transaction_detail','online_transaction_reference','payment_narration'],
-						'cheque'=>['bank_name','bank_ifsc_code','cheque_number','cheque_date','deposite_date','cheque_deposite_receipt_image_id','payment_narration'],
-						'dd'=>['bank_name','bank_ifsc_code','dd_number','dd_date','deposite_date','dd_deposite_receipt_image_id','payment_narration'],
-						'deposite_in_company'=>['office_receipt_image_id','payment_narration'],
-						'deposite_in_franchies'=>['office_receipt_image_id','payment_narration']
-					];
-
-					if($history->loaded() AND isset($mandatory_field_set[$history['payment_mode']])){
-						$field_to_show = $mandatory_field_set[$history['payment_mode']];						
-						
-						$page->add('View')->setHtml("Payment Mode: <b>".$history['payment_mode']."</b>")->addClass('alert alert-success');
-						foreach ($field_to_show as $key => $value) {
-							if(in_array($value, ['office_receipt_image_id','dd_deposite_receipt_image_id','cheque_deposite_receipt_image_id'])){
-								$page->add('View')->setElement('img')->setAttr('src',$history[str_replace("_id","" , $value)])->setStyle('width','100px;');
-								// ->setAttr('src',$history[str_replace("id","", $value)]);
-							}else		
-								$page->add('View')->setHtml($value." : ".$history[$value])->addClass('alert alert-info');
-						}
-					}
-
-				});
-		}
 
 	}
 }

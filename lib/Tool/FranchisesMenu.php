@@ -22,7 +22,8 @@ class Tool_FranchisesMenu extends \xepan\cms\View_Tool{
 
 		$menu = [
 				['key'=>'franchises_dashboard','name'=>'Dashboard'],
-				['key'=>'franchises_order','name'=>'Orders'],
+				['key'=>'franchises_order','name'=>'New Orders'],
+				['key'=>'franchises_verifyorder','name'=>'Verify Orders'],
 				['key'=>'franchises_setting','name'=>'Settings'],
 			];
 
