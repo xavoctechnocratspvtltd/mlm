@@ -64,4 +64,13 @@ class Model_Franchises extends \xepan\commerce\Model_Store_Warehouse {
 		$this['status'] = "Deactive";
 		$this->save();
 	}
+
+	function paymentReceived($invoice_model,$franchises_id){
+		$fp = $this->add('xavoc\mlm\Model_FranchisePayment');
+		$fp['sale_invoice_id'] = $invoice_model['id'];
+		// $fp['distributor_id'] = $invoice_model['contact_id'];
+		$fp['franchise_id'] = $franchises_id;
+		$fp['net_amount'] = $invoice_model['net_amount'];
+		$fp->save();
+	}
 } 

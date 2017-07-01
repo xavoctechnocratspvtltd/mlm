@@ -7,12 +7,14 @@ class Tool_FranchisesOrder extends \xepan\cms\View_Tool{
 
 	public $order_id=0;
 	public $saleOrder;
+	public $v;
 	function init(){
 		parent::init();
 		
 		if($this->owner instanceof \AbstractController) return;
 		
-		$this->addClass('main-box');
+		$this->addClass('main-box franchises-order-verification');
+		$this->js('reload')->reload();
 
 		$this->order_id = $o_id = $this->app->stickyGET('order_id');
 		
@@ -21,8 +23,7 @@ class Tool_FranchisesOrder extends \xepan\cms\View_Tool{
 		if($o_id)
 			$this->saleOrder = $sale_order->load($o_id);
 
-		$v = $this->add('View');
-		// $v->add('View_Error')->set("Order No : ".$o_id);
+		$this->v = $v = $this->add('View');
 
 		$f = $v->add('Form');
 		$field = $f->addField('autocomplete/Basic','order_no')->validate('required');
@@ -34,15 +35,15 @@ class Tool_FranchisesOrder extends \xepan\cms\View_Tool{
 			$js=[
 				$v->js()->reload(['order_id'=>$f['order_no']])
 			];
-			$f->js(null,$js)->execute();	
+			$f->js(null,$js)->execute();
 		}
 		
 		if(!$sale_order->loaded()){
 			return;
 		}
+
 		$order_view = $v->add('View',null,null,['view/franschises-order-item','order']);
 		$order_view->setModel($sale_order);
-
 
 		$contact = $sale_order->ref('contact_id');
 		// throw new \Exception($contact['user'], 1);
@@ -73,15 +74,10 @@ class Tool_FranchisesOrder extends \xepan\cms\View_Tool{
 			$pay_now_btn = $order_view->add('Button',null,'btn_wrapper')->set('Pay Now')->addClass('btn btn-success  pull-right');
 			
 			$pay_now_btn->add('VirtualPage')
-				->bindEvent('My Cool Title','click')
+				->bindEvent('Paid Payment of order '.$this->saleOrder['document_no'],'click')
 				->set(function($page){
-					$page->add('LoremIpsum');
+					$page->add('xavoc\mlm\View_FranchisesOrderPayment',['saleOrder'=>$this->saleOrder]);
 				});
-
-			// if($pay_now_btn->isClicked()){
-			// 	$sale_order->invoice()->paid();
-			// 	$this->js(null,$v->js()->reload())->reload()->execute();
-			// }	
 
 		}else{
 			$payment_detail_btn = $order_view->add('Button',null,'btn_wrapper')->set('Payment Detail')->addClass('btn btn-success  pull-right');
