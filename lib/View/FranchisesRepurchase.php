@@ -11,8 +11,8 @@ class View_FranchisesRepurchase extends \View{
 		$dist_id = $this->app->stickyGET('r_dist_id');
 
 		$form = $this->add('Form');
-		$form->addField('distributor_id');
-		$form->addSubmit('Go');
+		$form->addField('distributor_id')->validate('required');
+		$form->addSubmit('Go')->addClass('btn btn-primary ds-button');
 
 		$grid = $this->add('Grid');
 		$dist = $this->add('xavoc\mlm\Model_Distributor');
@@ -38,12 +38,12 @@ class View_FranchisesRepurchase extends \View{
 
 				$model = $page->add('xavoc\mlm\Model_TemporaryRepurchaseItem');
 				$model->addCondition('distributor_id',$id);
-				$crud = $page->add('CRUD');
+				$crud = $page->add('CRUD',['entity_name'=>'Repurchase Product']);
 				$crud->setModel($model,['item_id','quantity'],['item','quantity','price','amount']);
-				
+				$page->add('View')->setElement('hr');
 				$form = $page->add('Form');
 				$form->addField('text','payment_narration');
-				$form->addSubmit('Place Repurchase Order and Receive Payment');
+				$form->addSubmit('Place Repurchase Order and Receive Payment')->addClass('btn btn-primary ds-button');
 
 				if($form->isSubmitted()){
 
