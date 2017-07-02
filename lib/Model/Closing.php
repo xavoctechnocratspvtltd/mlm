@@ -595,7 +595,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 				mlm_distributor d
 			JOIN mlm_payout p  on p.distributor_id = d.distributor_id
 			SET
-				d.temp = p.previous_carried_amount + p.binary_income + p.introduction_amount + p.retail_profit + p.repurchase_bonus + p.generation_income + p.loyalty_bonus
+				d.temp = d.leadership_carried_amount + p.binary_income + p.introduction_amount + p.retail_profit + p.repurchase_bonus + p.generation_income + p.loyalty_bonus
 			WHERE
 				p.closing_date='$on_date'
 			";
@@ -703,12 +703,14 @@ class Model_Closing extends \xepan\base\Model_Table {
 		$this->query($q);
 
 		// add this carried amount in distributor for previous_carried_amount for next closing
+		$this->query('UPDATE mlm_distributor SET leadership_carried_amount = 0');
 		$q="
 			UPDATE
 				mlm_distributor d
 			JOIN mlm_payout p on d.distributor_id = p.distributor_id
 			SET
-				d.carried_amount = d.carried_amount + p.carried_amount
+				d.carried_amount = d.carried_amount + p.carried_amount,
+				d.leadership_carried_amount = p.binary_income + p.introduction_amount + p.retail_profit + p.repurchase_bonus + p.generation_income + p.loyalty_bonus
 			WHERE
 				p.carried_amount is not null AND 
 				p.carried_amount > 0 AND
