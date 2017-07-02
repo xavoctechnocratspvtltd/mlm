@@ -14,6 +14,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 	public $acl_type = 'Closing';
 
 	public $generation_bonus=[];
+
 	
 	function init(){
 		parent::init();
@@ -606,6 +607,22 @@ class Model_Closing extends \xepan\base\Model_Table {
 		";
 		$this->query($q);
 
+		// update with leadership bonus commulated in mlm_distributor also
+		$q="
+			UPDATE
+				mlm_payout p 
+				JOIN mlm_distributor d on p.distributor_id=d.distributor_id
+			SET
+				p.leadership_bonus = p.leadership_bonus + d.leadership_carried_amount
+			WHERE
+				p.closing_id=$closing_id;
+		";
+		$this->query($q);
+
+		// make leadership_carried_amount in distributor zero .. ready for next binary incomes to add
+		$q="UPDATE mlm_distributor SET leadership_carried_amount = 0";
+		$this->query($q);
+
 		// Awards & Rewards
 		// Need clear picture to write code
 
@@ -631,12 +648,8 @@ class Model_Closing extends \xepan\base\Model_Table {
 				mlm_payout p
 			JOIN mlm_distributor d on p.distributor_id=d.distributor_id
 			SET 
-				gross_payment = previous_carried_amount + d.leadership_carried_amount + binary_income + introduction_amount + retail_profit + repurchase_bonus + generation_income + loyalty_bonus + leadership_bonus
+				gross_payment = previous_carried_amount  + binary_income + introduction_amount + retail_profit + repurchase_bonus + generation_income + loyalty_bonus + leadership_bonus
 			WHERE closing_id=$closing_id";
-		$this->query($q);
-
-		// make leadership_carried_amount in distributor zero .. ready for next binary incomes to add
-		$q="UPDATE mlm_distributor SET leadership_carried_amount = 0";
 		$this->query($q);
 
 		// set tds and admin
