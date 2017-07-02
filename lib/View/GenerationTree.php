@@ -103,7 +103,7 @@ class View_GenerationTree extends \View{
 				"<br/>Kit: ". ($model['kit_item']?:'') ." SV(".$model['sv'].")"."BV(".$model['bv'].")".
 				"<br/>Intro: ". $model['introducer'] .
 				"<br/>Month Self BV: ". $model['month_self_bv'].
-				"<br/>Month BV: ". $model['month_bv'].
+				"<br/>Commulative Month BV: ". $model['total_month_bv'].
 				"<br/>Rank: ". $model['current_rank'].
 				"<br/>Slab Percentage: ". $model->ref('current_rank_id')->get('slab_percentage')
 				// "<br/>Slab Percentage: ". $model['temp']
