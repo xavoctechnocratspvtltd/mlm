@@ -98,17 +98,29 @@ class Model_SalesOrder extends \xepan\commerce\Model_SalesOrder {
 
 			$total_bv = 0;
 			$total_sv = 0;
+			$total_ii = 0;
 			foreach ($this->items() as $oi) {
 		        $item = $this->add('xavoc\mlm\Model_Item')->load($oi['item_id']);
 				$total_bv += $item['bv']*$oi['quantity'];
 		        $total_sv += $item['sv']*$oi['quantity'];
+		        $total_ii += $item['introducer_income'];
 		    }
 
 		    if($total_bv > 0 || $total_sv > 0){
 		    	$dis = $this->add('xavoc\mlm\Model_Distributor');
 		    	$dis->load($this['contact_id']);
+		    	
 		    	if($total_sv > 0){
 		    		$dis->updateAnsestorsSV(-1 * $total_sv);
+
+		    		if($this['is_topup_included'] && $total_ii > 0){
+		    			if($introducer  = $dis->introducer()){
+							$introducer->addSessionIntro($total_ii * -1);
+							$introducer['monthly_green_intros'] = $introducer['monthly_green_intros']-1;
+							$introducer->save();
+						}
+		    		}
+
 		    	}
 				
 				if($total_bv > 0){
@@ -127,6 +139,7 @@ class Model_SalesOrder extends \xepan\commerce\Model_SalesOrder {
 					$dis->save();
 					$dis->updateAnsestorsBV(-1 * $total_bv);
 				}
+
 		    }
 			
 			$this->delete();
