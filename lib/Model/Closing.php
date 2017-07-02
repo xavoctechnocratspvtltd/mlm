@@ -157,6 +157,30 @@ class Model_Closing extends \xepan\base\Model_Table {
 		";
 		$this->query($q);
 
+		// save this leadership bonus to be added in monthly closing
+		// Keep adding for all binary closings before monthly closing
+		$q="
+			UPDATE 
+				mlm_distributor d
+				JOIN mlm_payout p on d.distributor_id=p.distributor_id
+			SET
+				d.leadership_carried_amount = d.leadership_carried_amount + p.leadership_bonus 
+			WHERE
+				p.closing_id=$closing_id
+		";
+		$this->query($q);
+
+		// and make this leadership bonus zero here, we are not gonna give it now
+		$q="
+			UPDATE
+				mlm_payout p
+			SET 
+				p.leadership_bonus=0
+			WHERE
+				p.closing_id=$closing_id
+		";
+		$this->query($q);
+
 		// make weekly figures zero
 		if(!$this->app->getConfig('skipzero_for_testing',false)){
 			$q="UPDATE mlm_distributor SET week_pairs=0, weekly_intros_amount=0 WHERE greened_on is not null";
@@ -601,14 +625,18 @@ class Model_Closing extends \xepan\base\Model_Table {
 		if(!$on_date) $on_date = $this->app->now;
 		// calculate payment tds deduction carry forward etc. inclusing previous carried amount
 		// set and save carried_amount to distributor
-
+		// add leadership_carried_amount commulated in various binary closings in previous
 		$q="
 			UPDATE
 				mlm_payout p
 			JOIN mlm_distributor d on p.distributor_id=d.distributor_id
 			SET 
-				gross_payment = previous_carried_amount + binary_income + introduction_amount + retail_profit + repurchase_bonus + generation_income + loyalty_bonus + leadership_bonus
+				gross_payment = previous_carried_amount + d.leadership_carried_amount + binary_income + introduction_amount + retail_profit + repurchase_bonus + generation_income + loyalty_bonus + leadership_bonus
 			WHERE closing_id=$closing_id";
+		$this->query($q);
+
+		// make leadership_carried_amount in distributor zero .. ready for next binary incomes to add
+		$q="UPDATE mlm_distributor SET leadership_carried_amount = 0";
 		$this->query($q);
 
 		// set tds and admin
