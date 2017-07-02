@@ -626,6 +626,10 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 	}
 
 	function repurchase($bv,$sv=0){
+		if($this->app->getConfig('repurchase_stopped',true)){
+			throw new \Exception("Mark Green is stopped due to maintenance", 1);
+		}
+
 		$this['month_self_bv'] = $this['month_self_bv'] + $bv;
 		$this['total_self_bv'] = $this['total_self_bv'] + $bv;
 		
