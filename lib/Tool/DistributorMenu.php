@@ -16,7 +16,7 @@ class Tool_DistributorMenu extends \xavoc\mlm\Tool_Distributor{
 
 		$distributor->loadLoggedIn();
 		if(!$distributor->loaded()){
-			return;
+			$this->app->redirect($this->options['login_page']);
 		}
 
 		$menu = [
