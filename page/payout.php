@@ -16,7 +16,7 @@ class page_payout extends \xepan\base\Page {
 			return $m->refSQL('distributor_id')->fieldQuery('user');
 		});
 
-		$m->loadBy('closing_id',$closing_id);
+		$m->addCondition('closing_id',$closing_id);
 
 		$g = $this->add('Grid');
 		$g->setModel($m);
