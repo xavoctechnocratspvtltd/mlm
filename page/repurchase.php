@@ -19,6 +19,7 @@ class page_repurchase extends \xepan\base\Page {
 				['name','sku','display_sequence','original_price','sale_price','qty_unit','pv','bv','sv','dp','capping','introducer_income','description','website_display','is_saleable']
 			);
 
+		$crud->grid->addQuickSearch(['name','sku']);
 
 	}
 }

@@ -47,6 +47,11 @@ class Tool_RepurchaseItem extends \xepan\cms\View_Tool{
 
 		// cart tool
 		$this->cart = $cl->add('xavoc\mlm\View_Cart',null,'heading');
+
+		$this->on('click','.img-wrapper,.caption > h3',function($js,$data){
+
+			return $js->univ()->frameURL("Product Detail: ".$data['name'],$this->app->url('xavoc_dm_productdetail',['commerce_item_id'=>$data['itemid']]));
+		});
 	}
 
 	function addToolCondition_row_show_addtocart($value,$l){
