@@ -14,6 +14,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 	public $acl_type = 'Closing';
 
 	public $generation_bonus=[];
+
 	
 	function init(){
 		parent::init();
@@ -93,6 +94,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 				day_pairs = IF(day_left_sv > day_right_sv, day_right_sv ,day_left_sv ),
 				day_pairs = IF(day_left_sv = day_right_sv AND day_left_sv <> 0 AND day_left_sv <= capping, day_pairs - $pair_pv ,day_pairs),
 				day_pairs = day_pairs*10/100,
+				/* ????????????????????????  */
 				day_pairs = IF(day_pairs >= capping, capping, day_pairs),
 				week_pairs = week_pairs + day_pairs
 			/*WHERE greened_on is not null*/
@@ -129,18 +131,69 @@ class Model_Closing extends \xepan\base\Model_Table {
 
 		$this->query($q);
 
+		// calculate leadership bonus
+		
+		// save total amount of income other then leadership bonus to distributor temp
+		$q="UPDATE mlm_distributor SET temp=0;";
+		$this->query($q);
+		$q="UPDATE 
+				mlm_distributor d
+			JOIN mlm_payout p  on p.distributor_id = d.distributor_id
+			SET
+				d.temp = p.binary_income + p.introduction_amount + p.retail_profit + p.repurchase_bonus + p.generation_income + p.loyalty_bonus
+			WHERE
+				p.closing_id=$closing_id
+			";
+		$this->query($q);
+
+
+		$q="
+			UPDATE
+				mlm_payout p 
+			SET
+				p.leadership_bonus = IFNULL((SELECT sum(d.temp) from mlm_distributor d WHERE d.introducer_id = p.distributor_id),0)*10/100
+			WHERE
+				p.closing_id=$closing_id;
+
+		";
+		$this->query($q);
+
+		// save this leadership bonus to be added in monthly closing
+		// Keep adding for all binary closings before monthly closing
+		$q="
+			UPDATE 
+				mlm_distributor d
+				JOIN mlm_payout p on d.distributor_id=p.distributor_id
+			SET
+				d.leadership_carried_amount = d.leadership_carried_amount + p.leadership_bonus 
+			WHERE
+				p.closing_id=$closing_id
+		";
+		$this->query($q);
+
+		// and make this leadership bonus zero here, we are not gonna give it now
+		$q="
+			UPDATE
+				mlm_payout p
+			SET 
+				p.leadership_bonus=0
+			WHERE
+				p.closing_id=$closing_id
+		";
+		$this->query($q);
+
 		// make weekly figures zero
 		if(!$this->app->getConfig('skipzero_for_testing',false)){
 			$q="UPDATE mlm_distributor SET week_pairs=0, weekly_intros_amount=0 WHERE greened_on is not null";
 			$this->query($q);
 		}
 
-		$this->calculateWeeklyPayment($this['on_date']);
-		$this->resetWeekData($this['on_date']);
+		$this->calculateWeeklyPayment($this['on_date'],$closing_id);
+		$this->resetWeekData($this['on_date'],$closing_id);
 		
 	}
 
-	function calculateWeeklyPayment($on_date=null){
+	function calculateWeeklyPayment($on_date=null,$closing_id){
 		if(!$on_date) $on_date = $this->app->now;
 		// calculate payment tds deduction carry forward etc. inclusing previous carried amount
 		// set and save carried_amount to distributor
@@ -151,7 +204,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 			JOIN mlm_distributor d on p.distributor_id=d.distributor_id
 			SET 
 				gross_payment = previous_carried_amount + binary_income + introduction_amount + retail_profit + repurchase_bonus + generation_income + loyalty_bonus + leadership_bonus
-			WHERE closing_date='$on_date'";
+			WHERE closing_id=$closing_id";
 		$this->query($q);
 
 		// set tds and admin
@@ -163,7 +216,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 			SET 
 				tds = IF(c.pan_no <> '' AND c.pan_no is not null,gross_payment*5/100,gross_payment*20/100),
 				admin_charge = gross_payment*5/100
-			WHERE closing_date='$on_date'";
+			WHERE closing_id=$closing_id";
 		$this->query($q);
 
 		// set net amount
@@ -174,7 +227,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 			JOIN customer c on c.contact_id = d.distributor_id
 			SET 
 				net_payment = gross_payment - ( tds + admin_charge )
-			WHERE closing_date='$on_date'";
+			WHERE closing_id=$closing_id";
 		$this->query($q);
 
 
@@ -192,6 +245,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 				net_payment = 0
 			WHERE
 				(
+					/* ???????????????????????? */
 					p.month_self_bv < 250 OR
 					net_payment < 500 OR
 					d.is_document_verified = 0 OR
@@ -202,7 +256,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 					*/
 				) AND
 
-				closing_date='$on_date'
+				closing_id=$closing_id
 		";
 		$this->query($q);
 
@@ -212,11 +266,11 @@ class Model_Closing extends \xepan\base\Model_Table {
 				mlm_distributor d
 			JOIN mlm_payout p on d.distributor_id = p.distributor_id
 			SET
-				d.carried_amount = d.carried_amount + p.carried_amount
+				d.carried_amount = p.carried_amount
 			WHERE
 				p.carried_amount is not null AND 
 				p.carried_amount > 0 AND
-				p.closing_date='$on_date'
+				p.closing_id=$closing_id
 		";
 		$this->query($q);
 
@@ -226,7 +280,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 					FROM
 					mlm_payout p
 				WHERE
-					p.closing_date='$on_date' AND 
+					p.closing_id=$closing_id AND 
 					p.net_payment = 0 and 
 					p.carried_amount = 0
 			";
@@ -262,7 +316,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 			SET
 				p.retail_profit = d.monthly_retail_profie
 			WHERE
-				p.closing_date = '$on_date'
+				p.closing_id=$closing_id
 		";
 		$this->query($q);
 
@@ -287,7 +341,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 											+
 											IFNULL((SELECT total_self_bv FROM mlm_distributor d WHERE d.distributor_id=p.distributor_id) ,0)
 			WHERE
-				p.closing_date='$on_date';
+				p.closing_id=$closing_id;
 		";
 		$this->query($q);
 
@@ -326,7 +380,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 					WHERE
 						d.current_rank_id = $previous_rank AND
 						p.capped_total_business >= $rank_from_bv AND
-						p.closing_date='$on_date';
+						p.closing_id=$closing_id;
 				";
 
 				if($debug_60_40) echo $q .'<br/>';
@@ -344,7 +398,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 					d.current_rank_id = $rank_id
 				WHERE
 					p.capped_total_business >= $rank_from_bv AND
-					closing_date = '$on_date'
+					p.closing_id=$closing_id
 				";
 			if($debug_60_40) echo $q.'<br/>';
 
@@ -352,66 +406,6 @@ class Model_Closing extends \xepan\base\Model_Table {
 
 			$previous_rank= $rank_id;
 		}
-
-		// ******************** OLD PATTERN OF 60-40 differnece ... to delete 
-		/*
-		$this->query("UPDATE mlm_payout SET effective_business = capped_total_business WHERE closing_date='$on_date'");
-		
-		// if($debug_60_40) exit;
-		
-		// EFFECTIVE BUSINESS
-		// find effective business by subtracting business of my intros that are from more or equal to my slab
-
-		$q="
-			UPDATE
-				mlm_payout p 
-			SET
-				effective_business = p.generation_month_business - IFNULL((
-								select 
-									sum(intros_payout.generation_month_business) 
-								from 
-									(select * from mlm_payout WHERE closing_date='$on_date' ) intros_payout WHERE intros_payout.introducer_id=p.distributor_id and intros_payout.slab_percentage >= p.slab_percentage
-								),0)
-								
-			WHERE 
-				p.closing_date='$on_date'
-		";
-		$this->query($q);
-
-		// GENERATION_INCOME GROSS
-		// generate commission as per slab and effective business
-		$q="
-			UPDATE 
-				mlm_payout
-			SET 
-				re_purchase_income_gross = (effective_business)* slab_percentage/100
-			WHERE
-				closing_date = '$on_date'
-
-		";
-		$this->query($q);
-
-		// find difference from introducer downline path only rfom those who are  on smalled slab _percentage then distributor
-		$q="
-			UPDATE
-				mlm_payout p 
-			SET
-				p.repurchase_bonus = 
-									p.re_purchase_income_gross 
-										- 
-									IFNULL((
-										SELECT 
-											SUM(re_purchase_income_gross)
-										FROM 
-											(select * from mlm_payout WHERE closing_date='$on_date' ) intros_payout WHERE intros_payout.introducer_id=p.distributor_id and intros_payout.slab_percentage < p.slab_percentage)
-											,0)
-			WHERE
-				closing_date = '$on_date'
-		";
-
-		$this->query($q);
-		
-		*/
 
 		// ======= new 60-40 based business difference generation generation_bonus
 
@@ -422,7 +416,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 			SET
 				d.temp = p.slab_percentage
 			WHERE
-				p.closing_date='$on_date' 
+				p.closing_id=$closing_id
 		";
 		$this->query($q);
 
@@ -436,7 +430,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 			SET
 				p.repurchase_bonus = d.temp2
 			WHERE
-			p.closing_date='$on_date'
+			p.closing_id=$closing_id
 		";
 		$this->query($q);
 
@@ -459,7 +453,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 					repurchase_bonus=0
 				WHERE
 					repurchase_bonus < 0 AND
-					closing_date = '$on_date'
+					closing_id=$closing_id
 			";
 			$this->query($q);
 		}
@@ -467,7 +461,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 		if(!$this->app->getConfig('skipzero_for_testing',false)){
 			// Generation Income
 			$this->query('UPDATE mlm_distributor SET temp=0');
-			$this->query("UPDATE mlm_distributor d JOIN mlm_payout p  ON d.distributor_id = p.distributor_id SET d.temp=p.repurchase_bonus WHERE p.closing_date='$on_date'");
+			$this->query("UPDATE mlm_distributor d JOIN mlm_payout p  ON d.distributor_id = p.distributor_id SET d.temp=p.repurchase_bonus WHERE p.closing_id=$closing_id");
 		}
 
 
@@ -523,7 +517,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 						)
 						WHERE
 							d.current_rank_id = $rank_id
-							AND	p.closing_date = '$on_date'	
+							AND	p.closing_id=$closing_id
 						";
 					// echo $q.'<br/>';
 					$this->query($q);
@@ -539,7 +533,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 			SET
 				generation_income = generation_income_1 + generation_income_2 + generation_income_3 + generation_income_4 + generation_income_5 + generation_income_6 + generation_income_7
 			WHERE
-				closing_date='$on_date'
+				closing_id=$closing_id
 		";
 
 		$this->query($q);
@@ -572,7 +566,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 					WHERE
 						rank= '$rank' AND 
 						quarter_bv_saved > $turnover_criteria AND
-						closing_date = '$on_date'
+						closing_id=$closing_id
 				";
 				$this->query($q);
 				
@@ -595,9 +589,9 @@ class Model_Closing extends \xepan\base\Model_Table {
 				mlm_distributor d
 			JOIN mlm_payout p  on p.distributor_id = d.distributor_id
 			SET
-				d.temp = p.previous_carried_amount + p.binary_income + p.introduction_amount + p.retail_profit + p.repurchase_bonus + p.generation_income + p.loyalty_bonus
+				d.temp = p.binary_income + p.introduction_amount + p.retail_profit + p.repurchase_bonus + p.generation_income + p.loyalty_bonus
 			WHERE
-				p.closing_date='$on_date'
+				p.closing_id=$closing_id
 			";
 		$this->query($q);
 
@@ -608,16 +602,32 @@ class Model_Closing extends \xepan\base\Model_Table {
 			SET
 				p.leadership_bonus = IFNULL((SELECT sum(d.temp) from mlm_distributor d WHERE d.introducer_id = p.distributor_id),0)*10/100
 			WHERE
-				p.closing_date='$on_date';
+				p.closing_id=$closing_id;
 
 		";
+		$this->query($q);
+
+		// update with leadership bonus commulated in mlm_distributor also
+		$q="
+			UPDATE
+				mlm_payout p 
+				JOIN mlm_distributor d on p.distributor_id=d.distributor_id
+			SET
+				p.leadership_bonus = p.leadership_bonus + d.leadership_carried_amount
+			WHERE
+				p.closing_id=$closing_id;
+		";
+		$this->query($q);
+
+		// make leadership_carried_amount in distributor zero .. ready for next binary incomes to add
+		$q="UPDATE mlm_distributor SET leadership_carried_amount = 0";
 		$this->query($q);
 
 		// Awards & Rewards
 		// Need clear picture to write code
 
-		$this->calculateMonthlyPayment($this['on_date']);
-		$this->resetMonthData($this['on_date']);
+		$this->calculateMonthlyPayment($this['on_date'],$closing_id);
+		$this->resetMonthData($this['on_date'],$closing_id);
 
 	}
 
@@ -628,18 +638,18 @@ class Model_Closing extends \xepan\base\Model_Table {
 
 	
 
-	function calculateMonthlyPayment($on_date=null){
+	function calculateMonthlyPayment($on_date=null,$closing_id){
 		if(!$on_date) $on_date = $this->app->now;
 		// calculate payment tds deduction carry forward etc. inclusing previous carried amount
 		// set and save carried_amount to distributor
-
+		// add leadership_carried_amount commulated in various binary closings in previous
 		$q="
 			UPDATE
 				mlm_payout p
 			JOIN mlm_distributor d on p.distributor_id=d.distributor_id
 			SET 
-				gross_payment = previous_carried_amount + binary_income + introduction_amount + retail_profit + repurchase_bonus + generation_income + loyalty_bonus + leadership_bonus
-			WHERE closing_date='$on_date'";
+				gross_payment = previous_carried_amount  + binary_income + introduction_amount + retail_profit + repurchase_bonus + generation_income + loyalty_bonus + leadership_bonus
+			WHERE closing_id=$closing_id";
 		$this->query($q);
 
 		// set tds and admin
@@ -651,7 +661,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 			SET 
 				tds = IF(c.pan_no <> '' AND c.pan_no is not null,gross_payment*5/100,gross_payment*20/100),
 				admin_charge = gross_payment*5/100
-			WHERE closing_date='$on_date'";
+			WHERE closing_id=$closing_id";
 		$this->query($q);
 
 		// set net amount
@@ -662,7 +672,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 			JOIN customer c on c.contact_id = d.distributor_id
 			SET 
 				net_payment = gross_payment - ( tds + admin_charge )
-			WHERE closing_date='$on_date'";
+			WHERE closing_id=$closing_id";
 		$this->query($q);
 
 
@@ -680,6 +690,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 				net_payment = 0
 			WHERE
 				(
+					/* ???????????????????????? */
 					(p.month_self_bv < 250 OR d.monthly_green_intros = 0) OR
 					net_payment < 500 OR
 					d.is_document_verified = 0 OR
@@ -690,7 +701,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 					*/
 				) AND
 
-				closing_date='$on_date'
+				closing_id=$closing_id
 		";
 		$this->query($q);
 
@@ -708,11 +719,11 @@ class Model_Closing extends \xepan\base\Model_Table {
 				mlm_distributor d
 			JOIN mlm_payout p on d.distributor_id = p.distributor_id
 			SET
-				d.carried_amount = d.carried_amount + p.carried_amount
+				d.carried_amount = p.carried_amount
 			WHERE
 				p.carried_amount is not null AND 
 				p.carried_amount > 0 AND
-				p.closing_date='$on_date'
+				p.closing_id=$closing_id
 		";
 		$this->query($q);
 
@@ -722,7 +733,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 					FROM
 					mlm_payout p
 				WHERE
-					p.closing_date='$on_date' AND 
+					p.closing_id=$closing_id AND 
 					p.net_payment = 0 and 
 					p.carried_amount = 0
 			";
@@ -735,22 +746,22 @@ class Model_Closing extends \xepan\base\Model_Table {
 
 	}
 
-	function resetWeekData($on_date=null){
+	function resetWeekData($on_date=null,$closing_id){
 		if(!$on_date) $on_date = $this->app->today;
 		// set fields zero in distributor 
 		$q="
-			DELETE FROM mlm_payout WHERE closing_date='$on_date' AND net_payment=0 AND carried_amount=0
+			DELETE FROM mlm_payout WHERE closing_id=$closing_id AND net_payment=0 AND carried_amount=0
 		";
 		$this->query($q);
 
 
 	}
 
-	function resetMonthData($on_date=null){
+	function resetMonthData($on_date=null,$closing_id){
 		if(!$on_date) $on_date = $this->app->today;
 		// set fields zero in distributor 
 		// like month_self_bv if greened_on is not null
-		$this->resetWeekData($on_date);
+		$this->resetWeekData($on_date,$closing_id);
 	
 	}
 
