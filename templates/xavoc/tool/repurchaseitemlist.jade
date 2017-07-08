@@ -5,11 +5,11 @@ div(id='{$_name}' class="{$class} row" style="{$style}")
   .col-md-3.col-sm-12.col-lg-3.col-xs-12.ds-list-li
     .thumbnail
       {image_wrapper}
-      div.img-wrapper(style="height:150px;")
+      div.img-wrapper(style="height:150px;" data-itemid="{$id}" data-name="{$name}")
         img(src='{$img}', alt='{$alt} we are uploading images ...' style="width:100%;max-heigth:150px;")
       {/}
       .caption
-        h3 {$name}
+        h3(data-itemid="{$id}" data-name="{$name}") {$name}
         div.kit-description{$description}
         .row
           .col-md-12.col-sm-12.col-lg-12.col-xs-12
