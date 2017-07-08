@@ -44,6 +44,21 @@ class Initiator extends \Controller_Addon {
                 $distributor->repurchase($total_bv,$total_sv);
         });
 
+        $now = \DateTime::createFromFormat('Y-m-d H:i:s', $this->app->now);
+        // $closing_m = $this->add('xavoc\mlm\Model_Closing')
+        //                 ->setOrder('id','desc')
+        //                 ->tryLoadAny();
+
+        // $date = $this->app->my_date_diff($this->app->now,$closing_m['on_date']); 
+        // if($date['days'] > 1) {
+            $cron = new \Cron\Job\ShellJob();
+            // $cron->setSchedule(new \Cron\Schedule\CrontabSchedule('* * * * *'));
+            $cron->setSchedule(new \Cron\Schedule\CrontabSchedule('0 0 * * *'));
+            if(!$cron->getSchedule() || $cron->getSchedule()->valid($now)){
+                $this->add('xavoc\mlm\Controller_AutoDailyClosing');              
+            }
+        // }
+
         return $this;
     }
 
