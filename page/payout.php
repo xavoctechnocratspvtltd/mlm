@@ -12,9 +12,23 @@ class page_payout extends \xepan\base\Page {
 		$closing_id = $this->app->stickyGET('closing_id');
 
 		$m = $this->add('xavoc\mlm\Model_Payout');
+
 		$m->addExpression('user')->set(function($m,$q){
 			return $m->refSQL('distributor_id')->fieldQuery('user');
 		});
+
+		$m->addExpression('account_number')->set(function($m,$q){
+			return $m->refSQL('distributor_id')->fieldQuery('d_account_number');
+		});
+
+		$m->addExpression('bank_name')->set(function($m,$q){
+			return $m->refSQL('distributor_id')->fieldQuery('d_bank_name');
+		});
+
+		$m->addExpression('bank_ifsc_code')->set(function($m,$q){
+			return $m->refSQL('distributor_id')->fieldQuery('d_bank_ifsc_code');
+		});
+
 
 		$m->addCondition('closing_id',$closing_id);
 
