@@ -29,6 +29,23 @@ class page_payout extends \xepan\base\Page {
 			return $m->refSQL('distributor_id')->fieldQuery('d_bank_ifsc_code');
 		});
 
+		$m->addExpression('mobile_number')->set(function($m,$q){
+			return $m->refSQL('distributor_id')->fieldQuery('mobile_number');
+		});
+
+		$m->addExpression('email')->set(function($m,$q){
+			return $m->refSQL('distributor_id')->fieldQuery('email');
+		});
+
+		$m->addExpression('address')->set(function($m,$q){
+			return $q->expr('CONCAT([0],", ",[1],", ",[2],", ",[3])',[
+					$m->refSQL('distributor_id')->fieldQuery('address'),
+					$m->refSQL('distributor_id')->fieldQuery('city'),
+					$m->refSQL('distributor_id')->fieldQuery('state'),
+					$m->refSQL('distributor_id')->fieldQuery('country'),
+				]);
+		});
+
 
 		$m->addCondition('closing_id',$closing_id);
 
