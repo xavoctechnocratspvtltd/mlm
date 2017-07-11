@@ -43,6 +43,12 @@ class Model_Closing extends \xepan\base\Model_Table {
 			
 		}
 
+		// take backup by shell command ???
+		// check varius conditions like
+		// 1. for monthly and weekly there must be a daily closing before on same? day 
+		// 2. there must not be two closings of same type on same day
+		// 
+
 		$back_date_closing = $this->add('xavoc\mlm\Model_Closing');
 		$back_date_closing->addCondition('on_date','>=',$this['on_date']);
 		$back_date_closing->addCondition('type',$this['type']);
