@@ -11,6 +11,14 @@ class page_payout extends \xepan\base\Page {
 
 		$closing_id = $this->app->stickyGET('closing_id');
 
+		$closing = $this->add('xavoc\mlm\Model_Closing');
+		$closing->load($closing_id);		
+		$field_to_show = [];
+		if($closing['type'] == "WeeklyClosing"){
+			$field_to_show = ['distributor','user','closing_date','previous_carried_amount','leadership_carried_amount','binary_income','introduction_amount','gross_payment','tds','admin_charge','net_payment','carried_amount','account_number','bank_name','bank_ifsc_code','mobile_number','email','address'];
+		}
+
+
 		$m = $this->add('xavoc\mlm\Model_Payout');
 		$m->getElement('net_payment')->sortable(true);
 		$m->getElement('distributor_id')->sortable(true);
@@ -52,7 +60,12 @@ class page_payout extends \xepan\base\Page {
 		$m->addCondition('closing_id',$closing_id);
 
 		$g = $this->add('Grid');
-		$g->setModel($m);
+
+		if(count($field_to_show) > 0)
+			$g->setModel($m,$field_to_show);
+		else
+			$g->setModel($m);
+
 		$g->addOrder()->move('user','after','distributor')->now();
 		$g->removeColumn('closing');
 		$g->addPaginator($ipp=100);
