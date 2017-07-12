@@ -9,25 +9,29 @@ class page_test extends \xepan\base\Page {
 	function init(){
 		parent::init();
 
-		$form = $this->add('Form');
-		$form->addField('mobile_no');
-		$form->addField('text','msg');
-		$form->addSubmit('Submit');
+		// $form = $this->add('Form');
+		// $form->addField('mobile_no');
+		// $form->addField('text','msg');
+		// $form->addSubmit('Submit');
 
-		$v = $this->add('View')->set($_GET['data']);
+		// $v = $this->add('View')->set($_GET['data']);
 
-		if($form->isSubmitted()){
+		// if($form->isSubmitted()){
 
-			$dis = $this->add('xavoc\mlm\Model_Distributor')->tryLoadAny();
-			$dis->welcomeDistributor();
-			// $data = $this->add('xepan\communication\Controller_Sms')->sendMessage($form['mobile_no'],$form['msg']);
-			$form->js(null,$v->js()->reload())->univ()->successMessage("send ")->execute();
-		}
+		// 	$dis = $this->add('xavoc\mlm\Model_Distributor')->tryLoadAny();
+		// 	$dis->welcomeDistributor();
+		// 	// $data = $this->add('xepan\communication\Controller_Sms')->sendMessage($form['mobile_no'],$form['msg']);
+		// 	$form->js(null,$v->js()->reload())->univ()->successMessage("send ")->execute();
+		// }
 
 		// $grid = $this->add('Grid');
 		// $grid->setModel($this->add('xavoc\mlm\Model_Distributor_Genology'));
 
-		$this->add('CRUD')->setModel('xavoc\mlm\Model_Attachment');
+		// $this->add('CRUD')->setModel('xavoc\mlm\Model_Attachment');
 
-	}
+		$model = $this->add('xavoc\mlm\Model_Distributor');
+		$grid = $this->add('Grid');
+		$grid->setModel($model,['name','user','email','mobile_number','d_account_number','d_bank_name','d_bank_ifsc_code','nominee_name','nominee_email','nominee_age','address','city','state','country','pin_code']);
+		$grid->add("misc/Export");
+	}	
 }

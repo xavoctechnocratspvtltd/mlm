@@ -36,6 +36,7 @@ class page_distributors extends \xepan\base\Page {
 				$state_field->getModel()->addCondition('country_id',$_GET['country_id']);
 			}
 		}
+		
 	}
 
 	function page_orderitem(){
