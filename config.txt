@@ -5,9 +5,17 @@
 	$config['include_60_40']=true;
 	$config['username_is_email']=false;
 	$config['retail_profit_on_kit_purchase']=false;
-	$config['remove_zero_income']=false;
+	$config['remove_zero_income']=true;
 	$config['make_negative_difference_to_zero']=false;
+	
 	$config['enable_closing']=false;
-	$config['mark_green_stopped']=true;
-	$config['purchase_kit_stopped']=true;
-	$config['new_registration_stopped']=true;
+	
+	$config['mark_green_stopped']=false;
+	$config['purchase_kit_stopped']=false;
+	$config['repurchase_stopped']=false;
+	$config['new_registration_stopped']=false;
+
+	$config['auto_daily_closing']=false;
+	
+
+	$config['in_production']=true;

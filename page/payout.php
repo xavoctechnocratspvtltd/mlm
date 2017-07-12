@@ -20,6 +20,8 @@ class page_payout extends \xepan\base\Page {
 
 
 		$m = $this->add('xavoc\mlm\Model_Payout');
+		$m->getElement('net_payment')->sortable(true);
+		$m->getElement('distributor_id')->sortable(true);
 
 		$m->addExpression('user')->set(function($m,$q){
 			return $m->refSQL('distributor_id')->fieldQuery('user');

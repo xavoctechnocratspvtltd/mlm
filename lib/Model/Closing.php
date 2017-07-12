@@ -43,6 +43,12 @@ class Model_Closing extends \xepan\base\Model_Table {
 			
 		}
 
+		// take backup by shell command ???
+		// check varius conditions like
+		// 1. for monthly and weekly there must be a daily closing before on same? day 
+		// 2. there must not be two closings of same type on same day
+		// 
+
 		$back_date_closing = $this->add('xavoc\mlm\Model_Closing');
 		$back_date_closing->addCondition('on_date','>=',$this['on_date']);
 		$back_date_closing->addCondition('type',$this['type']);
@@ -246,10 +252,10 @@ class Model_Closing extends \xepan\base\Model_Table {
 			WHERE
 				(
 					/* ???????????????????????? */
-					p.month_self_bv < 250 OR
-					net_payment < 500 OR
+					/*p.month_self_bv < 250 OR*/
+					net_payment < 500 /*OR
 					d.is_document_verified = 0 OR
-					d.is_document_verified is null
+					d.is_document_verified is null*/
 					/*
 					OR (select count(distributor_id) from mlm_distributor li where li.introducer_id = d.distributor_id and li.path like concat(d.path,'A%')) < 1
 					OR (select count(distributor_id) from mlm_distributor ri where ri.introducer_id = d.distributor_id and ri.path like concat(d.path,'B%')) < 1
