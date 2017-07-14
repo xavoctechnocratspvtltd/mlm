@@ -116,6 +116,7 @@ class Initiator extends \Controller_Addon {
             // $cron->setSchedule(new \Cron\Schedule\CrontabSchedule('* * * * *'));
             $cron->setSchedule(new \Cron\Schedule\CrontabSchedule('0 0 * * *'));
             if(!$cron->getSchedule() || $cron->getSchedule()->valid($now)){
+                echo "going for daily auto closing </br>";
                 $this->add('xavoc\mlm\Controller_AutoDailyClosing');              
             }
         // }
