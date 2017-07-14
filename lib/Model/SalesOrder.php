@@ -7,13 +7,13 @@ class Model_SalesOrder extends \xepan\commerce\Model_SalesOrder {
 	public $status = ['Draft','Submitted','Redesign','Approved','InProgress','Canceled','Completed','Dispatched','OnlineUnpaid'];
 	public $actions = [
 
-	'Draft'=>['view','edit','delete','manage_attachments','verifyRepurchasePayment'],
-	'Submitted'=>['view','edit','delete','approve','redesign','manage_attachments','print_document','verifyRepurchasePayment'],
-	'Approved'=>['view','edit','delete','inprogress','send','manage_attachments','createInvoice','print_document'],
-	'InProgress'=>['view','edit','delete','cancel','complete','manage_attachments','send'],
+	'Draft'=>['view','edit','delete','verifyRepurchasePayment','manage_attachments'],
+	'Submitted'=>['view','edit','delete','approve','redesign','print_document','verifyRepurchasePayment','manage_attachments'],
+	'Approved'=>['view','edit','delete','inprogress','send','createInvoice','print_document','assign_for_shipping','manage_attachments'],
+	'InProgress'=>['view','edit','delete','cancel','complete','send','manage_attachments'],
 	'Canceled'=>['view','edit','delete','redraft','manage_attachments'],
-	'Completed'=>['view','edit','delete','manage_attachments','createInvoice','print_document','send'],
-	'OnlineUnpaid'=>['view','edit','delete','approve','createInvoice','manage_attachments','print_document','send','verifyRepurchasePayment'],
+	'Completed'=>['view','edit','delete','createInvoice','print_document','send','manage_attachments'],
+	'OnlineUnpaid'=>['view','edit','delete','approve','createInvoice','print_document','send','verifyRepurchasePayment','manage_attachments'],
 	'Redesign'=>['view','edit','delete','submit','manage_attachments']
 	];
 	/*
@@ -151,4 +151,42 @@ class Model_SalesOrder extends \xepan\commerce\Model_SalesOrder {
 
 		return true;
 	}
+
+	function page_assign_for_shipping($page){
+		if(!$this->loaded()) throw new \Exception("model must loaded");
+
+		// check order is already assigned or not
+		$assign_order = $this->add('xavoc\mlm\Model_AssignOrder');
+		$assign_order->addCondition('saleorder_id',$this['id']);
+
+		if($assign_order->count()->getOne() > 1){
+			throw new \Exception("assign to more then one franchises, that`s wrong ".$transaction->count()->getOne());
+		}
+
+		$assign_order->tryLoadAny();
+
+		if($assign_order->loaded()){
+			$page->add('View')->addClass('alert alert-info')->setHTML('order is already assign to franchise : <strong>'.$assign_order['franchises'].'</strong>');
+		}
+
+		$model = $page->add('xavoc\mlm\Model_Franchises');
+		$model->addCondition('status','Active');
+
+		$form = $page->add('Form');
+		$f_field = $form->addField('xepan\base\DropDown','franchise')->validate('required');
+		$f_field->setModel($model);
+		$f_field->setEmptyText('Please Select Franchise');
+
+		$form->addSubmit('Assign To Franchise');
+		if($form->isSubmitted()){
+			
+			$assign_order['franchises_id'] = $form['franchise'];
+			$assign_order['created_by_id'] = $this->app->auth->model->id;
+			$assign_order->save();
+
+			return $page->js(null,$page->js()->univ()->successMessage('Order Assigned'))->univ()->closeDialog();
+		}
+
+	}
+
 } 

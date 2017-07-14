@@ -5,7 +5,7 @@ namespace xavoc\mlm;
 
 class Model_Attachment extends \xepan\base\Model_Table {
 	public $table = "mlm_attachment";
-	public $acl_type= "ispmanager_distributor";
+	public $acl_type= "mlm_distributor";
 	function init(){
 		parent::init();
 

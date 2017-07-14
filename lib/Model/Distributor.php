@@ -14,7 +14,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 				'Blocked'=>['view','edit','delete','Unblocked']
 			];
 	
-	public $acl_type= "ispmanager_distributor";
+	public $acl_type= "mlm_distributor";
 
 
 	function init(){

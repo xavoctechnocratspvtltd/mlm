@@ -24,6 +24,7 @@ class Tool_FranchisesMenu extends \xepan\cms\View_Tool{
 				['key'=>'franchises_dashboard','name'=>'Dashboard'],
 				['key'=>'franchises_order','name'=>'New Orders'],
 				['key'=>'franchises_verifyorder','name'=>'Verify Orders'],
+				['key'=>'franchises_dispatch','name'=>'Dispatch Request'],
 				['key'=>'franchises_setting','name'=>'Settings'],
 			];
 
