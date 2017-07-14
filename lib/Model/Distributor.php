@@ -159,6 +159,11 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 	function beforeSaveDistributor(){
 		if(!$this->loaded()){
 			// Its New Entry
+
+			if(!$this->app->day_closing_done){
+				throw $this->exception('Auto closing was not done, some issues! PLeasec contact developers','ValidityCheck')->setField('username');
+			}
+
 			if($this->app->getConfig('new_registration_stopped',true)){
 				throw $this->exception('New registration are stopped due to maintenance','ValidityCheck')->setField('username');
 			}
@@ -500,6 +505,10 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 	function purchaseKit($kit){
 
+		if(!$this->app->day_closing_done){
+			throw $this->exception('Auto closing was not done or running, some issues! PLeasec contact developers');
+		}
+
 		if($this->app->getConfig('purchase_kit_stopped',true)){
 			throw new \Exception("Kit purchase is stopped due to maintenance", 1);
 		}
@@ -557,6 +566,10 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 	}
 
 	function markGreen($on_date=null){
+
+		if(!$this->app->day_closing_done){
+				throw $this->exception('Auto closing was not done or running, some issues! PLeasec contact developers');
+		}
 
 		if($this->app->getConfig('mark_green_stopped',true)){
 			throw new \Exception("Mark Green is stopped due to maintenance", 1);
