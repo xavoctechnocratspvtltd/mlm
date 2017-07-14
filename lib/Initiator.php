@@ -44,21 +44,6 @@ class Initiator extends \Controller_Addon {
                 $distributor->repurchase($total_bv,$total_sv);
         });
 
-        $now = \DateTime::createFromFormat('Y-m-d H:i:s', $this->app->now);
-        // $closing_m = $this->add('xavoc\mlm\Model_Closing')
-        //                 ->setOrder('id','desc')
-        //                 ->tryLoadAny();
-
-        // $date = $this->app->my_date_diff($this->app->now,$closing_m['on_date']); 
-        // if($date['days'] > 1) {
-            $cron = new \Cron\Job\ShellJob();
-            // $cron->setSchedule(new \Cron\Schedule\CrontabSchedule('* * * * *'));
-            $cron->setSchedule(new \Cron\Schedule\CrontabSchedule('0 0 * * *'));
-            if(!$cron->getSchedule() || $cron->getSchedule()->valid($now)){
-                $this->add('xavoc\mlm\Controller_AutoDailyClosing');              
-            }
-        // }
-
         return $this;
     }
 
@@ -71,6 +56,17 @@ class Initiator extends \Controller_Addon {
         $this->routePages('xavoc_dm');
         $this->addLocation(array('template'=>'templates','js'=>'templates/js','css'=>'templates/css'))
         ->setBaseURL('./shared/apps/xavoc/mlm/');
+
+        // check if previous day auto closing is done or not
+        $this->app->day_closing_done = false;
+        $closing = $this->add('xavoc\mlm\Model_Closing')
+                    ->addCondition('type','DailyClosing')
+                    ->addCondition('on_date',$this->app->today)
+                    ->tryLoadAny();
+        
+        if($closing->loaded()){
+            $this->app->day_closing_done = true;
+        }
 
         return $this;
 
@@ -107,6 +103,23 @@ class Initiator extends \Controller_Addon {
                 }
             }
         });
+
+
+        $now = \DateTime::createFromFormat('Y-m-d H:i:s', $this->app->now);
+        // $closing_m = $this->add('xavoc\mlm\Model_Closing')
+        //                 ->setOrder('id','desc')
+        //                 ->tryLoadAny();
+
+        // $date = $this->app->my_date_diff($this->app->now,$closing_m['on_date']); 
+        // if($date['days'] > 1) {
+            $cron = new \Cron\Job\ShellJob();
+            // $cron->setSchedule(new \Cron\Schedule\CrontabSchedule('* * * * *'));
+            $cron->setSchedule(new \Cron\Schedule\CrontabSchedule('0 0 * * *'));
+            if(!$cron->getSchedule() || $cron->getSchedule()->valid($now)){
+                echo "going for daily auto closing </br>";
+                $this->add('xavoc\mlm\Controller_AutoDailyClosing');              
+            }
+        // }
         
         $this->app->exportFrontEndTool('xavoc\mlm\Tool_Register','MLM');
       

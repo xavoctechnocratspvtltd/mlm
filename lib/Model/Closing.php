@@ -70,9 +70,22 @@ class Model_Closing extends \xepan\base\Model_Table {
 				$this->dailyClosing($this['on_date']);
 				break;
 			case 'WeeklyClosing':
+				// cehck if daily is closed before 
+				$closing = $this->add('xavoc\mlm\Model_Closing')
+                    ->addCondition('type','DailyClosing')
+                    ->addCondition('on_date',$this->app->today)
+                    ->tryLoadAny();
+                if(!$closing->loaded()) throw new \Exception("Daily Closing not run before, please run daily closing first", 1);
+                
 				$this->weeklyClosing($this->id,$this['on_date']);
 				break;
 			case 'MonthlyClosing':
+				// cehck if daily is closed before 
+				$closing = $this->add('xavoc\mlm\Model_Closing')
+                    ->addCondition('type','DailyClosing')
+                    ->addCondition('on_date',$this->app->today)
+                    ->tryLoadAny();
+            	if(!$closing->loaded()) throw new \Exception("Daily Closing not run before, please run daily closing first", 1);
 				$this->monthlyClosing($this->id,$this['on_date'],$this['calculate_loyalty']);
 				break;
 			

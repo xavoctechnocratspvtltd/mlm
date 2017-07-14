@@ -11,6 +11,7 @@ class Controller_AutoDailyClosing extends \AbstractController {
 		// where that we can test later on
 
 		if($this->app->getConfig('auto_daily_closing',false)){
+			echo "auto closing off in config, returning";
 			return;
 		}
 		
