@@ -139,6 +139,9 @@ class Model_Closing extends \xepan\base\Model_Table {
 	function weeklyClosing($closing_id,$on_date){
 		if(!$on_date) $on_date = $this->app->now;
 		// move data to payout table
+		if(date('w', strtotime($on_date)) != 6){
+			throw new \Exception("Weekly closing must be on sunday 00:00 After Saturday Finished", 1);
+		}
 
 		// copy all distributors in here
 		$q="
@@ -315,6 +318,10 @@ class Model_Closing extends \xepan\base\Model_Table {
 
 	function monthlyClosing($closing_id,$on_date,$calculate_loyalty=false){
 		if(!$on_date) $on_date = $this->app->now;
+
+		if(date('d', strtotime($on_date)) != '01'){
+			throw new \Exception("Monthly closing must be on 01st of month 00:00 After Previous Month Finished", 1);
+		}
 
 		// copy all distributors in here
 		$q="
