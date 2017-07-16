@@ -139,8 +139,8 @@ class Model_Closing extends \xepan\base\Model_Table {
 	function weeklyClosing($closing_id,$on_date){
 		if(!$on_date) $on_date = $this->app->now;
 		// move data to payout table
-		if(date('w', strtotime($on_date)) != 6){
-			throw new \Exception("Weekly closing must be on sunday (6) 00:00 After Saturday Finished. Today is " . date('w', strtotime($on_date)), 1);
+		if(date('w', strtotime($on_date)) !== 0){
+			throw new \Exception("Weekly closing must be on sunday (0) 00:00 After Saturday Finished. Today is " . date('w', strtotime($on_date)), 1);
 		}
 
 		// copy all distributors in here
