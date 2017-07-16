@@ -59,7 +59,7 @@ class Tool_Register extends \xavoc\mlm\Tool_Distributor{
 				$form->js()->reload()->univ()->successMessage('Saved')->execute();
 			}catch(\Exception $e){
 				$this->api->db->rollback();
-				$form->js()->reload()->univ()->errorMessage($e->getMessage())->execute();
+				$form->js()->univ()->errorMessage($e->getMessage())->execute();
 			}
 
 		}
