@@ -33,7 +33,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 		$dist_j->addField('path')->type('text');
 		$dist_j->addField('introducer_path')->type('text');
-		$dist_j->addField('side')->enum(['A','B'])->display(['form'=>'xepan\base\DropDownNormal']);
+		$dist_j->addField('side')->setValueList(['A'=>'Left','B'=>'Right'])->display(['form'=>'xepan\base\DropDownNormal']);
 
 		$dist_j->addField('kit_item_id')->defaultValue(null)->caption('Startup Package');
 		// $dist_j->hasOne('xavoc\mlm\Kit','kit_item_id')->defaultValue(null)->caption('Startup Package');
@@ -1012,7 +1012,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 		// there must a closing done before current date 
 		if(!$this->app->day_closing_done){
-				throw $this->exception('Auto closing was not done or running, some issues! PLeasec contact developers');
+				throw $this->exception('Auto closing was not done or running, some issues! Perform Previous Days Daily Closing First');
 		}
 
 
