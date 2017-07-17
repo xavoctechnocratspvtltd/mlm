@@ -16,8 +16,8 @@ class page_franchise extends \xepan\base\Page {
 		$franch_model = $this->add('xavoc\mlm\Model_Franchises');
 		$crud = $this->add('xepan\hr\CRUD');
 		$crud->setModel($franch_model,
-						['first_name','country_id','state_id','','address','city','pin_code','website','status'],
-						['first_name','country','state','','address','city','pin_code','website','status']
+						['first_name','country_id','state_id','','address','city','pin_code','status'],
+						['first_name','country','state','','address','city','pin_code','status']
 					);
 		$crud->grid->removeColumn('attachment_icon');
 	}

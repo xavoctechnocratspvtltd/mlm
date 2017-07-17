@@ -20,11 +20,20 @@ class Tool_FranchisesMenu extends \xepan\cms\View_Tool{
 			$this->app->redirect('login');
 		}
 
+		$assign_order = $this->add('xavoc\mlm\Model_AssignOrder');
+		$assign_order->addCondition('franchises_id',$franchises->id);
+		$assign_order->addCondition('status','<>','Completed');
+		$assign_order_count = "" ;
+		if($assign_order->count()->getOne() > 0)
+			$assign_order_count = '<span class="badge">'.$assign_order->count()->getOne()."</span>";
+		
+
 		$menu = [
 				['key'=>'franchises_dashboard','name'=>'Dashboard'],
 				['key'=>'franchises_order','name'=>'New Orders'],
 				['key'=>'franchises_verifyorder','name'=>'Verify Orders'],
-				['key'=>'franchises_dispatch','name'=>'Dispatch Request'],
+				['key'=>'franchises_dispatch','name'=>'Dispatch Request '.$assign_order_count],
+				['key'=>'franchises_stock','name'=>'Stock'],
 				['key'=>'franchises_setting','name'=>'Settings'],
 			];
 
@@ -36,6 +45,8 @@ class Tool_FranchisesMenu extends \xepan\cms\View_Tool{
 				$g->current_row_html['active_menu'] = "active";
 			else
 				$g->current_row_html['active_menu'] = "deactive";
+			
+			$g->current_row_html['name'] = $g->model['name'];
 		});
 
 
