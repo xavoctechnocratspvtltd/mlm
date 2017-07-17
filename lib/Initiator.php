@@ -20,6 +20,7 @@ class Initiator extends \Controller_Addon {
         $m->addItem(['Franchises','icon'=>'fa fa-check-square-o'],'xavoc_dm_franchise');
         $m->addItem(['Closings','icon'=>'fa fa-check-square-o'],'xavoc_dm_closings');
         $m->addItem(['Configuration','icon'=>'fa fa-check-square-o'],'xavoc_dm_config');
+        $m->addItem(['Set Date','icon'=>'fa fa-check-square-o'],'xavoc_dm_setdate');
 
         $this->addAppFunctions();
 
@@ -56,17 +57,6 @@ class Initiator extends \Controller_Addon {
         $this->routePages('xavoc_dm');
         $this->addLocation(array('template'=>'templates','js'=>'templates/js','css'=>'templates/css'))
         ->setBaseURL('./shared/apps/xavoc/mlm/');
-
-        // check if previous day auto closing is done or not
-        $this->app->day_closing_done = false;
-        $closing = $this->add('xavoc\mlm\Model_Closing')
-                    ->addCondition('type','DailyClosing')
-                    ->addCondition('on_date',$this->app->today)
-                    ->tryLoadAny();
-        
-        if($closing->loaded()){
-            $this->app->day_closing_done = true;
-        }
 
         return $this;
 

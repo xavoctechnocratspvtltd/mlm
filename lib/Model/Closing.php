@@ -139,8 +139,8 @@ class Model_Closing extends \xepan\base\Model_Table {
 	function weeklyClosing($closing_id,$on_date){
 		if(!$on_date) $on_date = $this->app->now;
 		// move data to payout table
-		if(date('w', strtotime($on_date)) != 6){
-			throw new \Exception("Weekly closing must be on sunday 00:00 After Saturday Finished", 1);
+		if(date('w', strtotime($on_date)) !== '0'){
+			throw new \Exception("Weekly closing must be on sunday (0) 00:00 After Saturday Finished. Today is " . date('w', strtotime($on_date)), 1);
 		}
 
 		// copy all distributors in here
@@ -319,7 +319,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 	function monthlyClosing($closing_id,$on_date,$calculate_loyalty=false){
 		if(!$on_date) $on_date = $this->app->now;
 
-		if(date('d', strtotime($on_date)) != '01'){
+		if(date('d', strtotime($on_date)) !== '01'){
 			throw new \Exception("Monthly closing must be on 01st of month 00:00 After Previous Month Finished", 1);
 		}
 
@@ -668,7 +668,8 @@ class Model_Closing extends \xepan\base\Model_Table {
 		if(!$on_date) $on_date = $this->app->now;
 		// calculate payment tds deduction carry forward etc. inclusing previous carried amount
 		// set and save carried_amount to distributor
-		// add leadership_carried_amount commulated in various binary closings in previous
+		// add leadership_carried_amount commulated in various binary closings in previous 
+		// (d.leadership_carried_amount already added in p.leadership_bonus in prev function)
 		$q="
 			UPDATE
 				mlm_payout p

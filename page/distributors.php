@@ -8,6 +8,12 @@ class page_distributors extends \xepan\base\Page {
 
 	function page_index(){
 		// parent::init();
+
+		$vp = $this->add('VirtualPage')->set(function($page){
+			$page->add('xavoc\mlm\Tool_Register');
+		});
+
+
 		$status_color = [
 						'Red'=>'danger',
 						'KitSelected'=>'default',
@@ -19,6 +25,7 @@ class page_distributors extends \xepan\base\Page {
 		$dis_action_m->add('xavoc\mlm\Controller_SideBarStatusFilter');
 		
 		$crud = $this->add('xepan\hr\CRUD',['status_color'=>$status_color,'allow_del'=>false, 'allow_add'=>false]);
+		$btn = $crud->grid->add('Button',null,'grid_buttons')->set('Add Distributor')->addClass('btn btn-primary')->js('click',$this->js()->univ()->frameURL('Add',$vp->getURL()));
 		$crud->setModel($dis_action_m,
 						['country_id','state_id','address','city','pin_code'],
 						['distributor_name','side','sponsor','introducer','joining_date','email','mobile_number']

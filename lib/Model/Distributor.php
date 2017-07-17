@@ -33,7 +33,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 		$dist_j->addField('path')->type('text');
 		$dist_j->addField('introducer_path')->type('text');
-		$dist_j->addField('side')->enum(['A','B'])->display(['form'=>'xepan\base\DropDownNormal']);
+		$dist_j->addField('side')->setValueList(['A'=>'Left','B'=>'Right'])->display(['form'=>'xepan\base\DropDownNormal']);
 
 		$dist_j->addField('kit_item_id')->defaultValue(null)->caption('Startup Package');
 		// $dist_j->hasOne('xavoc\mlm\Kit','kit_item_id')->defaultValue(null)->caption('Startup Package');
@@ -160,9 +160,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		if(!$this->loaded()){
 			// Its New Entry
 
-			if(!$this->app->day_closing_done){
-				throw $this->exception('Auto closing was not done, some issues! PLeasec contact developers','ValidityCheck')->setField('username');
-			}
+			$this->checkDateConditions();
 
 			if($this->app->getConfig('new_registration_stopped',true)){
 				throw $this->exception('New registration are stopped due to maintenance','ValidityCheck')->setField('username');
@@ -505,9 +503,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 	function purchaseKit($kit){
 
-		if(!$this->app->day_closing_done){
-			throw $this->exception('Auto closing was not done or running, some issues! PLeasec contact developers');
-		}
+		$this->checkDateConditions();
 
 		if($this->app->getConfig('purchase_kit_stopped',true)){
 			throw new \Exception("Kit purchase is stopped due to maintenance", 1);
@@ -567,9 +563,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 	function markGreen($on_date=null){
 
-		if(!$this->app->day_closing_done){
-				throw $this->exception('Auto closing was not done or running, some issues! PLeasec contact developers');
-		}
+		$this->checkDateConditions();
 
 		if($this->app->getConfig('mark_green_stopped',true)){
 			throw new \Exception("Mark Green is stopped due to maintenance", 1);
@@ -1001,5 +995,34 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		$sale_order->addCondition('status','<>','Completed');
 
 		return $sale_order->count()->getOne();
+	}
+
+	function checkDateConditions(){
+
+		// check if previous day auto closing is done or not
+        $this->app->day_closing_done = false;
+        $closing = $this->add('xavoc\mlm\Model_Closing')
+                    ->addCondition('type','DailyClosing')
+                    ->addCondition('on_date',$this->app->today)
+                    ->tryLoadAny();
+        
+        if($closing->loaded()){
+            $this->app->day_closing_done = true;
+        }
+
+		// there must a closing done before current date 
+		if(!$this->app->day_closing_done){
+				throw $this->exception('Auto closing was not done or running, some issues! Perform Previous Days Daily Closing First');
+		}
+
+
+		$closing = $this->add('xavoc\mlm\Model_Closing')
+                    ->addCondition('type','DailyClosing')
+                    ->addCondition('on_date','>',$this->app->today)
+                    ->tryLoadAny();
+		// there must not be any closing done after current date
+        if($closing->loaded()){
+			throw $this->exception('Closing was done after this date, cannot insert this data before closing');
+        }
 	}
 } 
