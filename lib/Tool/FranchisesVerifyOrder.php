@@ -69,7 +69,6 @@ class Tool_FranchisesVerifyOrder extends \xepan\cms\View_Tool{
 		$cl = $v->add('CompleteLister',null,null,['view/franschises-order-item','order_item']);
 		$cl->setModel($order_item);
 		
-		$order_view->add('Button',null,'btn_wrapper')->set('Dispatch')->addClass('btn btn-warning  pull-right');
 		
 		if($inv_status != "Paid"){
 			$pay_now_btn = $order_view->add('Button',null,'btn_wrapper')->set('Pay Now')->addClass('btn btn-success  pull-right');
@@ -119,6 +118,18 @@ class Tool_FranchisesVerifyOrder extends \xepan\cms\View_Tool{
 
 				});
 		}
+		$dispatch_btn = $order_view->add('Button',null,'btn_wrapper')->set('Dispatch')->addClass('btn btn-warning  pull-right');
+		$dispatch_btn->add('VirtualPage')
+				->bindEvent('Dispatch Order '.$this->saleOrder['document_no'],'click')
+				->set(function($page){
+
+					$view = $page->add('xavoc\mlm\View_FranchisesDispatch',['order_id'=>$this->saleOrder->id]);
+					$ret = $view->getReturnJs();
+					if ($ret instanceof \jQuery_Chain) {
+						$js_event = [$ret,$this->js()->_selector('.franchises-order-verification')->trigger('reload')];
+						$this->app->js(true,$js_event)->execute();
+					}
+				});
 
 	}
 }

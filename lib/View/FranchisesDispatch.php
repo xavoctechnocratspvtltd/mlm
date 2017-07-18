@@ -14,8 +14,19 @@ class View_FranchisesDispatch extends \View{
 		$this->franchises = $franchises = $this->add('xavoc\mlm\Model_Franchises');
 		$this->franchises->loadLoggedIn();
 
+
 		$order_id = $this->order_id;
 		$order_model = $this->add('xavoc\mlm\Model_SalesOrder')->load($order_id);
+
+		$sd = $this->add('xepan\commerce\Model_Store_Delivered');
+		$sd->addCondition('related_document_id',$this->order_id);
+		$sd->addCondition('status',['Delivered','Shipped']);
+		$sd->tryLoadAny();
+		if($sd->loaded()){
+			$this->add('View')->set('Order Already Dispatched')->addClass('alert alert-success');
+			$this->add('View')->setHtml('Dispatched Date: <b>'.$sd['created_at']."</b><br/> Status: <b>".$sd['status']."</b><br/>".'Delivery via: <b>'.$sd['delivery_via']."</b><br/> Delivery Reference: <b>".$sd['delivery_reference']."</b>")->addClass('alert alert-info');
+			return;
+		}
 
 		// warehouse try load store transaction entry with status received
 		$transaction = $this->add('xepan\commerce\Model_Store_TransactionAbstract');
