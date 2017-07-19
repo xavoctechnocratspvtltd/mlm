@@ -1,7 +1,7 @@
 <?php
 
 
-class xavoc\mlm;
+namespace xavoc\mlm;
 
 class View_Report_Distributor_Downline extends \View{
 	function init(){
@@ -17,12 +17,13 @@ class View_Report_Distributor_Downline extends \View{
 		$downline->addCondition('path','like',$model['path'].'%');
 
 		if($_GET['search_distributor']){
-			$downline>addCondition([['user',$_GET['search_distributor']],['name','like','%'.$_GET['search_distributor'].'%'],['id',$_GET['search_distributor']]]);
+			$downline->addCondition([['user',$_GET['search_distributor']],['name','like','%'.$_GET['search_distributor'].'%'],['id',$_GET['search_distributor']]]);
 		}
 		
 		$grid = $this->add('Grid');
-		$grid->setModel($downline,['name','sponsor','introducer','status']);
+		$grid->setModel($downline,['name','sponsor','introducer','current_rank','status']);
 
+		$grid->addPaginator(100);
 		// reload self view with form values
 		if($form->isSubmitted()){
 			$this->js()->reload(['search_distributor'=>$form['search_distributor']])->execute();

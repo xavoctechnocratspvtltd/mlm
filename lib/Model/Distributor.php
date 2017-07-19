@@ -71,7 +71,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		$dist_j->addField('month_self_bv')->type('int')->defaultValue(0);
 		$dist_j->addField('total_self_bv')->type('int')->defaultValue(0);
 		$dist_j->addField('month_bv')->type('int')->defaultValue(0);
-		$dist_j->addField('total_month_bv')->type('int')->defaultValue(0);
+		$dist_j->addField('total_month_bv')->type('int')->defaultValue(0)->caption('Accumulated BV');
 		$dist_j->addField('quarter_bv_saved')->type('int')->defaultValue(0);
 		$dist_j->addField('monthly_retail_profie')->type('int')->defaultValue(0);
 		

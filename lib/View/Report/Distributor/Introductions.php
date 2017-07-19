@@ -1,9 +1,10 @@
 <?php
 
 
-class xavoc\mlm;
+namespace xavoc\mlm;
 
 class View_Report_Distributor_Introductions extends \View{
+	
 	function init(){
 		parent::init();
 	}
@@ -21,7 +22,7 @@ class View_Report_Distributor_Introductions extends \View{
 		}
 		
 		$grid = $this->add('Grid');
-		$grid->setModel($downline,['name','sponsor','introducer','status']);
+		$grid->setModel($downline,['name','sponsor','introducer','month_self_bv','total_month_bv','status']);
 
 		// reload self view with form values
 		if($form->isSubmitted()){

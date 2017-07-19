@@ -29,16 +29,20 @@ class View_DistributorReport extends \View {
 
 		switch ($this->report) {
 			case 'downline':
-				$this->add('View_Report_Distributor_Downline')
+				$this->add('xavoc\mlm\View_Report_Distributor_Downline')
 						->setModel($this->distributor);
 				break;
 			case 'intros-list':
-				$this->add('View_Report_Distributor_Introductions')
+				$this->add('xavoc\mlm\View_Report_Distributor_Introductions')
 						->setModel($this->distributor);
 				break;
 			default:
 				# code...
 				break;
 		}
+	}
+
+	function defaultTemplate(){
+		return ['view/distributorreport'];
 	}
 }
