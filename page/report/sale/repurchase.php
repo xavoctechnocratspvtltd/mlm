@@ -66,6 +66,14 @@ class page_report_sale_repurchase extends \xepan\base\Page{
 			return $q->expr('[0]',[$qsp_detail->sum('quantity')]);
 		});
 
+		// $repurchase_model->addExpression('amount')->set(function($m,$q){
+		// 	$qsp_detail = $m->add('xavoc\mlm\Model_QSPDetail');
+		// 	$qsp_detail->addCondition('item_id',$m->getElement('id'));
+		// 	$qsp_detail->addCondition('qsp_created_date','>=',$this->from_date);
+		// 	$qsp_detail->addCondition('qsp_created_date','<',$this->app->nextDate($this->to_date));
+		// 	return $q->expr('[0]',[$qsp_detail->sum('total_amount')]);
+		// });
+
 		$repurchase_model->addCondition('orders','>',0);
 		$repurchase_model->setOrder('orders','desc');
 

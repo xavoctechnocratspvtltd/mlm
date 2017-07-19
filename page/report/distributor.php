@@ -7,6 +7,8 @@ class page_report_distributor extends \xavoc\mlm\page_report {
 	public $title = "Distributor Id wise Report";
 	public $from_date;
 	public $to_date;
+	public $include;
+	public $distributor_id;
 
 	function init(){
 		parent::init();

@@ -59,6 +59,14 @@ class page_report_sale_topup extends \xepan\base\Page{
 			return $q->expr('[0]',[$th->count()]);
 		});
 
+		// $kit_model->addExpression('topup_amount')->set(function($m,$q){
+		// 	$th = $m->add('xavoc\mlm\Model_TopupHistory')
+		// 		->addCondition('created_at','>=',$this->from_date)
+		// 		->addCondition('created_at','<',$this->app->nextDate($this->to_date))
+		// 		->addCondition('kit_item_id',$m->getElement('id'));
+		// 	return $q->expr('[0]',[$th->sum('sale_price')]);
+		// });
+
 		$kit_model->addCondition('topups','>',0);
 		$kit_model->setOrder('topups','desc');
 
