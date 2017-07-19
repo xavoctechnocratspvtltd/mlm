@@ -24,7 +24,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		// $this->getElement('pan_no')->display(array('form'=>'xavoc\mlm\PanNumber'));
 		$dist_j = $this->join('mlm_distributor.distributor_id');
 
-		$dist_j->hasOne('xavoc\mlm\Sponsor','sponsor_id')->display(['form'=>'xepan\base\Basic'])->defaultValue(0);
+		$dist_j->hasOne('xavoc\mlm\Sponsor','sponsor_id')->display(['form'=>'xepan\base\Basic'])->defaultValue(0)->caption('Placement Parent');
 		$dist_j->hasOne('xavoc\mlm\Introducer','introducer_id','distributor_name_with_username')->display(['form'=>'xepan\base\Basic'])->defaultValue(0);
 
 		$dist_j->hasOne('xavoc\mlm\Left','left_id')->display(['form'=>'xepan\base\DropDownNormal']);
@@ -71,7 +71,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		$dist_j->addField('month_self_bv')->type('int')->defaultValue(0);
 		$dist_j->addField('total_self_bv')->type('int')->defaultValue(0);
 		$dist_j->addField('month_bv')->type('int')->defaultValue(0);
-		$dist_j->addField('total_month_bv')->type('int')->defaultValue(0);
+		$dist_j->addField('total_month_bv')->type('int')->defaultValue(0)->caption('Accumulated BV');
 		$dist_j->addField('quarter_bv_saved')->type('int')->defaultValue(0);
 		$dist_j->addField('monthly_retail_profie')->type('int')->defaultValue(0);
 		
