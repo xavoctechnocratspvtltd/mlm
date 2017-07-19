@@ -12,5 +12,7 @@ class Model_QSPDetail extends \xepan\commerce\Model_QSP_Detail {
 		$this->addExpression('item_sku')->set(function($m,$q){
 			return $m->refSQL('item_id')->fieldQuery('sku');
 		});
+
+		$this->addExpression('qsp_created_date')->set($this->refSQL("qsp_master_id")->fieldQuery('created_at'));
 	}
 } 

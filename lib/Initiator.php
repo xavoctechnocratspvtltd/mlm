@@ -19,6 +19,7 @@ class Initiator extends \Controller_Addon {
         $m->addItem(['Orders','icon'=>'fa fa-check-square-o'],'xavoc_dm_salesorder');
         $m->addItem(['Franchises','icon'=>'fa fa-check-square-o'],'xavoc_dm_franchise');
         $m->addItem(['Closings','icon'=>'fa fa-check-square-o'],'xavoc_dm_closings');
+        $m->addItem(['Report','icon'=>'fa fa-check-square-o'],'xavoc_dm_report_planwisesale');
         $m->addItem(['Configuration','icon'=>'fa fa-check-square-o'],'xavoc_dm_config');
         $m->addItem(['Set Date','icon'=>'fa fa-check-square-o'],'xavoc_dm_setdate');
 
