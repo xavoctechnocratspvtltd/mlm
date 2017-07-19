@@ -7,7 +7,7 @@ class Model_SalesOrder extends \xepan\commerce\Model_SalesOrder {
 	public $status = ['Draft','Submitted','Redesign','Approved','InProgress','Canceled','Completed','Dispatched','OnlineUnpaid'];
 	public $actions = [
 
-	'Draft'=>['view','edit','delete','verifyRepurchasePayment','manage_attachments'],
+	'Draft'=>['view','edit','delete','submit','verifyRepurchasePayment','manage_attachments'],
 	'Submitted'=>['view','edit','delete','approve','redesign','print_document','verifyRepurchasePayment','manage_attachments'],
 	'Approved'=>['view','edit','delete','inprogress','send','createInvoice','print_document','assign_for_shipping','manage_attachments'],
 	'InProgress'=>['view','edit','delete','cancel','complete','send','manage_attachments'],
