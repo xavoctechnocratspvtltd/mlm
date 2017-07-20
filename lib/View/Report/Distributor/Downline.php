@@ -14,6 +14,7 @@ class View_Report_Distributor_Downline extends \View{
 		$this->app->stickyGET('based_on');
 
 		$this->add('View')->setElement('hr');
+		$this->addClass('main-box');
 	}
 
 	function setModel($model){
@@ -42,7 +43,12 @@ class View_Report_Distributor_Downline extends \View{
 
 		$downline = $this->add('xavoc\mlm\Model_Distributor');
 		$downline->addCondition('path','like',$model['path'].'%');
-
+		$downline->addExpression('joining')->set(function($m,$q){
+			return $q->expr('DATE([0])',[$m->getElement('created_at')]);
+		});
+		$downline->addExpression('green_on')->set(function($m,$q){
+			return $q->expr('DATE([0])',[$m->getElement('greened_on')]);
+		});
 		if($_GET['search_distributor']){
 			$downline->addCondition([['user',$_GET['search_distributor']],['name','like','%'.$_GET['search_distributor'].'%'],['id',$_GET['search_distributor']]]);
 		}
@@ -52,7 +58,7 @@ class View_Report_Distributor_Downline extends \View{
 			$downline->addCondition('status',$_GET['status']);
 		}
 
-		if($_GET['from_date'] != null){
+		if($_GET['from_date'] != null && $_GET['from_date'] != "null"){
 			if($_GET['based_on'] == "green"){
 				$downline->addCondition('greened_on','>=',$_GET['from_date']);
 			}else
@@ -62,22 +68,21 @@ class View_Report_Distributor_Downline extends \View{
 		}
 
 		
-		if($_GET['to_date'] != null){
+		if($_GET['to_date'] != null && $_GET['to_date'] != "null"){
 
 			if($_GET['based_on'] == "green"){
 				$downline->addCondition('greened_on','<',$this->app->nextDate($_GET['to_date']));
 			}else{
 				$downline->addCondition('created_at','<',$this->app->nextDate($_GET['to_date']));
 			}
-			
 			$to_date_field->set($_GET['to_date']);
 		}
 
 		$this->add('View')->setElement('hr');
 		$grid = $this->add('Grid');
-		$grid->setModel($downline,['name','sponsor','introducer','current_rank','status','created_at','greened_on']);
+		$grid->setModel($downline,['name','sponsor','introducer','current_rank','status','joining','green_on']);
 
-		$grid->addPaginator(100);
+		$grid->addPaginator($ipp=100);
 		// reload self view with form values
 		if($form->isSubmitted()){
 			if($form['from_date'] && $form['to_date']){

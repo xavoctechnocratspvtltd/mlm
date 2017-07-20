@@ -31,10 +31,12 @@ class View_DistributorReport extends \View {
 			case 'downline':
 				$this->add('xavoc\mlm\View_Report_Distributor_Downline')
 						->setModel($this->distributor);
+				$this->template->trySet('downline_active','btn btn-primary');
 				break;
 			case 'intros-list':
 				$this->add('xavoc\mlm\View_Report_Distributor_Introductions')
 						->setModel($this->distributor);
+				$this->template->trySet('introduction_active','btn btn-primary');
 				break;
 			default:
 				# code...
