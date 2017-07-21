@@ -982,6 +982,31 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		foreach ($payment_detail as $key => $value) {
 			$re_his[$key] = $value;
 		}
+
+		// updating total bv and sv value
+		$ois = $this->add('xavoc\mlm\Model_QSPDetail')->addCondition('qsp_master_id',$order_id);
+		$totals = [
+					'total_bv'=>0,
+					'total_pv'=>0,
+					'total_sv'=>0,
+					'total_capping'=>0,
+					'total_introduction_income'=>0,
+					'total_dp'=>0
+				];
+		foreach ($ois as $oi) {
+            $item = $this->add('xavoc\mlm\Model_Item')->load($oi['item_id']);
+            $totals['total_bv'] += $item['bv']*$oi['quantity'];
+            $totals['total_pv'] += $item['pv']*$oi['quantity'];
+            $totals['total_sv'] += $item['sv']*$oi['quantity'];
+            $totals['total_capping'] += $item['capping']*$oi['quantity'];
+            $totals['total_introduction_income'] += $item['introduction_income']*$oi['quantity'];
+            $totals['total_dp'] += $item['dp']*$oi['quantity'];
+        }
+
+        foreach ($totals as $key => $value) {
+			$re_his[$key] = $value;
+		}
+
 		$re_his->save();
 	}
 

@@ -13,11 +13,12 @@ class Model_RepurchaseHistory extends \xepan\base\Model_Table {
 		$this->hasOne('xavoc\mlm\Model_SalesOrder','sale_order_id');
 		$this->hasOne('xavoc\mlm\Model_Customer','related_customer_id');
 		
-		// $this->addField('total_bv');
-		// $this->addField('total_pv');
-		// $this->addField('total_sv');
-		// $this->addField('total_capping');
-		// $this->addField('total_introduction_income');
+		$this->addField('total_bv');
+		$this->addField('total_pv');
+		$this->addField('total_sv');
+		$this->addField('total_capping');
+		$this->addField('total_introduction_income');
+		$this->addField('total_dp');
 		
 		$this->add('xepan\filestore\Field_Image','cheque_deposite_receipt_image_id');
 		$this->add('xepan\filestore\Field_Image','dd_deposite_receipt_image_id');
