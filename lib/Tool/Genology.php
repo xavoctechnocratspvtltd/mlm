@@ -19,8 +19,8 @@ class Tool_Genology extends \xavoc\mlm\Tool_Distributor{
 		$d->loadLoggedIn();
 		if(!$d->loaded()) return;
 
-		// $this->add('xavoc\mlm\View_GenologyStandard',['options'=>$this->options]);
-		$this->add('xavoc\mlm\View_GenologyDynamic',['options'=>$this->options]);
+		$this->add('xavoc\mlm\View_GenologyStandard',['options'=>$this->options]);
+		// $this->add('xavoc\mlm\View_GenologyDynamic',['options'=>$this->options]);
 
 	}
 }
