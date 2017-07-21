@@ -113,11 +113,16 @@ class View_GenologyStandard extends \View{
 			$greened_on_date = date("d M Y", strtotime($model['greened_on']));
 		else
 			$greened_on_date = "--/---/----";
+		if($model['kit_item_id'])
+			$kit_item = $this->add('xepan/commerce/Model_Item')->tryLoad($model['kit_item_id'])->get('name');
+		else
+			$kit_item="-";
+
 		$str= 
 				$model['name'].
 				"<br/>Jn: ". date("d M Y", strtotime($model['created_at'])). 
 				"<br/>Gr: ". $greened_on_date. 
-				"<br/>Kit: ". $model['kit_item'] ." SV(".$model['sv'].")"."BV(".$model['bv'].")".
+				"<br/>Kit: ". $kit_item ." SV(".$model['sv'].")"."BV(".$model['bv'].")".
 				"<br/>Intro: ". $model['introducer'] .
 				"<br/><table border='1' width='100%'>
 					<tr>
