@@ -1,5 +1,5 @@
 
-<div id="{$_name}" style="{$style}" class="tree main_div mlm-tree main-box {$class}">
+<div id="{$_name}" style="{$style}" class="tree mlm-tree main-box {$class}">
   {$Content}
   {Tree}
   {/Tree}
@@ -9,9 +9,9 @@
     <div class="text-center atk-swatch-blue atk-box-small text-right"><a href="#xepan" onclick="{$ParentURL}">Go Up</a></div>
   </div>{/Parent}
   {Node}
-  <ul title="{$title}" class="tree-view-ul text-center atk-size-giga {$class}">
+  <ul class="tree-view-ul text-center atk-size-giga">
     <li>
-      <div class="text-center"><i style="width:100%" class="fa fa-user fa-3x"></i>{username}Username Here{/username}</div>
+      <div class="text-center"><i style="width:100%" title="{$title}" class="fa fa-user fa-3x main_div {$class}"></i>{username}Username Here{/username}</div>
       <ul>
         <li>{leftnode}<a href="#join" onclick="$.univ().frameURL(&quot;New Joining&quot;,&quot;index.php?page=xMLM_page_owner_xmlm_newjoining&amp;sponsor_id={$sponsor_id}&amp;Leg=A&quot;);">Join Here</a>			{/leftnode}</li>
         <li>{rightnode}<a href="#join" onclick="$.univ().frameURL(&quot;New Joining&quot;,&quot;index.php?page=xMLM_page_owner_xmlm_newjoining&amp;sponsor_id={$sponsor_id}&amp;Leg=B&quot;);">Join Here</a>			{/rightnode}</li>
@@ -116,8 +116,3 @@
   	border-color:  #94a0b4;
   }
 </style>
-<script>
-  $(document).ready(function(){
-  	
-  });
-</script>

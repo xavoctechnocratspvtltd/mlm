@@ -173,7 +173,8 @@ class View_GenologyStandard extends \View{
 		    	$this->template->del('Parent');
 		    }
 	        $this->template->del('Node');
-	        $this->js(true)->_selector('.main_div')->xtooltip();
+	        $this->js(true)->_selector('.main_div')->tooltip(["placement"=>'bottom','html'=>true]);
+	        // $this->js(true)->_selector('.main_div')->xtooltip();
 		}
 		return parent::render();
 	}

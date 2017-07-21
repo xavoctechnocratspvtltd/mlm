@@ -1,4 +1,4 @@
-.tree.main_div.mlm-tree.main-box(id='{$_name}', class='{$class}', style='{$style}')
+.tree.mlm-tree.main-box(id='{$_name}', class='{$class}', style='{$style}')
 	| {$Content}
 	| {Tree}
 	| {/Tree}
@@ -10,15 +10,10 @@
 			a(href='#xepan', onclick='{$ParentURL}') Go Up
 	| {/Parent}
 	| {Node}
-	ul.tree-view-ul.text-center.atk-size-giga(class='{$class}', title='{$title}')
-		//- .main_div.text-center.atk-size-giga()
-		//- i.fa.fa-user.fa-3x
-		//- |  {username}Username Here{/username}
-		//- div
-		//- hr
+	ul.tree-view-ul.text-center.atk-size-giga()
 		li
 			div.text-center
-				i.fa.fa-user.fa-3x(style="width:100%")
+				i.fa.fa-user.fa-3x.main_div(style="width:100%" class='{$class}', title='{$title}')
 				{username}Username Here{/username}
 			ul
 				li
@@ -131,7 +126,9 @@ style.
 	.tree li a:hover+ul ul::before{
 		border-color:  #94a0b4;
 	}
-script.
-	$(document).ready(function(){
-		
-	});
+//- script.
+//- 	$(document).ready(function(){
+//- 		$('.main_div').tooltip({
+//- 			placement : 'top'
+//- 		});
+//- 	});	
