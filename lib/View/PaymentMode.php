@@ -293,7 +293,8 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 							'exchange_rate' => $this->app->epan->default_currency['value'],
 							'tnc_id'=>$tnc_id,
 							'tnc_text'=> $tnc_text,
-							'status' => "OnlineUnpaid"
+							'status' => "OnlineUnpaid",
+							'due_date'=>$this->app->nextDate($this->app->now)
 						];
 
 			$detail_data = [];
