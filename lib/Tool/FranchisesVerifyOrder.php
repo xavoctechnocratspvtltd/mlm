@@ -13,7 +13,6 @@ class Tool_FranchisesVerifyOrder extends \xepan\cms\View_Tool{
 		
 		if($this->owner instanceof \AbstractController) return;
 		
-
 		$this->addClass('main-box franchises-order-verification');
 		$this->js('reload')->reload();
 
@@ -126,7 +125,9 @@ class Tool_FranchisesVerifyOrder extends \xepan\cms\View_Tool{
 					$view = $page->add('xavoc\mlm\View_FranchisesDispatch',['order_id'=>$this->saleOrder->id]);
 					$ret = $view->getReturnJs();
 					if ($ret instanceof \jQuery_Chain) {
-						$js_event = [$ret,$this->js()->_selector('.franchises-order-verification')->trigger('reload')];
+						$this->app->stickyForget('order_id');
+						$js_event = [$ret,$this->app->redirect($this->app->url())];
+						// $js_event = [$ret,$this->js()->_selector('.franchises-order-verification')->trigger('reload')];
 						$this->app->js(true,$js_event)->execute();
 					}
 				});
