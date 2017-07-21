@@ -57,6 +57,18 @@ class View_FranchisesDispatch extends \View{
 			->load($oi_id);
 
 		$ret = $x->page_dispatch($this);
+		
+		if ($ret instanceof \jQuery_Chain) {
+			$sd = $this->add('xepan\commerce\Model_Store_Delivered');
+			$sd->addCondition('related_document_id',$order_model->id);
+			$sd->addCondition('status',['Delivered','Shipped']);
+			$sd->tryLoadAny();
+			if($sd->loaded()){
+				$order = $this->add('xepan\commerce\Model_SalesOrder');
+				$order->load($order_model->id);
+				$order->complete();
+			}
+		}
 
 		$this->return_js = $ret;
 	}
