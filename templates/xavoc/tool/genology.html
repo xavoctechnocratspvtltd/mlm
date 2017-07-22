@@ -3,10 +3,8 @@
   {$Content}
   {Tree}
   {/Tree}
-  {Parent}
-  <div class="atk-section text-center">
-    <div class="text-center atk-swatch-blue atk-box-small text-left"><a href="#xepan" onclick="{$MyURL}">My Tree</a></div>
-    <div class="text-center atk-swatch-blue atk-box-small text-right"><a href="#xepan" onclick="{$ParentURL}">Go Up</a></div>
+  <div class="atk-clear-fix"></div>{Parent}
+  <div class="atk-section text-center btn-group"><a href="#xepan" onclick="{$MyURL}" class="btn btn-success">My Tree</a><a href="#xepan" onclick="{$ParentURL}" class="btn btn-primary">Go Up</a>
   </div>{/Parent}
   {Node}
   <ul class="tree-view-ul text-center atk-size-giga">
@@ -122,5 +120,29 @@
   	border:1px solid gray;
   	box-shadow:5px 5px 5px 10px rgba(0, 0, 0, 0.3);;		
   }
+  .atk-clear-fix::before, .atk-clear-fix::after {
+      content: "";
+      display: table!important;
+      line-height: 0;
+      width: 100%;
+  }
+  .atk-clear-fix::after {
+      clear: both;
+  }
+  .atk-clear-fix::before, .atk-clear-fix::after {
+      content: "";
+      display: table;
+      line-height: 0;
+      width: 100%;
+  }
+  .tree .atk-section a{
+  	color:white;
+  }
+  .tree .atk-section{
+  	margin-left: auto;
+      margin-right: auto;
+  	margin-top: 25px;
+  	text-align: center;
+  	width: 100%;
+  }
 </style>
-<script></script>
