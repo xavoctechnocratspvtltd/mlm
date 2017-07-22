@@ -15,11 +15,11 @@ class page_config extends \xepan\base\Page{
 		$tab = $this->add('Tabs');
 		
 		$g_tab = $tab->addTab('Generation Income Slab');
-		$g_crud = $g_tab->add('xepan\hr\CRUD');
+		$g_crud = $g_tab->add('xepan\hr\Grid');
 		$g_crud->setModel('xavoc\mlm\GenerationIncomeSlab');
 		
 		$r_tab = $tab->addTab('RePurchase Bonus Slab');
-		$r_crud = $r_tab->add('xepan\hr\CRUD');
+		$r_crud = $r_tab->add('xepan\hr\Grid');
 		$r_crud->setModel('xavoc\mlm\RePurchaseBonusSlab');
 
 		// welcome mail and sms
