@@ -34,8 +34,12 @@
 style.
 	/*Now the CSS*/
 	* {margin: 0; padding: 0;}
+	.main-box{
+		min-height:900px;
+	}
 	.main-box > ul{
 		width:1100px;
+
 	}
 	.tree ul {
 		padding-top: 20px; position: relative;
@@ -132,7 +136,10 @@ style.
 		background:white!important;
 		color:black;
 		border:1px solid gray;
-		box-shadow:5px 5px 5px 10px rgba(0, 0, 0, 0.3);;		
+		box-shadow:5px 5px 5px 10px rgba(0, 0, 0, 0.3);
+		width:250px;
+		max-width:250px;
+		font-size:10px;		
 	}
 	.atk-clear-fix::before, .atk-clear-fix::after {
 	    content: "";
@@ -159,3 +166,17 @@ style.
 		text-align: center;
 		width: 100%;
 	}
+	table {
+	    font-family: arial, sans-serif;
+	    width: 100%;
+	    text-align:left!important;
+	}
+
+
+	tr:nth-child(even) {
+	    background-color: #dddddd;
+	}
+	.tree > ul > li {
+	    margin-left: 100px;
+	}
+

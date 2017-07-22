@@ -117,43 +117,99 @@ class View_GenologyStandard extends \View{
 			$kit_item = $this->add('xepan/commerce/Model_Item')->tryLoad($model['kit_item_id'])->get('name');
 		else
 			$kit_item="-";
-
-		$str= 
-				$model['name'].
-				"<br/>Jn: ". date("d M Y", strtotime($model['created_at'])). 
-				"<br/>Gr: ". $greened_on_date. 
-				"<br/>Kit: ". $kit_item ." SV(".$model['sv'].")"."BV(".$model['bv'].")".
-				"<br/>Intro: ". $model['introducer'] .
-				"<br/><table border='1' width='100%'>
-					<tr>
-						<th> Session </th><th> Left </th><th> Right </th>
-					</tr>
-					<tr>
-						<th>SV</th><td>".$model['day_left_sv']."</td><td>".$model['day_right_sv']."</td>
-					</tr>
-					</table>
-					<div class='atk-box-small'>Gen Business: ".$model['generation_business']."</div>
-					<div class='atk-box-small'>Month Self BV: ".$model['month_self_bv']."</div>
-					<div class='atk-box-small atk-swatch-green'>Session Intros: ".$model['session_intros_amount']." /-</div>
-					<div class='atk-box-small atk-size-mega atk-swatch-green'>Downline</div>
-					<table border='1' width='100%'>
-						<tr>
-							<td>&nbsp;</td>
-							<td>Left</td>
-							<td>Right</td>
-						</tr>
-						<tr>
-							<td>Total</td>
-							<td>". $model->newInstance()->addCondition('path','like',$model['path'].'A%')->count()->getOne() ."</td>
-							<td>". $model->newInstance()->addCondition('path','like',$model['path'].'B%')->count()->getOne() ."</td>
-						</tr>
-						<tr>
-							<td>Green</td>
-							<td>". $model->newInstance()->addCondition('path','like',$model['path'].'A%')->addCondition('greened_on','<>',null)->addCondition('ansestors_updated',true)->count()->getOne() ."</td>
-							<td>". $model->newInstance()->addCondition('path','like',$model['path'].'B%')->addCondition('greened_on','<>',null)->addCondition('ansestors_updated',true)->count()->getOne() ."</td>
-						</tr>
-					</table>
-					";
+		$str = "
+				<table  style='width:100%;font-size:10px'>
+				  <tr>
+				  	<th class='text-center'>".$model['name']."</th>
+				  </tr>
+				  <tr>
+				  	<td>
+				    <table  style='width:100%'>
+				    	<tr>
+				    		<th >Joining. Date<br/>". date("d M Y", strtotime($model['created_at']))."</th>
+				    		<th >Green. Date<br/>".$greened_on_date."</th>
+				    	</tr>
+				    </table>
+				    </td>
+				    
+				  </tr>
+				  <tr>
+				  	<td style='text-align:left'>Kit:(".$kit_item. "), SV:( ".$model['sv']." ), BV:( ".$model['bv']." ) </td>
+				  </tr>
+				  
+				  
+				  <tr>
+				  	<td>
+				    	<table  style='width:100%'>
+				           <tr>
+						  	<td >Intro:-".$model['introducer']."</td>
+						  </tr>
+				           <tr>
+				    			<td >Session:<br/> SV</td>
+				    			<td >Left:- <br/>".$model['day_left_sv']."</td>
+				    			<td > Right:- <br/>".$model['day_right_sv']."</td>
+				  			</tr>
+				  			<tr>
+				    			<td>Gen. Business:-<br/> ".$model['generation_business']." </td>
+				    			<td>Month Staff BV:-<br/> ".$model['month_self_bv']."</td>
+				    			<td>Session Intro:-<br/>".$model['session_intros_amount']." /-</td>
+				  			</tr>
+				  			<tr>
+				              <th >Downline </th>
+				              <th >Left</th>
+				              <th >Right</th>
+				            </tr>
+				            <tr>
+				              <td>Total<br/>Green</td>
+				              <td>".$model->newInstance()->addCondition('path','like',$model['path'].'A%')->count()->getOne() .
+				              "<br/>".
+				              		$model->newInstance()->addCondition('path','like',$model['path'].'A%')->addCondition('greened_on','<>',null)->addCondition('ansestors_updated',true)->count()->getOne() ."</td>
+				              
+				              <td>". $model->newInstance()->addCondition('path','like',$model['path'].'B%')->count()->getOne() .
+				              "<br/>
+				              		". $model->newInstance()->addCondition('path','like',$model['path'].'B%')->addCondition('greened_on','<>',null)->addCondition('ansestors_updated',true)->count()->getOne() ."
+				              </td>
+				            </tr>
+				        </table>
+				    </td>    
+				  </tr>				  
+				</table>";		
+		// $str= 
+		// 		$model['name'].
+		// 		"<br/>Jn: ". date("d M Y", strtotime($model['created_at'])). 
+		// 		"<br/>Gr: ". $greened_on_date. 
+		// 		"<br/>Kit: ". $kit_item ." SV(".$model['sv'].")"."BV(".$model['bv'].")".
+		// 		"<br/>Intro: ". $model['introducer'] .
+		// 		"<br/><table border='1' width='100%'>
+		// 			<tr>
+		// 				<th> Session </th><th> Left </th><th> Right </th>
+		// 			</tr>
+		// 			<tr>
+		// 				<th>SV</th><td>".$model['day_left_sv']."</td><td>".$model['day_right_sv']."</td>
+		// 			</tr>
+		// 			</table>
+		// 			<div class='atk-box-small'>Gen Business: ".$model['generation_business']."</div>
+		// 			<div class='atk-box-small'>Month Self BV: ".$model['month_self_bv']."</div>
+		// 			<div class='atk-box-small atk-swatch-green'>Session Intros: ".$model['session_intros_amount']." /-</div>
+		// 			<div class='atk-box-small atk-size-mega atk-swatch-green'>Downline</div>
+		// 			<table border='1' width='100%'>
+		// 				<tr>
+		// 					<td>&nbsp;</td>
+		// 					<td>Left</td>
+		// 					<td>Right</td>
+		// 				</tr>
+		// 				<tr>
+		// 					<td>Total</td>
+		// 					<td>". $model->newInstance()->addCondition('path','like',$model['path'].'A%')->count()->getOne() ."</td>
+		// 					<td>". $model->newInstance()->addCondition('path','like',$model['path'].'B%')->count()->getOne() ."</td>
+		// 				</tr>
+		// 				<tr>
+		// 					<td>Green</td>
+		// 					<td>". $model->newInstance()->addCondition('path','like',$model['path'].'A%')->addCondition('greened_on','<>',null)->addCondition('ansestors_updated',true)->count()->getOne() ."</td>
+		// 					<td>". $model->newInstance()->addCondition('path','like',$model['path'].'B%')->addCondition('greened_on','<>',null)->addCondition('ansestors_updated',true)->count()->getOne() ."</td>
+		// 				</tr>
+		// 			</table>
+		// 			";
 		$str= str_replace("'", "\'", $str);
 		$str= str_replace("\n", "", $str);
 		return $str;
