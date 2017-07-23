@@ -146,8 +146,8 @@ class Model_Closing extends \xepan\base\Model_Table {
 		// copy all distributors in here
 		$q="
 			INSERT INTO mlm_payout
-						(id, closing_id, distributor_id,sponsor_id, introducer_id,closing_date,previous_carried_amount, binary_income, introduction_amount, retail_profit,slab_percentage,month_self_bv,generation_income,loyalty_bonus,gross_payment,tds, net_payment,  carried_amount)
-				SELECT 	  0,$closing_id,distributor_id, sponsor_id, introducer_id,'$on_date'  ,carried_amount         , week_pairs   , weekly_intros_amount,      0       ,          0    ,     0      ,      0          ,       0     ,     0       , 0 ,     0      ,        0       FROM mlm_distributor 
+						(id, closing_id, distributor_id,sponsor_id, introducer_id,closing_date,previous_carried_amount, binary_income, introduction_amount, retail_profit,slab_percentage,month_self_bv,generation_income,loyalty_bonus,gross_payment,tds, net_payment,  carried_amount, saved_monthly_green_intros, saved_weekly_intros_amount, saved_total_intros_amount, saved_day_left_sv, saved_day_right_sv, saved_day_pairs, saved_week_pairs, saved_total_left_sv, saved_total_right_sv, saved_month_self_bv, saved_total_self_bv, saved_month_bv, saved_total_month_bv, saved_quarter_bv_saved, saved_monthly_retail_profie, saved_total_pairs)
+				SELECT 	  0,$closing_id,distributor_id, sponsor_id, introducer_id,'$on_date'  ,carried_amount         , week_pairs   , weekly_intros_amount,      0       ,          0    ,     0      ,      0          ,       0     ,     0       , 0 ,     0      ,        0       , monthly_green_intros, weekly_intros_amount, total_intros_amount, day_left_sv, day_right_sv, day_pairs, week_pairs, total_left_sv, total_right_sv, month_self_bv, total_self_bv, month_bv, total_month_bv, quarter_bv_saved, monthly_retail_profie, total_pairs FROM mlm_distributor 
 		";
 				// WHERE greened_on is not null
 
@@ -326,8 +326,8 @@ class Model_Closing extends \xepan\base\Model_Table {
 		// copy all distributors in here
 		$q="
 			INSERT INTO mlm_payout
-						(id, closing_id, distributor_id,sponsor_id, introducer_id,closing_date,previous_carried_amount, binary_income, introduction_amount, retail_profit,slab_percentage,month_self_bv,generation_income,loyalty_bonus,gross_payment,tds, net_payment,  carried_amount)
-				SELECT 	  0,$closing_id,distributor_id, sponsor_id, introducer_id,'$on_date'  ,carried_amount         , 0            ,         0          ,      0       ,          0    ,month_self_bv,      0          ,       0     ,     0       , 0 ,     0      ,        0       FROM mlm_distributor 
+						(id, closing_id, distributor_id,sponsor_id, introducer_id,closing_date,previous_carried_amount, binary_income, introduction_amount, retail_profit,slab_percentage,month_self_bv,generation_income,loyalty_bonus,gross_payment,tds, net_payment,  carried_amount, saved_monthly_green_intros, saved_weekly_intros_amount, saved_total_intros_amount, saved_day_left_sv, saved_day_right_sv, saved_day_pairs, saved_week_pairs, saved_total_left_sv, saved_total_right_sv, saved_month_self_bv, saved_total_self_bv, saved_month_bv, saved_total_month_bv, saved_quarter_bv_saved, saved_monthly_retail_profie, saved_total_pairs)
+				SELECT 	  0,$closing_id,distributor_id, sponsor_id, introducer_id,'$on_date'  ,carried_amount         , 0            ,         0          ,      0       ,          0    ,month_self_bv,      0          ,       0     ,     0       , 0 ,     0      ,        0       ,  monthly_green_intros, weekly_intros_amount, total_intros_amount, day_left_sv, day_right_sv, day_pairs, week_pairs, total_left_sv, total_right_sv, month_self_bv, total_self_bv, month_bv, total_month_bv, quarter_bv_saved, monthly_retail_profie, total_pairs FROM mlm_distributor 
 		";
 				// WHERE greened_on is not null
 
