@@ -118,7 +118,7 @@ class View_GenologyStandard extends \View{
 		else
 			$kit_item="-";
 		$str = "
-				<table  style='width:100%;font-size:10px'>
+				<table  style='width:100%;font-size:10px ' width:'100%'>
 				  <tr>
 				  	<th class='text-center'>".$model['name']."</th>
 				  </tr>
