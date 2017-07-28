@@ -126,8 +126,8 @@ class View_VerifyRepurchasePayment extends \View{
 			}
 
 			$js_event = [
-				$form->js()->_selector('.ds-order-grid')->trigger('reload'),
-				$form->js()->closest('.dialog')->dialog('close')
+				// $form->js()->_selector('.ds-order-grid')->trigger('reload'),
+				$form->js()->_selector('.dialog')->dialog('close')
 			];
 
 			$form->js(null,$js_event)->univ()->successMessage('payment verified')->execute();
