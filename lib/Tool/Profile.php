@@ -58,7 +58,7 @@ class Tool_Profile extends \xavoc\mlm\Tool_Distributor{
 		// profile 
 		$col = $profile_tab->add('Columns');
 		$left = $col->addColumn(8);
-		$pro_fields = ['dob','country_id','state_id','city','address','pin_code','image_id','image'];
+		$pro_fields = ['dob','country_id','state_id','city','address','pin_code','pan_no','image_id','image'];
 		$form = $left->add('Form');
 		$form->add('View')->setHtml("<strong>Name: </strong><br/> ".$distributor['first_name']." ".$distributor['last_name']);
 		// $f_c = $form->add('Columns');
