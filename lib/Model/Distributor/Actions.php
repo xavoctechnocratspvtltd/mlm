@@ -270,9 +270,13 @@ class Model_Distributor_Actions extends \xavoc\mlm\Model_Distributor
 		
 		$form->addSubmit('update');
 		if($form->isSubmitted()){
-			$form->update();
-			$user['username'] = $form['user_name'];
-			$user->save();
+			try{
+				$form->update();
+				$user['username'] = $form['user_name'];
+				$user->save();
+			}catch(\Exception $e){
+				$this->app->js()->univ()->errorMessage($e->getMessage())->execute();
+			}
 			$this->app->page_action_result = $form->js(null,$form->js()->closest('.dialog')->dialog('close'))->univ()->successMessage('Distributor detail updated');		
 		}
 

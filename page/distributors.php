@@ -43,6 +43,8 @@ class page_distributors extends \xepan\base\Page {
 				$state_field->getModel()->addCondition('country_id',$_GET['country_id']);
 			}
 		}
+
+		$crud->grid->js(true)->_selector('.table-responsive')->css('min-height','300px');
 		
 	}
 
