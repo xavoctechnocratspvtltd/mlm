@@ -33,6 +33,7 @@ class Tool_Profile extends \xavoc\mlm\Tool_Distributor{
 			$doc_tab->add('View_Error')->set("more thenn one kyc attachment found");
 		}else{
 			$form = $doc_tab->add('Form');
+			$form->addField('pan_no')->validate('required')->set($distributor['pan_no']);
 			$form->setModel($attachment,['pan_card_id','aadhar_card_id','driving_license_id']);
 			$form->addField('bank_account_number')->validate('required');
 			$form->addField('bank_name')->validate('required');
@@ -45,6 +46,7 @@ class Tool_Profile extends \xavoc\mlm\Tool_Distributor{
 				
 				$form->update();
 
+				$distributor['pan_no'] = $form['pan_no'];
 				$distributor['d_account_number'] = $form['bank_account_number'];
 				$distributor['d_bank_name'] = $form['bank_name'];
 				$distributor['d_bank_ifsc_code'] = $form['bank_ifsc_code'];
@@ -58,7 +60,7 @@ class Tool_Profile extends \xavoc\mlm\Tool_Distributor{
 		// profile 
 		$col = $profile_tab->add('Columns');
 		$left = $col->addColumn(8);
-		$pro_fields = ['dob','country_id','state_id','city','address','pin_code','pan_no','image_id','image'];
+		$pro_fields = ['dob','country_id','state_id','city','address','pin_code','image_id','image','pan_no'];
 		$form = $left->add('Form');
 		$form->add('View')->setHtml("<strong>Name: </strong><br/> ".$distributor['first_name']." ".$distributor['last_name']);
 		// $f_c = $form->add('Columns');
