@@ -319,7 +319,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 	function monthlyClosing($closing_id,$on_date,$calculate_loyalty=false){
 		if(!$on_date) $on_date = $this->app->now;
 
-		if(date('d', strtotime($on_date)) !== '01'){
+		if(date('d', strtotime($on_date)) !== '05'){
 			throw new \Exception("Monthly closing must be on 01st of month 00:00 After Previous Month Finished", 1);
 		}
 
@@ -718,10 +718,10 @@ class Model_Closing extends \xepan\base\Model_Table {
 			WHERE
 				(
 					/* ???????????????????????? */
-					(p.month_self_bv < 250 OR d.monthly_green_intros = 0) OR
-					net_payment < 500 OR
+					/*(p.month_self_bv < 250 OR d.monthly_green_intros = 0) OR*/
+					net_payment < 500 /*OR
 					d.is_document_verified = 0 OR
-					d.is_document_verified is null
+					d.is_document_verified is null*/
 					/*
 					OR (select count(distributor_id) from mlm_distributor li where li.introducer_id = d.distributor_id and li.path like concat(d.path,'A%')) < 1
 					OR (select count(distributor_id) from mlm_distributor ri where ri.introducer_id = d.distributor_id and ri.path like concat(d.path,'B%')) < 1
