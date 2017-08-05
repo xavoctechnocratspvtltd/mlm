@@ -23,6 +23,7 @@ class Initiator extends \Controller_Addon {
         $m->addItem(['Store Activity','icon'=>'fa fa-check-square-o'],'xavoc_dm_store_activity');
         $m->addItem(['Configuration','icon'=>'fa fa-check-square-o'],'xavoc_dm_config');
         $m->addItem(['Set Date','icon'=>'fa fa-check-square-o'],'xavoc_dm_setdate');
+        $m->addItem(['Pan Update','icon'=>'fa fa-check-square-o'],'xavoc_dm_report_panupdate');
 
         $this->addAppFunctions();
 
