@@ -7,11 +7,11 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 	public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 	public $actions = [
-				'Red'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName'],
-				'KitSelected'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName'],
-				'KitPaid'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName'],
-				'Green'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName'],
-				'Blocked'=>['view','edit','delete','Unblocked']
+				'Red'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName','payouts'],
+				'KitSelected'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName','payouts'],
+				'KitPaid'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName','payouts'],
+				'Green'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName','payouts'],
+				'Blocked'=>['view','edit','delete','Unblocked','payouts']
 			];
 	
 	public $acl_type= "mlm_distributor";

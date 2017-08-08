@@ -282,4 +282,17 @@ class Model_Distributor_Actions extends \xavoc\mlm\Model_Distributor
 
 	}
 
+	function page_payouts($page){
+		$g=$page->add('Grid');
+		$m=$this->add('xavoc\mlm\Model_Payout');
+		$m->addExpression('closing_type')->set(function($m1,$q){
+			return $m1->refSQL('closing_id')->fieldQuery('type');
+		});
+		$m->addCondition('distributor_id',$this->id);
+		$m->setOrder('closing_date');
+		$g->setModel($m);
+		$g->addOrder()->move('closing_type','first')->now();
+		$g->add("misc/Export");
+	}
+
 }
