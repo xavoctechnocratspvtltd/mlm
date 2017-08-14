@@ -131,6 +131,9 @@ class Tool_Profile extends \xavoc\mlm\Tool_Distributor{
 				$change_pass_form->displayError('old_password','Password not match');
 
 			if($user->updatePassword($change_pass_form['new_password'])){
+				$this->distributor['password'] = $change_pass_form['new_password'];
+				$this->distributor->save();
+
 				$this->app->auth->logout();
 				$this->app->redirect($this->options['login_page']);
 				// $change_pass_form->js()->univ()->successMessage('Password Changed Successfully')->execute();

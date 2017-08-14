@@ -28,7 +28,7 @@ class Tool_DashBoard extends \xavoc\mlm\Tool_Distributor{
 			// $this->add('Button')->set('click to login')->js('click')->univ()->redirect($this->app->url($this->options['login_page']));
 			// $this->app->redirect($this->app->url($this->options['login_page']));
 		}
-
+		
 		$this->add('xavoc\mlm\View_ProfileChecker');
 
 		$col = $this->add('Columns')->addClass('row');
