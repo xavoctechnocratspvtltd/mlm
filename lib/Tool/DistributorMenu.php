@@ -26,20 +26,44 @@ class Tool_DistributorMenu extends \xavoc\mlm\Tool_Distributor{
 				['key'=>'generation','name'=>'Generation'],
 				['key'=>'repurchase','name'=>'Repurchase'],
 				['key'=>'mypayouts','name'=>'My Payouts'],
-				['key'=>'index.php?page=distributorreports&report=downline','name'=>'Reports'],
+				['key'=>'reports','name'=>'Reports'],
 				// ['key'=>'mywallet','name'=>'My Wallet'],
 				['key'=>'myorder','name'=>'My Orders'],
 				['key'=>'setting','name'=>'Settings'],
 			];
 
+		$submenu_list = ['reports'=>[
+							'index.php?page=distributorreports&report=downline'=>'report 1',
+							'index.php?page=distributorreports&report=intros-list'=>'report 2'
+							]
+						];
+		
 		$this->complete_lister = $cl = $this->add('CompleteLister',null,null,['view/distributormenu']);
 		$cl->setSource($menu);
 		$page = $this->app->page;	
-		$cl->addHook('formatRow',function($g)use($page){
+		$cl->addHook('formatRow',function($g)use($page,$submenu_list){
+			$submenu_html = "";
+			$submenu_class = "";
+
+			if(isset($submenu_list[$g->model['key']])){
+				$submenu_html = '<ul class="dropdown-menu">';
+				foreach ($submenu_list[$g->model['key']] as $s_key => $s_value) {
+					$submenu_html .= '<li><a class="dropdown-item" href="'.$s_key.'">'.$s_value.'</a></li>';
+				}
+				$submenu_html .= '</ul>';
+				$submenu_class = "dropdown";
+
+				$g->current_row_html['list'] = '<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">'.$g->model['name'].' <span class="caret"></span></a>';
+			}else{
+				$g->current_row_html['list'] = '<a href="'.$g->model['key'].'">'.$g->model['name'].'</a>';
+			}
+
 			if($g->model['key'] == $page)
-				$g->current_row_html['active_menu'] = "active";
+				$g->current_row_html['active_menu'] = "active ".$submenu_class;
 			else
-				$g->current_row_html['active_menu'] = "deactive";
+				$g->current_row_html['active_menu'] = "deactive ".$submenu_class;
+			
+			$g->current_row_html['submenu'] = $submenu_html;
 		});
 
 		$cl->template->trySet('distributor_name',$distributor['name']);
@@ -47,5 +71,7 @@ class Tool_DistributorMenu extends \xavoc\mlm\Tool_Distributor{
 
 		$cl->template->trySet('distributor_name',$distributor['name']);
 		$cl->template->trySet('user_name',$this->app->auth->model['username']);
+		
+		$this->js(true)->_selector('.dropdown-toggle')->dropdown();
 	}
 }
