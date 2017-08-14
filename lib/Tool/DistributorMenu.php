@@ -2,7 +2,7 @@
 
 namespace xavoc\mlm;
 
-class Tool_DistributorMenu extends \xavoc\mlm\Tool_Distributor{ 
+class Tool_DistributorMenu extends \xavoc\mlm\Tool_Distributor{
 	public $options = ['login_page'=>'login'];
 
 	function init(){

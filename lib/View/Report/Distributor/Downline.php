@@ -51,10 +51,13 @@ class View_Report_Distributor_Downline extends \View{
 			return $q->expr('DATE([0])',[$m->getElement('greened_on')]);
 		});
 
+		
 		if($this->report_status == "active"){
 			$downline->addCondition('green_on','<>',null);
+			$name = "Active Downline Report";
 		}else{
 			$downline->addCondition('green_on',null);
+			$name = "Inactive Downline Report";
 		}
 
 		if($_GET['search_distributor']){
@@ -65,6 +68,8 @@ class View_Report_Distributor_Downline extends \View{
 									['city',$_GET['search_distributor']],
 									['state',$_GET['search_distributor']],
 								]);
+
+			$search_field->set($_GET['search_distributor']);
 		}
 		
 		// if($_GET['status']){
