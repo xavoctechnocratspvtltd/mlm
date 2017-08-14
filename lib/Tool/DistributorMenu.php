@@ -33,11 +33,14 @@ class Tool_DistributorMenu extends \xavoc\mlm\Tool_Distributor{
 			];
 
 		$submenu_list = ['reports'=>[
-							'index.php?page=distributorreports&report=downline'=>'report 1',
-							'index.php?page=distributorreports&report=intros-list'=>'report 2'
+							'index.php?page=distributorreports&report=active-downline'=>'Active Downline',
+							'index.php?page=distributorreports&report=inactive-downline'=>'Inactive Downline',
+							'index.php?page=distributorreports&report=active-intros-list'=>'Active Sponsored',
+							'index.php?page=distributorreports&report=inactive-intros-list'=>'Inactive Sponsored',
+							'index.php?page=distributorreports&report=direct-downline-business'=>'Direct Downline Business',
 							]
 						];
-		
+
 		$this->complete_lister = $cl = $this->add('CompleteLister',null,null,['view/distributormenu']);
 		$cl->setSource($menu);
 		$page = $this->app->page;	
