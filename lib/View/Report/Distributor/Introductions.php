@@ -52,10 +52,15 @@ class View_Report_Distributor_Introductions extends \View{
 			return $q->expr('DATE([0])',[$m->getElement('greened_on')]);
 		});
 
+
 		if($this->report_status == "active"){
 			$downline->addCondition('green_on','<>',null);
+			$name = "Active Sponsored Report";
 		}elseif($this->report_status == "inactive"){
 			$downline->addCondition('green_on',null);
+			$name = "Inactive Sponsored Report";
+		}else{
+			$name = "Direct Downline Report";
 		}
 
 		if($_GET['search_distributor']){
@@ -93,12 +98,17 @@ class View_Report_Distributor_Introductions extends \View{
 		}elseif($this->report_status == "downline_business"){
 			$fields = ['joining','user','name','month_self_bv','total_month_bv'];
 		}
-		$downline->getElement('green_on')->caption('Activation');
 
+		$downline->getElement('green_on')->caption('Act. Date');
+		$downline->getElement('user')->caption('User ID');
+		$downline->getElement('name')->caption('User Name');
+		// $downline->getElement('green_on')->caption('Activation');
+
+		$this->add('View')->setElement('h3')->set($name.' ('.$downline->count()->getOne().')');
 		$this->add('View')->setElement('hr');
 		$grid = $this->add('xepan\hr\Grid');
 		$grid->setModel($downline,$fields);
-		$grid->addSno();
+		$grid->addSno('Sr. No.');
 		$grid->addPaginator($ipp=100);
 		// reload self view with form values
 		if($form->isSubmitted()){

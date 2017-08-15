@@ -29,6 +29,7 @@ class Tool_MyOrder extends \xavoc\mlm\Tool_Distributor{
 		$my_order->addCondition('contact_id',$distributor->id);
 		$my_order->setOrder('id','desc');
 		$my_order->getElement('document_no')->caption('Order No.');
+		$my_order->getElement('created_at')->caption('Order Date');
 		$grid = $this->add('Grid');
 		$grid->setModel($my_order,['document_no','created_at','status','invoice_detail','items']);
 		$self = $this;

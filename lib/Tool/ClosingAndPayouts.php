@@ -82,7 +82,7 @@ class Tool_ClosingAndPayouts extends \xepan\cms\View_Tool{
 		$this->add('View')->setStyle('height','30px');
 
 		$v = $this->add('View')->addClass('main-box');
-		$v->add('View')->setElement('h5')->set('Previous');
+		$v->add('View')->setElement('h5')->set('Previous Months');
 		$grid = $v->add('xepan\base\Grid');
 
 		// $grid->addColumn('detail');
@@ -93,7 +93,7 @@ class Tool_ClosingAndPayouts extends \xepan\cms\View_Tool{
 
 	function allPayout(){
 		$this->add('View')->setElement('h4')->set('Payout\'s');
-		$grid = $this->add('xepan\base\Grid');
+		$grid = $this->add('xepan\base\Grid')->addClass('main-box');
 		$grid->setModel($this->payout,['date','previous_carried_amount','binary_income','introduction_amount','retail_profit','repurchase_bonus','generation_income','loyalty_bonus','leadership_bonus','gross_payment','tds','admin_charge','net_payment','carried_amount']);
 		$grid->addPaginator($ipp=25);
 	}
