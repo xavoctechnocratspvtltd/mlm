@@ -2,7 +2,6 @@
 
 namespace xavoc\mlm;
 
-
 class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 	public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];

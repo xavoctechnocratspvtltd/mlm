@@ -1,2 +1,50 @@
 div(id="{$_name}" class=" {$class} " style="{$style}")
+	{$header_section}
+	.row
+		.col-md-2.col-sm-12.col-lg-2(style="font-size:20px;") Recent News: 
+		.col-md-10.col-sm-12.col-lg-10 {$news_section}
+	hr
+	h3 Profile
+	.row(style="outline:1px solid #f3f3f3;")
+		.col-lg-4.col-md-4.col-sm-12.col-xs-12(style="outline:1px solid #f3f3f3;padding-top:10px;")
+			{profile}
+			.row
+				.col-md-6.col-lg-6.col-xs-12.col-sm-12.text-right 
+					p Registration Date:
+				.col-md-6.col-lg-6.col-xs-12.col-sm-12 {$registration_date}
+			.row
+				.col-md-6.col-lg-6.col-xs-12.col-sm-12.text-right 
+					p Activation Date:
+				.col-md-6.col-lg-6.col-xs-12.col-sm-12 {$activation_date}
+			p(style="height:10px;")
+			.row
+				.col-md-6.col-lg-6.col-xs-12.col-sm-12.text-right 
+					p Distributor Name:
+				.col-md-6.col-lg-6.col-xs-12.col-sm-12 {$name}
+			.row
+				.col-md-6.col-lg-6.col-xs-12.col-sm-12.text-right 
+					p City/State:
+				.col-md-6.col-lg-6.col-xs-12.col-sm-12 {$city}/{$state}
+			.row
+				.col-md-6.col-lg-6.col-xs-12.col-sm-12.text-right 
+					p Mobile No:
+				.col-md-6.col-lg-6.col-xs-12.col-sm-12 {$mobile_number}
+			.row
+				.col-md-6.col-lg-6.col-xs-12.col-sm-12.text-right 
+					p Email id:
+				.col-md-6.col-lg-6.col-xs-12.col-sm-12 {$email}
+			.row
+				.col-md-6.col-lg-6.col-xs-12.col-sm-12.text-right 
+					p Package Name:
+				.col-md-6.col-lg-6.col-xs-12.col-sm-12
+					{$package_code} <br/> {$package_name}
+			p(style="height:10px;")
+			.row
+				.col-md-6.col-lg-6.col-xs-12.col-sm-12.text-right 
+					p Package Amount:
+				.col-md-6.col-lg-6.col-xs-12.col-sm-12 {$package_amount}&nbsp;
+					i.fa.fa-rupee
+			{/}
+		.col-lg-8.col-md-8.col-sm-12.col-xs-12(style="padding-top:10px;")
+			{$right_section}
 	{$Content}

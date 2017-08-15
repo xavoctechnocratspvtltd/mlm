@@ -22,23 +22,35 @@ class Tool_DistributorMenu extends \xavoc\mlm\Tool_Distributor{
 		$menu = [
 				['key'=>'dashboard','name'=>'Dashboard'],
 				['key'=>'panelregistration', 'name'=>'Registration'],
-				['key'=>'genology','name'=>'Genology'],
-				['key'=>'generation','name'=>'Generation'],
-				['key'=>'repurchase','name'=>'Repurchase'],
+				['key'=>'tree','name'=>'View'],
+				['key'=>'repurchase','name'=>'Shopping'],
 				['key'=>'mypayouts','name'=>'My Payouts'],
 				['key'=>'reports','name'=>'Reports'],
 				// ['key'=>'mywallet','name'=>'My Wallet'],
-				['key'=>'myorder','name'=>'My Orders'],
+				// ['key'=>'myorder','name'=>'My Orders'],
 				['key'=>'setting','name'=>'Settings'],
 			];
 
 		$submenu_list = ['reports'=>[
 							'index.php?page=distributorreports&report=active-downline'=>'Active Downline',
-							'index.php?page=distributorreports&report=inactive-downline'=>'Inactive Downline',
 							'index.php?page=distributorreports&report=active-intros-list'=>'Active Sponsored',
-							'index.php?page=distributorreports&report=inactive-intros-list'=>'Inactive Sponsored',
 							'index.php?page=distributorreports&report=direct-downline-business'=>'Direct Downline Business',
-							]
+							'index.php?page=distributorreports&report=inactive-intros-list'=>'Inactive Sponsored',
+							'index.php?page=distributorreports&report=inactive-downline'=>'Inactive Downline',
+							],
+							'tree'=>[
+								'genology'=>'Genology',
+								'generation'=>'Generation'
+							],
+							'mypayouts'=>[
+								'index.php?page=mypayouts&report=binary'=>'Binary',
+								'index.php?page=mypayouts&report=generation'=>'Generation',
+								'index.php?page=mypayouts&report=all'=>'All',
+							],
+							'repurchase'=>[
+									'repurchase'=>'Repurchase',
+									'myorder'=>'My Orders'
+								]
 						];
 
 		$this->complete_lister = $cl = $this->add('CompleteLister',null,null,['view/distributormenu']);

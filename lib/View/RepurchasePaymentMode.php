@@ -70,7 +70,9 @@ class View_RepurchasePaymentMode extends \View{
 					$this->app->db->rollback();
 					$form->js()->univ()->errorMessage($e->getMessage())->execute();
 				}						
-				$form->js(null,$form->js()->redirect($this->app->url('dashboard')))->univ()->successMessage('Order Placed and Payment Detail Submitted')->execute();
+				$order_no = $result['master_detail']['document_no'];
+				$form->js(null,$form->js()->redirect($this->app->url(null,['message'=>'Order Placed Successfully, Order No:'.$order_no])))->univ()->execute();
+				// $form->js(null,$form->js()->redirect($this->app->url('dashboard')))->univ()->successMessage('Order Placed and Payment Detail Submitted')->execute();
 		}
 
 
@@ -124,7 +126,10 @@ class View_RepurchasePaymentMode extends \View{
 					$this->app->db->rollback();
 					$dd_form->js()->univ()->errorMessage($e->getMessage())->execute();
 				}
-				$dd_form->js(null,$dd_form->js()->redirect($this->app->url('dashboard')))->univ()->successMessage('Order Placed and Payment Detail Submitted')->execute();
+
+				$order_no = $result['master_detail']['document_no'];
+				$dd_form->js(null,$dd_form->js()->redirect($this->app->url(null,['message'=>'Order Placed Successfully, Order No:'.$order_no])))->univ()->execute();
+				// $dd_form->js(null,$dd_form->js()->redirect($this->app->url('dashboard')))->univ()->successMessage('Order Placed and Payment Detail Submitted')->execute();
 		}
 		// end of dd--------
 
@@ -179,7 +184,10 @@ class View_RepurchasePaymentMode extends \View{
 					$this->app->db->rollback();
 					$cheque_form->js()->univ()->errorMessage($e->getMessage())->execute();
 				}
-				$cheque_form->js(null,$cheque_form->js()->redirect($this->app->url('dashboard')))->univ()->successMessage('Order Placed and Payment Detail Submitted')->execute();
+				
+				$order_no = $result['master_detail']['document_no'];
+				$cheque_form->js(null,$cheque_form->js()->redirect($this->app->url(null,['message'=>'Order Placed Successfully, Order No:'.$order_no])))->univ()->execute();
+				// $cheque_form->js(null,$cheque_form->js()->redirect($this->app->url('dashboard')))->univ()->successMessage('Order Placed and Payment Detail Submitted')->execute();
 		}
 
 		// pay via online process
