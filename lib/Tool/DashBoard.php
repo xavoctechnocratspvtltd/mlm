@@ -48,11 +48,20 @@ class Tool_DashBoard extends \xavoc\mlm\Tool_Distributor{
 		}
 
 		$this->addClass('main-box');
+		$config_model = $this->add('xepan\base\Model_ConfigJsonModel',
+		[
+			'fields'=>[
+						'recent_news'=>'text',
+					],
+				'config_key'=>'DM_RECENTNEWS',
+				'application'=>'mlm'
+		]);
+		$config_model->tryLoadAny();
 		$this->add('View',null,'news_section')
 				->setElement('marquee')
 				// ->setAttr('direction','right')
 				->setStyle('font-size','16px')
-				->set('Recent News');
+				->setHtml($config_model['recent_news']);
 
 
 		$this->add('xavoc\mlm\View_ProfileChecker',null,'profile');

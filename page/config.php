@@ -40,63 +40,61 @@ class page_config extends \xepan\base\Page{
 							'payout_sms_content'=>'Text',
 							'topup_mail_subject'=>'Line',
 							'topup_mail_content'=>'xepan\base\RichText',
-							'topup_sms_content'=>'Text',
+							'topup_sms_content'=>'Text'
 						],
 					'config_key'=>'DM_WELCOME_CONTENT',
 					'application'=>'mlm'
 			]);
 		$welcome_model->tryLoadAny();
+
 		$w_tab = $tab->addTab('Mail & SMS Layout');
-		// $form = $w_tab->add('Form');
-		// $form->setModel($welcome_model);
-		// $form->addSubmit('Save');
-		// if($form->isSubmitted()){
-		// 	$form->update();
-		// 	$form->js(null,$form->js()->reload())->univ()->successMessage('Saved')->execute();
-		// }
 
-		$f = $w_tab->add('Form');
-		$f->addField('line','welcome_mail_subject')->set($welcome_model['welcome_mail_subject']);
-		$f->addField('xepan\base\RichText','welcome_mail_content')->set($welcome_model['welcome_mail_content']);
-		$f->addField('text','welcome_sms_content')->set($welcome_model['welcome_sms_content']);
+		$tab = $w_tab->add('Tabs');
+		$welcome_tab = $tab->addTab('Red/ Registartion SMS/Email');
 
-		$f->addField('line','green_mail_subject')->set($welcome_model['green_mail_subject']);
-		$f->addField('xepan\base\RichText','green_mail_content')->set($welcome_model['green_mail_content']);
-		$f->addField('text','green_sms_content')->set($welcome_model['welcome_sms_content']);
-
-		$f->addField('line','deactivate_mail_subject')->set($welcome_model['deactivate_mail_subject']);
-		$f->addField('xepan\base\RichText','deactivate_mail_content')->set($welcome_model['deactivate_mail_subject']);
-		$f->addField('text','deactivate_sms_content')->set($welcome_model['deactivate_sms_content']);
-
-		$f->addField('line','payout_mail_subject')->set($welcome_model['payout_mail_subject']);
-		$f->addField('xepan\base\RichText','payout_mail_content')->set($welcome_model['payout_mail_content']);
-		$f->addField('text','payout_sms_content')->set($welcome_model['payout_sms_content']);
-
-		$f->addField('line','topup_mail_subject')->set($welcome_model['topup_mail_subject']);
-		$f->addField('xepan\base\RichText','topup_mail_content')->set($welcome_model['topup_mail_content']);
-		$f->addField('text','topup_sms_content')->set($welcome_model['topup_sms_content']);
-		$f->addSubmit('Update')->addClass('btn btn-primary');
+		$f = $welcome_tab->add('Form');
+		$f->setModel($welcome_model,['welcome_mail_subject','welcome_mail_content','welcome_sms_content']);
+		$f->addSubmit('Update');
 		if($f->isSubmitted()){
-
-			$welcome_model['welcome_mail_subject'] = $f['welcome_mail_subject'];	
-			$welcome_model['welcome_mail_content'] = $f['welcome_mail_content'];	
-			$welcome_model['welcome_sms_content'] = $f['welcome_sms_content'];	
-			$welcome_model['green_mail_subject'] = $f['green_mail_subject'];	
-			$welcome_model['green_mail_content'] = $f['green_mail_content'];	
-			$welcome_model['green_sms_content'] = $f['green_sms_content'];
-			$welcome_model['deactivate_mail_subject'] = $f['deactivate_mail_subject'];
-			$welcome_model['deactivate_mail_content'] = $f['deactivate_mail_content'];
-			$welcome_model['deactivate_sms_content'] = $f['deactivate_sms_content'];
-			$welcome_model['payout_mail_subject'] = $f['payout_mail_subject'];
-			$welcome_model['payout_mail_content'] = $f['payout_mail_content'];
-			$welcome_model['payout_sms_content'] = $f['payout_sms_content'];
-			$welcome_model['topup_mail_subject'] = $f['topup_mail_subject'];
-			$welcome_model['topup_mail_content'] = $f['topup_mail_content'];
-			$welcome_model['topup_sms_content'] = $f['topup_sms_content'];
-
-			$welcome_model->save();	
-
-			$f->js(null,$f->js()->reload())->univ()->successMessage('Saved')->execute();
+			$f->save();
+			$f->js()->reload()->univ()->successMessage('Saved Successfully')->execute();
 		}
+
+		$green_tab = $tab->addTab('Green/Activation SMS/Email');
+		$f = $green_tab->add('Form');
+		$f->setModel($welcome_model,['green_mail_subject','green_mail_content','green_sms_content']);
+		$f->addSubmit('Update');
+		if($f->isSubmitted()){
+			$f->save();
+			$f->js()->reload()->univ()->successMessage('Saved Successfully')->execute();
+		}
+
+		$d_tab = $tab->addTab('Deactivate Email/SMS');
+		$f = $d_tab->add('Form');
+		$f->setModel($welcome_model,['deactivate_mail_subject','deactivate_mail_content','deactivate_sms_content']);
+		$f->addSubmit('Update');
+		if($f->isSubmitted()){
+			$f->save();
+			$f->js()->reload()->univ()->successMessage('Saved Successfully')->execute();
+		}
+
+		$p_tab = $tab->addTab('Payout Email/SMS');
+		$f = $p_tab->add('Form');
+		$f->setModel($welcome_model,['payout_mail_subject','payout_mail_content','payout_sms_content']);
+		$f->addSubmit('Update');
+		if($f->isSubmitted()){
+			$f->save();
+			$f->js()->reload()->univ()->successMessage('Saved Successfully')->execute();
+		}
+
+		$t_tab = $tab->addTab('Topup Email/SMS');
+		$f = $t_tab->add('Form');
+		$f->setModel($welcome_model,['topup_mail_subject','topup_mail_content','topup_sms_content']);
+		$f->addSubmit('Update');
+		if($f->isSubmitted()){
+			$f->save();
+			$f->js()->reload()->univ()->successMessage('Saved Successfully')->execute();
+		}
+
 	}
 }

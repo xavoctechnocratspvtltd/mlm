@@ -27,7 +27,7 @@ class Tool_DistributorMenu extends \xavoc\mlm\Tool_Distributor{
 				['key'=>'mypayouts','name'=>'My Payouts'],
 				['key'=>'reports','name'=>'Reports'],
 				// ['key'=>'mywallet','name'=>'My Wallet'],
-				// ['key'=>'myorder','name'=>'My Orders'],
+				['key'=>'utility','name'=>'Utility'],
 				['key'=>'setting','name'=>'Settings'],
 			];
 
@@ -50,6 +50,10 @@ class Tool_DistributorMenu extends \xavoc\mlm\Tool_Distributor{
 							'repurchase'=>[
 									'repurchase'=>'Repurchase',
 									'myorder'=>'My Orders'
+								],
+							'utility'=>[
+								'index.php?page=utility&type=gallery'=>'Gallery',
+								'index.php?page=utility&type=download'=>'Download'
 								]
 						];
 
