@@ -107,10 +107,13 @@ class Tool_ClosingAndPayouts extends \xepan\cms\View_Tool{
 		$previous_payout->addExpression('date')->set($previous_payout->dsql()->expr(' DATE_FORMAT(closing_date,"%d %b %y")'));
 		$previous_payout->addCondition('month_year','<>',$this->current_month_year);
 		$previous_payout->addCondition('distributor_id',$this->distributor->id);
+		$previous_payout->addCondition('payout_type','WeeklyClosing');
 
-		$sum_field = ['previous_carried_amount','leadership_carried_amount','binary_income','introduction_amount','gross_payment','tds','admin_charge','net_payment','carried_amount'];
+		$sum_field = ['gross_payment','tds','admin_charge','net_payment'];
 		foreach ($sum_field as $key => $field) {
-			$previous_payout->addExpression('sum_'.$field)->set('sum('.$field.')')->caption(strtoupper(str_replace("_", " ", $field)));
+			$previous_payout->addExpression('sum_'.$field)->set('sum('.$field.')')
+				->caption(strtoupper(str_replace("_", " ", $field)))
+				->display(['grid'=>'text']);
 		}
 
 		$previous_payout->setOrder('id','desc');
