@@ -2,7 +2,6 @@
 
 namespace xavoc\mlm;
 
-
 class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 	public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
@@ -53,6 +52,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		$dist_j->addField('relation_with_nominee')->enum(['Mother','Father','Wife','Brother','Sister','Other']);
 		$dist_j->addField('nominee_email')->caption('Nominee email')->display(array('form'=>'xavoc\mlm\Email'));
 		$dist_j->addField('nominee_age')->display(array('form'=>'xavoc\mlm\Range'));
+		$dist_j->addField('aadhar_card_number');
 
 		// weekly session
 		$dist_j->addField('monthly_green_intros')->type('int')->defaultValue(0);
@@ -95,6 +95,8 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		$dist_j->addField('d_account_number')->caption('Account Number');
 		$dist_j->addField('d_bank_name')->caption('Bank Name');
 		$dist_j->addField('d_bank_ifsc_code')->caption('Bank IFSC Code');
+		$dist_j->addField('d_account_type')->enum(['Saving','Current']);
+		$dist_j->addField('password');
 
 		// payment mode fields
 		// for online payment
@@ -219,7 +221,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 			// 	$introducer->addSessionIntro($kit->getIntro());
 			// }
 			
-			$this->welcomeDistributor();
+			// $this->welcomeDistributor();
 
 			// $m_no=$this['mobile_number'];
 		
@@ -252,7 +254,9 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 	// send email and send sms
 	function welcomeDistributor(){
 		if(!$this->loaded()) throw new \Exception("Distributor Not Found, some thing wrong");
-				
+		
+		$this->reload();
+		
 		// welcome mail and sms
 		$welcome_model = $this->add('xepan\base\Model_ConfigJsonModel',
 			[
@@ -783,19 +787,24 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 			$this[$field] = $value;
 		}
 
+		$this->save();
 		$user = $this->add('xepan\base\Model_User');
 
 		$this->add('BasicAuth')
 				->usePasswordEncryption('md5')
 				->addEncryptionHook($user);
 		
-		$user->addCondition('username',(isset($data['username'])?$data['username']:$data['first_name']));
-		$user['password']= $data['password']?:'123456';
+		$password = rand(100000,999999);
+		$user['username']='dsgm'.$this->id.rand(100,999);
+		$user['password']= $password;
 		$user->save();
 
 		$this['user_id'] = $user->id;
-
+		$this['password'] = $password;
 		$this->save();
+
+		$this->welcomeDistributor();
+		return $this;
 	}
 
 	function isRoot(){

@@ -28,15 +28,30 @@ class View_DistributorReport extends \View {
 		}
 
 		switch ($this->report) {
-			case 'downline':
-				$this->add('xavoc\mlm\View_Report_Distributor_Downline')
+			case 'active-downline':
+				// $this->add('View')->setElement('h3')->set('Active Downline Report');
+				$this->add('xavoc\mlm\View_Report_Distributor_Downline',['report_status'=>'active'])
 						->setModel($this->distributor);
-				$this->template->trySet('downline_active','btn btn-primary');
 				break;
-			case 'intros-list':
-				$this->add('xavoc\mlm\View_Report_Distributor_Introductions')
+			case 'inactive-downline':
+				// $this->add('View')->setElement('h3')->set('Inactive Downline Report');
+				$this->add('xavoc\mlm\View_Report_Distributor_Downline',['report_status'=>'inactive'])
 						->setModel($this->distributor);
-				$this->template->trySet('introduction_active','btn btn-primary');
+				break;
+			case 'active-intros-list':
+				// $this->add('View')->setElement('h3')->set('Active Sponsored Report');
+				$this->add('xavoc\mlm\View_Report_Distributor_Introductions',['report_status'=>'active'])
+						->setModel($this->distributor);
+				break;
+			case 'inactive-intros-list':
+				// $this->add('View')->setElement('h3')->set('Inactive Sponsored Report');
+				$this->add('xavoc\mlm\View_Report_Distributor_Introductions',['report_status'=>'inactive'])
+						->setModel($this->distributor);
+				break;
+			case 'direct-downline-business':
+				// $this->add('View')->setElement('h3')->set('Direct Downline Report');
+				$this->add('xavoc\mlm\View_Report_Distributor_Introductions',['report_status'=>'downline_business'])
+						->setModel($this->distributor);
 				break;
 			default:
 				# code...
@@ -44,7 +59,7 @@ class View_DistributorReport extends \View {
 		}
 	}
 
-	function defaultTemplate(){
-		return ['view/distributorreport'];
-	}
+	// function defaultTemplate(){
+	// 	return ['view/distributorreport'];
+	// }
 }

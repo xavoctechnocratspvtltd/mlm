@@ -39,23 +39,23 @@ class View_ProfileChecker extends \xepan\cms\View_Tool{
 		if($complete_percentage > 0)
 			$this->template->tryDel('not_found');
 		
-		if(!$distributor['kit_item_id']){
-			$this->add('Button',null,'kit_info')->set('Purchase Kit Now')->addClass('btn btn-warning btn-block alert')->js('click')->univ()->redirect($this->app->url($this->options['kit_purchase_page']));
-		}else{
-			$view_box = $this->add('View',null,'kit_info');
-			$view_box->add('Button')->set('Update Topup')->addClass('btn btn-warning btn-sm')->js('click')->univ()->redirect($this->app->url($this->options['kit_purchase_page']));
-			$view_box->setHTML('<i class="glyphicon glyphicon-ok"></i> Your Topup is <b>'.$distributor['kit_item']."</b><br/>")->addClass('alert alert-success');
-		}
+		// if(!$distributor['kit_item_id']){
+		// 	$this->add('Button',null,'kit_info')->set('Purchase Kit Now')->addClass('btn btn-warning btn-block alert')->js('click')->univ()->redirect($this->app->url($this->options['kit_purchase_page']));
+		// }else{
+		// 	$view_box = $this->add('View',null,'kit_info');
+		// 	$view_box->add('Button')->set('Update Topup')->addClass('btn btn-warning btn-sm')->js('click')->univ()->redirect($this->app->url($this->options['kit_purchase_page']));
+		// 	$view_box->setHTML('<i class="glyphicon glyphicon-ok"></i> Your Topup is <b>'.$distributor['kit_item']."</b><br/>")->addClass('alert alert-success');
+		// }
 		
-		if(!$distributor['attachment_count']){
-			$this->add('Button',null,'kyc_info')->set('Update KYC')->addClass('btn btn-primary btn-block alert')->js('click')->univ()->redirect($this->app->url($this->options['kyc_purchase_page']));
-		}else{ 
-			$this->add('View_Box',null,'kyc_info')->setHTML('<i class="glyphicon glyphicon-ok"></i> You Updated Your KYC')->addClass('alert alert-success');
-		}
+		// if(!$distributor['attachment_count']){
+		// 	$this->add('Button',null,'kyc_info')->set('Update KYC')->addClass('btn btn-primary btn-block alert')->js('click')->univ()->redirect($this->app->url($this->options['kyc_purchase_page']));
+		// }else{ 
+		// 	$this->add('View_Box',null,'kyc_info')->setHTML('<i class="glyphicon glyphicon-ok"></i> You Updated Your KYC')->addClass('alert alert-success');
+		// }
 
-		if(!$distributor['is_verified']){
-			$this->add('View_Box',null,'verification_info')->addClass('alert alert-info')->set('You are under admin verification process');
-		}
+		// if(!$distributor['is_verified']){
+		// 	$this->add('View_Box',null,'verification_info')->addClass('alert alert-info')->set('You are under admin verification process');
+		// }
 	}
 
 	function defaultTemplate(){

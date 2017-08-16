@@ -1,2 +1,64 @@
 
-<div id="{$_name}" style="{$style}" class=" {$class} ">{$Content}</div>
+<div id="{$_name}" style="{$style}" class=" {$class} ">{$header_section}
+  <div class="row">
+    <div style="font-size:20px;" class="col-md-2 col-sm-12 col-lg-2">Recent News: </div>
+    <div class="col-md-10 col-sm-12 col-lg-10">{$news_section}</div>
+  </div>
+  <hr/>
+  <h3>Profile</h3>
+  <div style="outline:1px solid #f3f3f3;" class="row">
+    <div style="outline:1px solid #f3f3f3;padding-top:10px;" class="col-lg-4 col-md-4 col-sm-12 col-xs-12">{profile}
+      <div class="row">
+        <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12 text-right"> 
+          <p>Registration Date:</p>
+        </div>
+        <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">{$registration_date}</div>
+      </div>
+      <div class="row">
+        <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12 text-right"> 
+          <p>Activation Date:</p>
+        </div>
+        <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">{$activation_date}</div>
+      </div>
+      <p style="height:10px;"></p>
+      <div class="row">
+        <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12 text-right"> 
+          <p>Distributor Name:</p>
+        </div>
+        <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">{$name}</div>
+      </div>
+      <div class="row">
+        <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12 text-right"> 
+          <p>City / State:</p>
+        </div>
+        <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">{$city} / {$state}</div>
+      </div>
+      <div class="row">
+        <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12 text-right"> 
+          <p>Mobile No:</p>
+        </div>
+        <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">{$mobile_number}</div>
+      </div>
+      <div class="row">
+        <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12 text-right"> 
+          <p>Email id:</p>
+        </div>
+        <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">{$email}</div>
+      </div>
+      <div class="row">
+        <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12 text-right"> 
+          <p>Package Name:</p>
+        </div>
+        <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">{$package_code} <br/> {$package_name}</div>
+      </div>
+      <p style="height:10px;"></p>
+      <div class="row">
+        <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12 text-right"> 
+          <p>Package Amount:</p>
+        </div>
+        <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">{$package_amount}&nbsp;<i class="fa fa-rupee"></i></div>
+      </div>{/}
+    </div>
+    <div style="padding-top:10px;" class="col-lg-8 col-md-8 col-sm-12 col-xs-12">{$right_section}</div>
+  </div>{$Content}
+</div>

@@ -48,15 +48,30 @@
 			{$address}
 	hr
 	.row
-		.col-xs-12.col-sm-12.col-md-4.col-lg-4.form-group.atk-form-row.atk-form-field
-			label User name
-			{$username}
-		.col-xs-12.col-sm-12.col-md-4.col-lg-4.form-group.atk-form-row.atk-form-field
-			label Password
-			{$password}
-		.col-xs-12.col-sm-12.col-md-4.col-lg-4.form-group.atk-form-row.atk-form-field
-			label Re-Password
-			{$retype_password}
+		div.col-xs-12.col-sm-12.col-md-4.col-lg-4.form-group.atk-form-row.atk-form-field
+			label Nominee Name
+			{$nominee_name}
+		div.col-xs-12.col-sm-12.col-md-4.col-lg-4.form-group.atk-form-row.atk-form-field
+			label Relation with nominee
+			{$relation_with_nominee}
+		div.col-xs-12.col-sm-12.col-md-4.col-lg-4.form-group.atk-form-row.atk-form-field
+			label Aadhar Card Number
+			{$aadhar_card_number}
+	hr
+	.row
+		.col-xs-12.col-sm-12.col-md-3.col-lg-3.form-group.atk-form-row.atk-form-field
+			label Bank Name
+			{$d_bank_name}
+		.col-xs-12.col-sm-12.col-md-3.col-lg-3.form-group.atk-form-row.atk-form-field
+			label Account Number
+			{$d_account_number}
+		.col-xs-12.col-sm-12.col-md-3.col-lg-3.form-group.atk-form-row.atk-form-field
+			label Bank IFSC Code
+			{$d_bank_ifsc_code}
+		.col-xs-12.col-sm-12.col-md-3.col-lg-3.form-group.atk-form-row.atk-form-field
+			label Bank Type
+			{$d_account_type}
+
 	.row		
 	{$FormButtons}
 	//- input.btn.btn-info.btn-block(type='submit', value='Register')

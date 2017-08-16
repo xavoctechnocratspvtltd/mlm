@@ -14,7 +14,8 @@ div(id="{$_name}" class="{$class} ds-distributor-navbar" style="{$style}")
 				ul.nav.navbar-nav
 					{rows}{row}
 					li(data-page='{$key}' class="{$active_menu}")
-						a(href='{$key}') {$name}
+						{list} {$name} {/}
+						|{$submenu}
 					{/}{/}
 				ul.nav.navbar-nav.navbar-right
 					li.bg.bg-info(style="border-radius:5px 0px 0px 5px;") 

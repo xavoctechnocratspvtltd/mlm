@@ -20,13 +20,22 @@ class Tool_Register extends \xavoc\mlm\Tool_Distributor{
 
 		if($this->owner instanceof \AbstractController) return;
 
-		$form_field = ['introducer_id','side','first_name','last_name','dob','email','mobile_number','pan_no','country_id','state_id','city','pin_code','address'];
+		$this->app->stickyGET('new_dist_id');
+
+		$v = $this->add('View');
+
+		if($_GET['new_dist_id']){
+			$new_dis = $this->add('xavoc\mlm\Model_Distributor')->load($_GET['new_dist_id']);
+			$v->add('View')->addClass('alert alert-success text-center')->setHtml('<h4>Registration done successfully. User Id:<strong>'.$new_dis['user']."</strong>, Password: <strong>".$new_dis['password']."</strong></h4>");
+		}
+
+		$form_field = ['introducer_id','side','first_name','last_name','dob','email','mobile_number','pan_no','country_id','state_id','city','pin_code','address','d_account_number','d_bank_name','d_bank_ifsc_code','nominee_name','relation_with_nominee','aadhar_card_number','d_account_type'];
 		$form = $this->add('Form');
 		$form->setLayout(['view/form/registration']);
 		$form->setModel('xavoc\mlm\Distributor',$form_field);
 		
 		foreach ($form_field as $key => $name) {
-			if(in_array($name, ['pan_no'])) continue;
+			if(in_array($name, ['pan_no','d_account_number','d_bank_name','d_bank_ifsc_code','nominee_name','relation_with_nominee','aadhar_card_number','d_account_type'])) continue;
 			$form->getElement($name)->validate('required');
 		}
 		
@@ -39,9 +48,9 @@ class Tool_Register extends \xavoc\mlm\Tool_Distributor{
 		// $country_field->js('change',$form->js()->atk4_form('reloadField','state_id',[$this->app->url(null,['cut_object'=>$state_field->name]),'country_id'=>$country_field->js()->val()]));
 		
 
-		$form->addField('username')->validate('required');
-		$form->addField('password','password')->validate('required');	
-		$form->addField('password','retype_password')->validate('required');	
+		// $form->addField('username')->validate('required');
+		// $form->addField('password','password')->validate('required');	
+		// $form->addField('password','retype_password')->validate('required');	
 		$form->addSubmit('Register')->addClass(' btn btn-primary btn-block');
 		
 		if($form->isSubmitted()){
@@ -56,7 +65,7 @@ class Tool_Register extends \xavoc\mlm\Tool_Distributor{
 				$distributor->register($form->get());
 				
 				$this->api->db->commit();
-				$form->js()->reload()->univ()->successMessage('Saved')->execute();
+				$v->js(null,[$form->js()->reload(),$v->js()->reload(['new_dist_id'=>$distributor->id])])->univ()->successMessage('Registration Successfully')->execute();
 			}catch(\Exception $e){
 				$this->api->db->rollback();
 				$form->js()->univ()->errorMessage($e->getMessage())->execute();

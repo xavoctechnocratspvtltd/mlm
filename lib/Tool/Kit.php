@@ -33,7 +33,7 @@ class Tool_Kit extends \xepan\cms\View_Tool{
 				return "distributor not found";
 			}
 			if($distributor['kit_item_id'] ){
-				$this->add('View')->set("Update Your Topup")->addClass('text-center bg bg-info');
+				$this->add('View')->setHtml("<p style='font-size:20px;'>Select Package & Update Your Topup</p>")->addClass('text-center alert alert-info')->setStyle(['font-weight'=>'bold']);
 			}
 		}
 
