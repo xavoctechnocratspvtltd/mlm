@@ -49,7 +49,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		// $dist_j->add('xepan\filestore\Field_Image','kyc_id')->caption('KYC form');
 		// $dist_j->add('xepan\filestore\Field_Image','address_proof_id')->caption('Address proof');
 		$dist_j->addField('nominee_name');
-		$dist_j->addField('relation_with_nominee')->enum(['Mother','Father','Wife','Brother','Sister','Other']);
+		$dist_j->addField('relation_with_nominee')->enum(['Mother','Father','Wife','Brother','Sister','Other'])->display(array('form' => 'xepan\base\DropDownNormal'));
 		$dist_j->addField('nominee_email')->caption('Nominee email')->display(array('form'=>'xavoc\mlm\Email'));
 		$dist_j->addField('nominee_age')->display(array('form'=>'xavoc\mlm\Range'));
 		$dist_j->addField('aadhar_card_number');
@@ -95,7 +95,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		$dist_j->addField('d_account_number')->caption('Account Number');
 		$dist_j->addField('d_bank_name')->caption('Bank Name');
 		$dist_j->addField('d_bank_ifsc_code')->caption('Bank IFSC Code');
-		$dist_j->addField('d_account_type')->enum(['Saving','Current']);
+		$dist_j->addField('d_account_type')->enum(['Saving','Current'])->display(array('form' => 'xepan\base\DropDownNormal'));
 		$dist_j->addField('password');
 
 		// payment mode fields
