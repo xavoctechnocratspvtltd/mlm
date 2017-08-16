@@ -145,8 +145,8 @@ class View_GenologyStandard extends \View{
 				  	<td>
 				    <table  style='width:100%'>
 				    	<tr>
-				    		<td style='text-align:left;'>Total Left SV<br/>".$model['day_left_sv']."</td>
-				    		<td style='text-align:right;'>Total Right SV<br/>".$model['day_left_sv']."</td>
+				    		<td style='text-align:left;'>Total Left SV<br/>".$model['total_left_sv']."</td>
+				    		<td style='text-align:right;'>Total Right SV<br/>".$model['total_right_sv']."</td>
 				    	</tr>
 				    </table>
 				    </td>
@@ -156,8 +156,8 @@ class View_GenologyStandard extends \View{
 				  	<td>
 				    <table  style='width:100%'>
 				    	<tr>
-				    		<td style='text-align:left;'>Total Left BV<br/>".$model['day_left_sv']."</td>
-				    		<td style='text-align:right;'>Total Right BV<br/>".$model['day_left_sv']."</td>
+				    		<td style='text-align:left;'>Month Self BV<br/>".$model['month_self_bv']."</td>
+				    		<td style='text-align:right;'>Accumulated BV<br/>".$model['total_month_bv']."</td>
 				    	</tr>
 				    </table>
 				    </td>
@@ -167,12 +167,12 @@ class View_GenologyStandard extends \View{
 				  	<td>
 				    <table  style='width:100%'>
 				    	<tr>
-				    		<th style='text-align:left;'>Total Team Left<br/>".$model['day_left_sv']."</th>
-				    		<th style='text-align:right;'>Total Team Right<br/>".$model['day_left_sv']."</th>
+				    		<th style='text-align:left;'>Total Team Left<br/>".$model->newInstance()->addCondition('path','like',$model['path'].'A%')->count()->getOne()."</th>
+				    		<th style='text-align:right;'>Total Team Right<br/>".$model->newInstance()->addCondition('path','like',$model['path'].'B%')->count()->getOne()."</th>
 				    	</tr>
 				    </table>
 				    </td>
-				  </tr>			  
+				  </tr>
 				</table>";		
 		// $str= 
 		// 		$model['name'].
