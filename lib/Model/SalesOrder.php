@@ -40,6 +40,15 @@ class Model_SalesOrder extends \xepan\commerce\Model_SalesOrder {
 			return $q->expr("CONCAT(IFNULL([0],' '),'-',IFNULL([1],' '))",[$in->fieldQuery('id'),$in->fieldQuery('status')]);
 		})->caption('Invoice/Status');
 
+		// is_delivered
+		$this->addExpression('is_delivered')->set(function($m,$q){
+			$sd = $m->add('xepan\commerce\Model_Store_Delivered');
+			$sd->addCondition('related_document_id',$q->getField('id'));
+			$sd->addCondition('status',['Delivered','Shipped']);
+			return $sd->count();
+			return $q->expr('IFNULL([0],0)',[$sd->count()]);
+		})->type('boolean');
+
 		$this->hasMany('xavoc\mlm\Model_QSPDetail','qsp_master_id');
 	}
 
@@ -187,6 +196,18 @@ class Model_SalesOrder extends \xepan\commerce\Model_SalesOrder {
 			return $page->js(null,$page->js()->univ()->successMessage('Order Assigned'))->univ()->closeDialog();
 		}
 
+	}
+
+	function isDelivered(){
+		if(!$this->loaded()) throw new \Exception("model must loaded");
+				
+		$sd = $this->add('xepan\commerce\Model_Store_Delivered');
+		$sd->addCondition('related_document_id',$this->id);
+		$sd->addCondition('status',['Delivered','Shipped']);
+		$sd->tryLoadAny();
+		if($sd->loaded()) return true;
+
+		return false;
 	}
 
 } 
