@@ -95,6 +95,20 @@ class Model_Item extends \xepan\commerce\Model_Item {
 		
 		$this->addCondition('dp_customfield_generic_id',$specification->fieldQuery('id'));
 
+		// // weight in Gm distributor point
+		// $weight_spec = $this->add('xepan\commerce\Model_Item_Specification');
+		// $weight_spec->addCondition('name','weight_in_gm');
+		
+		// $j1 = $this->join('customfield_association.item_id',null,null,'weight_in_gm_j');
+		// $j1->addField('weight_in_gm_customfield_generic_id','customfield_generic_id');
+		// $j1->addField('weight_in_gm_status','status')->defaultValue('Active')->system(true);
+
+		// $j2 = $j1->join('customfield_value.customfield_association_id',null,null,'weight_value_j');
+		// $j2->addField('weight_in_gm','name')->defaultValue(0);//->display(array('form'=>'Readonly'));
+		// $j2->addField('weight_in_gm_value_status','status')->defaultValue('Active')->system(true);//->display(array('form'=>'Readonly'));
+		
+		// $this->addCondition('weight_in_gm_customfield_generic_id',$specification->fieldQuery('id'));
+
 		$this->getElement('status')->defaultValue('Published');
 	}
 }
