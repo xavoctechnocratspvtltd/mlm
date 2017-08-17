@@ -20,13 +20,23 @@ class Initiator extends \Controller_Addon {
             $m->addItem(['Supplier Bank Details','icon'=>'fa fa-check-square-o'],'xavoc_dm_supplier');
             $m->addItem(['Purchase','icon'=>'fa fa-check-square-o'],'xavoc_dm_productpurchase');
         $m = $this->app->top_menu->addMenu('Distributors');
+            $m->addItem(['Red Distributors','icon'=>'fa fa-check-square-o'],'xavoc_dm_distributor_reddistributors');
+            $m->addItem(['Red Distributors Other','icon'=>'fa fa-check-square-o'],'xavoc_dm_distributor_reddistributorsother');
+            $m->addItem(['Red Distributors Introducer','icon'=>'fa fa-check-square-o'],'xavoc_dm_distributor_reddistributorsintroducer');
+            $m->addItem(['Red Distributors Bank Report','icon'=>'fa fa-check-square-o'],'xavoc_dm_reddistributorsbank');
+
+            $m->addItem(['Green Distributors','icon'=>'fa fa-check-square-o'],'xavoc_dm_greendistributors');
+            $m->addItem(['Green Distributors Other','icon'=>'fa fa-check-square-o'],'xavoc_dm_greendistributorsother');
+            $m->addItem(['Green Distributors Introducer','icon'=>'fa fa-check-square-o'],'xavoc_dm_greendistributorsintroducer');
+            $m->addItem(['Green Distributors Bank Report','icon'=>'fa fa-check-square-o'],'xavoc_dm_greendistributorsbank');
+            
             $m->addItem(['Distributors','icon'=>'fa fa-check-square-o'],'xavoc_dm_distributors');
             $m->addItem(['Pending Orders','icon'=>'fa fa-check-square-o'],'xavoc_dm_distributors');
             $m->addItem(['Approved Orders','icon'=>'fa fa-check-square-o'],'xavoc_dm_distributors');
             $m->addItem(['Dispacthed Orders','icon'=>'fa fa-check-square-o'],'xavoc_dm_distributors');
         $m = $this->app->top_menu->addMenu('Franchisies');
-            $m->addItem(['Franchise List','icon'=>'fa fa-check-square-o'],'xavoc_dm_franchise');
-            $m->addItem(['Franchise Orders','icon'=>'fa fa-check-square-o'],'xavoc_dm_franchise');
+            $m->addItem(['Franchise List','icon'=>'fa fa-check-square-o'],'xavoc_dm_franchiselist');
+            $m->addItem(['Franchise Orders','icon'=>'fa fa-check-square-o'],'xavoc_dm_franchiseorder');
         $m = $this->app->top_menu->addMenu('Closings');
             $m->addItem(['Closings','icon'=>'fa fa-check-square-o'],'xavoc_dm_closings');
         $m = $this->app->top_menu->addMenu('Store');
