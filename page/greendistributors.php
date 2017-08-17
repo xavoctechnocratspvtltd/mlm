@@ -37,7 +37,7 @@ class page_greendistributors extends \xepan\base\Page {
 		}
 
 		$grid = $this->add('xepan\base\Grid');
-		$grid->setModel($model,['created_at','user','name','city','pan_no','dob','email']);
+		$grid->setModel($model,['greened_on','user','name','city','state','mobile_number']);
 		$grid->add('xepan\hr\Controller_ACL',['status_color'=>$status_color]);
 
 		$grid->addPaginator($ipp=50);

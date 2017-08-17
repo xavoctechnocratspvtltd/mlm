@@ -86,7 +86,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		$dist_j->addField('carried_amount')->type('money')->defaultValue(0)->caption('Carried amount');
 		$dist_j->addField('leadership_carried_amount')->type('money')->defaultValue(0)->caption('LeaderShip Carried amount');
 
-		$dist_j->addField('greened_on')->type('datetime')->defaultValue(null)->caption('Qualified date');
+		$dist_j->addField('greened_on')->type('datetime')->defaultValue(null)->caption('Acct. Date');
 		$dist_j->addField('ansestors_updated')->type('boolean')->defaultValue(false)->system(true);
 		
 		$dist_j->addField('temp')->type('number')->system(true);
