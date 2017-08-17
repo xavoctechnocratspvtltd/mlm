@@ -11,21 +11,34 @@ class Initiator extends \Controller_Addon {
         $this->addLocation(array('template'=>'templates','js'=>'templates/js','css'=>'templates/css'))
         ->setBaseURL('../shared/apps/xavoc/mlm/');
 
-        $m = $this->app->top_menu->addMenu('Direct Marketing');
-        // $m->addItem(['Pin Management','icon'=>'fa fa-check-square-o'],'xavoc_dm_distributors');
-        $m->addItem(['Kit Management','icon'=>'fa fa-check-square-o'],'xavoc_dm_kits');
-        $m->addItem(['Repurchase Product','icon'=>'fa fa-check-square-o'],'xavoc_dm_repurchase');
-        $m->addItem(['Distributors','icon'=>'fa fa-check-square-o'],'xavoc_dm_distributors');
-        $m->addItem(['Orders','icon'=>'fa fa-check-square-o'],'xavoc_dm_salesorder');
-        $m->addItem(['Franchises','icon'=>'fa fa-check-square-o'],'xavoc_dm_franchise');
-        $m->addItem(['Closings','icon'=>'fa fa-check-square-o'],'xavoc_dm_closings');
-        $m->addItem(['Report','icon'=>'fa fa-check-square-o'],'xavoc_dm_report_planwisesale');
-        $m->addItem(['Store Activity','icon'=>'fa fa-check-square-o'],'xavoc_dm_store_activity');
-        $m->addItem(['Set Date','icon'=>'fa fa-check-square-o'],'xavoc_dm_setdate');
-        $m->addItem(['Pan Update','icon'=>'fa fa-check-square-o'],'xavoc_dm_report_panupdate');
-        $m->addItem(['Recent News','icon'=>'fa fa-check-square-o'],'xavoc_dm_recentnews');
-        $m->addItem(['Gallery','icon'=>'fa fa-check-square-o'],'xavoc_dm_gallery');
-        $m->addItem(['Configuration','icon'=>'fa fa-check-square-o'],'xavoc_dm_config');
+        $m = $this->app->top_menu->addMenu('Products');
+            $m->addItem(['Product Categories','icon'=>'fa fa-check-square-o'],'xavoc_dm_productcategories');
+            $m->addItem(['Kit Management','icon'=>'fa fa-check-square-o'],'xavoc_dm_kits');
+            $m->addItem(['Repurchase Product','icon'=>'fa fa-check-square-o'],'xavoc_dm_repurchase');
+        $m = $this->app->top_menu->addMenu('Purchase');
+            $m->addItem(['Supplier','icon'=>'fa fa-check-square-o'],'xavoc_dm_supplier');
+            $m->addItem(['Supplier Bank Details','icon'=>'fa fa-check-square-o'],'xavoc_dm_supplier');
+            $m->addItem(['Purchase','icon'=>'fa fa-check-square-o'],'xavoc_dm_productpurchase');
+        $m = $this->app->top_menu->addMenu('Distributors');
+            $m->addItem(['Distributors','icon'=>'fa fa-check-square-o'],'xavoc_dm_distributors');
+            $m->addItem(['Pending Orders','icon'=>'fa fa-check-square-o'],'xavoc_dm_distributors');
+            $m->addItem(['Approved Orders','icon'=>'fa fa-check-square-o'],'xavoc_dm_distributors');
+            $m->addItem(['Dispacthed Orders','icon'=>'fa fa-check-square-o'],'xavoc_dm_distributors');
+        $m = $this->app->top_menu->addMenu('Franchisies');
+            $m->addItem(['Franchise List','icon'=>'fa fa-check-square-o'],'xavoc_dm_franchise');
+            $m->addItem(['Franchise Orders','icon'=>'fa fa-check-square-o'],'xavoc_dm_franchise');
+        $m = $this->app->top_menu->addMenu('Closings');
+            $m->addItem(['Closings','icon'=>'fa fa-check-square-o'],'xavoc_dm_closings');
+        $m = $this->app->top_menu->addMenu('Store');
+            $m->addItem(['Pack/Open Joining Kits','icon'=>'fa fa-check-square-o'],'xavoc_dm_store_activity');
+            $m->addItem(['Stock Report','icon'=>'fa fa-check-square-o'],'xavoc_dm_store_activity');
+            $m->addItem(['Store Activity','icon'=>'fa fa-check-square-o'],'xavoc_dm_store_activity');
+        $m = $this->app->top_menu->addMenu('Admin');
+            $m->addItem(['Recent News','icon'=>'fa fa-check-square-o'],'xavoc_dm_recentnews');
+            $m->addItem(['Gallery','icon'=>'fa fa-check-square-o'],'xavoc_dm_gallery');
+            $m->addItem(['Configuration','icon'=>'fa fa-check-square-o'],'xavoc_dm_config');
+            $m->addItem(['Set Date','icon'=>'fa fa-check-square-o'],'xavoc_dm_setdate');
+
 
         $this->addAppFunctions();
 

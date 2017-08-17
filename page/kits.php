@@ -9,9 +9,22 @@ class page_kits extends \xepan\base\Page {
 	function init(){
 		parent::init();
 		
-		$crud = $this->add('CRUD');
+		$crud = $this->add('xepan\hr\CRUD');
 		$model= $this->add('xavoc\mlm\Model_Kit');
-		$crud->setModel($model,['qty_unit','name','sku','display_sequence','original_price','sale_price','pv','bv','sv','dp','capping','introducer_income','description']);
+		
+		$model->addHook('beforeSave',function($m){			
+			$m['sale_price']=$m['dp'];
+		});
+
+
+		$crud->setModel($model,['name','sku','hsn_sac','bv','sv','dp','capping','introducer_income','item_count']);
+		$crud->grid->addQuickSearch(['name','sku']);
+		$crud->removeAttachment();
+		$crud->grid->addOrder()->move('edit','last')->now();
+		$crud->grid->addSno('Sr. No');
+
+		$crud->grid->removeColumn('hsn_sac');
+		$crud->grid->addFormatter('sku','template')->setTemplate('{$sku}<br/>{$hsn_sac}','sku');
 	}
 
 }
