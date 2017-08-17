@@ -6,11 +6,11 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 	public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 	public $actions = [
-				'Red'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName','payouts'],
-				'KitSelected'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName','payouts'],
-				'KitPaid'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName','payouts'],
-				'Green'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName','payouts'],
-				'Blocked'=>['view','edit','delete','Unblocked','payouts']
+				'Red'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName','payouts','sv_records'],
+				'KitSelected'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName','payouts','sv_records'],
+				'KitPaid'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName','payouts','sv_records'],
+				'Green'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName','payouts','sv_records'],
+				'Blocked'=>['view','edit','delete','Unblocked','payouts','sv_records']
 			];
 	
 	public $acl_type= "mlm_distributor";
@@ -1058,5 +1058,26 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
         if($closing->loaded()){
 			throw $this->exception('Closing was done after this date, cannot insert this data before closing');
         }
+	}
+
+	function dailyActivity($date) {
+
+		$topup = $this->add('xavoc\mlm\Model_TopupHistory');
+		$dist_j = $topup->join('mlm_distributor.distributor_id','distributor_id');
+		$dist_j->addField('path');
+		$topup->addCondition('path','like',$this['path'].'A%');
+		$topup->addCondition('created_at','>',$date);
+		$topup->addCondition('created_at','<',$this->app->nextDate($date));
+		$left_sv = $topup->sum('sv')->getOne();
+
+		$topup = $this->add('xavoc\mlm\Model_TopupHistory');
+		$dist_j = $topup->join('mlm_distributor.distributor_id','distributor_id');
+		$dist_j->addField('path');
+		$topup->addCondition('path','like',$this['path'].'B%');
+		$topup->addCondition('created_at','>',$date);
+		$topup->addCondition('created_at','<',$this->app->nextDate($date));
+		$right_sv = $topup->sum('sv')->getOne();
+
+		return ['left_sv'=>$left_sv, 'right_sv'=>$right_sv];
 	}
 } 

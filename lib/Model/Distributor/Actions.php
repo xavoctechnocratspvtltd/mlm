@@ -295,4 +295,20 @@ class Model_Distributor_Actions extends \xavoc\mlm\Model_Distributor
 		$g->add("misc/Export");
 	}
 
+	function page_sv_records($page){
+		$g=$page->add('Grid');
+		$m=$this->add('xavoc\mlm\Model_Closing');
+		$m->setOrder('on_date','desc');
+		$g->setModel($m,['type','on_date']);
+		
+		$g->addColumn('leftSV');
+		$g->addColumn('rightSV');
+		$g->addHook('formatRow',function($g){
+			$sv = $this->dailyActivity($g->model['on_date']);
+			$g->current_row['leftSV'] = $sv['left_sv'];
+			$g->current_row['rightSV']= $sv['right_sv'];
+		});
+
+	}
+
 }
