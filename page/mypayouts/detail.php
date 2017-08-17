@@ -27,7 +27,7 @@ class page_mypayouts_detail extends \Page {
 		$m_payout->addCondition('payout_type','WeeklyClosing');
 		$m_payout->setOrder('id','desc');
 
-		$grid = $this->add('xepan\base\Grid')->addClass('hide-header');
+		$grid = $this->add('xepan\base\Grid');//->addClass('hide-header');
 		$grid->setModel($m_payout,['date','previous_carried_amount','leadership_carried_amount','binary_income','introduction_amount','gross_payment','tds','admin_charge','net_payment','carried_amount']);
 	}	
 }

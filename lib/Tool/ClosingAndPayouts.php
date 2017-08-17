@@ -46,7 +46,44 @@ class Tool_ClosingAndPayouts extends \xepan\cms\View_Tool{
 	}
 
 	function generationPayout(){
-		$this->add('View')->set('Generation Payout');
+		$this->add('View')->setElement('h4')->set('Generation Payout');
+		// current month payout
+		$v = $this->add('View')->addClass('main-box');
+		$v->add('View')->setElement('h5')
+			->set('Current Month '.$this->current_month_year);
+
+		$this->payout
+			->addCondition('month_year',$this->current_month_year)
+			->addCondition('payout_type','MonthlyClosing');
+			;
+
+		$grid = $v->add('xepan\base\Grid');
+		$grid->setModel($this->payout,['date','previous_carried_amount','leadership_carried_amount','retail_profit','repurchase_bonus','generation_income','loyalty_bonus','leadership_bonus','gross_payment','tds','admin_charge','net_payment','carried_amount']);
+
+		$previous_payout = $this->add('xavoc\mlm\Model_Payout');
+		$previous_payout->addExpression('date')->set($previous_payout->dsql()->expr(' DATE_FORMAT(closing_date,"%d %b %y")'));
+		$previous_payout->addCondition('month_year','<>',$this->current_month_year);
+		$previous_payout->addCondition('distributor_id',$this->distributor->id);
+		$previous_payout->addCondition('payout_type','MonthlyClosing');
+
+		$sum_field = ['previous_carried_amount','leadership_carried_amount','binary_income','introduction_amount','gross_payment','tds','admin_charge','net_payment','carried_amount'];
+		// foreach ($sum_field as $key => $field) {
+		// 	$previous_payout->addExpression('sum_'.$field)->set('sum('.$field.')')->caption(strtoupper(str_replace("_", " ", $field)));
+		// }
+
+		$previous_payout->setOrder('id','desc');
+		// $previous_payout->_dsql()->group('month_year');
+
+		$this->add('View')->setStyle('height','30px');
+
+		$v = $this->add('View')->addClass('main-box');
+		$v->add('View')->setElement('h5')->set('Previous Months');
+		$grid = $v->add('xepan\base\Grid');
+
+		// $grid->addColumn('detail');
+		$grid->setModel($previous_payout,['date','previous_carried_amount','leadership_carried_amount','retail_profit','repurchase_bonus','generation_income','loyalty_bonus','leadership_bonus','gross_payment','tds','admin_charge','net_payment','carried_amount']);
+		$grid->addPaginator($ipp=12);
+		// $grid->addColumn('expander','detail',['page'=>'xavoc_dm_mypayouts_detail']);
 	}
 
 	function binaryPayout(){
@@ -68,7 +105,7 @@ class Tool_ClosingAndPayouts extends \xepan\cms\View_Tool{
 
 		$previous_payout = $this->add('xavoc\mlm\Model_Payout');
 		$previous_payout->addExpression('date')->set($previous_payout->dsql()->expr(' DATE_FORMAT(closing_date,"%d %b %y")'));
-		// $previous_payout->addCondition('month_year','<>',$this->current_month_year);
+		$previous_payout->addCondition('month_year','<>',$this->current_month_year);
 		$previous_payout->addCondition('distributor_id',$this->distributor->id);
 		$previous_payout->addCondition('payout_type','WeeklyClosing');
 
@@ -85,20 +122,19 @@ class Tool_ClosingAndPayouts extends \xepan\cms\View_Tool{
 		$this->add('View')->setStyle('height','30px');
 
 		$v = $this->add('View')->addClass('main-box');
-		$v->add('View')->setElement('h5')->set('Previous');
+		$v->add('View')->setElement('h5')->set('Previous Months');
 		$grid = $v->add('xepan\base\Grid');
 
 		// $grid->addColumn('detail');
-		$grid->setModel($previous_payout,['month_year','sum_gross_payment','sum_tds','sum_admin_charge','sum_net_payment']);
-
+		$grid->setModel($previous_payout,['month_year','sum_gross_payment','sum_tds','sum_admin_charge','sum_net_payment','sum_carried_amount']);
 		$grid->addPaginator($ipp=12);
 		$grid->addColumn('expander','detail',['page'=>'xavoc_dm_mypayouts_detail']);
 	}
 
 	function allPayout(){
 		$this->add('View')->setElement('h4')->set('Payout\'s');
-		$grid = $this->add('xepan\base\Grid');
-		$grid->setModel($this->payout,['date','payout_type','previous_carried_amount','binary_income','introduction_amount','retail_profit','repurchase_bonus','generation_income','loyalty_bonus','leadership_bonus','gross_payment','tds','admin_charge','net_payment','carried_amount']);
+		$grid = $this->add('xepan\base\Grid')->addClass('main-box');
+		$grid->setModel($this->payout,['date','previous_carried_amount','binary_income','introduction_amount','retail_profit','repurchase_bonus','generation_income','loyalty_bonus','leadership_bonus','gross_payment','tds','admin_charge','net_payment','carried_amount']);
 		$grid->addPaginator($ipp=25);
 	}
 }

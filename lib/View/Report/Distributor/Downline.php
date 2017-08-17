@@ -55,9 +55,11 @@ class View_Report_Distributor_Downline extends \View{
 		if($this->report_status == "active"){
 			$downline->addCondition('green_on','<>',null);
 			$name = "Active Downline Report";
+			$downline->setOrder('green_on','desc');
 		}else{
 			$downline->addCondition('green_on',null);
 			$name = "Inactive Downline Report";
+			$downline->setOrder('created_at','desc');
 		}
 
 		if($_GET['search_distributor']){
@@ -97,17 +99,20 @@ class View_Report_Distributor_Downline extends \View{
 			$to_date_field->set($_GET['to_date']);
 		}
 
-		$downline->getElement('green_on')->caption('Activation');
+		$downline->getElement('green_on')->caption('Act. Date');
+		$downline->getElement('user')->caption('User ID');
+		$downline->getElement('name')->caption('User Name');
 
 		$fields = ['green_on','user','name','city','state','current_rank'];
 		if($this->report_status == "inactive"){
 			$fields = ['joining','user','name','city','state'];
 		}
 
+		$this->add('View')->setElement('h3')->set($name.' ('.$downline->count()->getOne().')');
 		$this->add('View')->setElement('hr');
 		$grid = $this->add('xepan\hr\Grid');
 		$grid->setModel($downline,$fields);
-		$grid->addSno();
+		$grid->addSno('Sr. No.');
 
 		$grid->addPaginator($ipp=50);
 		// reload self view with form values

@@ -34,12 +34,11 @@ class Initiator extends \Controller_Addon {
             $m->addItem(['Stock Report','icon'=>'fa fa-check-square-o'],'xavoc_dm_store_activity');
             $m->addItem(['Store Activity','icon'=>'fa fa-check-square-o'],'xavoc_dm_store_activity');
         $m = $this->app->top_menu->addMenu('Admin');
+            $m->addItem(['Recent News','icon'=>'fa fa-check-square-o'],'xavoc_dm_recentnews');
+            $m->addItem(['Gallery','icon'=>'fa fa-check-square-o'],'xavoc_dm_gallery');
             $m->addItem(['Configuration','icon'=>'fa fa-check-square-o'],'xavoc_dm_config');
             $m->addItem(['Set Date','icon'=>'fa fa-check-square-o'],'xavoc_dm_setdate');
-        // $m->addItem(['Pin Management','icon'=>'fa fa-check-square-o'],'xavoc_dm_distributors');
-        // $m->addItem(['Orders','icon'=>'fa fa-check-square-o'],'xavoc_dm_salesorder');
-        // $m->addItem(['Report','icon'=>'fa fa-check-square-o'],'xavoc_dm_report_planwisesale');
-        // $m->addItem(['Pan Update','icon'=>'fa fa-check-square-o'],'xavoc_dm_report_panupdate');
+
 
         $this->addAppFunctions();
 
@@ -156,6 +155,7 @@ class Initiator extends \Controller_Addon {
         $this->app->exportFrontEndTool('xavoc\mlm\Tool_FranchisesStock','MLM');
         $this->app->exportFrontEndTool('xavoc\mlm\Tool_DistributorCheckout','MLM');
         $this->app->exportFrontEndTool('xavoc\mlm\Tool_DistributorReport','MLM');
+        $this->app->exportFrontEndTool('xavoc\mlm\Tool_Utility','MLM');
         return $this;
     }
 }
