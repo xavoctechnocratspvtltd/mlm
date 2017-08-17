@@ -1,4 +1,40 @@
 
+$config['hidden_report_menu'] = true;
+$config['hidden_user_menu'] = true;
+
+$config['hidden_xepan_communication']= true;
+$config['hidden_my_menu']= true;
+$config['only_my_menu']= false;
+
+$config['hidden_xepan_hr']= true;
+$config['base_hr_only']= false;
+$config['only_xepan_hr']= false;
+
+$config['hidden_xepan_projects']= true;
+$config['only_xepan_projects']= false;
+
+$config['hidden_xepan_marketing']= true;
+$config['only_xepan_marketing']= false;
+
+$config['hidden_xepan_accounts']= true;
+$config['only_xepan_accounts']= false;
+
+$config['hidden_xepan_commerce']= true;
+$config['only_xepan_commerce']= false;
+
+$config['hidden_xepan_production']= true;
+$config['only_xepan_production']= false;
+
+$config['hidden_xepan_crm']= true;
+$config['only_xepan_crm']= false;
+
+$config['hidden_xepan_cms']= true;
+$config['only_xepan_cms']= false;
+
+
+
+
+	
 	$config['skipzero_for_testing']=false;
 	$config['send_email']=false;
 	$config['send_sms']=false;
@@ -8,7 +44,7 @@
 	$config['remove_zero_income']=true;
 	$config['make_negative_difference_to_zero']=false;
 	
-	$config['enable_closing']=false;
+	$config['enable_closing']=true;
 	
 	$config['mark_green_stopped']=false;
 	$config['purchase_kit_stopped']=false;
@@ -19,3 +55,7 @@
 	
 
 	$config['in_production']=true;
+
+	$config['backup_db_password']='winserver';
+	$config['backup_db']='dsmarketing';
+	$config['backup_before_closings']=true;
