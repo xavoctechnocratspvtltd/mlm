@@ -283,6 +283,9 @@ class Model_Closing extends \xepan\base\Model_Table {
 		$this->query($q);
 
 		// add this carried amount in distributor for previous_carried_amount for next closing
+		$q="UPDATE mlm_distributor d SET d.carried_amount=0";
+		$this->query($q);
+
 		$q="
 			UPDATE
 				mlm_distributor d
@@ -740,7 +743,11 @@ class Model_Closing extends \xepan\base\Model_Table {
 				";
 		$this->query($q);
 
+		
 		// add this carried amount in distributor for previous_carried_amount for next closing
+		$q="UPDATE mlm_distributor d SET d.carried_amount=0";
+		$this->query($q);
+		
 		$q="
 			UPDATE
 				mlm_distributor d

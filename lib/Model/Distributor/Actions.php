@@ -270,11 +270,44 @@ class Model_Distributor_Actions extends \xavoc\mlm\Model_Distributor
 		
 		$form->addSubmit('update');
 		if($form->isSubmitted()){
-			$form->update();
-			$user['username'] = $form['user_name'];
-			$user->save();
+			try{
+				$form->update();
+				$user['username'] = $form['user_name'];
+				$user->save();
+			}catch(\Exception $e){
+				$this->app->js()->univ()->errorMessage($e->getMessage())->execute();
+			}
 			$this->app->page_action_result = $form->js(null,$form->js()->closest('.dialog')->dialog('close'))->univ()->successMessage('Distributor detail updated');		
 		}
+
+	}
+
+	function page_payouts($page){
+		$g=$page->add('Grid');
+		$m=$this->add('xavoc\mlm\Model_Payout');
+		$m->addExpression('closing_type')->set(function($m1,$q){
+			return $m1->refSQL('closing_id')->fieldQuery('type');
+		});
+		$m->addCondition('distributor_id',$this->id);
+		$m->setOrder('closing_date');
+		$g->setModel($m);
+		$g->addOrder()->move('closing_type','first')->now();
+		$g->add("misc/Export");
+	}
+
+	function page_sv_records($page){
+		$g=$page->add('Grid');
+		$m=$this->add('xavoc\mlm\Model_Closing');
+		$m->setOrder('on_date','desc');
+		$g->setModel($m,['type','on_date']);
+		
+		$g->addColumn('leftSV');
+		$g->addColumn('rightSV');
+		$g->addHook('formatRow',function($g){
+			$sv = $this->dailyActivity($g->model['on_date']);
+			$g->current_row['leftSV'] = $sv['left_sv'];
+			$g->current_row['rightSV']= $sv['right_sv'];
+		});
 
 	}
 
