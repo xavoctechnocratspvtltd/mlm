@@ -36,7 +36,7 @@ class page_productpurchase extends \xepan\base\Page {
 
 		$item_m = $this->recall('item_model',false);
 		if(!$item_m){			
-			$item_m = $this->add('xavoc\commerce\Model_Item');
+			$item_m = $this->add('xepan\commerce\Model_Item');
 			$this->memorize('item_model',$item_m);
 		}
 
