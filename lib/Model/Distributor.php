@@ -763,6 +763,15 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		return $in_down;
 	}
 
+	function isInIntroductionDown($downline_distributor){
+		
+		$down_path = $downline_distributor['introducer_path'];
+		$my_path =$this['introducer_path'];
+
+		$in_down = strpos($down_path, $my_path.".") !== false;
+		return $in_down;
+	}
+
 	function loadRoot(){
 		return $this->loadBy('path','0');	
 	}
@@ -1058,6 +1067,33 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
         if($closing->loaded()){
 			throw $this->exception('Closing was done after this date, cannot insert this data before closing');
         }
+	}
+
+	function changeIntroducer(xepan\mlm\Model_Distributor $new_introducer){
+		throw new \Exception("to test", 1);
+		// $new_introducer must not be one self in downline both in introduction path and simple path
+		if($new_introducer->isInIntroductionDown($this) || $new_introducer->isInDown($this))
+			throw new \Exception("Cannot change under distributor that is in downline", 1);
+			
+		$old_introducer_id = $this['introducer_id'];
+		$this_old_introducer_path = $this['introducer_path'];
+		$this_new_introducer_path = $new_introducer['introducer_path'].'.'.$this->id;
+
+		$q="UPDATE mlm_distributor SET introducer_path = REPLACE('$this_old_introducer_path.','$this_new_introducer_path.') WHERE introducer_path like '$this_old_introducer_path.%'";
+		$this->app->db->dsql()->expr($q)->execute();
+
+		$this['introducer_path'] = $this_new_introducer_path;
+		$this['introducer_id'] = $new_introducer->id;
+
+		$this->save();
+
+		$this->app->employee
+		->addActivity("Introducer changed : from $old_introducer_id to ".$new_introducer->id, $this->id/* Related Document ID*/, $this['id'] /*Related Contact ID*/,null,null,null/*click to go path*/);
+		// all child having $this->introducer_path .".%" should be replaced with $new_introducers->introducer_path
+		// also change introducer_id for this
+		// AND do make activity for records that it was a change 
+
+		
 	}
 
 	function dailyActivity($date) {
