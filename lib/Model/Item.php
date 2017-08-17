@@ -9,6 +9,8 @@ class Model_Item extends \xepan\commerce\Model_Item {
 	function init(){
 		parent::init();
 
+		$this->getElement('qty_unit_id')->defaultValue($this->add('xepan\commerce\Model_Unit')->tryLoadAny()->get('id'));
+		$this->getElement('sale_price')->caption('MRP');
 		// PV
 		$specification = $this->add('xepan\commerce\Model_Item_Specification');
 		$specification->addCondition('name','PV');
@@ -32,7 +34,7 @@ class Model_Item extends \xepan\commerce\Model_Item {
 		$spec_assos_j1->addField('bv_status','status')->defaultValue('Active')->system(true);
 
 		$spec_value_j1 = $spec_assos_j1->join('customfield_value.customfield_association_id',null,null,'bv_value_j');
-		$spec_value_j1->addField('bv','name');//->display(array('form'=>'Readonly'));
+		$spec_value_j1->addField('bv','name')->defaultValue(0);//->display(array('form'=>'Readonly'));
 		$spec_value_j1->addField('bv_value_status','status')->defaultValue('Active')->system(true);//->display(array('form'=>'Readonly'));
 		
 		$this->addCondition('bv_customfield_generic_id',$specification->fieldQuery('id'));
@@ -46,7 +48,7 @@ class Model_Item extends \xepan\commerce\Model_Item {
 		$spec_assos_j1->addField('sv_status','status')->defaultValue('Active')->system(true);
 
 		$spec_value_j1 = $spec_assos_j1->join('customfield_value.customfield_association_id',null,null,'sv_value_j');
-		$spec_value_j1->addField('sv','name');//->display(array('form'=>'Readonly'));
+		$spec_value_j1->addField('sv','name')->defaultValue(0);//->display(array('form'=>'Readonly'));
 		$spec_value_j1->addField('sv_value_status','status')->defaultValue('Active')->system(true);//->display(array('form'=>'Readonly'));
 		
 		$this->addCondition('sv_customfield_generic_id',$specification->fieldQuery('id'));
@@ -60,7 +62,7 @@ class Model_Item extends \xepan\commerce\Model_Item {
 		$spec_assos_j1->addField('cp_status','status')->defaultValue('Active')->system(true);
 
 		$spec_value_j1 = $spec_assos_j1->join('customfield_value.customfield_association_id',null,null,'cp_value_j');
-		$spec_value_j1->addField('capping','name');//->display(array('form'=>'Readonly'));
+		$spec_value_j1->addField('capping','name')->defaultValue(0);//->display(array('form'=>'Readonly'));
 		$spec_value_j1->addField('cp_value_status','status')->defaultValue('Active')->system(true);//->display(array('form'=>'Readonly'));
 		
 		$this->addCondition('cp_customfield_generic_id',$specification->fieldQuery('id'));
@@ -88,7 +90,7 @@ class Model_Item extends \xepan\commerce\Model_Item {
 		$spec_assos_j1->addField('dp_status','status')->defaultValue('Active')->system(true);
 
 		$spec_value_j1 = $spec_assos_j1->join('customfield_value.customfield_association_id',null,null,'dp_value_j');
-		$spec_value_j1->addField('dp','name');//->display(array('form'=>'Readonly'));
+		$spec_value_j1->addField('dp','name')->defaultValue(0);//->display(array('form'=>'Readonly'));
 		$spec_value_j1->addField('dp_value_status','status')->defaultValue('Active')->system(true);//->display(array('form'=>'Readonly'));
 		
 		$this->addCondition('dp_customfield_generic_id',$specification->fieldQuery('id'));

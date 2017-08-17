@@ -14,12 +14,10 @@ class Model_RepurchaseItem extends \xavoc\mlm\Model_Item{
 		parent::init();
 		
 		$this->addCondition('is_package',false);
-		// $this->getElement('bv')->destroy();
-		// $this->getElement('sv')->destroy();
+
 		$this->getElement('pv')->destroy();
 		$this->getElement('introducer_income')->destroy();
 		$this->getElement('capping')->destroy();
-		$this->getElement('dp')->destroy();
 	}
 
 	function detail(){
