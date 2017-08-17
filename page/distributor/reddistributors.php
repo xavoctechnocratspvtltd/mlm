@@ -10,9 +10,11 @@ class page_distributor_reddistributors extends \xepan\base\Page {
 		// parent::init();
 
 		$form = $this->add('Form');
+		$form->setLayout('view/form/distributor-filter');
+		$form->addField('line','search');
 		$form->addField('DatePicker','from_date');
 		$form->addField('DatePicker','to_date');
-		$form->addSubmit('Filter');
+		$form->addSubmit('Filter')->addClass('btn btn-primary');
 
 		$status_color = [
 						'Red'=>'danger',
@@ -32,6 +34,10 @@ class page_distributor_reddistributors extends \xepan\base\Page {
 			$model->addCondition('created_at','<',$this->app->nextDate($td));
 		}
 
+		if($search = $this->app->stickyGET('search')){
+			$model->addCondition([['name',$search],['email',$search],['mobile_number',$search],['user',$search]]);
+		}
+
 		$grid = $this->add('xepan\base\Grid');
 		$grid->setModel($model,['created_at','user','name','city','state','mobile_number']);
 		$grid->add('xepan\hr\Controller_ACL',['status_color'=>$status_color]);
@@ -41,7 +47,7 @@ class page_distributor_reddistributors extends \xepan\base\Page {
 		$grid->addSno('Sr.No');
 
 		if($form->isSubmitted()){
-			$grid->js()->reload(['from_date'=>$form['from_date']?:0,'to_date'=>$form['to_date']?:0])->execute();
+			$grid->js()->reload(['search'=>$form['search'],'from_date'=>$form['from_date']?:0,'to_date'=>$form['to_date']?:0])->execute();
 		}
 		
 	}

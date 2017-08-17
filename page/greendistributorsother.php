@@ -3,8 +3,8 @@
 
 namespace xavoc\mlm;
 
-class page_distributor_reddistributorsintroducer extends \xepan\base\Page {
-	public $title= "Red Distributors Introducers";
+class page_greendistributorsother extends \xepan\base\Page {
+	public $title= "Green Distributors other";
 
 	function page_index(){
 		$form = $this->add('Form');
@@ -37,7 +37,7 @@ class page_distributor_reddistributorsintroducer extends \xepan\base\Page {
 		}
 
 		$grid = $this->add('xepan\base\Grid');
-		$grid->setModel($model,['created_at','user','name','city','introducer','sponsor']);
+		$grid->setModel($model,['created_at','user','name','city','pan_no','dob','email']);
 		$grid->add('xepan\hr\Controller_ACL',['status_color'=>$status_color]);
 
 		$grid->addPaginator($ipp=50);
