@@ -41,7 +41,7 @@ class Model_TopupHistory extends \xepan\base\Model_Table {
 
 		$this->addField('deposite_date')->type('date');
 		
-		$this->addField('is_payment_verified')->type('boolean');
+		$this->addField('is_payment_verified')->type('boolean')->defaultValue(0);
 
 		$this->addField('payment_mode')->enum(['online','cash','cheque','dd','deposite_in_franchies','deposite_in_company']);
 		// $this->addField('payment_mode');

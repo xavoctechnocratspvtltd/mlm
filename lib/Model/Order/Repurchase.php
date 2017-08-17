@@ -2,7 +2,7 @@
 
 namespace xavoc\mlm;
 
-class Model_Order_Topup extends \xavoc\mlm\Model_SalesOrder {
+class Model_Order_Repurchase extends \xavoc\mlm\Model_SalesOrder {
 
 	public $actions = [
 		'Draft'=>['view','edit','delete','verify_Payment'],
@@ -18,29 +18,28 @@ class Model_Order_Topup extends \xavoc\mlm\Model_SalesOrder {
 	function init(){
 		parent::init();
 
-		$this->addExpression('topup_history_count')->set(function($m,$q){
-			$m->add('xavoc\mlm\Model_TopupHistory')
-				->addCondition('sale_order_id',$q->getField('id'))
-				;
-			return $m->count();
+		$this->addExpression('repurchase_history_count')->set(function($m,$q){
+			return $q->expr('[0]',[$m->add('xavoc\mlm\Model_RepurchaseHistory')->addCondition('sale_order_id',$q->getField('id'))->count()]);
 		});
 
 		$this->addExpression('is_payment_verified')->set(function($m,$q){
-			$th = $m->add('xavoc\mlm\Model_TopupHistory')
+			$th = $m->add('xavoc\mlm\Model_RepurchaseHistory')
 				->addCondition('sale_order_id',$q->getField('id'))
 				;
 			return $q->expr('IFNULL([0],0)',[$th->fieldQuery('is_payment_verified')]);
 		})->type('boolean');
 
-		$this->addCondition('topup_history_count','>',0);
-		$this->addCondition('is_topup_included',true);
+		$this->addCondition('repurchase_history_count','>',0);
+
+		$this->addCondition('is_topup_included',false);
 	}
 
 	function page_verify_Payment($page){
-		$th = $this->add('xavoc\mlm\Model_TopupHistory');
+
+		$th = $this->add('xavoc\mlm\Model_RepurchaseHistory');
 		$th->addCondition('sale_order_id',$this->id);
 		if($th->count()->getOne() > 1){
-			$page->add('View')->set('more than one topup history found for same order');
+			$page->add('View')->set('more than one repurchase payment record found');
 			return;
 		}
 		$th->tryLoadAny();
@@ -91,6 +90,7 @@ class Model_Order_Topup extends \xavoc\mlm\Model_SalesOrder {
 		if($image_field){
 			$col2->add('View')->setHtml('<a target="_blank" href="'.$th[$image_field].'"><img style="width:100%;" src="'.$th[$image_field].'" /></a>');
 		}
+
 		if(!$th['is_payment_verified'])
 			$form->addSubmit('Verify Payment')->addClass('btn btn-primary');
 
@@ -103,7 +103,7 @@ class Model_Order_Topup extends \xavoc\mlm\Model_SalesOrder {
 			// $dist = $this->add('xavoc\mlm\Model_Distributor');
 			// $dist->load($this['contact_id']);
 			// $dist->markGreen();
-			$this->app->page_action_result = $form->js(null,$form->js()->closest('.dialog')->dialog('close'))->univ()->successMessage('payment verified and marked green');
+			$this->app->page_action_result = $form->js(null,$form->js()->closest('.dialog')->dialog('close'))->univ()->successMessage('payment verified successfully');
 		}
 
 	}

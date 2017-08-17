@@ -39,7 +39,7 @@ class Model_RepurchaseHistory extends \xepan\base\Model_Table {
 		$this->addField('dd_date')->type('date');
 
 		$this->addField('deposite_date')->type('date');
-		$this->addField('is_payment_verified')->type('boolean');
+		$this->addField('is_payment_verified')->type('boolean')->defaultValue(0);
 
 		$this->addField('payment_mode')->enum(['online','cheque','dd','deposite_in_franchies','deposite_in_company']);
 

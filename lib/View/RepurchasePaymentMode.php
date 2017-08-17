@@ -69,7 +69,7 @@ class View_RepurchasePaymentMode extends \View{
 				}catch(\Exception $e){
 					$this->app->db->rollback();
 					$form->js()->univ()->errorMessage($e->getMessage())->execute();
-				}						
+				}
 				$order_no = $result['master_detail']['document_no'];
 				$form->js(null,$form->js()->redirect($this->app->url(null,['message'=>'Order Placed Successfully, Order No:'.$order_no])))->univ()->execute();
 				// $form->js(null,$form->js()->redirect($this->app->url('dashboard')))->univ()->successMessage('Order Placed and Payment Detail Submitted')->execute();
@@ -108,15 +108,15 @@ class View_RepurchasePaymentMode extends \View{
 				$order_id = $result['master_detail']['id'];
 				$payment_mode = 'dd';
 				$payment_detail = [
-							'bank_name'=>$form['bank_name'],
-							'bank_ifsc_code'=>$form['bank_ifsc_code'],
-							'dd_number'=>$form['dd_number'],
-							'dd_date'=>$form['dd_date'],
-							'deposite_date'=>$form['deposite_date'],
+							'bank_name'=>$dd_form['bank_name'],
+							'bank_ifsc_code'=>$dd_form['bank_ifsc_code'],
+							'dd_number'=>$dd_form['dd_number'],
+							'dd_date'=>$dd_form['dd_date'],
+							'deposite_date'=>$dd_form['deposite_date'],
 							'office_receipt_image_id' => 0,
-							'dd_deposite_receipt_image_id' => $form['dd_deposite_receipt_image_id'],
+							'dd_deposite_receipt_image_id' => $dd_form['dd_deposite_receipt_image_id'],
 							'cheque_deposite_receipt_image_id' => 0,
-							'payment_narration' => $form['narration']
+							'payment_narration' => $dd_form['narration']
 						];
 
 				$distributor->updateRepurchaseHistory($order_id,$payment_mode,$payment_detail);
@@ -166,15 +166,15 @@ class View_RepurchasePaymentMode extends \View{
 				$order_id = $result['master_detail']['id'];
 				$payment_mode = 'cheque';
 				$payment_detail = [
-							'bank_name'=>$form['bank_name'],
-							'bank_ifsc_code'=>$form['bank_ifsc_code'],
-							'cheque_number'=>$form['cheque_number'],
-							'cheque_date'=>$form['cheque_date'],
-							'deposite_date'=>$form['deposite_date'],
+							'bank_name'=>$cheque_form['bank_name'],
+							'bank_ifsc_code'=>$cheque_form['bank_ifsc_code'],
+							'cheque_number'=>$cheque_form['cheque_number'],
+							'cheque_date'=>$cheque_form['cheque_date'],
+							'deposite_date'=>$cheque_form['deposite_date'],
 							'office_receipt_image_id' => 0,
 							'dd_deposite_receipt_image_id' => 0,
-							'cheque_deposite_receipt_image_id' => $form['cheque_deposite_receipt_image_id'],
-							'payment_narration' => $form['narration']
+							'cheque_deposite_receipt_image_id' => $cheque_form['cheque_deposite_receipt_image_id'],
+							'payment_narration' => $cheque_form['narration']
 						];
 
 				$distributor->updateRepurchaseHistory($order_id,$payment_mode,$payment_detail);
