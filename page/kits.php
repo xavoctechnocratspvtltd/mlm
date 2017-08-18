@@ -18,7 +18,7 @@ class page_kits extends \xepan\base\Page {
 
 		$model->getElement('sale_price')->caption('MRP');
 
-		$crud->setModel($model,['name','sku','hsn_sac','bv','sv','dp','capping','introducer_income','item_count'],['name','sku','hsn_sac','sale_price','bv','sv','dp','capping','introducer_income','item_count']);
+		$crud->setModel($model,['name','sku','hsn_sac','bv','sv','dp','capping','introducer_income','tax_percentage','weight_in_gm','item_count'],['name','sku','hsn_sac','sale_price','bv','sv','dp','capping','introducer_income','item_count']);
 		$crud->grid->addQuickSearch(['name','sku']);
 		$crud->removeAttachment();
 		$crud->grid->addOrder()->move('edit','last')->now();

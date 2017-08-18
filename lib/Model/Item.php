@@ -124,6 +124,69 @@ class Model_Item extends \xepan\commerce\Model_Item {
 		// $this->addCondition('weight_in_gm_customfield_generic_id',$specification->fieldQuery('id'));
 
 		$this->getElement('status')->defaultValue('Published');
+
+		$this->addHook('beforeSave', $this);
+	}
+
+	function beforeSave(){
+		$this->createTax();
+	}
+
+	function createTax(){
+		if(!$this->loaded()) throw new \Exception('item model must loaded');
+		
+		if(!$this['tax_percentage']) return;
+
+		// IGST Tax
+		$gst_tax_name = "GST ".$this['tax_percentage']."% (IGST)";
+		$taxation = $this->add('xepan\commerce\Model_Taxation');
+		$taxation->addCondition('name',$gst_tax_name)
+				->addCondition('percentage',$this['tax_percentage'])
+				;
+		$taxation->tryLoadAny();
+		if(!$taxation->loaded()) $taxation->save();
+
+		$sub_tax = $this->add('xepan\commerce\Model_Taxation');
+		$sub_tax->addCondition('name','IGST');
+		$sub_tax->addCondition('percentage',$this['tax_percentage']);
+		$sub_tax->tryLoadAny();
+		$sub_tax['show_in_qsp'] = 0;
+		$sub_tax->save();
+
+		$igst_id = $sub_tax->id."-".$sub_tax['name']."-".$sub_tax['percentage'];
+		$taxation['sub_tax'] = $igst_id;
+		$taxation->save();
+		
+		// GST Tax
+		$gst_tax_name = "GST ".$this['tax_percentage']."%";
+
+		$taxation = $this->add('xepan\commerce\Model_Taxation');
+		$taxation->addCondition('name',$gst_tax_name)
+				->addCondition('percentage',$this['tax_percentage'])
+				;
+		$taxation->tryLoadAny();
+		if(!$taxation->loaded()) $taxation->save();
+
+		$sub_tax = $this->add('xepan\commerce\Model_Taxation');
+		$sub_tax->addCondition('name','CGST');
+		$sub_tax->addCondition('percentage',($this['tax_percentage']/2));
+		$sub_tax->tryLoadAny();
+		$sub_tax['show_in_qsp'] = 0;
+		$sub_tax->save();
+
+		$cgst_id = $sub_tax->id."-".$sub_tax['name']."-".$sub_tax['percentage'];
+
+		$sub_tax = $this->add('xepan\commerce\Model_Taxation');
+		$sub_tax->addCondition('name','SGST');
+		$sub_tax->addCondition('percentage',($this['tax_percentage']/2));
+		$sub_tax->tryLoadAny();
+		$sub_tax['show_in_qsp'] = 0;
+		$sub_tax->save();
+
+		$sgst_id = $sub_tax->id."-".$sub_tax['name']."-".$sub_tax['percentage'];
+
+		$taxation['sub_tax'] = $cgst_id.",".$sgst_id;
+		$taxation->save();
 	}
 
 
