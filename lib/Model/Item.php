@@ -132,78 +132,89 @@ class Model_Item extends \xepan\commerce\Model_Item {
 		$this->createTax();
 	}
 
-	function createTax(){
+	function createTax($igst=true,$gst=true){
 		if(!$this->loaded()) throw new \Exception('item model must loaded');
 		
 		if(!$this['tax_percentage']) return;
 
+		$return_array = []; 
 		// IGST Tax
-		$gst_tax_name = "GST ".$this['tax_percentage']."% (IGST)";
-		$taxation = $this->add('xepan\commerce\Model_Taxation');
-		$taxation->addCondition('name',$gst_tax_name)
-				->addCondition('percentage',$this['tax_percentage'])
-				;
-		$taxation->tryLoadAny();
-		if(!$taxation->loaded()) $taxation->save();
+		if($igst){
+			$gst_tax_name = "GST ".$this['tax_percentage']."% (IGST)";
+			$taxation = $this->add('xepan\commerce\Model_Taxation');
+			$taxation->addCondition('name',$gst_tax_name)
+					->addCondition('percentage',$this['tax_percentage'])
+					;
+			$taxation->tryLoadAny();
+			if(!$taxation->loaded()) $taxation->save();
 
-		$sub_tax = $this->add('xepan\commerce\Model_Taxation');
-		$sub_tax->addCondition('name','IGST');
-		$sub_tax->addCondition('percentage',$this['tax_percentage']);
-		$sub_tax->tryLoadAny();
-		$sub_tax['show_in_qsp'] = 0;
-		$sub_tax->save();
+			$sub_tax = $this->add('xepan\commerce\Model_Taxation');
+			$sub_tax->addCondition('name','IGST');
+			$sub_tax->addCondition('percentage',$this['tax_percentage']);
+			$sub_tax->tryLoadAny();
+			$sub_tax['show_in_qsp'] = 0;
+			$sub_tax->save();
 
-		$igst_id = $sub_tax->id."-".$sub_tax['name']."-".$sub_tax['percentage'];
-		$taxation['sub_tax'] = $igst_id;
-		$taxation->save();
+			$igst_id = $sub_tax->id."-".$sub_tax['name']."-".$sub_tax['percentage'];
+			$taxation['sub_tax'] = $igst_id;
+			$taxation->save();
+
+			$return_array['igst'] = ['taxation_id'=>$taxation->id];
+		}
 		
 		// GST Tax
-		$gst_tax_name = "GST ".$this['tax_percentage']."%";
+		if($gst){
+			$gst_tax_name = "GST ".$this['tax_percentage']."%";
 
-		$taxation = $this->add('xepan\commerce\Model_Taxation');
-		$taxation->addCondition('name',$gst_tax_name)
-				->addCondition('percentage',$this['tax_percentage'])
-				;
-		$taxation->tryLoadAny();
-		if(!$taxation->loaded()) $taxation->save();
+			$taxation = $this->add('xepan\commerce\Model_Taxation');
+			$taxation->addCondition('name',$gst_tax_name)
+					->addCondition('percentage',$this['tax_percentage'])
+					;
+			$taxation->tryLoadAny();
+			if(!$taxation->loaded()) $taxation->save();
 
-		$sub_tax = $this->add('xepan\commerce\Model_Taxation');
-		$sub_tax->addCondition('name','CGST');
-		$sub_tax->addCondition('percentage',($this['tax_percentage']/2));
-		$sub_tax->tryLoadAny();
-		$sub_tax['show_in_qsp'] = 0;
-		$sub_tax->save();
+			$sub_tax = $this->add('xepan\commerce\Model_Taxation');
+			$sub_tax->addCondition('name','CGST');
+			$sub_tax->addCondition('percentage',($this['tax_percentage']/2));
+			$sub_tax->tryLoadAny();
+			$sub_tax['show_in_qsp'] = 0;
+			$sub_tax->save();
 
-		$cgst_id = $sub_tax->id."-".$sub_tax['name']."-".$sub_tax['percentage'];
+			$cgst_id = $sub_tax->id."-".$sub_tax['name']."-".$sub_tax['percentage'];
 
-		$sub_tax = $this->add('xepan\commerce\Model_Taxation');
-		$sub_tax->addCondition('name','SGST');
-		$sub_tax->addCondition('percentage',($this['tax_percentage']/2));
-		$sub_tax->tryLoadAny();
-		$sub_tax['show_in_qsp'] = 0;
-		$sub_tax->save();
+			$sub_tax = $this->add('xepan\commerce\Model_Taxation');
+			$sub_tax->addCondition('name','SGST');
+			$sub_tax->addCondition('percentage',($this['tax_percentage']/2));
+			$sub_tax->tryLoadAny();
+			$sub_tax['show_in_qsp'] = 0;
+			$sub_tax->save();
 
-		$sgst_id = $sub_tax->id."-".$sub_tax['name']."-".$sub_tax['percentage'];
+			$sgst_id = $sub_tax->id."-".$sub_tax['name']."-".$sub_tax['percentage'];
 
-		$taxation['sub_tax'] = $cgst_id.",".$sgst_id;
-		$taxation->save();
+			$taxation['sub_tax'] = $cgst_id.",".$sgst_id;
+			$taxation->save();
+
+			$return_array['gst'] = ['taxation_id'=>$taxation->id];
+		}
+
+		return $return_array;
 	}
 
 
 	function getTaxAmount($contact_id,$qty=1){
 
 		$tax_array = [
+						'tax_apply'=>'none',
 						'base_amount'=>0,
+						'tax_id'=>0,
 						'tax_amount'=>0,
 						'tax_percentage'=>0,
-						'gst_amount'=>0,
 						'cgst_amount'=>0,
 						'cgst_percentage'=>0,
 						'sgst_amount'=>0,
 						'sgst_percentage'=>0,
 						'igst_amount'=>0,
 						'igst_percentage'=>0,
-						'tax_apply'=>'gst',
 						'net_amount'=> 0
 					];
 
@@ -215,28 +226,56 @@ class Model_Item extends \xepan\commerce\Model_Item {
 		if(!$state_model->loaded()) throw new \Exception("state model not found");
 
 		$contact = $this->add('xepan\base\Model_Contact')->load($contact_id);
-		
-		// 45/100 * 100 = 45%
+
+		$igst = false;
+		$gst = false;
+		if($state_model->id == $contact['state_id']){
+			$gst_tax_name = "GST ".$this['tax_percentage']."%";
+			$gst = true;
+		}else{
+			$gst_tax_name = "GST ".$this['tax_percentage']."% (IGST)";
+			$igst = true;
+		}
+
+		$taxation = $this->add('xepan\commerce\Model_Taxation');
+		$taxation->addCondition('name',$gst_tax_name)
+				->addCondition('percentage',$this['tax_percentage'])
+				;
+		$taxation->tryLoadAny();
+		if(!$taxation->loaded()){
+			$tax_array = $this->createTax($igst,$gst);
+			$temp_tax_name = "igst";
+			if($gst){
+				$temp_tax_name = 'gst';
+			}
+
+			$taxation_id = $tax_array[$temp_tax_name];
+
+			$taxation = $this->add('xepan\commerce\Model_Taxation')->load($taxation_id);
+		}
+					
+
+		$tax_percentage = $taxation['percentage'];
 
 		$base_amount = $this['sale_price'] * $qty;
-		$tax_amount =  ($base_amount * $this['tax_percentage'])/100;
+		$tax_amount =  ($base_amount * $tax_percentage)/100;
 
 		// GST = CGST/SGST
 		$tax_array['base_amount'] = $base_amount;
 		$tax_array['tax_amount'] = $tax_amount;
 		$tax_array['tax_percentage'] = $this['tax_percentage'];
-		$tax_array['gst_amount'] = $tax_amount;
 		$tax_array['net_amount'] = $base_amount + $tax_amount;
+		$tax_array['taxation_id'] = $taxation->id;
 		
 		if($state_model->id == $contact['state_id']){
 			$tax_array['cgst_amount'] = ($tax_amount/2);
-			$tax_array['cgst_percentage'] = ($this['tax_percentage']/2);
+			$tax_array['cgst_percentage'] = ($tax_percentage/2);
 			$tax_array['sgst_amount'] = ($tax_amount/2);
-			$tax_array['sgst_percentage'] = ($this['tax_percentage']/2);
+			$tax_array['sgst_percentage'] = ($tax_percentage/2);
 		}else{
 			// IGST Calculation
 			$tax_array['igst_amount'] = $tax_amount;
-			$tax_array['igst_percentage'] = $this['tax_percentage'];
+			$tax_array['igst_percentage'] = $tax_percentage;
 			$tax_array['tax_apply'] = 'igst';
 		}
 
