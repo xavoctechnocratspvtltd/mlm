@@ -7,9 +7,9 @@
 	function init(){
 		parent::init();
 
-		$topup_order = $this->add('xavoc\mlm\Model_Order_Topup');
-		$topup_order->addCondition('is_payment_verified',true);
-		$topup_order->addCondition('is_delivered',false);
+		$topup_order = $this->add('xavoc\mlm\Model_Order_TopupDeliver');
+		// $topup_order->addCondition('is_payment_verified',true);
+		// $topup_order->addCondition('is_delivered',false);
 
 		$crud = $this->add('xepan\hr\CRUD',['allow_add'=>false,'allow_edit'=>false,'allow_del'=>false]);
 		$crud->setModel($topup_order,['id','is_delivered']);

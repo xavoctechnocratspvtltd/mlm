@@ -6,14 +6,25 @@ class View_FranchisesDispatch extends \View{
 	public $order_id;
 	public $return_js;
 
+	public $to_warehouse = "franchises";
+
 	function init(){
 		parent::init();
 
-		if(!$this->order_id) throw new \Exception("order id must must be defined");
+		if(!$this->order_id) throw new \Exception("order id must be defined");
 		
-		$this->franchises = $franchises = $this->add('xavoc\mlm\Model_Franchises');
-		$this->franchises->loadLoggedIn();
-
+		if($this->to_warehouse == "franchises"){
+			$this->franchises = $franchises = $this->add('xavoc\mlm\Model_Franchises');
+			$this->franchises->loadLoggedIn();
+			$to_warehouse_id = $this->franchises->id;
+		}else{
+			$company_warehouse = $this->add('xepan\commerce\Model_Store_Warehouse')
+				->addCondition('first_name','company')
+				->tryLoadAny();
+			if(!$company_warehouse->loaded())
+				$company_warehouse->save();
+			$to_warehouse_id = $company_warehouse->id;
+		}
 
 		$order_id = $this->order_id;
 		$order_model = $this->add('xavoc\mlm\Model_SalesOrder')->load($order_id);
@@ -40,7 +51,7 @@ class View_FranchisesDispatch extends \View{
 
 		$transaction['type'] = "Store_DispatchRequest";
 		$transaction['from_warehouse_id'] = $order_model['contact_id'];
-		$transaction['to_warehouse_id'] = $this->franchises->id;
+		$transaction['to_warehouse_id'] = $to_warehouse_id;
 		$transaction['jobcard_id'] = null;
 		$transaction['department_id'] = null;
 		$transaction['narration'] = "system generated";

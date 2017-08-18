@@ -19,6 +19,7 @@ class Initiator extends \Controller_Addon {
             $m->addItem(['Supplier','icon'=>'fa fa-check-square-o'],'xavoc_dm_supplier');
             $m->addItem(['Supplier Bank Details','icon'=>'fa fa-check-square-o'],'xavoc_dm_supplier');
             $m->addItem(['Purchase','icon'=>'fa fa-check-square-o'],'xavoc_dm_productpurchase');
+        
         $m = $this->app->top_menu->addMenu('Distributors');
             $m->addItem(['Red Distributors','icon'=>'fa fa-check-square-o'],'xavoc_dm_distributor_reddistributors');
             $m->addItem(['Red Distributors Other','icon'=>'fa fa-check-square-o'],'xavoc_dm_distributor_reddistributorsother');
@@ -31,9 +32,14 @@ class Initiator extends \Controller_Addon {
             $m->addItem(['Green Distributors Bank Report','icon'=>'fa fa-check-square-o'],'xavoc_dm_greendistributorsbank');
             
             $m->addItem(['Distributors','icon'=>'fa fa-check-square-o'],'xavoc_dm_distributors');
-            $m->addItem(['Pending Orders','icon'=>'fa fa-check-square-o'],'xavoc_dm_distributors');
+            $m->addItem(['Verify Topup Order','icon'=>'fa fa-check-square-o'],'xavoc_dm_order_verifytopup');
+            $m->addItem(['Verify Repurchase Order','icon'=>'fa fa-check-square-o'],'xavoc_dm_order_verifyrepurchase');
+            $m->addItem(['Dispatch Topup Order','icon'=>'fa fa-check-square-o'],'xavoc_dm_order_delivertopup');
+            $m->addItem(['Dispatch Repurchase Order','icon'=>'fa fa-check-square-o'],'xavoc_dm_order_deliverrepurchase');
+            
             $m->addItem(['Approved Orders','icon'=>'fa fa-check-square-o'],'xavoc_dm_distributors');
             $m->addItem(['Dispacthed Orders','icon'=>'fa fa-check-square-o'],'xavoc_dm_distributors');
+        
         $m = $this->app->top_menu->addMenu('Franchisies');
             $m->addItem(['Franchise List','icon'=>'fa fa-check-square-o'],'xavoc_dm_franchiselist');
             $m->addItem(['Franchise Orders','icon'=>'fa fa-check-square-o'],'xavoc_dm_franchiseorder');

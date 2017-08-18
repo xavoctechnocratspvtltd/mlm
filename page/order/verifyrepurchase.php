@@ -1,4 +1,4 @@
-<?php 
+<?php
  namespace xavoc\mlm;
  class page_order_verifyrepurchase extends \xepan\base\Page{
 

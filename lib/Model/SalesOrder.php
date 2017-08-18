@@ -210,4 +210,17 @@ class Model_SalesOrder extends \xepan\commerce\Model_SalesOrder {
 		return false;
 	}
 
+	function page_dispatch($page){
+		if($this->isDelivered()){
+			$page->add('View')->set('Order is Dispatched')->addClass('alert alert-success');
+		}
+
+		$view = $page->add('xavoc\mlm\View_FranchisesDispatch',['order_id'=>$this->id,'to_warehouse'=>'company']); // this function craete dispatch request and then dispatch by reverting from/to hencce to_ware is ok
+		$ret = $view->getReturnJs();
+		if($ret instanceof \jQuery_Chain) {
+			$js_event = [$ret];
+			$this->app->page_action_result = $this->app->js(true,$js_event);
+		}
+	}
+
 } 
