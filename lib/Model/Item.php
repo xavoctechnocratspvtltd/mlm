@@ -125,4 +125,59 @@ class Model_Item extends \xepan\commerce\Model_Item {
 
 		$this->getElement('status')->defaultValue('Published');
 	}
+
+
+	function getTaxAmount($contact_id,$qty=1){
+
+		$tax_array = [
+						'base_amount'=>0,
+						'tax_amount'=>0,
+						'tax_percentage'=>0,
+						'gst_amount'=>0,
+						'cgst_amount'=>0,
+						'cgst_percentage'=>0,
+						'sgst_amount'=>0,
+						'sgst_percentage'=>0,
+						'igst_amount'=>0,
+						'igst_percentage'=>0,
+						'tax_apply'=>'gst',
+						'net_amount'=> 0
+					];
+
+		if(!$this['tax_percentage']) return $tax_array;
+
+		$state_model = $this->add('xepan\base\Model_State');
+		$state_model->addCondition('name','Gujarat');
+		$state_model->tryLoadAny();
+		if(!$state_model->loaded()) throw new \Exception("state model not found");
+
+		$contact = $this->add('xepan\base\Model_Contact')->load($contact_id);
+		
+		// 45/100 * 100 = 45%
+
+		$base_amount = $this['sale_price'] * $qty;
+		$tax_amount =  ($base_amount * $this['tax_percentage'])/100;
+
+		// GST = CGST/SGST
+		$tax_array['base_amount'] = $base_amount;
+		$tax_array['tax_amount'] = $tax_amount;
+		$tax_array['tax_percentage'] = $this['tax_percentage'];
+		$tax_array['gst_amount'] = $tax_amount;
+		$tax_array['net_amount'] = $base_amount + $tax_amount;
+		
+		if($state_model->id == $contact['state_id']){
+			$tax_array['cgst_amount'] = ($tax_amount/2);
+			$tax_array['cgst_percentage'] = ($this['tax_percentage']/2);
+			$tax_array['sgst_amount'] = ($tax_amount/2);
+			$tax_array['sgst_percentage'] = ($this['tax_percentage']/2);
+		}else{
+			// IGST Calculation
+			$tax_array['igst_amount'] = $tax_amount;
+			$tax_array['igst_percentage'] = $this['tax_percentage'];
+			$tax_array['tax_apply'] = 'igst';
+		}
+
+		return $tax_array;
+	}
+
 }

@@ -17,7 +17,7 @@ class View_FranchisesRepurchase extends \View{
 		$grid = $this->add('Grid');
 		$dist = $this->add('xavoc\mlm\Model_Distributor');
 		$dist->addExpression('distributor_username')->set($dist->refSQL('user_id')->fieldQuery('username'));
-
+		
 		if($dist_id){
 			$dist->addCondition('distributor_username',$dist_id);
 		}
