@@ -206,7 +206,7 @@ class Model_Item extends \xepan\commerce\Model_Item {
 		$tax_array = [
 						'tax_apply'=>'none',
 						'base_amount'=>0,
-						'tax_id'=>0,
+						'taxation_id'=>0,
 						'tax_amount'=>0,
 						'tax_percentage'=>0,
 						'cgst_amount'=>0,

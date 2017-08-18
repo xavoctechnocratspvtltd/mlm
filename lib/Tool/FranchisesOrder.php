@@ -96,7 +96,7 @@ class Tool_FranchisesOrder extends \xepan\cms\View_Tool{
 			
 			$html_tax_detail .= "<tr>";
 			$html_tax_detail .= "<td>GST Amount: <br/>@".$tax_array['tax_percentage']."% </td>";
-			$html_tax_detail .= "<td>".$tax_array['gst_amount']."</td>";
+			$html_tax_detail .= "<td>".$tax_array['tax_amount']."</td>";
 			$html_tax_detail .= "</tr>";
 
 			// sub tax detail table
@@ -155,7 +155,7 @@ class Tool_FranchisesOrder extends \xepan\cms\View_Tool{
 
 				$distributor = $this->add('xavoc\mlm\Model_Distributor')->load($form['distributor']);
 
-				$result = $distributor->placeTopupOrder($form['kit']);
+				$result = $distributor->placeTopupOrder($form['kit'],$this->franchises->id);
 				$order_id = $result['master_detail']['id'];
 				
 				$payment_detail['payment_narration'] = $form['payment_narration'];

@@ -893,29 +893,36 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		return $master_detail;
 	}
 
-	function getQSPDetail($item_id){
-		$item_model = $this->add('xepan\commerce\Model_Item');
+	function getQSPDetail($item_id,$qty=1,$contact_id=null){
+		$item_model = $this->add('xavoc\mlm\Model_Item');
 		$item_model->tryLoad($item_id);
 
 		if(!$item_model->loaded())
 			throw new \Exception("item not found, at getQSPDetail", 1);
 
-		$taxation = $item_model->applicableTaxation();
-		if($taxation instanceof \xepan\commerce\Model_Taxation){
-			$taxation_id = $taxation->id;
-			$tax_percentage = $taxation['percentage'];
-		}else{
-			$taxation_id = 0;
-			$tax_percentage = 0;
+		// $taxation = $item_model->applicableTaxation();
+		// if($taxation instanceof \xepan\commerce\Model_Taxation){
+		// 	$taxation_id = $taxation->id;
+		// 	$tax_percentage = $taxation['percentage'];
+		// }else{
+		// 	$taxation_id = 0;
+		// 	$tax_percentage = 0;
+		// }
+		if(!$contact_id){
+			$contact_id = $this->id;
 		}
 
+		$tax_array = $item_model->getTaxAmount($contact_id);
+		$taxation_id = $tax_array['taxation_id'];
+		$tax_percentage = $tax_array['tax_percentage'];		
+		
 		$sale_price = $item_model['sale_price'];
 
 		$qty_unit_id = $item_model['qty_unit_id'];
 		$item = [
 			'item_id'=>$item_model->id,
 			'price'=>$sale_price,
-			'quantity' => 1,
+			'quantity' => $qty,
 			'taxation_id' => $taxation_id,
 			'tax_percentage' => $tax_percentage,
 			'narration'=>null,
@@ -931,13 +938,13 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		return $item;
 	}
 
-	function placeTopupOrder($kit_id){
+	function placeTopupOrder($kit_id,$contact_id=null){
 
 		// $updating_kit = false;
 		// if($this['kit_item_id']) $updating_kit = true;
 
 		$master_detail = $this->getQSPMasterDetail();
-		$detail_data[] = $this->getQSPDetail($kit_id);
+		$detail_data[] = $this->getQSPDetail($kit_id,$qty=1,$contact_id);
 
 		return $this->add('xepan\commerce\Model_QSP_Master')->createQSP($master_detail,$detail_data,'SalesOrder');
 		// not required
