@@ -24,10 +24,13 @@ class page_mypayouts_detail extends \Page {
 		$m_payout->addExpression('date')->set($m_payout->dsql()->expr(' DATE_FORMAT(closing_date,"%d %b %y")'));
 		$m_payout->addCondition('month_year',$current_month_year);
 		$m_payout->addCondition('distributor_id',$this->distributor->id);
-		$m_payout->addCondition('payout_type','WeeklyClosing');
+		// $m_payout->addCondition('payout_type','WeeklyClosing');
 		$m_payout->setOrder('id','desc');
 
 		$grid = $this->add('xepan\base\Grid');//->addClass('hide-header');
-		$grid->setModel($m_payout,['date','previous_carried_amount','binary_income','introduction_amount','retail_profit','repurchase_bonus','generation_income','loyalty_bonus','leadership_bonus','gross_payment','tds','admin_charge','net_payment','carried_amount']);
+		$grid->setModel($m_payout,['date','previous_carried_amount','binary_income','introduction_amount','retail_profit','repurchase_bonus','generation_income','loyalty_bonus','leadership_bonus','gross_payment','tds','admin_charge','net_payment','carried_amount','payout_type']);
+
+		$grid->addFormatter('date','template')->setTemplate('{$date}<br/><small><small>({$payout_type})</small></small>','date');
+		$grid->removeColumn('payout_type');
 	}	
 }
