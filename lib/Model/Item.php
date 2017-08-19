@@ -201,7 +201,7 @@ class Model_Item extends \xepan\commerce\Model_Item {
 	}
 
 
-	function getTaxAmount($contact_id,$qty=1){
+	function getTaxAmount($contact_id,$qty=1,$from_dp=true){
 
 		$tax_array = [
 						'tax_apply'=>'none',
@@ -257,7 +257,11 @@ class Model_Item extends \xepan\commerce\Model_Item {
 
 		$tax_percentage = $taxation['percentage'];
 
-		$base_amount = $this['sale_price'] * $qty;
+		if($from_dp)
+			$base_amount = $this['dp'] * $qty;
+		else
+			$base_amount = $this['sale_price'] * $qty;
+
 		$tax_amount =  ($base_amount * $tax_percentage)/100;
 
 		// GST = CGST/SGST
