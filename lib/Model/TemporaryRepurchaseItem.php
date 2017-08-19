@@ -25,8 +25,8 @@ class Model_TemporaryRepurchaseItem extends \xepan\base\Model_Table {
 		$this->is([
 				'distributor_id|required',
 				'item_id|required',
-				'quantity|required|decimal|gt|0',
-				'price|decimal'
+				'quantity|required|number|gt|0',
+				'price|number'
 			]);
 
 		$this->add('dynamic_model/Controller_AutoCreator');
