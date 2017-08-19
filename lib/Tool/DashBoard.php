@@ -75,7 +75,27 @@ class Tool_DashBoard extends \xavoc\mlm\Tool_Distributor{
 		$col3 = $col->addColumn('4')->addClass('col-lg-4 col-md-4 col-sm-12 col-xs-12');
 
 		$view_box = $col1->add('View')->addClass('panel panel-info alert');
-		$view_box->add('View')->setElement('a')->set('Upgrade Package Request')->js('click')->univ()->redirect($this->app->url('kit'));
+		
+		$kit_model = $this->add('xavoc\mlm\Model_Kit');
+		$kit_model->addExpression('capping_int')->set(function($m,$q){
+			return $q->expr('CAST([0] AS SIGNED)',[$m->getElement('capping')]);
+		});
+		$last_kit = $this->add('xavoc\mlm\Model_TopupHistory')
+		->addCondition('distributor_id',$distributor->id)
+		->setOrder('id','desc')
+		->tryLoadAny()
+		;
+		if($last_kit->loaded())
+			$kit_model->addCondition('capping_int','>',$last_kit['capping']);
+		else{
+			$kit_model->addCondition('capping_int','>',$distributor['capping']);
+		}
+		if($kit_model->count()->getOne()){
+			$view_box->add('View')->setElement('a')->set('Upgrade Package Request')->js('click')->univ()->redirect($this->app->url('kit'));
+		}else{
+			$view_box->add('View_Box')->setHTML('<i class="glyphicon glyphicon-ok"></i> Topup Updated')->addClass('text-success text-center');
+		}
+
 
 		$view_box = $col2->add('View')->addClass('panel panel-info alert');//->setStyle('height','80px;');
 		if(!$distributor['attachment_count']){
