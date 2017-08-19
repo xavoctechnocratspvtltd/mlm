@@ -54,6 +54,7 @@ class Initiator extends \Controller_Addon {
             $m->addItem(['Stock Admin Report','icon'=>'fa fa-check-square-o'],'xavoc_dm_store_activity');
             $m->addItem(['Store Activity','icon'=>'fa fa-check-square-o'],'xavoc_dm_store_activity');
             $m->addItem(['Store Transaction','icon'=>'fa fa-check-square-o'],'xavoc_dm_storetransaction');
+            $m->addItem(['Item Stock Report','icon'=>'fa fa-check-square-o'],'xavoc_dm_itemstock');
             
         $m = $this->app->top_menu->addMenu('Admin');
             $m->addItem(['Recent News','icon'=>'fa fa-check-square-o'],'xavoc_dm_recentnews');
