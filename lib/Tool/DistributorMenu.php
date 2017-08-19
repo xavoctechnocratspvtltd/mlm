@@ -43,8 +43,8 @@ class Tool_DistributorMenu extends \xavoc\mlm\Tool_Distributor{
 								'generation'=>'Generation'
 							],
 							'mypayouts'=>[
-								'index.php?page=mypayouts&report=binary'=>'Binary',
-								'index.php?page=mypayouts&report=generation'=>'Generation',
+								// 'index.php?page=mypayouts&report=binary'=>'Binary',
+								// 'index.php?page=mypayouts&report=generation'=>'Generation',
 								'index.php?page=mypayouts&report=all'=>'All',
 							],
 							'repurchase'=>[
