@@ -38,7 +38,7 @@ class Tool_DistributorCheckout extends \xavoc\mlm\Tool_Distributor{
 		$this->add('View')->setElement('hr');
 
 		$crud = $this->add('CRUD',['allow_add'=>false,'allow_edit'=>true]);
-		$crud->setModel($temp,['quantity'],['image','item','quantity','price']);
+		$crud->setModel($temp,['quantity'],['image','item','quantity','price','tax_percentage','tax_amount','amount']);
 		$crud->grid->addHook('formatRow',function($m){
 			$m->current_row_html['image'] = '<img class="checkout-item-image" style="height:100px;" src="'.$m['image'].'"/>';
 		});	

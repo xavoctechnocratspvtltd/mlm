@@ -15,9 +15,9 @@ class Model_RepurchaseItem extends \xavoc\mlm\Model_Item{
 		
 		$this->addCondition('is_package',false);
 
-		$this->getElement('pv')->destroy();
-		$this->getElement('introducer_income')->destroy();
-		$this->getElement('capping')->destroy();
+		// $this->getElement('pv')->destroy();
+		// $this->getElement('introducer_income')->destroy();
+		// $this->getElement('capping')->destroy();
 	}
 
 	function detail(){

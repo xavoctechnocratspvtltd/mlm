@@ -25,8 +25,8 @@ class Model_TemporaryRepurchaseItem extends \xepan\base\Model_Table {
 		$this->is([
 				'distributor_id|required',
 				'item_id|required',
-				'quantity|required|int|gt|0',
-				'price|int'
+				'quantity|required|decimal|gt|0',
+				'price|decimal'
 			]);
 
 		$this->add('dynamic_model/Controller_AutoCreator');
@@ -35,7 +35,9 @@ class Model_TemporaryRepurchaseItem extends \xepan\base\Model_Table {
 	}
 
 	function beforeSave(){
-		if(!$this['price']){
+		
+		if($this['price'] > 0){
+			
 			$kit = $this->add('xavoc\mlm\Model_Item')->load($this['item_id']);
 			$this['price'] = $kit['dp'];
 			$tax_array = $kit->getTaxAmount($this['distributor_id'],$this['quantity']);
