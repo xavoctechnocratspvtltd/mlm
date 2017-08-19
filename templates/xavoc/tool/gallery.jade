@@ -9,7 +9,7 @@ div(id='{$_name}' class="{$class} row" style="{$style}")
       {/}
       .caption
         h3 {$name}
-        p Photos: {$images}
+        {photos}p Photos: {$images}{/photos}
         div{$description}
   {/}{/}
   {not_found}
