@@ -42,6 +42,9 @@ class View_FranchisesRepurchase extends \View{
 
 			$submit_form = $view->add('Form');
 			$submit_form->addField('text','payment_narration');
+			$submit_form->addField('line','delivery_via')->validate('required');
+			$submit_form->addField('line','delivery_docket_no','Docket no/ Person name/ Other reference');
+			$submit_form->addField('line','tracking_code');
 			$submit_form->addSubmit('Place Repurchase Order and Receive Payment')->addClass('btn btn-primary');
 
 			if($submit_form->isSubmitted()){
@@ -77,6 +80,13 @@ class View_FranchisesRepurchase extends \View{
 					$rh['payment_mode'] = 'deposite_in_franchies';
 					$rh['is_payment_verified'] = true;
 					$rh->save();
+
+					$order_model->dispatchComplete($this->franchises->id,[
+						'delivery_via'=>$submit_form['delivery_via'],
+						'delivery_docket_no'=>$submit_form['delivery_docket_no'],
+						'tracking_code'=>$submit_form['tracking_code'],
+						'narration' => $submit_form['payment_narration']
+					]);
 
 					$this->app->db->commit();
 				}catch(\Exception $e){

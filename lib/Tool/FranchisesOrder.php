@@ -56,6 +56,9 @@ class Tool_FranchisesOrder extends \xepan\cms\View_Tool{
 		$kit_field->setEmptyText('Please select');
 
 		$form->addField('text','payment_narration')->validate('required');
+		$form->addField('line','delivery_via')->validate('required');
+		$form->addField('line','delivery_docket_no','Docket no/ Person name/ Other reference');
+		$form->addField('line','tracking_code');
 
 		$tax_detail = $form->add('View');
 		// autocomplete reload
@@ -164,9 +167,16 @@ class Tool_FranchisesOrder extends \xepan\cms\View_Tool{
 				$distributor->purchaseKit($form['kit']);
 				$distributor->updateTopupHistory($form['kit'],$order_id,"deposite_in_franchies",$payment_detail);
 				
-				$order_model = $this->add('xepan\commerce\Model_SalesOrder');
+				$order_model = $this->add('xavoc\mlm\Model_SalesOrder');
 				$order_model->load($order_id);
 				$order_model->invoice()->paid();
+
+				$order_model->dispatchComplete($this->franchises->id,[
+						'delivery_via'=>$form['delivery_via'],
+						'delivery_docket_no'=>$form['delivery_docket_no'],
+						'tracking_code'=>$form['tracking_code'],
+						'narration' => $form['payment_narration']
+					]);
 				
 				$this->app->db->commit();
 			}catch(Exception $e){

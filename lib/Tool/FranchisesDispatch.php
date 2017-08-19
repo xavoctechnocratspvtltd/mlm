@@ -47,8 +47,6 @@ class Tool_FranchisesDispatch extends \xepan\cms\View_Tool{
 		$grid->addClass('franchises-dispatch');
 		$grid->js('reload')->reload();
 
-
-
 		$grid->add('VirtualPage')
 			->addColumn('Dispatch')
 			->set(function($page){

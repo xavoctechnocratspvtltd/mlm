@@ -223,4 +223,33 @@ class Model_SalesOrder extends \xepan\commerce\Model_SalesOrder {
 		}
 	}
 
+	function dispatchComplete($from_warehouse_id, $delivery_details=[]){
+
+		$deliver_model = $this->add('xepan\commerce\Model_Store_Delivered');
+		$deliver_model['from_warehouse_id'] = $from_warehouse_id;
+		$deliver_model['to_warehouse_id'] = $this['contact_id'];
+		$deliver_model['related_document_id'] = $this->id;
+		$deliver_model['delivery_via'] = $delivery_details['delivery_via'];
+		$deliver_model['delivery_reference'] = $delivery_details['delivery_docket_no'];
+		$deliver_model['narration'] = $delivery_details['narration'];
+		$deliver_model['tracking_code'] = $delivery_details['tracking_code'];
+		$deliver_model['status'] = 'Delivered';
+		// $deliver_model['related_transaction_id'] = $this->related_transaction_id;
+		$deliver_model->save();
+
+		foreach ($this->items() as $dispatched_item) {
+			$deliver_model->addItem(
+								$dispatched_item->id,
+								$dispatched_item['item_id'],
+								$dispatched_item['quantity'],
+								null,
+								null,
+								"Delivered"
+							);
+		}
+		// $invoice = $this->invoice();
+		// $invoice->paid();			
+		return $deliver_model;
+	}
+
 } 

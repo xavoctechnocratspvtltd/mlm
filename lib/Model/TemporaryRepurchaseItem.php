@@ -10,7 +10,7 @@ class Model_TemporaryRepurchaseItem extends \xepan\base\Model_Table {
 
 			
 		$this->hasOne('xavoc\mlm\Model_Distributor','distributor_id');
-		$this->hasOne('xepan\commerce\Model_Item','item_id')->display(['form'=>'autocomplete/Basic']);
+		$this->hasOne('xepan\commerce\Model_Item','item_id')->display(['form'=>'DropDown']);
 
 		$this->addExpression('image')->set($this->refSQL('item_id')->fieldQuery('first_image'));
 
@@ -36,15 +36,12 @@ class Model_TemporaryRepurchaseItem extends \xepan\base\Model_Table {
 
 	function beforeSave(){
 		
-		if($this['price'] > 0){
-			
 			$kit = $this->add('xavoc\mlm\Model_Item')->load($this['item_id']);
 			$this['price'] = $kit['dp'];
 			$tax_array = $kit->getTaxAmount($this['distributor_id'],$this['quantity']);
 			$this['taxation_id'] = $tax_array['taxation_id'];
 			$this['tax_percentage'] = $tax_array['tax_percentage'];
 			$this['tax_amount'] = $tax_array['tax_amount'];
-		}
 	}
 
 

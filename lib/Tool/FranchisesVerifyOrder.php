@@ -12,6 +12,9 @@ class Tool_FranchisesVerifyOrder extends \xepan\cms\View_Tool{
 		parent::init();
 		
 		if($this->owner instanceof \AbstractController) return;
+
+		$this->franchises = $franchises = $this->add('xavoc\mlm\Model_Franchises');
+		$franchises->loadLoggedIn();
 		
 		$this->addClass('main-box franchises-order-verification');
 		$this->js('reload')->reload();
@@ -117,20 +120,51 @@ class Tool_FranchisesVerifyOrder extends \xepan\cms\View_Tool{
 
 				});
 		}
-		$dispatch_btn = $order_view->add('Button',null,'btn_wrapper')->set('Dispatch')->addClass('btn btn-warning  pull-right');
-		$dispatch_btn->add('VirtualPage')
-				->bindEvent('Dispatch Order '.$this->saleOrder['document_no'],'click')
-				->set(function($page){
 
-					$view = $page->add('xavoc\mlm\View_FranchisesDispatch',['order_id'=>$this->saleOrder->id]);
-					$ret = $view->getReturnJs();
-					if ($ret instanceof \jQuery_Chain) {
-						$this->app->stickyForget('order_id');
-						$js_event = [$ret,$this->app->redirect($this->app->url())];
-						// $js_event = [$ret,$this->js()->_selector('.franchises-order-verification')->trigger('reload')];
-						$this->app->js(true,$js_event)->execute();
-					}
-				});
+		if(!$sale_order->isDelivered()){
+			$form = $v->add('Form');
+			$form->addField('text','narration')->validate('required');
+			$form->addField('line','delivery_via')->validate('required');
+			$form->addField('line','delivery_docket_no','Docket no/ Person name/ Other reference');
+			$form->addField('line','tracking_code');
+			$form->addSubmit('Dispatch');
+
+			if($form->isSubmitted()){
+				try{
+
+					$this->app->db->beginTransaction();
+
+					$sale_order->dispatchComplete($this->franchises->id,[
+							'delivery_via'=>$form['delivery_via'],
+							'delivery_docket_no'=>$form['delivery_docket_no'],
+							'tracking_code'=>$form['tracking_code'],
+							'narration' => $form['payment_narration']
+						]);
+					
+					$this->app->db->commit();
+					$v->js()->reload()->execute();
+				}catch(Exception $e){
+					$this->app->db->rollback();
+					throw $e;
+				}
+			}
+		}else{
+			$v->add('H3')->set('Already Dispactehd');
+		}
+		// $dispatch_btn = $order_view->add('Button',null,'btn_wrapper')->set('Dispatch')->addClass('btn btn-warning  pull-right');
+		// $dispatch_btn->add('VirtualPage')
+		// 		->bindEvent('Dispatch Order '.$this->saleOrder['document_no'],'click')
+		// 		->set(function($page){
+
+		// 			$view = $page->add('xavoc\mlm\View_FranchisesDispatch',['order_id'=>$this->saleOrder->id]);
+		// 			$ret = $view->getReturnJs();
+		// 			if ($ret instanceof \jQuery_Chain) {
+		// 				$this->app->stickyForget('order_id');
+		// 				$js_event = [$ret,$this->app->redirect($this->app->url())];
+		// 				// $js_event = [$ret,$this->js()->_selector('.franchises-order-verification')->trigger('reload')];
+		// 				$this->app->js(true,$js_event)->execute();
+		// 			}
+		// 		});
 
 	}
 }
