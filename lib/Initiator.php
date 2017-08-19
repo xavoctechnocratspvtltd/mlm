@@ -50,9 +50,11 @@ class Initiator extends \Controller_Addon {
             $m->addItem(['Stock Report','icon'=>'fa fa-check-square-o'],'xavoc_dm_store_activity');
             $m->addItem(['Stock Admin Report','icon'=>'fa fa-check-square-o'],'xavoc_dm_store_activity');
             $m->addItem(['Store Activity','icon'=>'fa fa-check-square-o'],'xavoc_dm_store_activity');
+        
         $m = $this->app->top_menu->addMenu('Admin');
             $m->addItem(['Recent News','icon'=>'fa fa-check-square-o'],'xavoc_dm_recentnews');
             $m->addItem(['Gallery','icon'=>'fa fa-check-square-o'],'xavoc_dm_gallery');
+            $m->addItem(['Download','icon'=>'fa fa-check-square-o'],'xavoc_dm_download');
             $m->addItem(['Configuration','icon'=>'fa fa-check-square-o'],'xavoc_dm_config');
             $m->addItem(['Set Date','icon'=>'fa fa-check-square-o'],'xavoc_dm_setdate');
             $m->addItem(['Post','icon'=>'fa fa-sitemap'],$this->app->url('xepan_hr_post',['status'=>'Active']));
