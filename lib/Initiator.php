@@ -47,12 +47,14 @@ class Initiator extends \Controller_Addon {
 
         $m = $this->app->top_menu->addMenu('Closings');
             $m->addItem(['Closings','icon'=>'fa fa-check-square-o'],'xavoc_dm_closings');
+        
         $m = $this->app->top_menu->addMenu('Store');
             $m->addItem(['Pack/Open Joining Kits','icon'=>'fa fa-check-square-o'],'xavoc_dm_store_activity');
             $m->addItem(['Stock Report','icon'=>'fa fa-check-square-o'],'xavoc_dm_store_activity');
             $m->addItem(['Stock Admin Report','icon'=>'fa fa-check-square-o'],'xavoc_dm_store_activity');
             $m->addItem(['Store Activity','icon'=>'fa fa-check-square-o'],'xavoc_dm_store_activity');
-        
+            $m->addItem(['Store Transaction','icon'=>'fa fa-check-square-o'],'xavoc_dm_storetransaction');
+            
         $m = $this->app->top_menu->addMenu('Admin');
             $m->addItem(['Recent News','icon'=>'fa fa-check-square-o'],'xavoc_dm_recentnews');
             $m->addItem(['Gallery','icon'=>'fa fa-check-square-o'],'xavoc_dm_gallery');
