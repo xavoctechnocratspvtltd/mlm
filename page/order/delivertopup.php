@@ -8,6 +8,7 @@
 		parent::init();
 
 		$topup_order = $this->add('xavoc\mlm\Model_Order_TopupDeliver');
+		$topup_order->setOrder('id','desc');
 		// $topup_order->addCondition('is_payment_verified',true);
 		// $topup_order->addCondition('is_delivered',false);
 

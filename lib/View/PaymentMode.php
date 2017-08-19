@@ -298,14 +298,20 @@ class View_PaymentMode extends \xepan\cms\View_Tool{
 						];
 
 			$detail_data = [];
-			$taxation = $kit_model->applicableTaxation();
-			if($taxation instanceof \xepan\commerce\Model_Taxation){
-				$taxation_id = $taxation->id;
-				$tax_percentage = $taxation['percentage'];
-			}else{
-				$taxation_id = 0;
-				$tax_percentage = 0;
-			}
+
+
+			$tax_array = $kit_model->getTaxAmount($distributor->id);
+			$taxation_id = $tax_array['taxation_id'];
+			$tax_percentage = $tax_array['tax_percentage'];
+
+			// $taxation = $kit_model->applicableTaxation();
+			// if($taxation instanceof \xepan\commerce\Model_Taxation){
+			// 	$taxation_id = $taxation->id;
+			// 	$tax_percentage = $taxation['percentage'];
+			// }else{
+			// 	$taxation_id = 0;
+			// 	$tax_percentage = 0;
+			// }
 
 
 			$sale_price = $kit_model['sale_price'];
