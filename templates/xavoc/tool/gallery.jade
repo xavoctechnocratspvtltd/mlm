@@ -1,0 +1,23 @@
+div(id='{$_name}' class="{$class} row" style="{$style}")
+  {$heading}
+  {rows}{row}
+  .col-md-3.col-sm-12.col-lg-3.col-xs-12.mlm-gallery-category(id="{$_id}" data-catid="{$id}" data-imgcount="{$images}")
+    .thumbnail
+      {image_wrapper}
+      div.img-wrapper(style="height:150px;overflow:hidden;")
+        img(src='{$image}', alt='{$alt} we are uploading images ...' style="max-heigth:150px;max-width:100%;width:auto;")
+      {/}
+      .caption
+        h3 {$name}
+        p Photos: {$images}
+        div{$description}
+  {/}{/}
+  {not_found}
+  div.full-width.alert.alert-warning(role="alert")
+    strong.glyphicon.glyphicon-warning-sign &nbsp;Warning!
+      span &nbsp;{$not_found_message}
+  {/}
+  {paginator_wrapper}
+  .ds-kit-paginator(style='float:none; clear:both;text-align:center;')
+    {$Paginator}
+  {/}

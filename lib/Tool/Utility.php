@@ -12,6 +12,8 @@ class Tool_Utility extends \xepan\cms\View_Tool{
 	function init(){
 		parent::init();
 
+		$this->app->stickyGET('type');
+
 		if($this->owner instanceof \AbstractController) return;
 
 		$this->addClass('main-box');
@@ -19,9 +21,10 @@ class Tool_Utility extends \xepan\cms\View_Tool{
 		switch ($_GET['type']) {
 			case 'gallery':
 			$this->add('xavoc\mlm\View_GalleryCategory');
-			break;	
-			// case 'gallery':
-			// break;
+			break;
+			case 'gallerylist':
+			$this->add('xavoc\mlm\View_GalleryCategoryImage');
+			break;
 		}
 	}
 }
