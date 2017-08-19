@@ -125,6 +125,9 @@ class View_GenologyStandard extends \View{
 				  <tr>
 				  	<th class='text-align:center;'>Name: ".$model['name'].' ('.$model['user'].')'."</th>
 				  </tr>
+				  <tr>
+				  	<th class='text-align:center;'>Intro: ".$model['introducer']."</th>
+				  </tr>
 				  <tr><td><p style='padding:0px;margin:5px;color:white;'></p></td></tr>
 				  <tr>
 				  	<td>
