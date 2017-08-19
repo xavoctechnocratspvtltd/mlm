@@ -25,6 +25,10 @@ class Tool_Utility extends \xepan\cms\View_Tool{
 			case 'gallerylist':
 			$this->add('xavoc\mlm\View_GalleryCategoryImage');
 			break;
+			case 'download':
+			$this->add('xavoc\mlm\View_Download');
+			break;
+
 		}
 	}
 }
