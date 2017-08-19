@@ -37,7 +37,7 @@ class Model_SalesOrder extends \xepan\commerce\Model_SalesOrder {
 			$in = $m->add('xepan\commerce\Model_SalesInvoice');
 			$in->addCondition('related_qsp_master_id',$q->getField('id'));
 
-			return $q->expr("CONCAT(IFNULL([0],' '),'-',IFNULL([1],' '))",[$in->fieldQuery('id'),$in->fieldQuery('status')]);
+			return $q->expr("CONCAT(IFNULL([0],' '),'-',IFNULL([1],' '))",[$in->fieldQuery('document_no'),$in->fieldQuery('status')]);
 		})->caption('Invoice/Status');
 
 		// is_delivered

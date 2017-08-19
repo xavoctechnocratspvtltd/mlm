@@ -37,8 +37,8 @@ class Initiator extends \Controller_Addon {
             $m->addItem(['Dispatch Topup Order','icon'=>'fa fa-check-square-o'],'xavoc_dm_order_delivertopup');
             $m->addItem(['Dispatch Repurchase Order','icon'=>'fa fa-check-square-o'],'xavoc_dm_order_deliverrepurchase');
             
-            $m->addItem(['Approved Orders','icon'=>'fa fa-check-square-o'],'xavoc_dm_distributors');
-            $m->addItem(['Dispacthed Orders','icon'=>'fa fa-check-square-o'],'xavoc_dm_distributors');
+            // $m->addItem(['Approved Orders','icon'=>'fa fa-check-square-o'],'xavoc_dm_distributors');
+            $m->addItem(['Dispacthed Orders','icon'=>'fa fa-check-square-o'],'xavoc_dm_dispatchorder');
         
         $m = $this->app->top_menu->addMenu('Franchisies');
             $m->addItem(['Franchise List','icon'=>'fa fa-check-square-o'],'xavoc_dm_franchiselist');
