@@ -915,7 +915,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		$tax_array = $item_model->getTaxAmount($contact_id);
 		$taxation_id = $tax_array['taxation_id'];
 		$tax_percentage = $tax_array['tax_percentage'];		
-		
+
 		$sale_price = $item_model['sale_price'];
 
 		$qty_unit_id = $item_model['qty_unit_id'];
@@ -974,7 +974,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 	}
 
-	function placeRepurchaseOrder(){
+	function placeRepurchaseOrder($contact_id=null){
 		if(!$this->loaded()) throw new \Exception("distributor model must loaded");
 		
 		$master_detail = $this->getQSPMasterDetail();
@@ -983,7 +983,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		$temp_oi->addCondition('distributor_id',$this->id);
 		$detail_data = [];
 		foreach ($temp_oi as $oi) {
-			$item_detail = $this->getQSPDetail($oi['item_id']);
+			$item_detail = $this->getQSPDetail($oi['item_id'],$oi['quantity'],$contact_id);
 			$item_detail['price'] = $oi['price'];
 			$item_detail['quantity'] = $oi['quantity'];
 

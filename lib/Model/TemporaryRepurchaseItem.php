@@ -16,8 +16,11 @@ class Model_TemporaryRepurchaseItem extends \xepan\base\Model_Table {
 
 		$this->addField('quantity');
 		$this->addField('price')->defaultValue(0);
+		$this->addField('taxation_id');
+		$this->addField('tax_percentage');
+		$this->addField('tax_amount')->defaultValue(0)->type('money');
 
-		$this->addExpression('amount')->set('quantity*price');
+		$this->addExpression('amount')->set('(quantity*price)+tax_amount')->type('money');
 
 		$this->is([
 				'distributor_id|required',
@@ -35,6 +38,10 @@ class Model_TemporaryRepurchaseItem extends \xepan\base\Model_Table {
 		if(!$this['price']){
 			$kit = $this->add('xavoc\mlm\Model_Item')->load($this['item_id']);
 			$this['price'] = $kit['dp'];
+			$tax_array = $kit->getTaxAmount($this['distributor_id'],$this['quantity']);
+			$this['taxation_id'] = $tax_array['taxation_id'];
+			$this['tax_percentage'] = $tax_array['tax_percentage'];
+			$this['tax_amount'] = $tax_array['tax_amount'];
 		}
 	}
 
