@@ -170,9 +170,11 @@ class Tool_ClosingAndPayouts extends \xepan\cms\View_Tool{
 		$grid = $v->add('xepan\base\Grid');
 
 		// $grid->addColumn('detail');
-		$grid->setModel($previous_payout,['month_year','sum_previous_carried_amount','sum_binary_income','sum_introduction_amount','sum_retail_profit','sum_repurchase_bonus','sum_generation_income','sum_loyalty_bonus','sum_leadership_bonus','sum_gross_payment','sum_tds','sum_admin_charge','sum_net_payment','sum_carried_amount']);
+		$grid->setModel($previous_payout,['month_year','sum_binary_income','sum_introduction_amount','sum_retail_profit','sum_repurchase_bonus','sum_generation_income','sum_loyalty_bonus','sum_leadership_bonus','sum_gross_payment','sum_tds','sum_admin_charge','sum_net_payment']);
 		$grid->addPaginator($ipp=12);
 		$grid->addColumn('expander','detail',['page'=>'xavoc_dm_mypayouts_detail']);
+
+		// $grid->js(true)->find('[type=checkbox]')->addClass('btn btn-primary');
 		
 	}
 }

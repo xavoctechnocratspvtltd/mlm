@@ -20,7 +20,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		parent::init();
 
 		$this->getElement('status')->defaultValue('Red');
-		// $this->getElement('pan_no')->display(array('form'=>'xavoc\mlm\PanNumber'));
+		$this->getElement('pan_no')->display(array('form'=>'xavoc\mlm\PanNumber'));
 		$dist_j = $this->join('mlm_distributor.distributor_id');
 
 		$dist_j->hasOne('xavoc\mlm\Sponsor','sponsor_id')->display(['form'=>'xepan\base\Basic'])->defaultValue(0)->caption('Placement Parent');

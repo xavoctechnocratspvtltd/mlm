@@ -14,7 +14,7 @@ class Form_Field_PanNumber extends \Form_Field_Line {
         }
 
         if($this->value!=''){
-            if(strtolower($this->value[4]) != strtolower($last_name[0]) OR (strlen($this->value) !=10)){
+            if((strlen($this->value) !=10) OR strtolower($this->value[4]) != strtolower($last_name[0])){
                 $this->displayFieldError('Pan No Does not looks correct ');
             }
 
