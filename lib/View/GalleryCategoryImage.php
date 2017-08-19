@@ -8,11 +8,11 @@ class View_GalleryCategoryImage extends \View{
 	function init(){
 		parent::init();
 
-		$cat_id = $_GET['catid'];
+		$cat_id = $this->app->stickyGET('catid');
 
 		$m = $this->add('xavoc\mlm\Model_GalleryImages')
 			->addCondition('category_id',$cat_id)
-			;
+			->setOrder('id','desc');
 		
 		$this->complete_lister = $cl = $this->add('CompleteLister',null,null,['xavoc/tool/gallery']);
 		$cl->setModel($m);
@@ -20,14 +20,15 @@ class View_GalleryCategoryImage extends \View{
 		$cat_model = $this->add('xavoc\mlm\Model_GalleryCategory');
 		$cat_model->load($cat_id);
 
+		$cl->add('View',null,'heading')
+			->addClass('text-center')
+			->set('see all gallery')->js('click')->redirect($this->app->url(null,['type'=>'gallery']));
+
 		$cl->add('View',null,'heading')->addClass('text-center')
 			->setElement('h2')
 			->set('Photos of '.$cat_model['name']);
 
-		$this->app->stickyForget('catid');
-		$cl->add('View',null,'heading')
-			->addClass('text-center')
-			->set('go to gallery')->js('click')->redirect($this->app->url(null,['type'=>'gallery']));
+		// $this->app->stickyForget('catid');
 
 		if($m->count()->getOne()){
 			$cl->template->del('not_found');
@@ -36,7 +37,9 @@ class View_GalleryCategoryImage extends \View{
 		}
 
 		$cl->add('xepan\cms\Controller_Tool_Optionhelper',['options'=>$this->options,'model'=>$m]);
-		
+
+		$paginator = $cl->add('Paginator',['ipp'=>16]);
+		$paginator->setRowsPerPage(16);
 		// $this->on('click','.mlm-gallery-category',function($js,$data){			
 		// 	if($data['imgcount'] > 0){
 		// 		return $this->app->js()->redirect($this->app->url(null,['type'=>'gallerylist','catid'=>$data['catid']]));
@@ -50,6 +53,8 @@ class View_GalleryCategoryImage extends \View{
 			$l->current_row_html['description']='';
 			return;
 		}
+		$l->current_row_html['photos'] = ' ';
+
 		if($this->options['show_description']){
 			$l->current_row_html['description'] = $l->model['description'];
 		}else{
