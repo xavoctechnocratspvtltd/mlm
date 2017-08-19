@@ -38,36 +38,38 @@ class Controlelr_Greet extends \AbstractController {
 
 		if($this->app->getConfig('send_email',false)){
 
-			if(!$messages_model[$event.'_mail_subject'] OR !$messages_model[$event.'_mail_content']) throw new \Exception("plase update welcome mail content");
-			$temp = $this->add('GiTemplate');
-			$temp->loadTemplateFromString($messages_model[$event.'_mail_subject']);
+			if($messages_model[$event.'_mail_subject'] AND $messages_model[$event.'_mail_content']){
 
-			$temp->set($data);
-			$subject = $temp->render();
-				// body
-			$temp = $this->add('GiTemplate');
-			$temp->loadTemplateFromString($messages_model[$event.'_mail_content']);
-			$temp->set($data);
-			$body = $temp->render();
+				$temp = $this->add('GiTemplate');
+				$temp->loadTemplateFromString($messages_model[$event.'_mail_subject']);
 
-			$email_setting = $this->add('xepan\communication\Model_Communication_EmailSetting')->setOrder('id','asc');
-			$email_setting->addCondition('is_active',true);
-			$email_setting->tryLoadAny();
+				$temp->set($data);
+				$subject = $temp->render();
+					// body
+				$temp = $this->add('GiTemplate');
+				$temp->loadTemplateFromString($messages_model[$event.'_mail_content']);
+				$temp->set($data);
+				$body = $temp->render();
 
-			if(!$email_setting->loaded()) throw new \Exception("update your email setting ", 1);
+				$email_setting = $this->add('xepan\communication\Model_Communication_EmailSetting')->setOrder('id','asc');
+				$email_setting->addCondition('is_active',true);
+				$email_setting->tryLoadAny();
+
+				if(!$email_setting->loaded()) throw new \Exception("update your email setting ", 1);
 
 
-			$communication = $this->add('xepan\communication\Model_Communication_Abstract_Email');
-			$communication->addCondition('communication_type','Email');
+				$communication = $this->add('xepan\communication\Model_Communication_Abstract_Email');
+				$communication->addCondition('communication_type','Email');
 
-			$communication->getElement('status')->defaultValue('Draft');
-			$communication['direction']='Out';
-			$communication->setfrom($email_setting['from_email'],$email_setting['from_name']);
-			
-			$communication->addTo($distributor['email']);
-			$communication->setSubject($subject);
-			$communication->setBody($body);
-			$communication->send($email_setting);
+				$communication->getElement('status')->defaultValue('Draft');
+				$communication['direction']='Out';
+				$communication->setfrom($email_setting['from_email'],$email_setting['from_name']);
+				
+				$communication->addTo($distributor['email']);
+				$communication->setSubject($subject);
+				$communication->setBody($body);
+				$communication->send($email_setting);
+			}
 		}
 
 		if($this->app->getConfig('send_sms',false)){
@@ -77,8 +79,9 @@ class Controlelr_Greet extends \AbstractController {
 			$temp->set($data);
 			$message = $temp->render();
 			
-			if(!$messages_model[$event.'_sms_content']) throw new \Exception("plase update welcome sms content");
-			$this->add('xepan\communication\Controller_Sms')->sendMessage($distributor['mobile_number'],$message);
+			if($messages_model[$event.'_sms_content']){
+				$this->add('xepan\communication\Controller_Sms')->sendMessage($distributor['mobile_number'],$message);
+			}
 		}
 	}
 }
