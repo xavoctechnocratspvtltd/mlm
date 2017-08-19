@@ -144,9 +144,11 @@ class Tool_ClosingAndPayouts extends \xepan\cms\View_Tool{
 			;
 
 		$grid = $v->add('xepan\base\Grid');
-		$grid->setModel($this->payout,['date','previous_carried_amount','binary_income','introduction_amount','retail_profit','repurchase_bonus','generation_income','loyalty_bonus','leadership_bonus','gross_payment','tds','admin_charge','net_payment','carried_amount']);
+		$grid->setModel($this->payout,['date','previous_carried_amount','binary_income','introduction_amount','retail_profit','repurchase_bonus','generation_income','loyalty_bonus','leadership_bonus','gross_payment','tds','admin_charge','net_payment','carried_amount','payout_type']);
 		$grid->addPaginator($ipp=25);
 
+		$grid->addFormatter('date','template')->setTemplate('{$date}<br/><small><small>({$payout_type})</small></small>','date');
+		$grid->removeColumn('payout_type');
 		// previous payout
 		$previous_payout = $this->add('xavoc\mlm\Model_Payout');
 		$previous_payout->addExpression('date')->set($previous_payout->dsql()->expr(' DATE_FORMAT(closing_date,"%d %b %y")'));
