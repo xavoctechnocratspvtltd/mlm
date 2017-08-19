@@ -57,7 +57,8 @@ class Initiator extends \Controller_Addon {
             $m->addItem(['Item Stock Report','icon'=>'fa fa-check-square-o'],'xavoc_dm_itemstock');
             
         $m = $this->app->top_menu->addMenu('Admin');
-            $m->addItem(['Recent News','icon'=>'fa fa-check-square-o'],'xavoc_dm_recentnews');
+            $m->addItem(['Recent Distributors News','icon'=>'fa fa-check-square-o'],'xavoc_dm_recentnews');
+            $m->addItem(['Recent Website News','icon'=>'fa fa-check-square-o'],'xavoc_dm_recentwebsitenews');
             $m->addItem(['Gallery','icon'=>'fa fa-check-square-o'],'xavoc_dm_gallery');
             $m->addItem(['Download','icon'=>'fa fa-check-square-o'],'xavoc_dm_download');
             $m->addItem(['Configuration','icon'=>'fa fa-check-square-o'],'xavoc_dm_config');
@@ -184,6 +185,7 @@ class Initiator extends \Controller_Addon {
         $this->app->exportFrontEndTool('xavoc\mlm\Tool_DistributorCheckout','MLM');
         $this->app->exportFrontEndTool('xavoc\mlm\Tool_DistributorReport','MLM');
         $this->app->exportFrontEndTool('xavoc\mlm\Tool_Utility','MLM');
+        $this->app->exportFrontEndTool('xavoc\mlm\Tool_RecentWebsiteNews','MLM');
         return $this;
     }
 }

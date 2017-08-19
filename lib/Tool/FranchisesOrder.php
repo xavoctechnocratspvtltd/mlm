@@ -47,18 +47,23 @@ class Tool_FranchisesOrder extends \xepan\cms\View_Tool{
 		$dist = $this->add('xavoc\mlm\Model_Distributor');
 		$dist->title_field = 'user';
 		
-		$form = $topup_tab->add('Form');
+		$form = $topup_tab->add('Form',null,null,['form/empty']);
+		// $form->setLayout(['view/form/franchises-order-form-layout']);
+
 		$dist_field = $form->addField('autocomplete/Basic','distributor')->validate('required');
 		$dist_field->setModel($dist);
 		
-		$kit_field = $form->addField('Dropdown','kit')->validate('required');
+		$kit_field = $form->addField('Dropdown','kit')->validate('required')->addClass('xepan-push-large');
 		$kit_field->setModel($item);
 		$kit_field->setEmptyText('Please select');
-
-		$form->addField('text','payment_narration')->validate('required');
-		$form->addField('line','delivery_via')->validate('required');
-		$form->addField('line','delivery_docket_no','Docket no/ Person name/ Other reference');
-		$form->addField('line','tracking_code');
+		$col  = $form->add('Columns')->addClass('row xepan-contact-form');
+		$left = $col->addColumn(4)->addClass('col-md-4 form-group');
+		$mid = $col->addColumn(4)->addClass('col-md-4 form-group');
+		$right = $col->addColumn(4)->addClass('col-md-4 form-group');
+		$left->addField('line','delivery_via')->validate('required')->addClass('xepan-form-control1');
+		$mid->addField('line','delivery_docket_no','Docket no/ Person name/ Other reference')->addClass('xepan-form-control1');
+		$right->addField('line','tracking_code')->addClass('xepan-form-control1');
+		$form->addField('text','payment_narration')->validate('required')->addClass('xepan-form-control1');
 
 		$tax_detail = $form->add('View');
 		// autocomplete reload

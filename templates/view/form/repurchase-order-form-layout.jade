@@ -1,0 +1,38 @@
+.xepan-contact-form
+	form#formid(action='#', style='')
+			.row
+				//- .col-lg-8.col-md-8.col-sm-10.col-lg-offset-2.col-md-offset-2.col-sm-offset-1
+				//- .col-sm-12
+				//- 	.form-group
+				//- 		.xepan-form-control.atk-form-field.atk-form-row
+				//- 			| {$full_name}
+				//- .col-md-6
+				//- 	.form-group
+				//- 		.atk-form-row.atk-form-field.form-control
+				//- 			{$distributor}
+				//- .col-md-6
+				//- 	.form-group
+				//- 		.atk-form-row.atk-form-field.xepan-form-control
+				//- 			{$kit}			
+			.row
+				.col-md-4
+					.form-group
+						.atk-form-row.atk-form-field.xepan-form-control
+							{$delivery_via}
+				.col-md-4
+					.form-group
+						.xepan-form-control.atk-form-row.atk-form-field
+							{$delivery_docket_no}
+				.col-md-4
+					.form-group
+						.xepan-form-control.atk-form-row.atk-form-field
+							{$tracking_code}
+				//- .col-sm-12
+				//- 	.form-group
+				//- 		.atk-form-field.atk-form-row
+				//- 			| {$email}
+			.form-group
+				.xepan-form-control.atk-form-field.atk-form-row
+					| {$payment_narration}
+			.text-center
+				| {$FormButtons}
