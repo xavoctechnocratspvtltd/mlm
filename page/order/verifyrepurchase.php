@@ -12,9 +12,11 @@
 		// $repurchase_order->debug();
 		$repurchase_order->setOrder('id','desc');
 		$crud = $this->add('xepan\hr\CRUD',['allow_add'=>false,'allow_edit'=>false,'allow_del'=>false]);
-		$crud->setModel($repurchase_order,['document_no','action']);
+		$crud->setModel($repurchase_order,['document_no','created_at','user','contact','net_amount','action']);
 		$crud->removeAttachment();
 		$crud->grid->addPaginator(10);
+
+		$crud->grid->addSno('Sr. No');
 
 	}
 }

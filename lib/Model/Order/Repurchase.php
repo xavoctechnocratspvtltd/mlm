@@ -29,6 +29,11 @@ class Model_Order_Repurchase extends \xavoc\mlm\Model_SalesOrder {
 			return $q->expr('IFNULL([0],0)',[$th->fieldQuery('is_payment_verified')]);
 		})->type('boolean');
 
+
+		$this->addExpression('user')->set(function($m,$q){
+			return $m->refSQL('contact_id')->fieldQuery('user');
+		});
+
 		$this->addCondition('repurchase_history_count','>',0);
 
 		$this->addCondition('is_topup_included',false);
