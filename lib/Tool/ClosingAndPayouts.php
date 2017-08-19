@@ -133,8 +133,46 @@ class Tool_ClosingAndPayouts extends \xepan\cms\View_Tool{
 
 	function allPayout(){
 		$this->add('View')->setElement('h4')->set('Payout\'s');
-		$grid = $this->add('xepan\base\Grid')->addClass('main-box');
+
+		// current month payout
+		$v = $this->add('View')->addClass('main-box');
+		$v->add('View')->setElement('h5')
+			->set('Current Month '.$this->current_month_year);
+
+		$this->payout
+			->addCondition('month_year',$this->current_month_year)
+			;
+
+		$grid = $v->add('xepan\base\Grid');
 		$grid->setModel($this->payout,['date','previous_carried_amount','binary_income','introduction_amount','retail_profit','repurchase_bonus','generation_income','loyalty_bonus','leadership_bonus','gross_payment','tds','admin_charge','net_payment','carried_amount']);
 		$grid->addPaginator($ipp=25);
+
+		// previous payout
+		$previous_payout = $this->add('xavoc\mlm\Model_Payout');
+		$previous_payout->addExpression('date')->set($previous_payout->dsql()->expr(' DATE_FORMAT(closing_date,"%d %b %y")'));
+		$previous_payout->addCondition('month_year','<>',$this->current_month_year);
+		$previous_payout->addCondition('distributor_id',$this->distributor->id);
+
+		$sum_field = ['previous_carried_amount','binary_income','introduction_amount','retail_profit','repurchase_bonus','generation_income','loyalty_bonus','leadership_bonus','gross_payment','tds','admin_charge','net_payment','carried_amount'];
+		foreach ($sum_field as $key => $field) {
+			$previous_payout->addExpression('sum_'.$field)->set('sum('.$field.')')
+				->caption(strtoupper(str_replace("_", " ", $field)))
+				->display(['grid'=>'text']);
+		}
+
+		$previous_payout->setOrder('id','desc');
+		$previous_payout->_dsql()->group('month_year');
+
+		$this->add('View')->setStyle('height','30px');
+
+		$v = $this->add('View')->addClass('main-box');
+		$v->add('View')->setElement('h5')->set('Previous Months');
+		$grid = $v->add('xepan\base\Grid');
+
+		// $grid->addColumn('detail');
+		$grid->setModel($previous_payout,['month_year','sum_previous_carried_amount','sum_binary_income','sum_introduction_amount','sum_retail_profit','sum_repurchase_bonus','sum_generation_income','sum_loyalty_bonus','sum_leadership_bonus','sum_gross_payment','sum_tds','sum_admin_charge','sum_net_payment','sum_carried_amount']);
+		$grid->addPaginator($ipp=12);
+		$grid->addColumn('expander','detail',['page'=>'xavoc_dm_mypayouts_detail']);
+		
 	}
 }
