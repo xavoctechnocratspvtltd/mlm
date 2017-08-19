@@ -43,7 +43,7 @@ class View_Report_Distributor_Downline extends \View{
 		$submit_col->addSubmit('Go')->setStyle('margin','20px')->addClass('btn btn-primary');
 
 		$downline = $this->add('xavoc\mlm\Model_Distributor');
-		$downline->addCondition('path','like',$model['path'].'%');
+		$downline->addCondition('path','like',$model['path'].'_%');
 		$downline->addExpression('joining')->set(function($m,$q){
 			return $q->expr('DATE([0])',[$m->getElement('created_at')]);
 		});
@@ -103,9 +103,9 @@ class View_Report_Distributor_Downline extends \View{
 		$downline->getElement('user')->caption('User ID');
 		$downline->getElement('name')->caption('User Name');
 
-		$fields = ['green_on','user','name','city','state','current_rank'];
+		$fields = ['green_on','user','name','city','state','current_rank','path'];
 		if($this->report_status == "inactive"){
-			$fields = ['joining','user','name','city','state'];
+			$fields = ['joining','user','name','city','state','path'];
 		}
 
 		$this->add('View')->setElement('h3')->set($name.' ('.$downline->count()->getOne().')');
@@ -113,6 +113,12 @@ class View_Report_Distributor_Downline extends \View{
 		$grid = $this->add('xepan\hr\Grid');
 		$grid->setModel($downline,$fields);
 		$grid->addSno('Sr. No.');
+		
+		$grid->addMethod('format_leg',function($g,$f)use($model){
+			$g->current_row[$f]=($g->model['path'])[strlen($model['path'])] == 'A'?'Left':'Right';
+		});
+		$grid->addColumn('leg','leg');
+		$grid->removeColumn('path');
 
 		$grid->addPaginator($ipp=50);
 		// reload self view with form values
