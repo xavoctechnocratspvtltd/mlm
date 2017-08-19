@@ -15,7 +15,7 @@ class page_repurchase extends \xepan\base\Page {
 		// 	$form = $crud->form;
 		// 	$form->setLayout('view/form/repurchaseitem');
 		// }
-		$crud->setModel($model,['name','sku','hsn_sac','bv','sv','dp','sale_price']);
+		$crud->setModel($model,['name','sku','hsn_sac','bv','sv','dp','sale_price','tax_percentage']);
 		$crud->grid->addQuickSearch(['name','sku']);
 		$crud->removeAttachment();
 		$crud->grid->addOrder()->move('edit','last')->now();
