@@ -47,14 +47,18 @@ class Initiator extends \Controller_Addon {
 
         $m = $this->app->top_menu->addMenu('Closings');
             $m->addItem(['Closings','icon'=>'fa fa-check-square-o'],'xavoc_dm_closings');
+        
         $m = $this->app->top_menu->addMenu('Store');
             $m->addItem(['Pack/Open Joining Kits','icon'=>'fa fa-check-square-o'],'xavoc_dm_store_activity');
             $m->addItem(['Stock Report','icon'=>'fa fa-check-square-o'],'xavoc_dm_store_activity');
             $m->addItem(['Stock Admin Report','icon'=>'fa fa-check-square-o'],'xavoc_dm_store_activity');
             $m->addItem(['Store Activity','icon'=>'fa fa-check-square-o'],'xavoc_dm_store_activity');
-        
+            $m->addItem(['Store Transaction','icon'=>'fa fa-check-square-o'],'xavoc_dm_storetransaction');
+            $m->addItem(['Item Stock Report','icon'=>'fa fa-check-square-o'],'xavoc_dm_itemstock');
+            
         $m = $this->app->top_menu->addMenu('Admin');
-            $m->addItem(['Recent News','icon'=>'fa fa-check-square-o'],'xavoc_dm_recentnews');
+            $m->addItem(['Recent Distributors News','icon'=>'fa fa-check-square-o'],'xavoc_dm_recentnews');
+            $m->addItem(['Recent Website News','icon'=>'fa fa-check-square-o'],'xavoc_dm_recentwebsitenews');
             $m->addItem(['Gallery','icon'=>'fa fa-check-square-o'],'xavoc_dm_gallery');
             $m->addItem(['Download','icon'=>'fa fa-check-square-o'],'xavoc_dm_download');
             $m->addItem(['Configuration','icon'=>'fa fa-check-square-o'],'xavoc_dm_config');
@@ -181,6 +185,7 @@ class Initiator extends \Controller_Addon {
         $this->app->exportFrontEndTool('xavoc\mlm\Tool_DistributorCheckout','MLM');
         $this->app->exportFrontEndTool('xavoc\mlm\Tool_DistributorReport','MLM');
         $this->app->exportFrontEndTool('xavoc\mlm\Tool_Utility','MLM');
+        $this->app->exportFrontEndTool('xavoc\mlm\Tool_RecentWebsiteNews','MLM');
         return $this;
     }
 }
