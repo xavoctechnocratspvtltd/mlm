@@ -8,7 +8,10 @@
       <!-- Collect the nav links, forms, and other content for toggling-->
       <div id="bs-example-navbar-collapse-1" class="collapse navbar-collapse">
         <ul class="nav navbar-nav">{rows}{row}
-          <li data-page="{$key}" class="{$active_menu}"><a href="{$key}">{$name}</a></li>{/}{/}
+          <li data-page="{$key}" class="{$active_menu}">
+            {list} {$name} {/}
+            {$submenu}
+          </li>{/}{/}
         </ul>
         <ul class="nav navbar-nav navbar-right">
           <li style="border-radius:5px 0px 0px 5px;" class="bg bg-info"> <a href="#" style="padding:10px;" class="text-center">Franchise Panel<br/>{$franchises_name}</a></li>

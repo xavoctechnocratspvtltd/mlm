@@ -8,6 +8,8 @@ class Tool_FranchisesStock extends \xepan\cms\View_Tool{
 	function init(){
 		parent::init();
 		
+		$report = $this->app->stickyGET('report');
+
 		if($this->owner instanceof \AbstractController) return;
 
 		$this->addClass('main-box');
@@ -15,8 +17,16 @@ class Tool_FranchisesStock extends \xepan\cms\View_Tool{
 		$this->franchises = $franchises = $this->add('xavoc\mlm\Model_Franchises');
 		$franchises->loadLoggedIn();
 
-		$this->add('View')->setElement('h4')->set('Stock Report');
+		switch ($report) {
+			case 'itemstock':
+				$this->add('View')->setElement('h4')->set('Stock Report');
+				$this->add('xavoc\mlm\View_ItemStock',['warehouse_id'=>$this->franchises->id]);				
+			break;
+			case 'stocktransaction':
+				$this->add('View')->setElement('h4')->set('Stock Transaction');
+				$this->add('xavoc\mlm\View_StoreTransaction',['warehouse'=>$this->franchises->id]);
+			break;
+		}
 
-		$this->add('xavoc\mlm\View_ItemStock',['warehouse_id'=>$this->franchises->id]);
 	}
 }
