@@ -11,6 +11,8 @@ class Initiator extends \Controller_Addon {
         $this->addLocation(array('template'=>'templates','js'=>'templates/js','css'=>'templates/css'))
         ->setBaseURL('../shared/apps/xavoc/mlm/');
 
+        $this->app->skip_accounts_ledger_creation = true;
+
         $m = $this->app->top_menu->addMenu('Products');
             $m->addItem(['Product Categories','icon'=>'fa fa-check-square-o'],'xavoc_dm_productcategories');
             $m->addItem(['Kit Management','icon'=>'fa fa-check-square-o'],'xavoc_dm_kits');
@@ -111,6 +113,8 @@ class Initiator extends \Controller_Addon {
     }
 
     function setup_frontend(){
+
+        $this->app->skip_accounts_ledger_creation = true;
 
         $this->app->addHook('login_panel_user_loggedin',function($app,$user){
             
