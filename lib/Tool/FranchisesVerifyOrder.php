@@ -79,7 +79,9 @@ class Tool_FranchisesVerifyOrder extends \xepan\cms\View_Tool{
 		$right_col = $col->addColumn(6)->addClass('col-lg-6 col-md-6 col-sm-12 col-xs-12');
 
 		if($inv_status != "Paid"){
-			$left_col->add('xavoc\mlm\View_FranchisesOrderPayment',['saleOrder'=>$this->saleOrder]);
+			$left_col->add('View')->addClass('alert alert-warning')->setHtml('<h2>Not Paid</h2>');
+			return;
+			// $left_col->add('xavoc\mlm\View_FranchisesOrderPayment',['saleOrder'=>$this->saleOrder]);
 						
 			// $pay_now_btn = $order_view->add('Button',null,'btn_wrapper')->set('Pay Now')->addClass('btn btn-success  pull-right');
 			// $pay_now_btn->add('VirtualPage')
