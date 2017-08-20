@@ -10,7 +10,7 @@ class Model_TemporaryRepurchaseItem extends \xepan\base\Model_Table {
 
 			
 		$this->hasOne('xavoc\mlm\Model_Distributor','distributor_id');
-		$this->hasOne('xepan\commerce\Model_Item','item_id')->display(['form'=>'DropDown']);
+		$this->hasOne('xavoc\mlm\Model_RepurchaseItem','item_id')->display(['form'=>'DropDown']);
 
 		$this->addExpression('image')->set($this->refSQL('item_id')->fieldQuery('first_image'));
 
@@ -25,7 +25,7 @@ class Model_TemporaryRepurchaseItem extends \xepan\base\Model_Table {
 		$this->is([
 				'distributor_id|required',
 				'item_id|required',
-				'quantity|required|number|gt|0',
+				'quantity|required|int|gt|0',
 				'price|number'
 			]);
 

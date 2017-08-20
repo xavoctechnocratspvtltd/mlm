@@ -89,8 +89,10 @@ class View_FranchisesRepurchase extends \View{
 						'narration' => $submit_form['payment_narration']
 					]);
 
-					$this->add('xavoc\mlm\Controller_Greet')->do($this,'repurchase',$order_model);
-					$this->add('xavoc\mlm\Controller_Greet')->do($this,'dispatch',$dispatch_m);
+					$data_array =array_merge($dispatch_m->data,$order_model->data);
+					
+					$this->add('xavoc\mlm\Controller_Greet')->do($distributor,'repurchase',$order_model);
+					$this->add('xavoc\mlm\Controller_Greet')->do($distributor,'dispatch',$data_array);
 
 					$this->app->db->commit();
 				}catch(\Exception $e){
