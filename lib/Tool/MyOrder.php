@@ -30,14 +30,16 @@ class Tool_MyOrder extends \xavoc\mlm\Tool_Distributor{
 		$my_order->setOrder('id','desc');
 		$my_order->getElement('document_no')->caption('Order No.');
 		$my_order->getElement('created_at')->caption('Order Date');
-		$grid = $this->add('Grid');
-		$grid->setModel($my_order,['document_no','created_at','status','invoice_detail','items']);
+		$grid = $this->add('xepan\base\Grid');
+		$grid->addSno('Sr. No.');
+		$grid->setModel($my_order,['document_no','created_at','status','invoice_detail','items','net_amount','is_delivered']);
 		$self = $this;
 		$this->vp = $this->add('VirtualPage')->set(function($p)use($self){
 			$p->api->stickyGET('sales_order_id');
 			$o = $this->add('xavoc\mlm\Model_QSPDetail')->addCondition('qsp_master_id',$_GET['sales_order_id']);
-			$order = $p->add('xepan\hr\Grid',null,null,['view/order-item']);
-			$order->setModel($o,['name','item_sku','price','quantity','total_amount']);
+			$o->getElement('amount_excluding_tax')->caption('amount');
+			$order = $p->add('xepan\base\Grid');
+			$order->setModel($o,['name','item_sku','price','quantity','amount_excluding_tax','tax_amount','total_amount']);
 		});
 
 		$grid->addMethod('format_items',function($g,$f){
