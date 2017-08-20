@@ -6,10 +6,10 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 	public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 	public $actions = [
-				'Red'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName','payouts','sv_records'],
-				'KitSelected'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName','payouts','sv_records'],
-				'KitPaid'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName','payouts','sv_records'],
-				'Green'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName','payouts','sv_records'],
+				'Red'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName','payouts','sv_records','password'],
+				'KitSelected'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName','payouts','sv_records','password'],
+				'KitPaid'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName','payouts','sv_records','password'],
+				'Green'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName','payouts','sv_records','password'],
 				'Blocked'=>['view','edit','delete','Unblocked','payouts','sv_records']
 			];
 	
