@@ -20,10 +20,12 @@ class View_StoreTransaction extends \View{
 		if($this->warehouse){
 			$transaction->addCondition([['from_warehouse_id',$this->warehouse],['to_warehouse_id',$this->warehouse]]);
 		}
+		$transaction->setOrder('id','desc');
 
-		$grid = $this->add('Grid');
+		$grid = $this->add('xepan\base\Grid');
 		$grid->setModel($transaction,['from_warehouse','to_warehouse','type','created_at','narration','total_item','item_quantity']);
-		
+		$grid->addSno('Sr. No.');
+
 		$grid->add('VirtualPage')
 		->addColumn('detail')
 		->set(function($page){
