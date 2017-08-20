@@ -71,22 +71,28 @@ class Tool_FranchisesVerifyOrder extends \xepan\cms\View_Tool{
 		$cl = $v->add('CompleteLister',null,null,['view/franschises-order-item','order_item']);
 		$cl->setModel($order_item);
 		
-		
+		$v->add('View')->setElement('h4')->setHtml('Total Amount: '.$this->saleOrder['net_amount'])->addclass('text-right');
+
+		$col = $v->add('Columns')->addClass('row');
+		$left_col = $col->addColumn(6)->addClass('col-lg-6 col-md-6 col-sm-12 col-xs-12');
+		$right_col = $col->addColumn(6)->addClass('col-lg-6 col-md-6 col-sm-12 col-xs-12');
+
 		if($inv_status != "Paid"){
-			$pay_now_btn = $order_view->add('Button',null,'btn_wrapper')->set('Pay Now')->addClass('btn btn-success  pull-right');
-			
-			$pay_now_btn->add('VirtualPage')
-				->bindEvent('Paid Payment of order '.$this->saleOrder['document_no'],'click')
-				->set(function($page){
-					$page->add('xavoc\mlm\View_FranchisesOrderPayment',['saleOrder'=>$this->saleOrder]);
-				});
+			$left_col->add('xavoc\mlm\View_FranchisesOrderPayment',['saleOrder'=>$this->saleOrder]);
+						
+			// $pay_now_btn = $order_view->add('Button',null,'btn_wrapper')->set('Pay Now')->addClass('btn btn-success  pull-right');
+			// $pay_now_btn->add('VirtualPage')
+			// 	->bindEvent('Paid Payment of order '.$this->saleOrder['document_no'],'click')
+				// ->set(function($page){
+					// $page->add('xavoc\mlm\View_FranchisesOrderPayment',['saleOrder'=>$this->saleOrder]);
+				// });
 
 		}else{
-			$payment_detail_btn = $order_view->add('Button',null,'btn_wrapper')->set('Payment Detail')->addClass('btn btn-success  pull-right');
-			$payment_detail_btn->add('VirtualPage')
-				->bindEvent('Payment Detail of Odrer '.$this->saleOrder['document_no'],'click')
-				->set(function($page){
-
+			// $payment_detail_btn = $order_view->add('Button',null,'btn_wrapper')->set('Payment Detail')->addClass('btn btn-success  pull-right');
+			// $payment_detail_btn->add('VirtualPage')
+			// 	->bindEvent('Payment Detail of Odrer '.$this->saleOrder['document_no'],'click')
+			// 	->set(function($page){
+					$left_col->add('View')->setElement('h2')->set('Payment Detail')->addClass('alert alert-success');
 					if($this->saleOrder['is_topup_included']){
 						$history = $this->add('xavoc\mlm\Model_TopupHistory');
 					}else{
@@ -108,21 +114,22 @@ class Tool_FranchisesVerifyOrder extends \xepan\cms\View_Tool{
 					if($history->loaded() AND isset($mandatory_field_set[$history['payment_mode']])){
 						$field_to_show = $mandatory_field_set[$history['payment_mode']];						
 						
-						$page->add('View')->setHtml("Payment Mode: <b>".$history['payment_mode']."</b>")->addClass('alert alert-success');
+						$left_col->add('View')->setHtml("Payment Mode: <b>".$history['payment_mode']."</b>")->addClass('alert alert-success');
 						foreach ($field_to_show as $key => $value) {
 							if(in_array($value, ['office_receipt_image_id','dd_deposite_receipt_image_id','cheque_deposite_receipt_image_id'])){
-								$page->add('View')->setElement('img')->setAttr('src',$history[str_replace("_id","" , $value)])->setStyle('width','100px;');
+								$left_col->add('View')->setElement('img')->setAttr('src',$history[str_replace("_id","" , $value)])->setStyle('width','100px;');
 								// ->setAttr('src',$history[str_replace("id","", $value)]);
 							}else		
-								$page->add('View')->setHtml($value." : ".$history[$value])->addClass('alert alert-info');
+								$left_col->add('View')->setHtml($value." : ".$history[$value])->addClass('alert alert-info');
 						}
 					}
 
-				});
+				// });
 		}
 
-		if(!$sale_order->isDelivered()){
-			$form = $v->add('Form');
+		if(!$sd = $sale_order->isDelivered()){
+			$right_col->add('View')->setElement('h2')->set('Dispatch Detail');
+			$form = $right_col->add('Form');
 			$form->addField('text','narration')->validate('required');
 			$form->addField('line','delivery_via')->validate('required');
 			$form->addField('line','delivery_docket_no','Docket no/ Person name/ Other reference');
@@ -138,7 +145,7 @@ class Tool_FranchisesVerifyOrder extends \xepan\cms\View_Tool{
 							'delivery_via'=>$form['delivery_via'],
 							'delivery_docket_no'=>$form['delivery_docket_no'],
 							'tracking_code'=>$form['tracking_code'],
-							'narration' => $form['payment_narration']
+							'narration' => $form['narration']
 						]);
 					
 					$this->app->db->commit();
@@ -149,7 +156,11 @@ class Tool_FranchisesVerifyOrder extends \xepan\cms\View_Tool{
 				}
 			}
 		}else{
-			$v->add('H3')->set('Already Dispactehd');
+			$right_col->add('H3')->set('Already Dispatched')->addClass('alert alert-success');
+			$right_col->add('View')->setHtml('Narration: '.$sd['narration'])->addClass('alert alert-info');
+			$right_col->add('View')->setHtml('Delivery Via: '.$sd['delivery_via'])->addClass('alert alert-info');
+			$right_col->add('View')->setHtml('Docket no/ Person name/ Other reference: '.$sd['delivery_docket_no'])->addClass('alert alert-info');
+			$right_col->add('View')->setHtml('Tracking Code: '.$sd['tracking_code'])->addClass('alert alert-info');
 		}
 		// $dispatch_btn = $order_view->add('Button',null,'btn_wrapper')->set('Dispatch')->addClass('btn btn-warning  pull-right');
 		// $dispatch_btn->add('VirtualPage')

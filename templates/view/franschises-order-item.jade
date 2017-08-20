@@ -53,15 +53,21 @@
 										strong Price
 									td.text-center
 										strong Quantity
+									td.text-center
+										strong Amount
+									td.text-center
+										strong Tax Amount
 									td.text-right
-										strong Totals
+										strong Total
 							tbody
 								// foreach ($order->lineItems as $line) or some such thing here
 								{rows}{row}
 								tr
-									td {$name}
+									td {$name}::{$item_sku}
 									td.text-center {$price}
 									td.text-center {$quantity}
+									td.text-center {$amount_excluding_tax}
+									td.text-center {$tax_amount}
 									td.text-right {$total_amount}
 								{/row}{/rows}
 								//- tr
