@@ -47,7 +47,7 @@ class Tool_FranchisesOrder extends \xepan\cms\View_Tool{
 		$dist = $this->add('xavoc\mlm\Model_Distributor');
 		$dist->title_field = 'user';
 		
-		$form = $topup_tab->add('Form',null,null,['form/empty']);
+		$form = $topup_tab->add('Form');
 		// $form->setLayout(['view/form/franchises-order-form-layout']);
 
 		$dist_field = $form->addField('autocomplete/Basic','distributor')->validate('required');
@@ -56,7 +56,8 @@ class Tool_FranchisesOrder extends \xepan\cms\View_Tool{
 		$kit_field = $form->addField('Dropdown','kit')->validate('required')->addClass('xepan-push-large');
 		$kit_field->setModel($item);
 		$kit_field->setEmptyText('Please select');
-		$col  = $form->add('Columns')->addClass('row xepan-contact-form');
+
+		$col  = $form->add('Columns')->addClass('row');
 		$left = $col->addColumn(4)->addClass('col-md-4 form-group');
 		$mid = $col->addColumn(4)->addClass('col-md-4 form-group');
 		$right = $col->addColumn(4)->addClass('col-md-4 form-group');
