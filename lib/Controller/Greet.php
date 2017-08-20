@@ -4,7 +4,7 @@
 namespace xavoc\mlm;
 
 
-class Controlelr_Greet extends \AbstractController {
+class Controller_Greet extends \AbstractController {
 
 	function do($distributor,$event,$related_document=null){
 		$messages_model = $this->add('xepan\base\Model_ConfigJsonModel',

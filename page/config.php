@@ -63,9 +63,9 @@ class page_config extends \xepan\base\Page{
 			$f->js()->reload()->univ()->successMessage('Saved Successfully')->execute();
 		}
 
-		$green_tab = $tab->addTab('Green/Activation SMS/Email');
+		$green_tab = $tab->addTab('Topup/Re-topup SMS/Email');
 		$f = $green_tab->add('Form');
-		$f->setModel($welcome_model,['green_mail_subject','green_mail_content','green_sms_content']);
+		$f->setModel($welcome_model,['topup_mail_subject','topup_mail_content','topup_sms_content']);
 		$f->addSubmit('Update');
 		if($f->isSubmitted()){
 			$f->save();
