@@ -49,6 +49,13 @@ class Model_SalesOrder extends \xepan\commerce\Model_SalesOrder {
 			return $q->expr('IFNULL([0],0)',[$sd->count()]);
 		})->type('boolean');
 
+		$this->addExpression('delivered_from_id')->set(function($m,$q){
+			$sd = $m->add('xepan\commerce\Model_Store_Delivered');
+			$sd->addCondition('related_document_id',$q->getField('id'));
+			$sd->addCondition('status',['Delivered','Shipped']);
+			return $q->expr('IFNULL([0],0)',[$sd->fieldQuery('from_warehouse_id')]);
+		});
+
 		$this->hasMany('xavoc\mlm\Model_QSPDetail','qsp_master_id');
 	}
 

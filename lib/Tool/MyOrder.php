@@ -45,7 +45,7 @@ class Tool_MyOrder extends \xavoc\mlm\Tool_Distributor{
 		$grid->addMethod('format_items',function($g,$f){
 			$g->current_row_html[$f] = '<a href="#na" onclick="javascript:'.$g->js()->univ()->frameURL('Order Items '. $g->model['sales_order'], $this->api->url($this->vp->getURL(),array('sales_order_id'=>$g->model->id))).'">View Items ( '. $g->current_row[$f] ." )</a>";
 		});
-		$grid->addFormatter('items','items');	
+		$grid->addFormatter('items','items');
 
 		$grid->addQuickSearch(['document_no','created_at','status']);	
 		$grid->addPaginator(10);	

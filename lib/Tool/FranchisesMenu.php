@@ -31,7 +31,7 @@ class Tool_FranchisesMenu extends \xepan\cms\View_Tool{
 		$menu = [
 				['key'=>'franchises_dashboard','name'=>'Dashboard'],
 				['key'=>'franchises_order','name'=>'New Orders'],
-				['key'=>'franchises_verifyorder','name'=>'Verify Orders'],
+				['key'=>'franchises_verifyorder','name'=>'Manage Order'],
 				// ['key'=>'franchises_dispatch','name'=>'Dispatch Request '.$assign_order_count],
 				['key'=>'franchises_stock','name'=>'Stock'],
 				['key'=>'franchises_setting','name'=>'Settings'],
@@ -40,7 +40,11 @@ class Tool_FranchisesMenu extends \xepan\cms\View_Tool{
 					'franchises_stock'=>[
 								'index.php?page=franchises_stock&report=itemstock'=>'Item Stock',
 								'index.php?page=franchises_stock&report=stocktransaction'=>'Stock Transaction'
-								]
+								],
+					'franchises_verifyorder'=>[
+							'index.php?page=franchises_verifyorder&action=verify'=>'Verify Order',
+							'index.php?page=franchises_verifyorder&action=history'=>'Order History',
+						]
 					];
 
 		$this->complete_lister = $cl = $this->add('CompleteLister',null,null,['view/franchisesmenu']);

@@ -8,14 +8,58 @@ class Tool_FranchisesVerifyOrder extends \xepan\cms\View_Tool{
 	public $order_id=0;
 	public $saleOrder;
 	public $v;
+
 	function init(){
 		parent::init();
-		
-		if($this->owner instanceof \AbstractController) return;
 
 		$this->franchises = $franchises = $this->add('xavoc\mlm\Model_Franchises');
 		$franchises->loadLoggedIn();
+
+		$action = $this->app->stickyGET('action');
+		switch ($action) {
+			case 'verify':
+				$this->verifyOrder();
+				break;
+			case 'history':
+				$this->orderHistory();
+				break;
+		}
+	}
+
+	function orderHistory(){
+
+		$this->addClass('main-box');
+		$oh = $this->add('xavoc\mlm\Model_SalesOrder');
+		$oh->addCondition([
+						['created_by_id',$this->franchises->id],
+						['delivered_from_id',$this->franchises->id]
+					]);
+		$oh->setOrder('id','desc');
+		$grid = $this->add('xepan\base\Grid');
+		$grid->setModel($oh,['document_no','contact','created_at','status','invoice_detail','items','net_amount','is_delivered']);
+		$grid->addSno('Sr. No.');
+		$grid->addPaginator(25);
+
+		$self = $this;
+		$this->vp = $this->add('VirtualPage')->set(function($p)use($self){
+			$p->api->stickyGET('sales_order_id');
+			$o = $this->add('xavoc\mlm\Model_QSPDetail')->addCondition('qsp_master_id',$_GET['sales_order_id']);
+			$o->getElement('amount_excluding_tax')->caption('amount');
+			$order = $p->add('xepan\base\Grid');
+			$order->setModel($o,['name','item_sku','price','quantity','amount_excluding_tax','tax_amount','total_amount']);
+		});
+		$grid->addMethod('format_items',function($g,$f){
+			$g->current_row_html[$f] = '<a href="#na" onclick="javascript:'.$g->js()->univ()->frameURL('Order Items '. $g->model['sales_order'], $this->api->url($this->vp->getURL(),array('sales_order_id'=>$g->model->id))).'">View Items ( '. $g->current_row[$f] ." )</a>";
+		});
 		
+		$grid->addFormatter('items','items');
+	}
+
+	function verifyOrder(){
+		// parent::init();
+		
+		if($this->owner instanceof \AbstractController) return;
+
 		$this->addClass('main-box franchises-order-verification');
 		$this->js('reload')->reload();
 
