@@ -34,10 +34,15 @@ class Controller_Greet extends \AbstractController {
 			]);
 		$messages_model->tryLoadAny();
 
-		if($related_document) 
-			$data = array_merge($distributor->data,$related_document->data);
-		else
+		if($related_document){
+			if(is_array($related_document))
+				$data=$related_document;
+			else
+				$data = array_merge($distributor->data,$related_document->data);
+		}
+		else{
 			$data = $distributor->data;
+		}
 
 		if($this->app->getConfig('send_email',false)){
 
