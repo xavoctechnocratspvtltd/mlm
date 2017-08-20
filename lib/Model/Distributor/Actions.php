@@ -277,7 +277,7 @@ class Model_Distributor_Actions extends \xavoc\mlm\Model_Distributor
 			}catch(\Exception $e){
 				$this->app->js()->univ()->errorMessage($e->getMessage())->execute();
 			}
-			$this->app->page_action_result = $form->js(null,$form->js()->closest('.dialog')->dialog('close'))->univ()->successMessage('Distributor detail updated');		
+			$this->app->page_action_result = $form->js(null,$form->js()->closest('.dialog')->dialog('close'))->univ()->successMessage('Distributor detail updated');
 		}
 
 	}
@@ -309,6 +309,25 @@ class Model_Distributor_Actions extends \xavoc\mlm\Model_Distributor
 			$g->current_row['rightSV']= $sv['right_sv'];
 		});
 
+	}
+
+	function page_password($page){
+		$form = $page->add('Form');
+		$form->addField('new_password')->validate('required');
+		$form->addSubmit('Change');
+
+		if($form->isSubmitted()){
+			$this->password($form['new_password']);
+			$this->app->page_action_result = $form->js(null,$form->js()->closest('.dialog')->dialog('close'))->univ()->successMessage('Distributor password changed');
+		}
+	}
+
+	function password($new_password){
+		$user = $this->add('xepan\base\Model_User');
+		$user->load($this['user_id']);
+		$this->api->auth->addEncryptionHook($user);
+		$user['password'] = $new_password;
+		$user->save();
 	}
 
 }
