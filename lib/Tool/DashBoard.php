@@ -19,6 +19,9 @@ class Tool_DashBoard extends \xavoc\mlm\Tool_Distributor{
 		$this->distributor = $distributor = $this->add('xavoc\mlm\Model_Distributor');
 		$distributor->addExpression('registration_date')->set('DATE(created_at)');
 		$distributor->addExpression('activation_date')->set('DATE(greened_on)');
+		$distributor->addExpression('total_mathcing_sv')->set(function($m,$q){
+			return $this->add('xavoc\mlm\Model_Payout')->addCondition('distributor_id',$q->getField('id'))->sum('binary_income');
+		});
 
 		$distributor->addExpression('package_name')->set(function($m,$q){
 			$task = $m->add('xepan\commerce\Model_Item',['table_alias'=>'package_item'])
@@ -140,7 +143,7 @@ class Tool_DashBoard extends \xavoc\mlm\Tool_Distributor{
 
 		$view_box = $col3->add('View')->addClass('panel panel-info alert text-right')->setStyle('height','80px;');
 		$view_box->add('View')->setHtml('Total Matching SV');
-		$view_box->add('View')->setHtml('<strong>'.strtoupper('---').'</strong>');
+		$view_box->add('View')->setHtml('<strong>'.strtoupper($distributor['total_mathcing_sv']*10).'</strong>');
 
 
 		$view_box = $col1->add('View')->addClass('panel panel-info alert text-right')->setStyle('height','80px;');
