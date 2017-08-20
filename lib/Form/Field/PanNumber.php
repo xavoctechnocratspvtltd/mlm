@@ -35,6 +35,6 @@ class Form_Field_PanNumber extends \Form_Field_Line {
 
 
 
-        return parent::validate('required');
+        return parent::validate('');
     }
 }
