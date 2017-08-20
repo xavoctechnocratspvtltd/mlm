@@ -32,26 +32,49 @@ class Tool_FranchisesMenu extends \xepan\cms\View_Tool{
 				['key'=>'franchises_dashboard','name'=>'Dashboard'],
 				['key'=>'franchises_order','name'=>'New Orders'],
 				['key'=>'franchises_verifyorder','name'=>'Verify Orders'],
-				['key'=>'franchises_dispatch','name'=>'Dispatch Request '.$assign_order_count],
+				// ['key'=>'franchises_dispatch','name'=>'Dispatch Request '.$assign_order_count],
 				['key'=>'franchises_stock','name'=>'Stock'],
 				['key'=>'franchises_setting','name'=>'Settings'],
 			];
+		$submenu_list = [
+					'franchises_stock'=>[
+								'index.php?page=franchises_stock&report=itemstock'=>'Item Stock',
+								'index.php?page=franchises_stock&report=stocktransaction'=>'Stock Transaction'
+								]
+					];
 
 		$this->complete_lister = $cl = $this->add('CompleteLister',null,null,['view/franchisesmenu']);
 		$cl->setSource($menu);
 		$page = $this->app->page;	
-		$cl->addHook('formatRow',function($g)use($page){
+		$cl->addHook('formatRow',function($g)use($page,$submenu_list){
+			$submenu_html = "";
+			$submenu_class = "";
+
+			if(isset($submenu_list[$g->model['key']])){
+				$submenu_html = '<ul class="dropdown-menu">';
+				foreach ($submenu_list[$g->model['key']] as $s_key => $s_value) {
+					$submenu_html .= '<li><a class="dropdown-item" href="'.$s_key.'">'.$s_value.'</a></li>';
+				}
+				$submenu_html .= '</ul>';
+				$submenu_class = "dropdown";
+
+				$g->current_row_html['list'] = '<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">'.$g->model['name'].' <span class="caret"></span></a>';
+			}else{
+				$g->current_row_html['list'] = '<a href="'.$g->model['key'].'">'.$g->model['name'].'</a>';
+			}
+
 			if($g->model['key'] == $page)
-				$g->current_row_html['active_menu'] = "active";
+				$g->current_row_html['active_menu'] = "active ".$submenu_class;
 			else
-				$g->current_row_html['active_menu'] = "deactive";
+				$g->current_row_html['active_menu'] = "deactive ".$submenu_class;
 			
-			$g->current_row_html['name'] = $g->model['name'];
+			$g->current_row_html['submenu'] = $submenu_html;
 		});
 
 
 		$cl->template->trySet('franchises_name',$this->app->auth->model['username']);
 		$cl->template->trySet('franchises_dp',($franchises['image']?:"shared/apps/xavoc/mlm/templates/img/profile.png"));
 
+		$this->js(true)->_selector('.dropdown-toggle')->dropdown();
 	}
 }

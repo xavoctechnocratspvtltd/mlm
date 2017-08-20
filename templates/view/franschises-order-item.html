@@ -45,15 +45,19 @@
                   <td><strong>Item</strong></td>
                   <td class="text-center"><strong>Price</strong></td>
                   <td class="text-center"><strong>Quantity</strong></td>
-                  <td class="text-right"><strong>Totals</strong></td>
+                  <td class="text-center"><strong>Amount</strong></td>
+                  <td class="text-center"><strong>Tax Amount</strong></td>
+                  <td class="text-right"><strong>Total</strong></td>
                 </tr>
               </thead>
               <tbody>
                 <!-- foreach ($order->lineItems as $line) or some such thing here-->{rows}{row}
                 <tr>
-                  <td>{$name}</td>
+                  <td>{$name}::{$item_sku}</td>
                   <td class="text-center">{$price}</td>
                   <td class="text-center">{$quantity}</td>
+                  <td class="text-center">{$amount_excluding_tax}</td>
+                  <td class="text-center">{$tax_amount}</td>
                   <td class="text-right">{$total_amount}</td>
                 </tr>{/row}{/rows}
               </tbody>

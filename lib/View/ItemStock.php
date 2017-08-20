@@ -24,7 +24,7 @@ class View_ItemStock extends \View{
 		}
 
 		$stock = $this->add('xavoc\mlm\Model_ItemStock');
-		$grid = $this->add('Grid');
+		$grid = $this->add('xepan\base\Grid');
 		if($this->warehouse_id){
 			$stock->warehouse_id = $this->warehouse_id;
 		}
@@ -32,7 +32,8 @@ class View_ItemStock extends \View{
 
 		$grid->setModel($stock,['name_with_code','total_in','total_out','net_stock']);
 		// $grid->addQuickSearch(['name_with_code']);
-				
+		$grid->addSno('Sr. No.');
+
 		if($show_form){
 			$f->addSubmit('submit')->addClass('btn btn-primary')->setStyle('margin-top','10px');
 			if($f->isSubmitted()){

@@ -205,7 +205,7 @@ class Model_SalesOrder extends \xepan\commerce\Model_SalesOrder {
 		$sd->addCondition('related_document_id',$this->id);
 		$sd->addCondition('status',['Delivered','Shipped']);
 		$sd->tryLoadAny();
-		if($sd->loaded()) return true;
+		if($sd->loaded()) return $sd;
 
 		return false;
 	}
