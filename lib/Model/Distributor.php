@@ -263,7 +263,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 	function sendMailGreenDistributor(){
 		if(!$this->loaded()) throw new \Exception("Distributor Not Found, some thing wrong");
 				
-		$this->add('xavoc\mlm\Controller_Greet')->do($this,'green');
+		// $this->add('xavoc\mlm\Controller_Greet')->do($this,'topup');
 	}
 
 	// send email and send sms
@@ -393,7 +393,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		}
 		
 		// $this->updateTopupHistoryAttachment();
-		$this->sendMailGreenDistributor();
+		// $this->sendMailGreenDistributor();
 	}
 
 	function updateTopupHistoryAttachment(){

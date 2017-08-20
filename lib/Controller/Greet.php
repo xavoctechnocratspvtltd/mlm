@@ -13,9 +13,9 @@ class Controlelr_Greet extends \AbstractController {
 							'welcome_mail_subject'=>'Line',
 							'welcome_mail_content'=>'xepan\base\RichText',
 							'welcome_sms_content'=>'Text',
-							'green_mail_subject'=>'Line',
-							'green_mail_content'=>'xepan\base\RichText',
-							'green_sms_content'=>'Text',
+							// 'green_mail_subject'=>'Line',
+							// 'green_mail_content'=>'xepan\base\RichText',
+							// 'green_sms_content'=>'Text',
 							'deactivate_mail_subject'=>'Line',
 							'deactivate_mail_content'=>'xepan\base\RichText',
 							'deactivate_sms_content'=>'Text',
@@ -25,6 +25,9 @@ class Controlelr_Greet extends \AbstractController {
 							'topup_mail_subject'=>'Line',
 							'topup_mail_content'=>'xepan\base\RichText',
 							'topup_sms_content'=>'Text',
+							'repurchase_mail_subject'=>'Line',
+							'repurchase_mail_content'=>'xepan\base\RichText',
+							'repurchase_sms_content'=>'Text'
 						],
 					'config_key'=>'DM_WELCOME_CONTENT',
 					'application'=>'mlm'

@@ -100,6 +100,7 @@ class Model_Order_Topup extends \xavoc\mlm\Model_SalesOrder {
 			$th->save();
 			$this->complete();
 			$this->invoice()->paid();
+			$this->add('xavoc\mlm\Controller_Greet')->do($this,'topup',$this);
 			// $dist = $this->add('xavoc\mlm\Model_Distributor');
 			// $dist->load($this['contact_id']);
 			// $dist->markGreen();
