@@ -36,7 +36,7 @@ class Controller_Greet extends \AbstractController {
 
 		if($related_document){
 			if(is_array($related_document))
-				$data=$related_document;
+				$data = array_merge($distributor->data,$related_document);
 			else
 				$data = array_merge($distributor->data,$related_document->data);
 		}
