@@ -96,13 +96,14 @@ class Model_Order_Topup extends \xavoc\mlm\Model_SalesOrder {
 
 		if($form->isSubmitted()){
 
+			$dist = $this->add('xavoc\mlm\Model_Distributor');
+			$dist->load($this['contact_id']);
+			
 			$th['is_payment_verified'] = true;
 			$th->save();
 			$this->complete();
 			$this->invoice()->paid();
-			$this->add('xavoc\mlm\Controller_Greet')->do($this,'topup',$this);
-			// $dist = $this->add('xavoc\mlm\Model_Distributor');
-			// $dist->load($this['contact_id']);
+			$this->add('xavoc\mlm\Controller_Greet')->do($dist,'topup',$this);
 			// $dist->markGreen();
 			$this->app->page_action_result = $form->js(null,$form->js()->closest('.dialog')->dialog('close'))->univ()->successMessage('payment verified and marked green');
 		}
