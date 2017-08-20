@@ -41,7 +41,7 @@ class View_FranchisesRepurchase extends \View{
 			$crud->grid->addTotals(['amount']);
 
 			$submit_form = $view->add('Form');
-			$submit_form->setLayout(['view/form/repurchase-order-form-layout']);
+			// $submit_form->setLayout(['view/form/repurchase-order-form-layout']);
 			$submit_form->addField('text','payment_narration');
 			$submit_form->addField('line','delivery_via')->validate('required');
 			$submit_form->addField('line','delivery_docket_no','Docket no/ Person name/ Other reference');
