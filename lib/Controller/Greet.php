@@ -27,7 +27,10 @@ class Controller_Greet extends \AbstractController {
 							'topup_sms_content'=>'Text',
 							'repurchase_mail_subject'=>'Line',
 							'repurchase_mail_content'=>'xepan\base\RichText',
-							'repurchase_sms_content'=>'Text'
+							'repurchase_sms_content'=>'Text',
+							'dispatch_mail_subject'=>'Line',
+							'dispatch_mail_content'=>'xepan\base\RichText',
+							'dispatch_sms_content'=>'Text'
 						],
 					'config_key'=>'DM_WELCOME_CONTENT',
 					'application'=>'mlm'

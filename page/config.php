@@ -43,7 +43,10 @@ class page_config extends \xepan\base\Page{
 							'topup_sms_content'=>'Text',
 							'repurchase_mail_subject'=>'Line',
 							'repurchase_mail_content'=>'xepan\base\RichText',
-							'repurchase_sms_content'=>'Text'
+							'repurchase_sms_content'=>'Text',
+							'dispatch_mail_subject'=>'Line',
+							'dispatch_mail_content'=>'xepan\base\RichText',
+							'dispatch_sms_content'=>'Text'
 						],
 					'config_key'=>'DM_WELCOME_CONTENT',
 					'application'=>'mlm'
@@ -102,6 +105,15 @@ class page_config extends \xepan\base\Page{
 		$r_tab = $tab->addTab('Repurchase Email/SMS');
 		$f = $r_tab->add('Form');
 		$f->setModel($welcome_model,['repurchase_mail_subject','repurchase_mail_content','repurchase_sms_content']);
+		$f->addSubmit('Update');
+		if($f->isSubmitted()){
+			$f->save();
+			$f->js()->reload()->univ()->successMessage('Saved Successfully')->execute();
+		}
+
+		$r_tab = $tab->addTab('Dispatch Email/SMS');
+		$f = $r_tab->add('Form');
+		$f->setModel($welcome_model,['dispatch_mail_subject','dispatch_mail_content','dispatch_sms_content']);
 		$f->addSubmit('Update');
 		if($f->isSubmitted()){
 			$f->save();

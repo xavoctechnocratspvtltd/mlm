@@ -185,8 +185,8 @@ class Tool_FranchisesOrder extends \xepan\cms\View_Tool{
 						'narration' => $form['payment_narration']
 					]);
 				
-				$this->add('xavoc\mlm\Controller_Greet')->do($this,'topup',$order_model);
-				$this->add('xavoc\mlm\Controller_Greet')->do($this,'dispatch',$dispatch_m);
+				$this->add('xavoc\mlm\Controller_Greet')->do($distributor,'topup',$order_model);
+				$this->add('xavoc\mlm\Controller_Greet')->do($distributor,'dispatch',$dispatch_m);
 
 				$this->app->db->commit();
 			}catch(Exception $e){

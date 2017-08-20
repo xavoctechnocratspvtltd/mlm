@@ -48,7 +48,8 @@ class Tool_FranchisesVerifyOrder extends \xepan\cms\View_Tool{
 		$order_view = $v->add('View',null,null,['view/franschises-order-item','order']);
 		$order_view->setModel($sale_order);
 
-		$contact = $sale_order->ref('contact_id');
+		$contact = $this->add('xavoc\mlm\Model_Distributor')->load($sale_order['contact_id']);
+		// $contact = $sale_order->ref('contact_id');
 		// throw new \Exception($contact['user'], 1);
 		$inv = explode('-', $sale_order['invoice_detail']);
 		$inv_no = $inv[0];
@@ -141,7 +142,7 @@ class Tool_FranchisesVerifyOrder extends \xepan\cms\View_Tool{
 
 					$this->app->db->beginTransaction();
 
-					$sale_order->dispatchComplete($this->franchises->id,[
+					$dispatch = $sale_order->dispatchComplete($this->franchises->id,[
 							'delivery_via'=>$form['delivery_via'],
 							'delivery_docket_no'=>$form['delivery_docket_no'],
 							'tracking_code'=>$form['tracking_code'],
@@ -149,6 +150,8 @@ class Tool_FranchisesVerifyOrder extends \xepan\cms\View_Tool{
 						]);
 					
 					$this->app->db->commit();
+					$data_array = array_merge($sale_order->data,$dispatch->data);
+					$this->add('xavoc\mlm\Controller_Greet')->do($contact,'dispatch',$data_array);
 					$v->js()->reload()->execute();
 				}catch(Exception $e){
 					$this->app->db->rollback();
