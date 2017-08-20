@@ -177,13 +177,17 @@ class Tool_FranchisesOrder extends \xepan\cms\View_Tool{
 				$order_model->load($order_id);
 				$order_model->invoice()->paid();
 
-				$order_model->dispatchComplete($this->franchises->id,[
+
+				$dispatch_m = $order_model->dispatchComplete($this->franchises->id,[
 						'delivery_via'=>$form['delivery_via'],
 						'delivery_docket_no'=>$form['delivery_docket_no'],
 						'tracking_code'=>$form['tracking_code'],
 						'narration' => $form['payment_narration']
 					]);
 				
+				$this->add('xavoc\mlm\Controller_Greet')->do($this,'topup',$order_model);
+				$this->add('xavoc\mlm\Controller_Greet')->do($this,'dispatch',$dispatch_m);
+
 				$this->app->db->commit();
 			}catch(Exception $e){
 				$this->app->db->rollback();

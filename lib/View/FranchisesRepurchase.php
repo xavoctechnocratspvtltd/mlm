@@ -82,12 +82,15 @@ class View_FranchisesRepurchase extends \View{
 					$rh['is_payment_verified'] = true;
 					$rh->save();
 
-					$order_model->dispatchComplete($this->franchises->id,[
+					$dispatch_m = $order_model->dispatchComplete($this->franchises->id,[
 						'delivery_via'=>$submit_form['delivery_via'],
 						'delivery_docket_no'=>$submit_form['delivery_docket_no'],
 						'tracking_code'=>$submit_form['tracking_code'],
 						'narration' => $submit_form['payment_narration']
 					]);
+
+					$this->add('xavoc\mlm\Controller_Greet')->do($this,'repurchase',$order_model);
+					$this->add('xavoc\mlm\Controller_Greet')->do($this,'dispatch',$dispatch_m);
 
 					$this->app->db->commit();
 				}catch(\Exception $e){

@@ -105,6 +105,7 @@ class Model_Order_Repurchase extends \xavoc\mlm\Model_SalesOrder {
 			$th->save();
 			$this->complete();
 			$this->invoice()->paid();
+			$this->add('xavoc\mlm\Controller_Greet')->do($this,'repurchase',$this);
 			// $dist = $this->add('xavoc\mlm\Model_Distributor');
 			// $dist->load($this['contact_id']);
 			// $dist->markGreen();

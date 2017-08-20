@@ -29,9 +29,9 @@ class page_config extends \xepan\base\Page{
 							'welcome_mail_subject'=>'Line',
 							'welcome_mail_content'=>'xepan\base\RichText',
 							'welcome_sms_content'=>'Text',
-							'green_mail_subject'=>'Line',
-							'green_mail_content'=>'xepan\base\RichText',
-							'green_sms_content'=>'Text',
+							// 'green_mail_subject'=>'Line',
+							// 'green_mail_content'=>'xepan\base\RichText',
+							// 'green_sms_content'=>'Text',
 							'deactivate_mail_subject'=>'Line',
 							'deactivate_mail_content'=>'xepan\base\RichText',
 							'deactivate_sms_content'=>'Text',
@@ -40,7 +40,10 @@ class page_config extends \xepan\base\Page{
 							'payout_sms_content'=>'Text',
 							'topup_mail_subject'=>'Line',
 							'topup_mail_content'=>'xepan\base\RichText',
-							'topup_sms_content'=>'Text'
+							'topup_sms_content'=>'Text',
+							'repurchase_mail_subject'=>'Line',
+							'repurchase_mail_content'=>'xepan\base\RichText',
+							'repurchase_sms_content'=>'Text'
 						],
 					'config_key'=>'DM_WELCOME_CONTENT',
 					'application'=>'mlm'
@@ -87,9 +90,18 @@ class page_config extends \xepan\base\Page{
 			$f->js()->reload()->univ()->successMessage('Saved Successfully')->execute();
 		}
 
-		$t_tab = $tab->addTab('Topup Email/SMS');
-		$f = $t_tab->add('Form');
-		$f->setModel($welcome_model,['topup_mail_subject','topup_mail_content','topup_sms_content']);
+		// $t_tab = $tab->addTab('Topup Email/SMS');
+		// $f = $t_tab->add('Form');
+		// $f->setModel($welcome_model,['topup_mail_subject','topup_mail_content','topup_sms_content']);
+		// $f->addSubmit('Update');
+		// if($f->isSubmitted()){
+		// 	$f->save();
+		// 	$f->js()->reload()->univ()->successMessage('Saved Successfully')->execute();
+		// }
+
+		$r_tab = $tab->addTab('Repurchase Email/SMS');
+		$f = $r_tab->add('Form');
+		$f->setModel($welcome_model,['repurchase_mail_subject','repurchase_mail_content','repurchase_sms_content']);
 		$f->addSubmit('Update');
 		if($f->isSubmitted()){
 			$f->save();
