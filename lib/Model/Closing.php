@@ -26,6 +26,19 @@ class Model_Closing extends \xepan\base\Model_Table {
 		$this->addField('type')->enum(['DailyClosing','WeeklyClosing','MonthlyClosing']);
 		$this->hasMany('xavoc\mlm\Payout','closing_id');
 
+		$this->addExpression('total_net_payout')->set(function($m,$q){
+			return $m->refSQL('xavoc\mlm\Payout')->sum('net_payment');
+		});
+
+		$this->addExpression('total_distributors')->set(function($m,$q){
+			return $m->refSQL('xavoc\mlm\Payout')->count();
+		});
+
+		$this->addExpression('net_payout_distributors')->set(function($m,$q){
+			return $m->refSQL('xavoc\mlm\Payout')->addCondition('net_payment','>',0)->count();
+		});
+
+
 		$this->is([
 				'on_date|unique|required',
 				'type|required'

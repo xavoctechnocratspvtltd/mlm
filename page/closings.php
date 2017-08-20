@@ -15,13 +15,16 @@ class page_closings extends \xepan\base\Page {
 		$mt = $tabs->addTab('Monthly');
 
 		$crud = $dt->add('xepan\hr\CRUD',['allow_del'=>false,'allow_edit'=>false]);
-		$crud->setModel('xavoc\mlm\Model_Closing_Daily');
+		$crud->setModel('xavoc\mlm\Model_Closing_Daily')->setOrder('on_date','desc');
+		$crud->grid->removeAttachment();
 
 		$crud = $wt->add('xepan\hr\CRUD',['allow_del'=>false,'allow_edit'=>false]);
-		$crud->setModel('xavoc\mlm\Model_Closing_Weekly');
+		$crud->setModel('xavoc\mlm\Model_Closing_Weekly')->setOrder('on_date','desc');
+		$crud->grid->removeAttachment();
 
 		$crud = $mt->add('xepan\hr\CRUD',['allow_del'=>false,'allow_edit'=>false]);
-		$crud->setModel('xavoc\mlm\Model_Closing_Monthly');
+		$crud->setModel('xavoc\mlm\Model_Closing_Monthly')->setOrder('on_date','desc');
+		$crud->grid->removeAttachment();
 
 	}
 
