@@ -34,14 +34,15 @@ class Tool_DistributorCheckout extends \xavoc\mlm\Tool_Distributor{
 		// 	// return;
 		// }
 
-		$this->add('xavoc\mlm\View_Cart',['options'=>['show_clear_btn'=>false,'show_next_btn'=>false]]);
+		$this->cart = $this->add('xavoc\mlm\View_Cart',['options'=>['show_clear_btn'=>false,'show_next_btn'=>false]]);
 		$this->add('View')->setElement('hr');
 
 		$crud = $this->add('CRUD',['allow_add'=>false,'allow_edit'=>true]);
 		$crud->setModel($temp,['quantity'],['image','item','quantity','price','tax_percentage','tax_amount','amount']);
 		$crud->grid->addHook('formatRow',function($m){
 			$m->current_row_html['image'] = '<img class="checkout-item-image" style="height:100px;" src="'.$m['image'].'"/>';
-		});	
+		});
+		$crud->js('reload',$this->cart->js()->reload());
 
 		if($total_cart_item){
 			$this->add('xavoc\mlm\View_RepurchasePaymentMode');

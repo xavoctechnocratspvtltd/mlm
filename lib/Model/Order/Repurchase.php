@@ -101,13 +101,15 @@ class Model_Order_Repurchase extends \xavoc\mlm\Model_SalesOrder {
 
 		if($form->isSubmitted()){
 
+			$dist = $this->add('xavoc\mlm\Model_Distributor');
+			$dist->load($this['contact_id']);
+			
 			$th['is_payment_verified'] = true;
 			$th->save();
 			$this->complete();
 			$this->invoice()->paid();
-			$this->add('xavoc\mlm\Controller_Greet')->do($this,'repurchase',$this);
-			// $dist = $this->add('xavoc\mlm\Model_Distributor');
-			// $dist->load($this['contact_id']);
+			
+			$this->add('xavoc\mlm\Controller_Greet')->do($dist,'repurchase',$this);
 			// $dist->markGreen();
 			$this->app->page_action_result = $form->js(null,$form->js()->closest('.dialog')->dialog('close'))->univ()->successMessage('payment verified successfully');
 		}

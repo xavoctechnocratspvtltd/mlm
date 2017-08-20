@@ -72,7 +72,7 @@ class Tool_RepurchaseItem extends \xepan\cms\View_Tool{
 		$col = $form->add('Columns')->addClass('row');
 		$col1 = $col->addColumn(4)->addClass('col-lg-12 col-md-12 col-sm-12 col-xs-12');
 		$col2 = $col->addColumn(8)->addClass('col-lg-12 col-md-12 col-sm-12 col-xs-12');
-		$col1->addField('Number','qty')->set(1)->validate('required');
+		$col1->addField('Number','qty')->set(1)->validate('required|int');
 		$col1->addField('hidden','item_id')->set($l->model->id);
 		$col1->addField('hidden','price')->set($l->model['dp']);
 		$col2->addSubmit('Add To Cart')->addClass('btn btn-primary btn-block');
