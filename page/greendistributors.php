@@ -23,7 +23,7 @@ class page_greendistributors extends \xepan\base\Page {
 		
 		$model = $this->add('xavoc\mlm\Model_Distributor_Actions');
 
-		$model->addCondition('status','Red');
+		$model->addCondition('status','Green');
 		if($fd = $this->app->stickyGET('from_date')){
 			$model->addCondition('created_at','>',$fd);
 		}
