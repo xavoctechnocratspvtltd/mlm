@@ -50,6 +50,9 @@ class Model_Payout extends \xepan\base\Model_Table {
 
 		$this->addExpression('month_year')->set($this->dsql()->expr(' DATE_FORMAT(closing_date,"%b-%Y")'));
 		$this->addExpression('payout_type')->set($this->refSQL('closing_id')->fieldQuery('type'));
+		
+		$this->addField('paid_on')->type('datetime');
+		$this->addField('paid_amount')->type('money')->defaultValue(0);
 	}
 
 	
