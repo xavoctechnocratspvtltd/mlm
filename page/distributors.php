@@ -21,8 +21,8 @@ class page_distributors extends \xepan\base\Page {
 		$model= $this->add('xavoc\mlm\Model_Distributor_Actions');
 		// $model->getElement('organization')->caption('SUPPLIER FIRM NAME');
 
-		$grid->setModel($model,['name','user']);
-		$grid->addQuickSearch(['name']);
+		$grid->setModel($model,['created_at','user','name','city','mobile_number']);
+		$grid->addQuickSearch(['name','user','mobile_number']);
 		$grid->addSno('Sr. No');
 
 		$grid->addPaginator(50);
