@@ -22,7 +22,8 @@ class Tool_GenerationTree extends \xavoc\mlm\Tool_Distributor{
 		if(!$d->loaded()) return;
 
 		$this->addClass('main-box');
-		$this->add('xavoc\mlm\View_GenerationTree',['options'=>$this->options]);
+		// $this->add('xavoc\mlm\View_GenerationTree',['options'=>$this->options]);
+		$this->add('xavoc\mlm\View_GenerationJSTree',['options'=>$this->options]);
 
 	}
 }

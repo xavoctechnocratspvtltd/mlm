@@ -12,7 +12,7 @@ class Tool_ClosingAndPayouts extends \xepan\cms\View_Tool{
 
 	function init(){
 		parent::init();
-		$report_type = $_GET['report'];
+		$report_type = $_GET['report']?:'all';
 
 		if($this->owner instanceof \AbstractController) return;
 
@@ -23,11 +23,10 @@ class Tool_ClosingAndPayouts extends \xepan\cms\View_Tool{
 		}
 		
 		$this->payout = $payout = $this->add('xavoc\mlm\Model_Payout');
-		$payout->addExpression('date')->set($payout->dsql()->expr(' DATE_FORMAT(closing_date,"%d %b %y")'));
+		$payout->addExpression('date')->set($payout->dsql()->expr(' DATE_FORMAT(closing_date,"%d %b %y")'))->caption('Closing Date');
 		// $payout->addExpression('month_year')->set($payout->dsql()->expr(' DATE_FORMAT(closing_date,"%b-%Y")'));
 		// $payout->addExpression('payout_type')->set($payout->refSQL('closing_id')->fieldQuery('type'));
 		$payout->addCondition('distributor_id',$this->distributor->id);
-
 		$payout->setOrder('id','desc');
 
 		$this->current_month_year = date('M-Y',strtotime($this->app->now));
@@ -41,6 +40,9 @@ class Tool_ClosingAndPayouts extends \xepan\cms\View_Tool{
 				break;
 			case 'all':
 				$this->allPayout();
+				break;
+			case 'paid':
+				$this->paidPayout();
 				break;
 		}
 	}
@@ -137,33 +139,57 @@ class Tool_ClosingAndPayouts extends \xepan\cms\View_Tool{
 		// current month payout
 		$v = $this->add('View')->addClass('main-box');
 		$v->add('View')->setElement('h5')
-			->set('Current Month '.$this->current_month_year);
+			->set('Current Month Payout - '.$this->current_month_year);
 
 		$this->payout
 			->addCondition('month_year',$this->current_month_year)
 			;
 
 		$grid = $v->add('xepan\base\Grid');
-		$grid->setModel($this->payout,['date','previous_carried_amount','binary_income','introduction_amount','retail_profit','repurchase_bonus','generation_income','loyalty_bonus','leadership_bonus','gross_payment','tds','admin_charge','net_payment','carried_amount','payout_type']);
+		$grid->setModel($this->payout,['date','binary_income','introduction_amount','repurchase_bonus','generation_income','loyalty_bonus','leadership_bonus','total_amt','previous_carried_amount','gross_payment','tds','admin_charge','net_payment','carried_amount','payout_type']);
 		$grid->addPaginator($ipp=25);
 
 		$grid->addFormatter('date','template')->setTemplate('{$date}<br/><small><small>({$payout_type})</small></small>','date');
 		$grid->removeColumn('payout_type');
+		$grid->addTotals(['binary_income','introduction_amount','repurchase_bonus','generation_income','loyalty_bonus','leadership_bonus','total_amt','gross_payment','tds','admin_charge','net_payment']);
+
 		// previous payout
 		$previous_payout = $this->add('xavoc\mlm\Model_Payout');
 		$previous_payout->addExpression('date')->set($previous_payout->dsql()->expr(' DATE_FORMAT(closing_date,"%d %b %y")'));
 		$previous_payout->addCondition('month_year','<>',$this->current_month_year);
 		$previous_payout->addCondition('distributor_id',$this->distributor->id);
 
-		$sum_field = ['previous_carried_amount','binary_income','introduction_amount','retail_profit','repurchase_bonus','generation_income','loyalty_bonus','leadership_bonus','gross_payment','tds','admin_charge','net_payment','carried_amount'];
+		$sum_field = ['binary_income'=>'BINARY AMT','introduction_amount'=>'INTRO AMT','repurchase_bonus'=>'REP BONUS','generation_income'=>'GEN INCOME','loyalty_bonus'=>'LOYALTY BONUS','leadership_bonus'=>'LEADER BONUS','total_amt'=>'TOTAL AMT','last_month_prev_amount'=>'PREV AMT','gross_payment'=>'GROSS AMT','tds'=>'TDS','admin_charge'=>'ADMIN','net_payment'=>'NET AMT','last_carried_amount'=>'C/F'];
 		foreach ($sum_field as $key => $field) {
-			$previous_payout->addExpression('sum_'.$field)->set('sum('.$field.')')
-				->caption(strtoupper(str_replace("_", " ", $field)))
-				->display(['grid'=>'text']);
+			if($previous_payout->hasElement($key)){
+				$previous_payout->addExpression('sum_'.$key)->set($this->app->db->dsql()->expr('sum([0])',[$previous_payout->getElement($key)]))
+					->caption($field)
+					->display(['grid'=>'text']);
+			}
 		}
 
 		$previous_payout->setOrder('id','desc');
 		$previous_payout->_dsql()->group('month_year');
+
+		$previous_payout->addExpression('last_month_prev_amount')->set(function($m,$q){
+			$last_month_last_payout = $m->add('xavoc\mlm\Model_Payout',['table_alias'=>'prev_caried'])
+										->addCondition('distributor_id',$q->getField('distributor_id'))
+										->addCondition('closing_date','<',$q->getField('closing_date'))
+										->setLimit(1)
+										->setOrder('closing_date','desc')
+										;
+			return $last_month_last_payout->fieldQuery('carried_amount');
+		})->caption('PREV. AMT');
+
+		$previous_payout->addExpression('last_month_cf_amount')->set(function($m,$q){
+			$last_month_last_payout = $m->add('xavoc\mlm\Model_Payout',['table_alias'=>'caried'])
+										->addCondition('distributor_id',$q->getField('distributor_id'))
+										->addCondition('month_year',$q->expr('DATE_FORMAT([0],"%b-%Y")',[$m->getElement('closing_date')]))
+										->setLimit(1)
+										->setOrder('closing_date','desc')
+										;
+			return $last_month_last_payout->fieldQuery('carried_amount');
+		})->caption('C/F');
 
 		$this->add('View')->setStyle('height','30px');
 
@@ -172,7 +198,7 @@ class Tool_ClosingAndPayouts extends \xepan\cms\View_Tool{
 		$grid = $v->add('xepan\base\Grid');
 
 		// $grid->addColumn('detail');
-		$grid->setModel($previous_payout,['month_year','sum_binary_income','sum_introduction_amount','sum_retail_profit','sum_repurchase_bonus','sum_generation_income','sum_loyalty_bonus','sum_leadership_bonus','sum_gross_payment','sum_tds','sum_admin_charge','sum_net_payment']);
+		$grid->setModel($previous_payout,['month_year','sum_binary_income','sum_introduction_amount','sum_retail_profit','sum_repurchase_bonus','sum_generation_income','sum_loyalty_bonus','sum_leadership_bonus','sum_total_amt','last_month_prev_amount','sum_gross_payment','sum_tds','sum_admin_charge','sum_net_payment','last_month_cf_amount']);
 		$grid->addPaginator($ipp=12);
 		$grid->addColumn('expander','detail',['page'=>'xavoc_dm_mypayouts_detail']);
 
