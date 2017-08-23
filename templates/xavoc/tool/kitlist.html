@@ -3,16 +3,16 @@
   <hr/>{rows}{row}
   <div class="col-md-3 col-sm-12 col-lg-3 col-xs-12">
     <div class="thumbnail">{image_wrapper}
-      <div style="height:150px;" class="img-wrapper"><img src="{$kit_img}" alt="{$alt} we are uploading images ..." style="width:100%;max-heigth:150px;"/></div>{/}
+      <div style="height:150px;" data-itemid="{$id}" data-name="{$name}" class="img-wrapper"><img src="{$kit_img}" alt="{$alt} we are uploading images ..." style="max-height:150px;" class="center-block img-responsive"/></div>{/}
       <div class="caption">
         <h3>{$name}</h3>
         <div class="kit-description">{$description}</div>
         <div class="row">
           <div class="col-md-12 col-sm-12 col-lg-12 col-xs-12">
-            <p class="price"><i class="fa fa-rupee">&nbsp;</i>{$sale_price}</p>
+            <h4 class="price"><i class="fa fa-rupee">&nbsp;</i>{$sale_price}</h4>
           </div>
         </div>
-        <div class="btn-group btn-group-justified btn-sm"><a href="#" role="button" class="btn btn-default">BV: {$bv}</a><a href="#" role="button" class="btn btn-default">SV: {$sv}</a></div>
+        <div style="margin-bottom: 10px;" class="btn-group btn-group-justified"><a href="#" role="button" class="btn btn-default">BV: {$bv}</a><a href="#" role="button" class="btn btn-default">SV: {$sv}</a></div>
         <div>{purchase_btn_wrapper}
           <div data-xbikitid="{$id}" data-name="{$name}" class="xepan-commerce-item-purchase-button">{$purchase_btn}</div>{/}
         </div>

@@ -5,18 +5,18 @@ div(id='{$_name}' class="{$class} row" style="{$style}")
   .col-md-3.col-sm-12.col-lg-3.col-xs-12
     .thumbnail
       {image_wrapper}
-      div.img-wrapper(style="height:150px;")
-        img(src='{$kit_img}', alt='{$alt} we are uploading images ...' style="width:100%;max-heigth:150px;")
+      div.img-wrapper(style="height:150px;" data-itemid="{$id}" data-name="{$name}")
+        img(src='{$kit_img}', alt='{$alt} we are uploading images ...' style="max-height:150px;" class="center-block img-responsive")
       {/}
       .caption
         h3 {$name}
         div.kit-description{$description}
         .row
           .col-md-12.col-sm-12.col-lg-12.col-xs-12
-            p.price
+            h4.price
               i.fa.fa-rupee &nbsp;
               |{$sale_price}
-        .btn-group.btn-group-justified.btn-sm
+        .btn-group.btn-group-justified(style="margin-bottom: 10px;")
           a.btn.btn-default(href='#', role='button') BV: {$bv}
           a.btn.btn-default(href='#', role='button') SV: {$sv}
         div
