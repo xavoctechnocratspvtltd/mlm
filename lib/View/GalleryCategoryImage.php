@@ -14,7 +14,7 @@ class View_GalleryCategoryImage extends \View{
 			->addCondition('category_id',$cat_id)
 			->setOrder('id','desc');
 		
-		$this->complete_lister = $cl = $this->add('CompleteLister',null,null,['xavoc/tool/gallery']);
+		$this->complete_lister = $cl = $this->add('CompleteLister',null,null,['xavoc/tool/gallerylist']);
 		$cl->setModel($m);
 
 		$cat_model = $this->add('xavoc\mlm\Model_GalleryCategory');
@@ -22,7 +22,7 @@ class View_GalleryCategoryImage extends \View{
 
 		$cl->add('View',null,'heading')
 			->addClass('text-center')
-			->set('see all gallery')->js('click')->redirect($this->app->url(null,['type'=>'gallery']));
+			->setHtml('<a href="#">see all gallery</a>')->js('click')->redirect($this->app->url(null,['type'=>'gallery']));
 
 		$cl->add('View',null,'heading')->addClass('text-center')
 			->setElement('h2')
@@ -46,6 +46,12 @@ class View_GalleryCategoryImage extends \View{
 		// 	}
 		// 	return $this->app->js()->univ()->errorMessage('no one image found in this category');
 		// });
+
+		$cl->js(true)->_load($this->app->url()->absolute()->getBaseURL().'vendor/xepan/commerce/templates/js/tool/jquery-elevatezoom.js')
+			   ->_load($this->app->url()->absolute()->getBaseURL().'vendor/xepan/commerce/templates/js/tool/jquery.fancybox.js')
+				->_css("tool/jquery.fancybox-buttons")
+				->_css("tool/jquery.fancybox");
+		$cl->js(true)->_selector('.fancybox')->fancybox();
 	}
 
 	function addToolCondition_row_show_description($value,$l){

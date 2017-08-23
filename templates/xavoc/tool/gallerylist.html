@@ -3,8 +3,7 @@
   {$heading}
   {rows}{row}
   <div id="{$_id}" data-catid="{$id}" data-imgcount="{$images}" class="col-md-3 col-sm-12 col-lg-3 col-xs-12 mlm-gallery-category">
-    <div class="thumbnail">{image_wrapper}
-      <div style="height:150px;" class="img-wrapper"><img src="{$image}" alt="{$alt} we are uploading images ..." style="max-height:150px;" class="center-block img-responsive"/></div>{/}
+    <div class="thumbnail">{image_wrapper}<a rel="gallery1" title="{$name}&lt;br/&gt;{$description}" href="{$image}" class="fancybox"><img src="{$image}" alt="{$alt} we are uploading images ..." style="max-height:150px;" class="center-block img-responsive"/></a>{/}
       <div style="height: 150px;" class="caption">
         <h3>{$name}</h3>{photos} Photos: {$images}{/photos}
         <div>{$description}</div>
