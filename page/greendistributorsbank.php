@@ -37,7 +37,7 @@ class page_greendistributorsbank extends \xepan\base\Page {
 		}
 
 		$grid = $this->add('xepan\base\Grid');
-		$grid->setModel($model,['greened_on','user','name','city','bank_name','d_account_number','d_account_type','d_bank_ifsc_code']);
+		$grid->setModel($model,['greened_on','user','name','city','d_bank_name','d_account_number','d_account_type','d_bank_ifsc_code']);
 		$grid->add('xepan\hr\Controller_ACL',['status_color'=>$status_color]);
 
 		$grid->addPaginator($ipp=50);

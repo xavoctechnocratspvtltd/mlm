@@ -95,7 +95,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		$dist_j->addField('d_account_number')->caption('Account Number');
 		$dist_j->addField('d_bank_name')->caption('Bank Name');
 		$dist_j->addField('d_bank_ifsc_code')->caption('Bank IFSC Code');
-		$dist_j->addField('d_account_type')->enum(['Saving','Current'])->display(array('form' => 'xepan\base\DropDownNormal'));
+		$dist_j->addField('d_account_type')->enum(['Saving','Current'])->display(array('form' => 'xepan\base\DropDownNormal'))->caption('Account Type');
 		$dist_j->addField('password');
 
 		// payment mode fields
