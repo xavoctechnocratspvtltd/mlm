@@ -205,4 +205,29 @@ class Tool_ClosingAndPayouts extends \xepan\cms\View_Tool{
 		// $grid->js(true)->find('[type=checkbox]')->addClass('btn btn-primary');
 		
 	}
+
+	function paidPayout(){
+
+		$this->add('View')->setElement('h4')->set('Paid Payout\'s');
+
+		// current month payout
+		$v = $this->add('View')->addClass('main-box');
+		// $v->add('View')->setElement('h5')
+		// 	->set('Current Month Payout - '.$this->current_month_year);
+
+		$this->payout
+			// ->addCondition('month_year',$this->current_month_year)
+			->addCondition('paid_on','<>',null)
+			;
+
+		$grid = $v->add('xepan\base\Grid');
+		$grid->setModel($this->payout,['date','binary_income','introduction_amount','repurchase_bonus','generation_income','loyalty_bonus','leadership_bonus','total_amt','previous_carried_amount','gross_payment','tds','admin_charge','net_payment','payout_type','paid_amount','paid_on']);
+		$grid->addPaginator($ipp=25);
+
+		$grid->addFormatter('date','template')->setTemplate('{$date}<br/><small><small>({$payout_type})</small></small>','date');
+		$grid->removeColumn('payout_type');
+		$grid->addTotals(['binary_income','introduction_amount','repurchase_bonus','generation_income','loyalty_bonus','leadership_bonus','total_amt','gross_payment','tds','admin_charge','net_payment','paid_amount']);
+	
+	}
+
 }
