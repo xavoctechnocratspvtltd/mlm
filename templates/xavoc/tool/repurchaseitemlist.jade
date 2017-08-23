@@ -6,14 +6,14 @@ div(id='{$_name}' class="{$class} row" style="{$style}")
     .thumbnail
       {image_wrapper}
       div.img-wrapper(style="height:150px;" data-itemid="{$id}" data-name="{$name}")
-        img(src='{$img}', alt='{$alt} we are uploading images ...' style="width:100%;max-heigth:150px;")
+        img(src='{$img}', alt='{$alt} we are uploading images ...' style="max-height:150px;" class="center-block img-responsive")
       {/}
       .caption
-        h3(data-itemid="{$id}" data-name="{$name}") {$name}
-        div.kit-description{$description}
+        h3(data-itemid="{$id}" data-name="{$name}" style="height:50px;") {$name}
+        div.kit-description(style="height:60px; overflow: hidden;"){$description}
         .row
           .col-md-12.col-sm-12.col-lg-12.col-xs-12
-            p.price
+            h4.price
               i.fa.fa-rupee &nbsp;
               |{$taxed_price}
         .btn-group.btn-group-justified.btn-sm
