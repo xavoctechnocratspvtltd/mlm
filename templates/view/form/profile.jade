@@ -72,10 +72,19 @@
 			label Bank Type
 			{$d_account_type}
 	.row
-		.col-xs-12.col-sm-12.col-md-6.form-group.atk-form-row.atk-form-field
+		.col-xs-12.col-sm-12.col-md-3.form-group.atk-form-row.atk-form-field
 			label Profile Image
 			{$image_id}{$image}
-	.row		
+		.col-lg-3.col-xs-12.col-sm-12.col-md-3.form-group.atk-form-row.atk-form-field
+			label Pan Card
+			{$pan_card_id}{$pan_card}
+		.col-lg-3.col-xs-12.col-sm-12.col-md-3.form-group.atk-form-row.atk-form-field
+			label Aadhar Card
+			{$aadhar_card_id}{$aadhar_card}
+		.col-lg-3.col-xs-12.col-sm-12.col-md-3.form-group.atk-form-row.atk-form-field
+			label Driving License
+			{$driving_license_id}{$driving_license}
+	.row
 	{$FormButtons}
 	{$Content}
 	//- input.btn.btn-info.btn-block(type='submit', value='Register')

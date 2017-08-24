@@ -57,15 +57,18 @@ class Tool_Profile extends \xavoc\mlm\Tool_Distributor{
 		// }
 		// end of tabs
 
-		// profile 
+		// profile
 		$col = $profile_tab->add('Columns');
-		$pro_fields = ['first_name','last_name','dob','email','mobile_number','pan_no','country_id','country','state_id','state','city','address','pin_code','image_id','image','nominee_name','relation_with_nominee','aadhar_card_number','d_account_number','d_bank_name','d_bank_ifsc_code','d_account_type'];
+		$pro_fields = ['first_name','last_name','dob','email','mobile_number','pan_no','country_id','country','state_id','state','city','address','pin_code','image_id','nominee_name','relation_with_nominee','aadhar_card_number','d_account_number','d_bank_name','d_bank_ifsc_code','d_account_type'];
 		$form = $col->add('Form');
 		$form->setLayout(['view/form/profile']);
 
+		$img_field_array = ['image_id'];
+
 		$field_to_update = [];
 		foreach ($pro_fields as $key => $field_name) {
-			if($distributor[$field_name]){
+
+			if($distributor[$field_name] && !in_array($field_name, $img_field_array)){
 				$form->layout->add('View',null,$field_name)->set($distributor[$field_name]);
 			}else{
 				$field_to_update[] = $field_name;
@@ -74,6 +77,38 @@ class Tool_Profile extends \xavoc\mlm\Tool_Distributor{
 		if(count($field_to_update))
 			$form->setModel($distributor,$field_to_update);
 
+		$attachment = $this->add('xavoc\mlm\Model_Attachment');
+		$attachment->addCondition('distributor_id',$distributor->id);
+		$attachment->tryLoadAny();
+
+		$update_attachment = ['pan_card_id'=>'pan_card_id','aadhar_card_id'=>'aadhar_card_id','driving_license_id'=>'driving_license_id'];
+
+		if($attachment->loaded()){
+			if($attachment['pan_card_id']){
+				$form->layout->add('View',null,'pan_card_id')->setHtml('<a target="_blank" href="'.$attachment['pan_card'].'"><img style="width:100%;" src="'.$attachment['pan_card'].'"/></a>');
+				unset($update_attachment['pan_card_id']);
+			}else{
+				$field = $form->addField('xepan\base\Upload','pan_card_id');
+				$field->setModel('xepan\filestore\Image');
+			}
+
+			if($attachment['aadhar_card_id']){
+				$form->layout->add('View',null,'aadhar_card_id')->setHtml('<a target="_blank" href="'.$attachment['aadhar_card'].'"><img style="width:100%;" src="'.$attachment['aadhar_card'].'"/></a>');				
+				unset($update_attachment['aadhar_card_id']);
+			}else{
+				$field = $form->addField('xepan\base\Upload','aadhar_card_id');
+				$field->setModel('xepan\filestore\Image');
+			}
+
+			if($attachment['driving_license_id']){
+				$form->layout->add('View',null,'driving_license_id')->setHtml('<a target="_blank" href="'.$attachment['driving_license'].'"><img style="width:100%;" src="'.$attachment['driving_license'].'"/></a>');
+				unset($update_attachment['driving_license_id']);
+			}else{
+				$field = $form->addField('xepan\base\Upload','driving_license_id');
+				$field->setModel('xepan\filestore\Image');
+			}
+		}
+		// attachment field
 		// $form->getElement('dob')->setAttr('disabled',true);
 		// $img_view = $form->add('View')->setHtml('<img src="'.$distributor['image'].'"/>');
 		// $img_field= $form->getElement('image_id');
@@ -94,7 +129,7 @@ class Tool_Profile extends \xavoc\mlm\Tool_Distributor{
 		// $country_field->js('change',$state_field->js()->reload(null,null,[$this->app->url(null,['cut_object'=>$state_field->name]),'country_id'=>$country_field->js()->val()]));
 		// $country_field->js('change',$form->js()->atk4_form('reloadField','state_id',[$this->app->url(null,['cut_object'=>$state_field->name]),'country_id'=>$country_field->js()->val()]));
 
-		if(count($field_to_update) > 0){
+		if(count($field_to_update) > 0 OR count($update_attachment) > 0){
 			$form->addSubmit('Update')->addClass('btn btn-primary');
 
 			if($form->isSubmitted()){
@@ -102,9 +137,17 @@ class Tool_Profile extends \xavoc\mlm\Tool_Distributor{
 				$dis = $this->add('xavoc\mlm\Model_Distributor')->load($distributor->id);
 				
 				foreach ($field_to_update as $key => $field_name) {
-					$dis[$field_name] = $form[$field_name];	
+					$dis[$field_name] = $form[$field_name];
 				}
 				$dis->save();
+
+				// update attachment 
+				if(count($update_attachment)){
+					foreach ($update_attachment as $key => $value) {
+						$attachment[$key] = $form[$key];
+					}
+					$attachment->save();
+				}
 
 				$this->app->skip_sponsor_introducer_mandatory = false;
 				$js_event = [
@@ -112,6 +155,7 @@ class Tool_Profile extends \xavoc\mlm\Tool_Distributor{
 					$form->js(true)->_selector('img.ds-dp')->attr('src',$dis['image'])
 				];
 				$form->js(null,$js_event)->univ()->successMessage('saved')->execute();
+			
 			}
 			
 		}
