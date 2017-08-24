@@ -11,8 +11,8 @@ class View_GalleryCategoryImage extends \View{
 		$cat_id = $this->app->stickyGET('catid');
 
 		$m = $this->add('xavoc\mlm\Model_GalleryImages')
-			->addCondition('category_id',$cat_id)
-			->setOrder('id','desc');
+			->addCondition('category_id',$cat_id);
+			// ->setOrder('id','desc');
 		
 		$this->complete_lister = $cl = $this->add('CompleteLister',null,null,['xavoc/tool/gallerylist']);
 		$cl->setModel($m);
