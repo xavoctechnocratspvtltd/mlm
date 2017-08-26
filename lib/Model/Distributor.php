@@ -865,9 +865,9 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 	function changeIntroducer(xepan\mlm\Model_Distributor $new_introducer){
 		throw new \Exception("to test", 1);
 		// $new_introducer must not be one self in downline both in introduction path and simple path
-		if($new_introducer->isInIntroductionDown($this) || $new_introducer->isInDown($this))
+		if($this->isInIntroductionDown($new_introducer) || $this->isInDown($new_introducer))
 			throw new \Exception("Cannot change under distributor that is in downline", 1);
-			
+
 		$old_introducer_id = $this['introducer_id'];
 		$this_old_introducer_path = $this['introducer_path'];
 		$this_new_introducer_path = $new_introducer['introducer_path'].'.'.$this->id;
