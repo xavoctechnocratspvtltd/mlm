@@ -84,7 +84,8 @@ class page_test extends \xepan\base\Page {
 					(
 						/* ???????????????????????? */
 						/*(p.month_self_bv < 250 OR d.monthly_green_intros = 0) OR*/
-						net_payment < 500 /*OR
+						net_payment < 500  OR
+						d.greened_on is null /*OR
 						d.is_document_verified = 0 OR
 						d.is_document_verified is null*/
 						/*
