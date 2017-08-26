@@ -1,19 +1,21 @@
 .main-box.ds-form(id="{$_name}" style="width:100%;")
 	.row
 		.xepan-push-large
-		.col-xs-12.col-sm-12.col-md-12.form-group.atk-form-row.atk-form-field
-			{$search}
-		.xepan-push
-			
-		.col-xs-4.col-sm-4.col-md-4.form-group.atk-form-row.atk-form-field
+		.col-xs-12.col-sm-12.col-md-4.form-group.atk-form-row.atk-form-field
+			{$user}
+		.col-xs-12.col-sm-12.col-md-4.form-group.atk-form-row.atk-form-field
+			{$name}
+		.col-xs-12.col-sm-12.col-md-4.form-group.atk-form-row.atk-form-field
+			{$mobile}
+	.row
+		.col-xs-12.col-sm-12.col-md-3.form-group.atk-form-row.atk-form-field
+			{$city}
+		.col-xs-12.col-sm-12.col-md-3.form-group.atk-form-row.atk-form-field
+			{$state}			
+		.col-xs-12.col-sm-12.col-md-3.form-group.atk-form-row.atk-form-field
 			{$from_date}
-		.col-xs-4.col-sm-4.col-md-4.form-group.atk-form-row.atk-form-field
-			//- label Last Name
+		.col-xs-12.col-sm-12.col-md-3.form-group.atk-form-row.atk-form-field
 			{$to_date}
-		//- .col-xs-4.col-sm-4.col-md-4.atk-form-row.atk-form-field.form-group
-		//- 	label DOB
-		//- 	{$dob}
-
-	.row		
+	{$Content}
 	{$FormButtons}
 	//- input.btn.btn-info.btn-block(type='submit', value='Register')
