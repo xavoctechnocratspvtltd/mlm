@@ -8,34 +8,34 @@
 	//- 		{$side}
 	//- hr
 	.row
-		//- .col-xs-4.col-sm-4.col-md-4.form-group.atk-form-row.atk-form-field
-		//- 	label First Name
-		//- 	{$first_name}
-		//- .col-xs-4.col-sm-4.col-md-4.form-group.atk-form-row.atk-form-field
-		//- 	label Last Name
-		//- 	{$last_name}
+		.col-xs-4.col-sm-4.col-md-4.form-group.atk-form-row.atk-form-field
+			label First Name
+			{$first_name}
+		.col-xs-4.col-sm-4.col-md-4.form-group.atk-form-row.atk-form-field
+			label Last Name
+			{$last_name}
 		.col-xs-4.col-sm-4.col-md-4.atk-form-row.atk-form-field.form-group
 			label DOB
 			{$dob}
-	//- .row
-	//- 	.col-xs-4.col-sm-4.col-md-4.form-group.atk-form-row.atk-form-field
-	//- 		label Email id
-	//- 		{$email}
-	//- 	.col-xs-4.col-sm-4.col-md-4.form-group.atk-form-row.atk-form-field
-	//- 		label Mobile No
-	//- 		{$mobile_number}
-	//- 	.col-xs-4.col-sm-4.col-md-4.form-group.atk-form-row.atk-form-field
-	//- 		label PAN Number
-	//- 		{$pan_no}
+	.row
+		.col-xs-4.col-sm-4.col-md-4.form-group.atk-form-row.atk-form-field
+			label Email id
+			{$email}
+		.col-xs-4.col-sm-4.col-md-4.form-group.atk-form-row.atk-form-field
+			label Mobile No
+			{$mobile_number}
+		.col-xs-4.col-sm-4.col-md-4.form-group.atk-form-row.atk-form-field
+			label PAN Number
+			{$pan_no}
 	.row
 		.col-xs-12.col-sm-12.col-md-6
 			.row
 				div.col-xs-12.col-sm-12.col-md-6.form-group.atk-form-row.atk-form-field
 					label Country
-					{$country_id}
+					{$country_id}{$country}
 				div.col-xs-12.col-sm-12.col-md-6.form-group.atk-form-row.atk-form-field
 					label State
-					{$state_id}
+					{$state_id}{$state}
 			.row
 				div.col-xs-12.col-sm-12.col-md-6.form-group.atk-form-row.atk-form-field
 					label City
@@ -46,19 +46,48 @@
 		.col-xs-12.col-sm-12.col-md-6.form-group.atk-form-row.atk-form-field
 			label Address
 			{$address}
+	hr
 	.row
-		.col-xs-12.col-sm-12.col-md-6.form-group.atk-form-row.atk-form-field
+		div.col-xs-12.col-sm-12.col-md-4.col-lg-4.form-group.atk-form-row.atk-form-field
+			label Nominee Name
+			{$nominee_name}
+		div.col-xs-12.col-sm-12.col-md-4.col-lg-4.form-group.atk-form-row.atk-form-field
+			label Relation with nominee
+			{$relation_with_nominee}
+		div.col-xs-12.col-sm-12.col-md-4.col-lg-4.form-group.atk-form-row.atk-form-field
+			label Aadhar Card Number
+			{$aadhar_card_number}
+	hr
+	.row
+		.col-xs-12.col-sm-12.col-md-3.col-lg-3.form-group.atk-form-row.atk-form-field
+			label Bank Name
+			{$d_bank_name}
+		.col-xs-12.col-sm-12.col-md-3.col-lg-3.form-group.atk-form-row.atk-form-field
+			label Account Number
+			{$d_account_number}
+		.col-xs-12.col-sm-12.col-md-3.col-lg-3.form-group.atk-form-row.atk-form-field
+			label Bank IFSC Code
+			{$d_bank_ifsc_code}
+		.col-xs-12.col-sm-12.col-md-3.col-lg-3.form-group.atk-form-row.atk-form-field
+			label Bank Type
+			{$d_account_type}
+	hr
+	.row
+		.col-xs-12.col-sm-12.col-md-3.form-group.atk-form-row.atk-form-field
 			label Profile Image
 			{$image_id}{$image}
-	{$Content}
-	//- hr
-	//- .row
-	//- 	.col-xs-12.col-sm-12.col-md-6.form-group.atk-form-row.atk-form-field
-	//- 		label User name
-	//- 		{$username}
-	//- 	.col-xs-12.col-sm-12.col-md-6.form-group.atk-form-row.atk-form-field
-	//- 		label Password
-	//- 		{$password}
-	//- .row
+		.col-lg-3.col-xs-12.col-sm-12.col-md-3.form-group.atk-form-row.atk-form-field
+			label Pan Card
+			{$pan_card_id}{$pan_card}
+		.col-lg-3.col-xs-12.col-sm-12.col-md-3.form-group.atk-form-row.atk-form-field
+			label Aadhar Card
+			{$aadhar_card_id}{$aadhar_card}
+		.col-lg-3.col-xs-12.col-sm-12.col-md-3.form-group.atk-form-row.atk-form-field
+			label Driving License
+			{$driving_license_id}{$driving_license}
+	hr
+	.row
 	{$FormButtons}
+	
+	{$Content}
 	//- input.btn.btn-info.btn-block(type='submit', value='Register')

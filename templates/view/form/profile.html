@@ -1,18 +1,35 @@
 
 <div id="{$_name}" style="width:100%;" class="ds-form">
   <div class="row">
+    <div class="col-xs-4 col-sm-4 col-md-4 form-group atk-form-row atk-form-field">
+      <label>First Name</label>{$first_name}
+    </div>
+    <div class="col-xs-4 col-sm-4 col-md-4 form-group atk-form-row atk-form-field">
+      <label>Last Name</label>{$last_name}
+    </div>
     <div class="col-xs-4 col-sm-4 col-md-4 atk-form-row atk-form-field form-group">
       <label>DOB</label>{$dob}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-4 col-sm-4 col-md-4 form-group atk-form-row atk-form-field">
+      <label>Email id</label>{$email}
+    </div>
+    <div class="col-xs-4 col-sm-4 col-md-4 form-group atk-form-row atk-form-field">
+      <label>Mobile No</label>{$mobile_number}
+    </div>
+    <div class="col-xs-4 col-sm-4 col-md-4 form-group atk-form-row atk-form-field">
+      <label>PAN Number</label>{$pan_no}
     </div>
   </div>
   <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-6">
       <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-6 form-group atk-form-row atk-form-field">
-          <label>Country</label>{$country_id}
+          <label>Country</label>{$country_id}{$country}
         </div>
         <div class="col-xs-12 col-sm-12 col-md-6 form-group atk-form-row atk-form-field">
-          <label>State</label>{$state_id}
+          <label>State</label>{$state_id}{$state}
         </div>
       </div>
       <div class="row">
@@ -28,9 +45,49 @@
       <label>Address</label>{$address}
     </div>
   </div>
+  <hr/>
   <div class="row">
-    <div class="col-xs-12 col-sm-12 col-md-6 form-group atk-form-row atk-form-field">
+    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 form-group atk-form-row atk-form-field">
+      <label>Nominee Name</label>{$nominee_name}
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 form-group atk-form-row atk-form-field">
+      <label>Relation with nominee</label>{$relation_with_nominee}
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 form-group atk-form-row atk-form-field">
+      <label>Aadhar Card Number</label>{$aadhar_card_number}
+    </div>
+  </div>
+  <hr/>
+  <div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 form-group atk-form-row atk-form-field">
+      <label>Bank Name</label>{$d_bank_name}
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 form-group atk-form-row atk-form-field">
+      <label>Account Number</label>{$d_account_number}
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 form-group atk-form-row atk-form-field">
+      <label>Bank IFSC Code</label>{$d_bank_ifsc_code}
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 form-group atk-form-row atk-form-field">
+      <label>Bank Type</label>{$d_account_type}
+    </div>
+  </div>
+  <hr/>
+  <div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-3 form-group atk-form-row atk-form-field">
       <label>Profile Image</label>{$image_id}{$image}
     </div>
-  </div>{$Content}{$FormButtons}
+    <div class="col-lg-3 col-xs-12 col-sm-12 col-md-3 form-group atk-form-row atk-form-field">
+      <label>Pan Card</label>{$pan_card_id}{$pan_card}
+    </div>
+    <div class="col-lg-3 col-xs-12 col-sm-12 col-md-3 form-group atk-form-row atk-form-field">
+      <label>Aadhar Card</label>{$aadhar_card_id}{$aadhar_card}
+    </div>
+    <div class="col-lg-3 col-xs-12 col-sm-12 col-md-3 form-group atk-form-row atk-form-field">
+      <label>Driving License</label>{$driving_license_id}{$driving_license}
+    </div>
+  </div>
+  <hr/>
+  <div class="row"></div>{$FormButtons}
+  {$Content}
 </div>

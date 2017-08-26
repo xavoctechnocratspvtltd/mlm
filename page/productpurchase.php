@@ -213,7 +213,7 @@ class page_productpurchase extends \xepan\base\Page {
 					$ret = $this->add('xepan\commerce\Model_QSP_Master')->createQSP($master_detail,$detail_data,'PurchaseInvoice');
 					$master = $this->add('xavoc\mlm\Model_PurchaseInvoice')->load($ret['master_detail']['id']);
 					
-					$company_warehouse = $this->add('xepan\commerce\Model_Store_Warehouse')
+					$company_warehouse = $this->add('xavoc\mlm\Model_Franchises')
 								->addCondition('first_name','company')
 								->tryLoadAny();
 					if(!$company_warehouse->loaded())

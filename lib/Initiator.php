@@ -105,7 +105,7 @@ class Initiator extends \Controller_Addon {
 
     function setup_pre_frontend(){
         $this->routePages('xavoc_dm');
-        $this->addLocation(array('template'=>'templates','js'=>'templates/js','css'=>'templates/css'))
+        $this->addLocation(array('template'=>'templates','js'=>'templates/js','css'=>['templates/css','templates/js']))
         ->setBaseURL('./shared/apps/xavoc/mlm/');
 
         return $this;

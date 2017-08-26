@@ -25,18 +25,18 @@ class Tool_DistributorMenu extends \xavoc\mlm\Tool_Distributor{
 				['key'=>'tree','name'=>'View'],
 				['key'=>'repurchase','name'=>'Shopping'],
 				['key'=>'mypayouts','name'=>'My Payouts'],
-				['key'=>'reports','name'=>'Reports'],
+				['key'=>'distributorreports','name'=>'Reports'],
 				// ['key'=>'mywallet','name'=>'My Wallet'],
 				['key'=>'utility','name'=>'Utility'],
 				['key'=>'setting','name'=>'Settings'],
 			];
 
-		$submenu_list = ['reports'=>[
+		$submenu_list = ['distributorreports'=>[
 							'index.php?page=distributorreports&report=active-downline'=>'Active Downline',
 							'index.php?page=distributorreports&report=active-intros-list'=>'Active Sponsored',
 							'index.php?page=distributorreports&report=direct-downline-business'=>'Direct Downline Business',
-							'index.php?page=distributorreports&report=inactive-intros-list'=>'Inactive Sponsored',
 							'index.php?page=distributorreports&report=inactive-downline'=>'Inactive Downline',
+							'index.php?page=distributorreports&report=inactive-intros-list'=>'Inactive Sponsored',
 							],
 							'tree'=>[
 								'genology'=>'Genology',
@@ -45,7 +45,8 @@ class Tool_DistributorMenu extends \xavoc\mlm\Tool_Distributor{
 							'mypayouts'=>[
 								// 'index.php?page=mypayouts&report=binary'=>'Binary',
 								// 'index.php?page=mypayouts&report=generation'=>'Generation',
-								'index.php?page=mypayouts&report=all'=>'All',
+								'index.php?page=mypayouts&report=all'=>'All Payouts',
+								'index.php?page=mypayouts&report=paid'=>'Paid Payouts',
 							],
 							'repurchase'=>[
 									'repurchase'=>'Repurchase',

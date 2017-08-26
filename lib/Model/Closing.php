@@ -8,7 +8,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 	public $status = ['All'];
 
 	public $actions = [
-		'All'=>['view','edit','delete','payoutsheet']
+		'All'=>['view','edit','delete','payoutsheet','payout_payment']
 	];
 
 	public $acl_type = 'Closing';
@@ -902,4 +902,12 @@ class Model_Closing extends \xepan\base\Model_Table {
 		}
 		$this->app->redirect($this->app->url('xavoc_dm_payout',['closing_id'=>$this->id]));
 	}
+
+	function payout_payment(){
+		if($this['type'] == 'DailyClosing')
+				$this->app->js()->univ()->errorMessage('No Payout for Daily closing')->execute();
+		
+		$this->app->redirect($this->app->url('xavoc_dm_payoutpayment',['closing_id'=>$this->id]));	
+	}
+
 }

@@ -21,96 +21,147 @@ class Tool_Profile extends \xavoc\mlm\Tool_Distributor{
 		if(!$distributor->loaded()) return "distributor is not loaded";
 
 		$tabs = $this->add('Tabs');
-		$doc_tab = $tabs->addTab('Document');
+		// $doc_tab = $tabs->addTab('Document');
 		$profile_tab = $tabs->addTab('Profile');
 		$pass_tab = $tabs->addTab('Change Password');
 
-		// attachment tabs
+		// // attachment tabs
+		// $attachment = $this->add('xavoc\mlm\Model_Attachment');
+		// $attachment->addCondition('distributor_id',$distributor->id);
+		// $attachment->tryLoadAny();
+		// if($attachment->count()->getOne() > 1){
+		// 	$doc_tab->add('View_Error')->set("more thenn one kyc attachment found");
+		// }else{
+		// 	$form = $doc_tab->add('Form');
+		// 	$form->addField('pan_no')->validate('required')->set($distributor['pan_no']);
+		// 	$form->setModel($attachment,['pan_card_id','aadhar_card_id','driving_license_id']);
+		// 	$form->addField('bank_account_number')->validate('required');
+		// 	$form->addField('bank_name')->validate('required');
+		// 	$form->addField('bank_ifsc_code')->validate('required');
+
+		// 	$form->addSubmit("Update")->addClass('btn btn-primary');
+		// 	if($form->isSubmitted()){
+		// 		if(!$form['pan_card_id']) $form->error('pan_card_id','pan card id must not be empty');
+		// 		if(!$form['aadhar_card_id']) $form->error('aadhar_card_id','aadhar card id must not be empty');
+				
+		// 		$form->update();
+
+		// 		$distributor['pan_no'] = $form['pan_no'];
+		// 		$distributor['d_account_number'] = $form['bank_account_number'];
+		// 		$distributor['d_bank_name'] = $form['bank_name'];
+		// 		$distributor['d_bank_ifsc_code'] = $form['bank_ifsc_code'];
+		// 		$distributor->save();
+
+		// 		$form->js()->univ()->successMessage('saved')->execute();
+		// 	}
+		// }
+		// end of tabs
+
+		// profile
+		$col = $profile_tab->add('Columns');
+		$pro_fields = ['first_name','last_name','dob','email','mobile_number','pan_no','country_id','country','state_id','state','city','address','pin_code','image_id','nominee_name','relation_with_nominee','aadhar_card_number','d_account_number','d_bank_name','d_bank_ifsc_code','d_account_type'];
+		$form = $col->add('Form');
+		$form->setLayout(['view/form/profile']);
+
+		$img_field_array = ['image_id'];
+
+		$field_to_update = [];
+		foreach ($pro_fields as $key => $field_name) {
+
+			if($distributor[$field_name] && !in_array($field_name, $img_field_array)){
+				$form->layout->add('View',null,$field_name)->set($distributor[$field_name]);
+			}else{
+				$field_to_update[] = $field_name;
+			}
+		}
+		if(count($field_to_update))
+			$form->setModel($distributor,$field_to_update);
+
 		$attachment = $this->add('xavoc\mlm\Model_Attachment');
 		$attachment->addCondition('distributor_id',$distributor->id);
 		$attachment->tryLoadAny();
-		if($attachment->count()->getOne() > 1){
-			$doc_tab->add('View_Error')->set("more thenn one kyc attachment found");
-		}else{
-			$form = $doc_tab->add('Form');
-			$form->addField('pan_no')->validate('required')->set($distributor['pan_no']);
-			$form->setModel($attachment,['pan_card_id','aadhar_card_id','driving_license_id']);
-			$form->addField('bank_account_number')->validate('required');
-			$form->addField('bank_name')->validate('required');
-			$form->addField('bank_ifsc_code')->validate('required');
 
-			$form->addSubmit("Update")->addClass('btn btn-primary');
-			if($form->isSubmitted()){
-				if(!$form['pan_card_id']) $form->error('pan_card_id','pan card id must not be empty');
-				if(!$form['aadhar_card_id']) $form->error('aadhar_card_id','aadhar card id must not be empty');
-				
-				$form->update();
+		$update_attachment = ['pan_card_id'=>'pan_card_id','aadhar_card_id'=>'aadhar_card_id','driving_license_id'=>'driving_license_id'];
 
-				$distributor['pan_no'] = $form['pan_no'];
-				$distributor['d_account_number'] = $form['bank_account_number'];
-				$distributor['d_bank_name'] = $form['bank_name'];
-				$distributor['d_bank_ifsc_code'] = $form['bank_ifsc_code'];
-				$distributor->save();
+		if($attachment->loaded()){
+			if($attachment['pan_card_id']){
+				$form->layout->add('View',null,'pan_card_id')->setHtml('<a target="_blank" href="'.$attachment['pan_card'].'"><img style="width:100%;" src="'.$attachment['pan_card'].'"/></a>');
+				unset($update_attachment['pan_card_id']);
+			}else{
+				$field = $form->addField('xepan\base\Upload','pan_card_id');
+				$field->setModel('xepan\filestore\Image');
+			}
 
-				$form->js()->univ()->successMessage('saved')->execute();
+			if($attachment['aadhar_card_id']){
+				$form->layout->add('View',null,'aadhar_card_id')->setHtml('<a target="_blank" href="'.$attachment['aadhar_card'].'"><img style="width:100%;" src="'.$attachment['aadhar_card'].'"/></a>');				
+				unset($update_attachment['aadhar_card_id']);
+			}else{
+				$field = $form->addField('xepan\base\Upload','aadhar_card_id');
+				$field->setModel('xepan\filestore\Image');
+			}
+
+			if($attachment['driving_license_id']){
+				$form->layout->add('View',null,'driving_license_id')->setHtml('<a target="_blank" href="'.$attachment['driving_license'].'"><img style="width:100%;" src="'.$attachment['driving_license'].'"/></a>');
+				unset($update_attachment['driving_license_id']);
+			}else{
+				$field = $form->addField('xepan\base\Upload','driving_license_id');
+				$field->setModel('xepan\filestore\Image');
 			}
 		}
-		// end of tabs
-
-		// profile 
-		$col = $profile_tab->add('Columns');
-		$left = $col->addColumn(8);
-		$pro_fields = ['dob','country_id','state_id','city','address','pin_code','image_id','image','pan_no'];
-		$form = $left->add('Form');
-		$form->add('View')->setHtml("<strong>Name: </strong><br/> ".$distributor['first_name']." ".$distributor['last_name']);
-		// $f_c = $form->add('Columns');
-		// $a = $f_c->addColumn('4');
-		// $b = $f_c->addColumn('4');
-		// $c = $f_c->addColumn('4');
-		$form->setLayout(['view/form/profile']);
-		$form->setModel($distributor,$pro_fields);
+		// attachment field
 		// $form->getElement('dob')->setAttr('disabled',true);
 		// $img_view = $form->add('View')->setHtml('<img src="'.$distributor['image'].'"/>');
 		// $img_field= $form->getElement('image_id');
 		// $img_field->js('change',$img_view->js()->reload());
 
-		$country_field = $form->getElement('country_id');
-		$country_field->validate('required');
+		// $country_field = $form->getElement('country_id');
+		// $country_field->validate('required');
 		
-		$state_field = $form->getElement('state_id');
-		$state_field->validate('required');
-		$form->getElement('city')->validate('required');
-		$form->getElement('address')->validate('required');
-		$form->getElement('pin_code')->validate('required');
+		// $state_field = $form->getElement('state_id');
+		// $state_field->validate('required');
+		// $form->getElement('city')->validate('required');
+		// $form->getElement('address')->validate('required');
+		// $form->getElement('pin_code')->validate('required');
 
-		if($_GET['country_id']){
-			$state_field->getModel()->addCondition('country_id',$_GET['country_id']);
-		}
-		$country_field->js('change',$state_field->js()->reload(null,null,[$this->app->url(null,['cut_object'=>$state_field->name]),'country_id'=>$country_field->js()->val()]));
+		// if($_GET['country_id']){
+		// 	$state_field->getModel()->addCondition('country_id',$_GET['country_id']);
+		// }
+		// $country_field->js('change',$state_field->js()->reload(null,null,[$this->app->url(null,['cut_object'=>$state_field->name]),'country_id'=>$country_field->js()->val()]));
 		// $country_field->js('change',$form->js()->atk4_form('reloadField','state_id',[$this->app->url(null,['cut_object'=>$state_field->name]),'country_id'=>$country_field->js()->val()]));
 
-		$form->addSubmit('Update')->addClass('btn btn-primary');
+		if(count($field_to_update) > 0 OR count($update_attachment) > 0){
+			$form->addSubmit('Update')->addClass('btn btn-primary');
 
-		if($form->isSubmitted()){
-			if($distributor->isRoot()) $this->app->skip_sponsor_introducer_mandatory = true;
-			$dis = $this->add('xavoc\mlm\Model_Distributor')->load($distributor->id);
-			foreach ($pro_fields as $key => $field_name) {
-				$dis[$field_name] = $form[$field_name];	
+			if($form->isSubmitted()){
+				if($distributor->isRoot()) $this->app->skip_sponsor_introducer_mandatory = true;
+				$dis = $this->add('xavoc\mlm\Model_Distributor')->load($distributor->id);
+				
+				foreach ($field_to_update as $key => $field_name) {
+					$dis[$field_name] = $form[$field_name];
+				}
+				$dis->save();
+
+				// update attachment 
+				if(count($update_attachment)){
+					foreach ($update_attachment as $key => $value) {
+						$attachment[$key] = $form[$key];
+					}
+					$attachment->save();
+				}
+
+				$this->app->skip_sponsor_introducer_mandatory = false;
+				$js_event = [
+					$form->js()->reload(),
+					$form->js(true)->_selector('img.ds-dp')->attr('src',$dis['image'])
+				];
+				$form->js(null,$js_event)->univ()->successMessage('saved')->execute();
+			
 			}
-			$dis->save();
-			$this->app->skip_sponsor_introducer_mandatory = false;
-			$js_event = [
-				$form->js()->reload(),
-				$form->js(true)->_selector('img.ds-dp')->attr('src',$dis['image'])
-			];
-			$form->js(null,$js_event)->univ()->successMessage('saved')->execute();
-
+			
 		}
 
-		$right = $col->addColumn(4);
 
 		// end of profile
-
 
 		// change distributor password -------
 		$user = $pass_tab->add('xepan\base\Model_User')->load($this->api->auth->model->id);

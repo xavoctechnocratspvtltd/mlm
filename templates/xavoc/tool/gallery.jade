@@ -4,12 +4,12 @@ div(id='{$_name}' class="{$class} row" style="{$style}")
   .col-md-3.col-sm-12.col-lg-3.col-xs-12.mlm-gallery-category(id="{$_id}" data-catid="{$id}" data-imgcount="{$images}")
     .thumbnail
       {image_wrapper}
-      div.img-wrapper(style="height:150px;overflow:hidden;")
-        img(src='{$image}', alt='{$alt} we are uploading images ...' style="max-heigth:150px;max-width:100%;width:auto;")
+      div.img-wrapper(style="height:150px;")
+        img(src='{$image}', alt='{$alt} we are uploading images ...' style="max-height:150px;" class="center-block img-responsive")
       {/}
-      .caption
+      .caption(style="height: 150px;")
         h3 {$name}
-        {photos}p Photos: {$images}{/photos}
+        {photos} Photos: {$images}{/photos}
         div{$description}
   {/}{/}
   {not_found}
