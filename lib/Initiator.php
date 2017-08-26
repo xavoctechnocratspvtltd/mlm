@@ -95,6 +95,8 @@ class Initiator extends \Controller_Addon {
                 $distributor->repurchase($total_bv,$total_sv);
         });
 
+        $this->app->js(true)->_selector('#page-wrapper')->addClass('nav-small');
+
         return $this;
     }
 
