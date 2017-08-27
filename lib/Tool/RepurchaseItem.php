@@ -31,12 +31,18 @@ class Tool_RepurchaseItem extends \xepan\cms\View_Tool{
 		$repurchase_item = $this->add('xavoc\mlm\Model_RepurchaseItem');
 		$repurchase_item->addCondition('status','Published');
 
+		$repurchase_item->addExpression('display_order')->set(function($m,$q){
+			return $m->refSQL('xepan\commerce\CategoryItemAssociation')->setLimit(1)->fieldQuery('category_display_sequence');
+		});
+
 		$repurchase_item->addExpression('taxed_price')->set(function($m,$q){
 			return $q->expr('ROUND([price]+([price]*IFNULL([tax_percenatge],0)/100),2)',[
 					'price'=>$m->getElement('dp'),
 					'tax_percenatge'=>$m->getElement('tax_percentage')
 				]);
 		});
+
+		$repurchase_item->setOrder('display_order');
 
 		$this->complete_lister = $cl = $this->add('CompleteLister',null,null,['xavoc/tool/'.$layout_template]);
 		$cl->setModel($repurchase_item);
