@@ -8,7 +8,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 	public $status = ['All'];
 
 	public $actions = [
-		'All'=>['view','edit','delete','payoutsheet','payout_payment']
+		'All'=>['view','edit','delete','payoutsheet','payout_payment','inform_distributors']
 	];
 
 	public $acl_type = 'Closing';
@@ -908,6 +908,39 @@ class Model_Closing extends \xepan\base\Model_Table {
 				$this->app->js()->univ()->errorMessage('No Payout for Daily closing')->execute();
 		
 		$this->app->redirect($this->app->url('xavoc_dm_payoutpayment',['closing_id'=>$this->id]));	
+	}
+
+	function page_inform_distributors($page){
+
+		$distributors = $this->add('xavoc\mlm\Model_Distributor');
+		$distributors->title_field = 'user';
+
+		$form = $page->add('Form');
+		$form->addField('autocomplete/Basic','distributor')->setModel($distributors);
+		$form->addSubmit('Send');
+		
+		if($form->isSubmitted()){
+			$this->inform_distributors($form['distributor']);
+			$this->app->page_action_result = $btn->js(null,$btn->js()->closest('.dialog')->dialog('close'))->univ()->successMessage('Done');
+		}
+	}
+
+
+	function inform_distributors($distributor_id = null){
+		$payouts = $this->add('xavoc\mlm\Model_Payout');
+		$payouts->addCondition('closing_id',$this->id);
+		$payouts->addCondition('net_amount','>',0);
+		
+		if($distributor_id)
+			$payouts->addCondition('distributor_id',$distributor_id);
+
+		foreach ($payouts as $p) {
+			try{
+				$this->add('xavoc\mlm\Controller_Greet')->do($p->ref('distributor_id'),'payout',$p);
+			}catch(\Exception $e){
+
+			}
+		}
 	}
 
 }
