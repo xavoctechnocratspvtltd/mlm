@@ -54,7 +54,7 @@ class page_gene extends \Page {
 		else
 			$greened_on_date = "--/---/----";
 		$str=  
-				$model['name']. " [".$model['id']."]".
+				$model['name']. " [".$model['user']."]".
 				"<br/>Jn: ". date("d M Y", strtotime($model['created_at'])). 
 				"<br/>Gr: ". $greened_on_date. 
 				"<br/>Kit: ". ($model['kit_item']?:'') ." SV(".$model['sv'].")"."BV(".$model['bv'].")".
