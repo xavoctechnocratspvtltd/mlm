@@ -6,11 +6,11 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 	public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 	public $actions = [
-				'Red'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName','payouts','sv_records','password'],
-				'KitSelected'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName','payouts','sv_records','password'],
-				'KitPaid'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName','payouts','sv_records','password'],
-				'Green'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName','payouts','sv_records','password'],
-				'Blocked'=>['view','edit','delete','Unblocked','payouts','sv_records']
+				'Red'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName','payouts','sv_records','password','changeIntroducer'],
+				'KitSelected'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName','payouts','sv_records','password','changeIntroducer'],
+				'KitPaid'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName','payouts','sv_records','password','changeIntroducer'],
+				'Green'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName','payouts','sv_records','password','changeIntroducer'],
+				'Blocked'=>['view','edit','delete','Unblocked','payouts','sv_records','changeIntroducer']
 			];
 	
 	public $acl_type= "mlm_distributor";
@@ -862,8 +862,20 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
         }
 	}
 
-	function changeIntroducer(xepan\mlm\Model_Distributor $new_introducer){
-		throw new \Exception("to test", 1);
+	function page_changeIntroducer($page){
+		$f = $page->add('Form');
+		$model = $this->newInstance();
+		$model->title_field='user';
+		$f->addField('autocomplete/Basic','new_introducer')->setModel($model);
+		$f->addSubmit('Move');
+
+		if($f->isSubmitted()){
+			$this->changeIntroducer($this->add('xavoc\mlm\Model_Distributor')->load($f['new_introducer']));
+			$this->app->page_action_result = $f->js(null,$f->js()->closest('.dialog')->dialog('close'))->univ()->successMessage('Distributor Moved');
+		}
+	}	
+
+	function changeIntroducer($new_introducer){
 		// $new_introducer must not be one self in downline both in introduction path and simple path
 		if($this->isInIntroductionDown($new_introducer) || $this->isInDown($new_introducer))
 			throw new \Exception("Cannot change under distributor that is in downline", 1);
@@ -872,7 +884,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		$this_old_introducer_path = $this['introducer_path'];
 		$this_new_introducer_path = $new_introducer['introducer_path'].'.'.$this->id;
 
-		$q="UPDATE mlm_distributor SET introducer_path = REPLACE('$this_old_introducer_path.','$this_new_introducer_path.') WHERE introducer_path like '$this_old_introducer_path.%'";
+		$q="UPDATE mlm_distributor SET introducer_path = REPLACE(introducer_path,'$this_old_introducer_path.','$this_new_introducer_path.') WHERE introducer_path like '$this_old_introducer_path.%'";
 		$this->app->db->dsql()->expr($q)->execute();
 
 		$this['introducer_path'] = $this_new_introducer_path;
@@ -888,6 +900,8 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 		
 	}
+
+	
 
 	function dailyActivity($date) {
 
