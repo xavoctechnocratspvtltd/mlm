@@ -19,6 +19,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 	function init(){
 		parent::init();
 
+		$this->getElement('country_id')->defaultValue(100);
 		$this->getElement('status')->defaultValue('Red');
 		$this->getElement('pan_no')->display(array('form'=>'xavoc\mlm\PanNumber'));
 		$dist_j = $this->join('mlm_distributor.distributor_id');
@@ -93,7 +94,24 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 		// distributor account detail
 		$dist_j->addField('d_account_number')->caption('Account Number');
-		$dist_j->addField('d_bank_name')->caption('Bank Name');
+		
+		
+		$banks_model = $this->add('xepan\base\Model_ConfigJsonModel',
+			[
+				'fields'=>[
+							'bank_name'=>'line'
+							],
+					'config_key'=>'DS_DEFAULT_BANKS_LIST',
+					'application'=>'xavoc\mlm'
+			]);
+
+		$banks_array=[];
+		foreach ($banks_model as $b) {
+			$banks_array[] = $b['bank_name'];
+		}
+		
+
+		$dist_j->addField('d_bank_name')->caption('Bank Name')->enum($banks_array);
 		$dist_j->addField('d_bank_ifsc_code')->caption('Bank IFSC Code');
 		$dist_j->addField('d_account_type')->enum(['Saving','Current'])->display(array('form' => 'xepan\base\DropDownNormal'))->caption('Account Type');
 		$dist_j->addField('password');
