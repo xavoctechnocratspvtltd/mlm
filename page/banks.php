@@ -18,7 +18,7 @@ class page_banks extends \xepan\base\Page {
 					'application'=>'xavoc\mlm'
 			]);
 		
-		$crud = $this->add('xepan\hr\CRUD');
+		$crud = $this->add('xepan\hr\CRUD',['entity_name'=>'Bank']);
 		$crud->setModel($banks,['bank_name']);
 	}
 

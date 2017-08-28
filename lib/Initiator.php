@@ -69,7 +69,7 @@ class Initiator extends \Controller_Addon {
             $m->addItem(['Post','icon'=>'fa fa-sitemap'],$this->app->url('xepan_hr_post',['status'=>'Active']));
             $m->addItem(['Employee','icon'=>'fa fa-male'],$this->app->url('xepan_hr_employee',['status'=>'Active']));
             $m->addItem(['User','icon'=>'fa fa-user'],$this->app->url('xepan_hr_user',['status'=>'Active']));
-            $m->addItem(['Banks','icon'=>'fa fa-user'],$this->app->url('xavoc_dm_banks',['status'=>'Active']));
+            $m->addItem(['Manage Banks','icon'=>'fa fa-user'],$this->app->url('xavoc_dm_banks',['status'=>'Active']));
             $m->addItem(['ACL','icon'=>'fa fa-dashboard'],'xepan_hr_aclmanagement');
 
 

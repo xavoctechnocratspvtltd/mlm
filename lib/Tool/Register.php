@@ -29,24 +29,25 @@ class Tool_Register extends \xavoc\mlm\Tool_Distributor{
 			$v->add('View')->addClass('alert alert-success text-center')->setHtml('<h4>Registration done successfully. User Id:<strong>'.$new_dis['user']."</strong>, Password: <strong>".$new_dis['password']."</strong></h4>");
 		}
 
-		$form_field = ['introducer_id','side','first_name','last_name','dob','email','mobile_number','pan_no','country_id','state_id','city','pin_code','address','d_account_number','d_bank_name','d_bank_ifsc_code','nominee_name','relation_with_nominee','aadhar_card_number','d_account_type'];
+		$form_field = ['introducer_id','side','first_name','last_name','dob','email','mobile_number','pan_no','country_id','state_id','city','pin_code','address','d_account_number','d_bank_name','d_bank_ifsc_code','nominee_name','relation_with_nominee','nominee_mobile_number','aadhar_card_number','d_account_type'];
 		$form = $this->add('Form');
 		$form->add('xepan\base\Controller_FLC')
 		->addContentSpot()
 		->layout([
-				'introducer'=>'PLACEMENT DETAILS~c1~6',
-				'side'=>'~c2~6',
+				'introducer~Search Introducer'=>'PLACEMENT DETAILS~c1~6',
+				'side~Placement Side'=>'~c2~6',
 				'first_name'=>'PERSONAL DETAILS~c1~4',
 				'last_name'=>'c2~4',
-				'dob'=>'c3~4',
-				'email'=>'c4~4',
-				'mobile_number'=>'c5~4',
-				'aadhar_card_number'=>'c6~4',
-				'country_id~Country'=>'c7~3',
-				'state_id~State'=>'c8~3',
-				'city'=>'c9~3',
-				'pin_code'=>'c10~3',
-				'address'=>'c11~12',
+				'dob~Date Of Birth'=>'c3~4',
+				'country_id~Country'=>'c8~4',
+				'state_id~State'=>'c9~4',
+				'city'=>'c10~3',
+				'pin_code'=>'c11~1',
+				'address'=>'c12~12',
+				'email'=>'c4~3',
+				'mobile_number'=>'c5~3',
+				'aadhar_card_number'=>'c6~3',
+				'pan_no'=>'c7~3',
 				'nominee_name'=>'NOMINEE DETAILS~c1~4',
 				'relation_with_nominee'=>'c2~4',
 				'nominee_mobile_number'=>'c3~4',
@@ -54,7 +55,6 @@ class Tool_Register extends \xavoc\mlm\Tool_Distributor{
 				'd_account_number~Account Number'=>'c2~3',
 				'd_bank_ifsc_code~Bank IFSC'=>'c3~3',
 				'd_account_type~Account Type'=>'c4~3',
-				'pan_no'=>'c5~12',
 
 			]
 			);

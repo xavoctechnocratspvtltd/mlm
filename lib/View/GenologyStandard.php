@@ -47,8 +47,14 @@ class View_GenologyStandard extends \View{
 		$this->level = $this->options['genology-depth-of-tree'];
 
 		$form = $this->add('Form');
+		$form->add('xepan\base\Controller_FLC')
+			->makePanelsCoppalsible()
+			->layout([
+					'username~'=>'SEARCH~c1~8~closed',
+					'FormButtons~'=>'c2~4'
+				]);
 		$user_field = $form->addField('line','username')->addClass('field-group');
-		$user_field->afterField()->add('Button')->set(array(' ','icon'=>'search fa fa-search'));
+		$form->addSubmit('Search')->addClass('btn btn-xs btn-primary');
 
 		if($form->isSubmitted()){
 			$model = $this->add('xavoc\mlm\Model_Distributor_Genology')
