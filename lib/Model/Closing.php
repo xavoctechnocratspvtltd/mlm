@@ -336,7 +336,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 	function monthlyClosing($closing_id,$on_date,$calculate_loyalty=false){
 		if(!$on_date) $on_date = $this->app->now;
 
-		if(date('d', strtotime($on_date)) !== '05'){
+		if(date('d', strtotime($on_date)) !== '01'){
 			throw new \Exception("Monthly closing must be on 01st of month 00:00 After Previous Month Finished", 1);
 		}
 
