@@ -69,6 +69,7 @@ class Initiator extends \Controller_Addon {
             $m->addItem(['Post','icon'=>'fa fa-sitemap'],$this->app->url('xepan_hr_post',['status'=>'Active']));
             $m->addItem(['Employee','icon'=>'fa fa-male'],$this->app->url('xepan_hr_employee',['status'=>'Active']));
             $m->addItem(['User','icon'=>'fa fa-user'],$this->app->url('xepan_hr_user',['status'=>'Active']));
+            $m->addItem(['Manage Banks','icon'=>'fa fa-user'],$this->app->url('xavoc_dm_banks',['status'=>'Active']));
             $m->addItem(['ACL','icon'=>'fa fa-dashboard'],'xepan_hr_aclmanagement');
 
 
@@ -94,6 +95,8 @@ class Initiator extends \Controller_Addon {
             if($total_bv > 0 || $total_sv > 0)
                 $distributor->repurchase($total_bv,$total_sv);
         });
+
+        $this->app->js(true)->_selector('#page-wrapper')->addClass('nav-small');
 
         return $this;
     }

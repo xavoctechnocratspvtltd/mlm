@@ -14,7 +14,7 @@ class page_productcategories extends \xepan\base\Page {
 			return $m->refSQL('xepan\commerce\CategoryItemAssociation')->count();
 		});
 
-		$crud->setModel($model,['name','cat_image_id'],['name','cat_image','products']);
+		$crud->setModel($model,['name','cat_image_id','display_sequence'],['name','cat_image','products','display_sequence']);
 		$crud->removeAttachment();
 
 		$crud->grid->addSno('Sr. No');

@@ -6,11 +6,11 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 	public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 	public $actions = [
-				'Red'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName','payouts','sv_records','password'],
-				'KitSelected'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName','payouts','sv_records','password'],
-				'KitPaid'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName','payouts','sv_records','password'],
-				'Green'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName','payouts','sv_records','password'],
-				'Blocked'=>['view','edit','delete','Unblocked','payouts','sv_records']
+				'Red'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName','payouts','sv_records','password','changeIntroducer'],
+				'KitSelected'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName','payouts','sv_records','password','changeIntroducer'],
+				'KitPaid'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName','payouts','sv_records','password','changeIntroducer'],
+				'Green'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName','payouts','sv_records','password','changeIntroducer'],
+				'Blocked'=>['view','edit','delete','Unblocked','payouts','sv_records','changeIntroducer']
 			];
 	
 	public $acl_type= "mlm_distributor";
@@ -19,6 +19,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 	function init(){
 		parent::init();
 
+		$this->getElement('country_id')->defaultValue(100);
 		$this->getElement('status')->defaultValue('Red');
 		$this->getElement('pan_no')->display(array('form'=>'xavoc\mlm\PanNumber'));
 		$dist_j = $this->join('mlm_distributor.distributor_id');
@@ -51,6 +52,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		$dist_j->addField('nominee_name');
 		$dist_j->addField('relation_with_nominee')->enum(['Mother','Father','Wife','Brother','Sister','Other'])->display(array('form' => 'xepan\base\DropDownNormal'));
 		$dist_j->addField('nominee_email')->caption('Nominee email')->display(array('form'=>'xavoc\mlm\Email'));
+		$dist_j->addField('nominee_mobile_number')->caption('Nominee email')->display(array('form'=>'xavoc\mlm\MobileNumber'));
 		$dist_j->addField('nominee_age')->display(array('form'=>'xavoc\mlm\Range'));
 		$dist_j->addField('aadhar_card_number');
 
@@ -93,7 +95,24 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 		// distributor account detail
 		$dist_j->addField('d_account_number')->caption('Account Number');
-		$dist_j->addField('d_bank_name')->caption('Bank Name');
+		
+		
+		$banks_model = $this->add('xepan\base\Model_ConfigJsonModel',
+			[
+				'fields'=>[
+							'bank_name'=>'line'
+							],
+					'config_key'=>'DS_DEFAULT_BANKS_LIST',
+					'application'=>'xavoc\mlm'
+			]);
+
+		$banks_array=[];
+		foreach ($banks_model as $b) {
+			$banks_array[] = $b['bank_name'];
+		}
+		
+
+		$dist_j->addField('d_bank_name')->caption('Bank Name')->enum($banks_array);
 		$dist_j->addField('d_bank_ifsc_code')->caption('Bank IFSC Code');
 		$dist_j->addField('d_account_type')->enum(['Saving','Current'])->display(array('form' => 'xepan\base\DropDownNormal'))->caption('Account Type');
 		$dist_j->addField('password');
@@ -862,17 +881,29 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
         }
 	}
 
-	function changeIntroducer(xepan\mlm\Model_Distributor $new_introducer){
-		throw new \Exception("to test", 1);
+	function page_changeIntroducer($page){
+		$f = $page->add('Form');
+		$model = $this->newInstance();
+		$model->title_field='user';
+		$f->addField('autocomplete/Basic','new_introducer')->setModel($model);
+		$f->addSubmit('Move');
+
+		if($f->isSubmitted()){
+			$this->changeIntroducer($this->add('xavoc\mlm\Model_Distributor')->load($f['new_introducer']));
+			$this->app->page_action_result = $f->js(null,$f->js()->closest('.dialog')->dialog('close'))->univ()->successMessage('Distributor Moved');
+		}
+	}	
+
+	function changeIntroducer($new_introducer){
 		// $new_introducer must not be one self in downline both in introduction path and simple path
-		if($new_introducer->isInIntroductionDown($this) || $new_introducer->isInDown($this))
+		if($this->isInIntroductionDown($new_introducer) || $this->isInDown($new_introducer))
 			throw new \Exception("Cannot change under distributor that is in downline", 1);
-			
+
 		$old_introducer_id = $this['introducer_id'];
 		$this_old_introducer_path = $this['introducer_path'];
 		$this_new_introducer_path = $new_introducer['introducer_path'].'.'.$this->id;
 
-		$q="UPDATE mlm_distributor SET introducer_path = REPLACE('$this_old_introducer_path.','$this_new_introducer_path.') WHERE introducer_path like '$this_old_introducer_path.%'";
+		$q="UPDATE mlm_distributor SET introducer_path = REPLACE(introducer_path,'$this_old_introducer_path.','$this_new_introducer_path.') WHERE introducer_path like '$this_old_introducer_path.%'";
 		$this->app->db->dsql()->expr($q)->execute();
 
 		$this['introducer_path'] = $this_new_introducer_path;
@@ -888,6 +919,8 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 		
 	}
+
+	
 
 	function dailyActivity($date) {
 

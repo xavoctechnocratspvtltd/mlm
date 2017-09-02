@@ -23,7 +23,7 @@ class page_distributors extends \xepan\base\Page {
 
 		$grid->setModel($model,['created_at','user','name','city','mobile_number']);
 		$grid->addQuickSearch(['name','user','mobile_number']);
-		$grid->addSno('Sr. No');
+		$grid->addSno('Sr. No',true);
 
 		$grid->addPaginator(50);
 		$grid->add('xepan\hr\Controller_ACL',['status_color'=>$status_color]);
