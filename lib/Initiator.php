@@ -61,6 +61,7 @@ class Initiator extends \Controller_Addon {
             
         $m = $this->app->top_menu->addMenu('Report');
             $m->addItem(['Rank Report','icon'=>'fa fa-check-square-o'],'xavoc_dm_distributor_rank');
+            $m->addItem(['TopUp & Repurchase History','icon'=>'fa fa-check-square-o'],'xavoc_dm_report_sale');
 
         $m = $this->app->top_menu->addMenu('Admin');
             $m->addItem(['Recent Distributors News','icon'=>'fa fa-check-square-o'],'xavoc_dm_recentnews');
@@ -122,8 +123,7 @@ class Initiator extends \Controller_Addon {
 
         $this->app->skip_accounts_ledger_creation = true;
 
-        $this->app->addHook('login_panel_user_loggedin',function($app,$user){
-            
+        $this->app->addHook('login_panel_user_loggedin',function($app,$user){            
             $f_model = $this->add('xavoc\mlm\Model_Franchises');
             $f_model->loadLoggedIn('Warehouse');
             if($f_model->loaded())
@@ -133,7 +133,7 @@ class Initiator extends \Controller_Addon {
             $m->loadLoggedIn('Customer');
             if($m->loaded()){
                 $this->app->redirect($this->app->url('dashboard'));
-            }
+            }            
 
         });
         

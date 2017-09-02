@@ -6,11 +6,11 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 	public $status = ['Red','KitSelected','KitPaid','Green','Blocked'];
 	public $actions = [
-				'Red'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName','payouts','sv_records','password','changeIntroducer'],
-				'KitSelected'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName','payouts','sv_records','password','changeIntroducer'],
-				'KitPaid'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName','payouts','sv_records','password','changeIntroducer'],
-				'Green'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName','payouts','sv_records','password','changeIntroducer'],
-				'Blocked'=>['view','edit','delete','Unblocked','payouts','sv_records','changeIntroducer']
+				'Red'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName','payouts','sv_records','password','changeIntroducer','loginFrontend'],
+				'KitSelected'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName','payouts','sv_records','password','changeIntroducer','loginFrontend'],
+				'KitPaid'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName','payouts','sv_records','password','changeIntroducer','loginFrontend'],
+				'Green'=>['view','edit','delete','topup','repurchase','verifyDocument','changeName','payouts','sv_records','password','changeIntroducer','loginFrontend'],
+				'Blocked'=>['view','edit','delete','Unblocked','payouts','sv_records','changeIntroducer','login']
 			];
 	
 	public $acl_type= "mlm_distributor";
@@ -920,7 +920,29 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		
 	}
 
-	
+	function loginFrontend(){
+		$u = $this->add('xepan\base\Model_User');
+		$u->tryLoad($this['user_id']?:0);
+
+		if(!$u->loaded()){			
+			$this->app->js()->univ()->errorMessage('No User found for this distributor')->execute();
+		}
+
+		$token = md5(uniqid());
+		$u->set('access_token',$token)
+			->set('access_token_expiry',date('Y-m-d H:i:s',strtotime($this->app->now.' +10 seconds')))
+			->save();
+
+		if($this->app->db->inTransaction()) $this->app->db->commit();
+
+		$this->url = $url = "{$_SERVER['HTTP_HOST']}";        
+	        $this->protocol = stripos($_SERVER['SERVER_PROTOCOL'],'https') === true ? 'https://' : 'http://';
+	        $this->domain = $domain = str_replace('www.','',$this->app->extract_domain($url))?:'www';
+	        $this->sub_domain = $sub_domain = str_replace('www.','',$this->app->extract_subdomains($url))?:'www';
+	        
+			$this->app->js()->univ()->newWindow($this->app->url($this->protocol.$this->app->current_website_name.".".$this->domain.str_replace("/admin","",$this->app->pathfinder->base_location->base_url),['access_token'=>$token,'page'=>'login']),'DistributorLogin')->execute();
+
+	}
 
 	function dailyActivity($date) {
 
