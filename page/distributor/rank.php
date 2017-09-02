@@ -79,6 +79,8 @@ class page_distributor_rank extends \xepan\base\Page {
 		$grid->setModel($d_m,['name','user','sponsor','introducer','created_at','greened_on']);
 		$grid->addPaginator(50);
 
+		$grid->addQuickSearch(['name','user']);
+
 	}
 
 
