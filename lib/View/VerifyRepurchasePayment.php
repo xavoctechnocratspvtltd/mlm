@@ -34,7 +34,7 @@ class View_VerifyRepurchasePayment extends \View{
 				$c_f = $crud->form;
 				$c_f->getElement('item_id')->getModel()->addCondition('is_package',false);
 			}
-			$crud->grid->addTotals(['price','amount','tax_amount']);
+			$crud->grid->addTotals(['price','amount','tax_amount','quantity']);
 		}
 
 		$repur_model = $this->add('xavoc\mlm\Model_RepurchaseHistory');
