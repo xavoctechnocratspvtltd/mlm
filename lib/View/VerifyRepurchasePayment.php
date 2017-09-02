@@ -109,15 +109,22 @@ class View_VerifyRepurchasePayment extends \View{
 					$result = $distributor->placeRepurchaseOrder();
 					if(!isset($result['master_detail']['id']) OR !$result['master_detail']['id']) throw new \Exception("order not created");
 					// delete temporary repurchase items
+					
+					$payment_detail = $form->get();					
+					$payment_detail['is_payment_verified'] = true;
+
+					
 					$temp_oi = $this->add('xavoc\mlm\Model_TemporaryRepurchaseItem');
 					$temp_oi->addCondition('distributor_id',$distributor->id);
 					$temp_oi->deleteAll();
 					$order_id = $result['master_detail']['id'];
 					$order_model->load($order_id);
+
+					$distributor->updateRepurchaseHistory($order_id,$form['payment_mode'],$payment_detail);
 				}
 
-				$form->model['is_payment_verified'] = true;
-				$form->update();
+				// $form->model['is_payment_verified'] = true;
+				// $form->update();
 				$order_model->invoice()->paid();
 
 				$this->app->db->commit();
