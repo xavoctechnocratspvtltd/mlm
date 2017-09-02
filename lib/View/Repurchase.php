@@ -26,7 +26,9 @@ class View_Repurchase extends \View{
 		$grid = $this->add('xavoc\mlm\Grid_Order',['distributor'=>$this->distributor,'istopuporder'=>0]);
 		$grid->setModel($order,['document_no','net_amount','items','status','invoice_detail']);
 		$grid->addColumn('expander','orderitem');
+		$grid->addColumn('remove');
 		$grid->addPaginator($ipp=3);
 		$grid->addQuickSearch(['document_no']);
+
 	}
 }
