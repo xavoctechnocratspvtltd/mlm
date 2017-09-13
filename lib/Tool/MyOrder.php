@@ -30,10 +30,13 @@ class Tool_MyOrder extends \xavoc\mlm\Tool_Distributor{
 		$my_order->setOrder('id','desc');
 		$my_order->getElement('document_no')->caption('Order No.');
 		$my_order->getElement('created_at')->caption('Order Date');
+		$my_order->getElement('items')->caption('Nos');
+
 		$grid = $this->add('xepan\base\Grid');
 		$grid->addSno('Sr. No.');
-		$grid->setModel($my_order,['document_no','created_at','status','invoice_detail','items','net_amount','is_delivered']);
+		$grid->setModel($my_order,['created_at','document_no','items','gross_amount','tax_amount','net_amount','details']);
 		$self = $this;
+
 		$this->vp = $this->add('VirtualPage')->set(function($p)use($self){
 			$p->api->stickyGET('sales_order_id');
 			$o = $this->add('xavoc\mlm\Model_QSPDetail')->addCondition('qsp_master_id',$_GET['sales_order_id']);
@@ -41,11 +44,11 @@ class Tool_MyOrder extends \xavoc\mlm\Tool_Distributor{
 			$order = $p->add('xepan\base\Grid');
 			$order->setModel($o,['name','item_sku','price','quantity','amount_excluding_tax','tax_amount','total_amount']);
 		});
-
-		$grid->addMethod('format_items',function($g,$f){
-			$g->current_row_html[$f] = '<a href="#na" onclick="javascript:'.$g->js()->univ()->frameURL('Order Items '. $g->model['sales_order'], $this->api->url($this->vp->getURL(),array('sales_order_id'=>$g->model->id))).'">View Items ( '. $g->current_row[$f] ." )</a>";
+		$grid->addColumn('details');
+		$grid->addMethod('format_details',function($g,$f){
+			$g->current_row_html[$f] = '<a class="btn btn-primary" href="#na" onclick="javascript:'.$g->js()->univ()->frameURL('Order Items '. $g->model['sales_order'], $this->api->url($this->vp->getURL(),array('sales_order_id'=>$g->model->id))).'">See Details</a>';
 		});
-		$grid->addFormatter('items','items');
+		$grid->addFormatter('details','details');
 
 		$grid->addQuickSearch(['document_no','created_at','status']);	
 		$grid->addPaginator(10);	
