@@ -50,7 +50,7 @@ class View_GenologyStandard extends \View{
 		$form->add('xepan\base\Controller_FLC')
 			->makePanelsCoppalsible()
 			->layout([
-					'username~'=>'SEARCH~c1~8~closed',
+					'username~search by user name or user id'=>'SEARCH~c1~8~closed',
 					'FormButtons~'=>'c2~4'
 				]);
 		$user_field = $form->addField('line','username')->addClass('field-group');
