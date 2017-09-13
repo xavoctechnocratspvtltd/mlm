@@ -78,7 +78,7 @@ class View_GenologyStandard extends \View{
 		$reload_js = $this->js()->reload(array('start_id'=>$model->id));
 		$t=$this->template->cloneRegion('Node');
 		$t->setHTML('username','<a href="#xepan" onclick="'.$reload_js->render().'">'.$model['name']."-".$model['user'].'</a>');
-		$t->set('class',($model['greened_on'])?'text-success':($model['kit_item_id']?'text-warning':'text-danger'));
+		$t->set('class',($model['greened_on'])?'text-success ds-icon-success':($model['kit_item_id']?'text-warning':'text-danger ds-icon-danger'));
 		if($model['greened_on'] !== null)
 			$greened_on_date = date("d M Y", strtotime($model['greened_on']));
 		else
@@ -92,9 +92,9 @@ class View_GenologyStandard extends \View{
 		}else{
 			$t->trySet('sponsor_id',$model->id);
 			if($model['left_id'])
-				$t->setHTML('leftnode','<i class="fa fa-user fa-2x"></i>');
+				$t->setHTML('leftnode','<i class="ds-icon-gray"></i>');
 			else
-				$t->setHTML('leftnode','<i class="fa fa-cog fa-2x"></i>');
+				$t->setHTML('leftnode','<i class="fa fa-cog fa-2x "></i>');
 			// $t->tryDel('leftnode');
 		}
 
@@ -104,7 +104,7 @@ class View_GenologyStandard extends \View{
 		}else{
 			$t->trySet('sponsor_id',$model->id);
 			if($model['right_id'])
-				$t->setHTML('rightnode','<i class="fa fa-user fa-2x"></i>');
+				$t->setHTML('rightnode','<div class="ds-icon-gray fa-2x"></div>');
 			else
 				$t->setHTML('rightnode','<i class="fa fa-cog fa-2x"></i>');
 			// $t->tryDel('rightnode');

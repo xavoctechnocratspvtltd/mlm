@@ -4,16 +4,17 @@
 	| {/Tree}
 	| {Parent}
 	.atk-section.text-center
-		.text-center.atk-swatch-blue.atk-box-small.text-left
-			a(href='#xepan', onclick='{$MyURL}') My Tree
-		.text-center.atk-swatch-blue.atk-box-small.text-right
-			a(href='#xepan', onclick='{$ParentURL}') Go Up
+		.btn-group
+			a.btn.btn-success(href='#xepan', onclick='{$MyURL}')
+				i.fa.fa-tree &nbsp;My Tree
+			a.btn.btn-primary(href='#xepan', onclick='{$ParentURL}')
+				i.fa.fa-arrow-up &nbsp;Go Up
 	| {/Parent}
 	| {Node}
 	table(width="100%")
 		tr
 			td.text-center(colspan=2)
-				i.fa.fa-user.fa-3x.main_div(style="width:100%" class='{$class}', title='{$title}')
+				div.fa-3x.main_div(style="width:100%" class='{$class}', title='{$title}')
 				{username}Username Here{/username}
 				.center-line
 		tr

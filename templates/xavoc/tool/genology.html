@@ -5,13 +5,13 @@
   {/Tree}
   {Parent}
   <div class="atk-section text-center">
-    <div class="text-center atk-swatch-blue atk-box-small text-left"><a href="#xepan" onclick="{$MyURL}">My Tree</a></div>
-    <div class="text-center atk-swatch-blue atk-box-small text-right"><a href="#xepan" onclick="{$ParentURL}">Go Up</a></div>
+    <div class="btn-group"><a href="#xepan" onclick="{$MyURL}" class="btn btn-success"><i class="fa fa-tree">&nbsp;My Tree</i></a><a href="#xepan" onclick="{$ParentURL}" class="btn btn-primary"><i class="fa fa-arrow-up">&nbsp;Go Up</i></a></div>
   </div>{/Parent}
   {Node}
   <table width="100%">
     <tr>
-      <td colspan="2" class="text-center"><i style="width:100%" title="{$title}" class="fa fa-user fa-3x main_div {$class}"></i>{username}Username Here{/username}
+      <td colspan="2" class="text-center">
+        <div style="width:100%" title="{$title}" class="fa-3x main_div {$class}"></div>{username}Username Here{/username}
         <div class="center-line"></div>
       </td>
     </tr>
