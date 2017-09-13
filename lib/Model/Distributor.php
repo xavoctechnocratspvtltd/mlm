@@ -611,7 +611,17 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 				->addEncryptionHook($user);
 		
 		$password = rand(100000,999999);
-		$user['username']='dsgm'.$this->id.rand(100,999);
+
+		$len = strlen($this->id);
+		$required = 7-$len-1;
+		$min = pow(10,$required);
+		$max = (pow(10,$required+1)-1);
+		$rand = rand($min, $max);
+		$id = "DSGM".$id;
+		if($rand)
+			$id .= $rand;
+		
+		$user['username']= $id;
 		$user['password']= $password;
 		$user->save();
 
