@@ -159,7 +159,7 @@ class Tool_ClosingAndPayouts extends \xepan\cms\View_Tool{
 		$previous_payout->addCondition('month_year','<>',$this->current_month_year);
 		$previous_payout->addCondition('distributor_id',$this->distributor->id);
 
-		$sum_field = ['binary_income'=>'BINARY AMT','introduction_amount'=>'INTRO AMT','repurchase_bonus'=>'REP BONUS','generation_income'=>'GEN INCOME','loyalty_bonus'=>'LOYALTY BONUS','leadership_bonus'=>'LEADER BONUS','total_amt'=>'TOTAL AMT','last_month_prev_amount'=>'PREV AMT','gross_payment'=>'GROSS AMT','tds'=>'TDS','admin_charge'=>'ADMIN','net_payment'=>'NET AMT','last_carried_amount'=>'C/F'];
+		$sum_field = ['binary_income'=>'BINARY AMT','introduction_amount'=>'INTRO AMT','repurchase_bonus'=>'REP BONUS','generation_income'=>'GEN INCOME','loyalty_bonus'=>'LOYALTY BONUS','leadership_bonus'=>'LEADER BONUS','total_amt'=>'TOTAL AMT','last_month_prev_amount'=>'PREV AMT','tds'=>'TDS','admin_charge'=>'ADMIN','net_payment'=>'NET AMT','last_carried_amount'=>'C/F'];
 		foreach ($sum_field as $key => $field) {
 			if($previous_payout->hasElement($key)){
 				$previous_payout->addExpression('sum_'.$key)->set($this->app->db->dsql()->expr('sum([0])',[$previous_payout->getElement($key)]))
@@ -167,6 +167,10 @@ class Tool_ClosingAndPayouts extends \xepan\cms\View_Tool{
 					->display(['grid'=>'text']);
 			}
 		}
+
+		$previous_payout->addExpression('sum_gross_payment')->set(function($m,$q){
+			return $q->expr('sum(IF([0]>0,[1],0))',[$m->getElement('net_payment'),$m->getElement('gross_payment')]);
+		})->caption('GROSS AMT');
 
 		$previous_payout->setOrder('id','desc');
 		$previous_payout->_dsql()->group('month_year');
@@ -200,7 +204,7 @@ class Tool_ClosingAndPayouts extends \xepan\cms\View_Tool{
 		// $grid->addColumn('detail');
 		$grid->setModel($previous_payout,['month_year','sum_binary_income','sum_introduction_amount','sum_retail_profit','sum_repurchase_bonus','sum_generation_income','sum_loyalty_bonus','sum_leadership_bonus','sum_total_amt','last_month_prev_amount','sum_gross_payment','sum_tds','sum_admin_charge','sum_net_payment','last_month_cf_amount']);
 		$grid->addPaginator($ipp=12);
-		$grid->addColumn('expander','detail',['page'=>'xavoc_dm_mypayouts_detail']);
+		$grid->addColumn('expanderplus','detail',['page'=>'xavoc_dm_mypayouts_detail','descr'=>'Detail']);
 
 		// $grid->js(true)->find('[type=checkbox]')->addClass('btn btn-primary');
 		
