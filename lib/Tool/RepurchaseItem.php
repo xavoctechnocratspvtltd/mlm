@@ -42,7 +42,7 @@ class Tool_RepurchaseItem extends \xepan\cms\View_Tool{
 				]);
 		});
 
-		$repurchase_item->setOrder('display_order');
+		$repurchase_item->setOrder('display_order','asc');
 
 		$this->complete_lister = $cl = $this->add('CompleteLister',null,null,['xavoc/tool/'.$layout_template]);
 		$cl->setModel($repurchase_item);
