@@ -33,6 +33,19 @@ class Model_SalesOrder extends \xepan\commerce\Model_SalesOrder {
 		});
 		
 		$this->addExpression('items')->set($this->refSQL('Details')->count());
+		
+		$this->addExpression('invoice_no')->set(function($m,$q){
+			$in = $m->add('xepan\commerce\Model_SalesInvoice');
+			$in->addCondition('related_qsp_master_id',$q->getField('id'));
+			return $q->expr("IFNULL([0],' ')",[$in->fieldQuery('document_no')]);
+		});
+
+		$this->addExpression('invoice_date')->set(function($m,$q){
+			$in = $m->add('xepan\commerce\Model_SalesInvoice');
+			$in->addCondition('related_qsp_master_id',$q->getField('id'));
+			return $q->expr("DATE(IFNULL([0],' '))",[$in->fieldQuery('created_at')]);
+		});
+
 		$this->addExpression('invoice_detail')->set(function($m,$q){
 			$in = $m->add('xepan\commerce\Model_SalesInvoice');
 			$in->addCondition('related_qsp_master_id',$q->getField('id'));

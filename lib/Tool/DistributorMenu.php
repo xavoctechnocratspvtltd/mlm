@@ -51,7 +51,7 @@ class Tool_DistributorMenu extends \xavoc\mlm\Tool_Distributor{
 							'repurchase'=>[
 									'repurchase'=>'Repurchase',
 									'index.php?page=myorder&action=orderdetail'=>'Order Detail',
-									// 'index.php?page=myorder&action=courierdetail'=>'Courier Detail',
+									'index.php?page=myorder&action=courierdetail'=>'Courier Detail',
 									'index.php?page=myorder&action=invoicedetail'=>'Invoice Detail'
 								],
 							'utility'=>[
