@@ -143,7 +143,7 @@ class Tool_DashBoard extends \xavoc\mlm\Tool_Distributor{
 
 		$view_box = $col3->add('View')->addClass('panel panel-info alert text-right')->setStyle('height','80px;');
 		$view_box->add('View')->setHtml('Total Matching SV');
-		$view_box->add('View')->setHtml('<strong>'.strtoupper($distributor['total_mathcing_sv']*10).'</strong>');
+		$view_box->add('View')->setHtml('<strong style="color:'.$text_color.'">'.strtoupper($distributor['total_mathcing_sv']*10).'</strong>');
 
 
 		$view_box = $col1->add('View')->addClass('panel panel-info alert text-right')->setStyle('height','80px;');
