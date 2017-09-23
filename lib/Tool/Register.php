@@ -30,33 +30,33 @@ class Tool_Register extends \xavoc\mlm\Tool_Distributor{
 			$v->add('View')->addClass('alert alert-success text-center')->setHtml('<h4>Registration done successfully. User Id:<strong>'.$new_dis['user']."</strong>, Password: <strong>".$new_dis['password']."</strong></h4>");
 		}
 
-		$form_field = ['introducer_id','side','first_name','last_name','dob','email','mobile_number','pan_no','country_id','state_id','city','pin_code','address','d_account_number','d_bank_name','d_bank_ifsc_code','nominee_name','relation_with_nominee','nominee_mobile_number','aadhar_card_number','d_account_type','d_bank_branch','image_id'];
+		$form_field = ['introducer_id','side','first_name','dob','country_id','state_id','city','pin_code','address','email','mobile_number','pan_no','d_account_number','d_bank_name','d_bank_ifsc_code','nominee_name','relation_with_nominee','nominee_mobile_number','aadhar_card_number','d_account_type','d_bank_branch','image_id'];
 		$form = $this->add('Form');
 		$form->add('xepan\base\Controller_FLC')
 		->addContentSpot()
 		->layout([
 				'introducer~Search Introducer'=>'PLACEMENT DETAILS~c1~6',
-				'side~Placement Side'=>'c2~6',
-				'first_name'=>'PERSONAL DETAILS~c1~4',
-				'last_name'=>'c2~4',
+				'side~Placement Side&nbsp;<i class="fa fa-cog color-red"></i>'=>'c2~6',
+				'first_name~Full Name&nbsp;<i class="fa fa-cog color-red"></i>'=>'PERSONAL DETAILS~c1~8',
+				// 'last_name'=>'c2~4',
 				'dob~Date Of Birth'=>'c3~4',
-				'country_id~Country'=>'c8~4',
-				'state_id~State'=>'c9~4',
-				'city'=>'c10~2',
-				'pin_code'=>'c11~2',
-				'address'=>'c12~12',
-				'email'=>'c4~4',
-				'mobile_number'=>'c5~4',
+				'country_id~Country&nbsp;<i class="fa fa-cog color-red"></i>'=>'c8~4',
+				'state_id~State&nbsp;<i class="fa fa-cog color-red"></i>'=>'c9~4',
+				'city~City&nbsp;<i class="fa fa-cog color-red"></i>'=>'c10~2',
+				'pin_code~Pin Code&nbsp;<i class="fa fa-cog color-red"></i>'=>'c11~2',
+				'address~Address&nbsp;<i class="fa fa-cog color-red"></i>'=>'c12~12',
+				'email~Email&nbsp;<i class="fa fa-cog color-red"></i>'=>'c4~4',
+				'mobile_number~Mobile Number&nbsp;<i class="fa fa-cog color-red"></i>'=>'c5~4',
 				'aadhar_card_number'=>'c6~4',
 				'nominee_name'=>'NOMINEE DETAILS~c1~4',
 				'relation_with_nominee'=>'c2~4',
-				'nominee_mobile_number'=>'c3~4',
+				'nominee_mobile_number~Nominee Mobile Number&nbsp;<i class="fa fa-cog color-red"></i>'=>'c3~4',
 				'd_bank_name~Bank Name'=>'BANK DETAILS~c1~3',
 				'd_account_number~Account Number'=>'c2~3',
 				'd_bank_ifsc_code~Bank IFSC Code'=>'c3~3',
 				'd_account_type~Account Type'=>'c4~3',
-				'd_bank_branch~Branch Name'=>'c1~3',
-				'pan_no'=>'c2~3',
+				'd_bank_branch~Branch Name&nbsp;<i class="fa fa-cog color-red"></i>'=>'c1~3',
+				'pan_no~Pan No'=>'c2~3',
 				'cancelled_cheque'=>'c31~12',
 				'image_id~Profile Image'=>'KYC DETAILS~c41~3',
 				'pan_card~PAN Card'=>'c42~3',
@@ -72,7 +72,8 @@ class Tool_Register extends \xavoc\mlm\Tool_Distributor{
 		$form->getElement('relation_with_nominee')->setEmptyText('Select Relation');
 		$form->getElement('state_id')->setEmptyText('Select State');
 		// $form->getElement('dob')->setAttr('placeholder',"DD/MM/YYYY");
-		$form->getElement('pin_code')->validate('required|number');
+		// $form->getElement('pin_code')->validate('required|number');
+		$form->getElement('first_name')->setAttr('placeholder','Full Name');
 
 		foreach ($form_field as $key => $name) {
 			if(in_array($name, ['pan_no','d_account_number','d_bank_name','d_bank_ifsc_code','nominee_name','relation_with_nominee','aadhar_card_number','d_account_type'])) continue;
@@ -117,8 +118,7 @@ class Tool_Register extends \xavoc\mlm\Tool_Distributor{
 		// $form->addField('password','retype_password')->validate('required');	
 		$form->addSubmit('Register')->addClass(' btn btn-primary btn-block')->setStyle('margin-bottom','60px;');
 		
-		if($form->isSubmitted()){
-			
+		if($form->isSubmitted()){			
 			if($form['password'] !== $form['retype_password'])
 				$form->displayError('retype_password','Password Not Match');
 
