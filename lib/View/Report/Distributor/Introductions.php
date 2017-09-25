@@ -10,11 +10,13 @@ class View_Report_Distributor_Introductions extends \View{
 		parent::init();
 
 		$this->app->stickyGET('search_distributor');
-		$this->app->stickyGET('status');
+		$this->app->stickyGET('search_placement');
+		$this->app->stickyGET('search_intro');
 		$this->app->stickyGET('from_date');
 		$this->app->stickyGET('to_date');
 		$this->app->stickyGET('based_on');
-
+		$this->app->stickyGET('status');
+		
 		$this->add('View')->setElement('hr');
 		$this->addClass('main-box');
 	}
@@ -22,26 +24,26 @@ class View_Report_Distributor_Introductions extends \View{
 	function setModel($model){
 		// add search related form
 		$form = $this->add('Form');
-		$col = $form->add('Columns')->addClass('row');
-		$col1 = $col->addColumn('3')->addClass('col-md-7 col-sm-12 col-lg-7 col-xs-12');
-		$col2 = $col->addColumn('2')->addClass('col-md-2 col-sm-12 col-lg-2 col-xs-12');
-		$col3 = $col->addColumn('2')->addClass('col-md-2 col-sm-12 col-lg-2 col-xs-12');
-		// $col4 = $col->addColumn('2')->addClass('col-md-2 col-sm-12 col-lg-2 col-xs-12');
-		// $col5 = $col->addColumn('2')->addClass('col-md-2 col-sm-12 col-lg-2 col-xs-12');
-		$submit_col = $col->addColumn('1')->addClass('col-lg-1 col-md-1 col-sm-12 col-lg-12');
+		$form->add('xepan\base\Controller_FLC')
+			->makePanelsCoppalsible(true)
+			->layout([
+				'search_distributor~Search User Id/Name'=>'Filter~c1~3',
+				'search_placement~Placement Id/Name'=>'c2~3',
+				'search_intro~Intro Id/Name'=>'c3~3',
+				'from_date'=>'c4~2',
+				'to_date'=>'c4~2',
+				'FormButtons~'=>'c6~1'
+				])
+			;
 
-		$search_field = $col1->addField('search_distributor',null,'Search User/Name');
-		$from_date_field = $col2->addField('DatePicker','from_date');
-		$to_date_field = $col3->addField('DatePicker','to_date');
+		$search_field = $form->addField('search_distributor',null,'Search User/Name');
+		$placement_field = $form->addField('search_placement',null,'Search Placement ID/Name');
+		$intro_field = $form->addField('search_intro',null,'Search Intro ID/Name');
 
-		// $status_field = $col4->addField('xepan\base\DropDown','status')->setValueList(['Red'=>'Red','KitSelected'=>'KitSelected','Green'=>'Green','Blocked'=>'Blocked']);
-		// $status_field->setEmptyText('All');
-		// $based_on_field = $col5->addField('xepan\base\DropDown','based_on')->setValueList(['joining'=>'Joining Date','green'=>'Green On Date']);
-		// if($_GET['based_on']){
-		// 	$based_on_field->set($_GET['based_on']);
-		// }
+		$from_date_field = $form->addField('DatePicker','from_date');
+		$to_date_field = $form->addField('DatePicker','to_date');
+		$form->addSubmit('Go')->setStyle('margin','20px')->addClass('btn btn-primary');
 
-		$submit_col->addSubmit('Go')->setStyle('margin','20px')->addClass('btn btn-primary');
 
 		$downline = $this->add('xavoc\mlm\Model_Distributor');
 		$downline->addCondition('introducer_id','like',$model->id);
@@ -50,6 +52,9 @@ class View_Report_Distributor_Introductions extends \View{
 		});
 		$downline->addExpression('green_on')->set(function($m,$q){
 			return $q->expr('DATE([0])',[$m->getElement('greened_on')]);
+		});
+		$downline->addExpression('intro_name')->set(function($m,$q){
+			return $q->expr('[0]',[$m->refSql('introducer_id')->fieldQuery('name')]);
 		});
 
 
@@ -92,12 +97,35 @@ class View_Report_Distributor_Introductions extends \View{
 			$to_date_field->set($_GET['to_date']);
 		}
 
-		$fields = ['green_on','user','name','sponsor_id','introducer_id'];
+		if($placement = $_GET['search_placement']){
+			$placement_field->set($placement);
+			$downline->addCondition([
+						['sponsor_id',$placement],
+						['sponsor',$placement]]
+					);
+		}
+
+		if($intro = $_GET['search_intro']){
+			$intro_field->set($intro);
+			$downline->addCondition([
+						['introducer_id',$intro],
+						['intro_name',$intro],
+						['introducer',$intro]
+					]);
+		}
+
+		$fields = ['green_on','user','name','sponsor_id','sponsor','introducer_id','intro_name'];
 		if($this->report_status == "inactive"){
 			$fields = ['joining','user','name','sponsor_id','introducer_id'];
 		}elseif($this->report_status == "downline_business"){
 			$fields = ['joining','user','name','month_self_bv','total_month_bv'];
 		}
+
+
+		$downline->getElement('sponsor_id')->caption('Placement ID');
+		$downline->getElement('sponsor')->caption('Placement Name');
+		$downline->getElement('introducer_id')->caption('Intro ID');
+		
 
 		$downline->getElement('green_on')->caption('Act. Date');
 		$downline->getElement('user')->caption('User ID');
@@ -117,7 +145,13 @@ class View_Report_Distributor_Introductions extends \View{
 					$form->error('to_date','must be equal or greater then from date');
 			}
 
-			$this->js()->reload(['search_distributor'=>trim($form['search_distributor']),'from_date'=>$form['from_date'],'to_date'=>$form['to_date']])->execute();
+			$this->js()->reload([
+								'search_distributor'=>trim($form['search_distributor']),
+								'search_placement'=>trim($form['search_placement']),
+								'search_intro'=>trim($form['search_intro']),
+								'from_date'=>$form['from_date'],
+								'to_date'=>$form['to_date'],
+							])->execute();
 		}
 		return parent::setModel($model);
 	}
