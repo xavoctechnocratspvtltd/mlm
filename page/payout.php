@@ -10,9 +10,10 @@ class page_payout extends \xepan\base\Page {
 		parent::init();
 
 		$closing_id = $this->app->stickyGET('closing_id');
+		$filter_zero = $this->app->stickyGET('filter_zero');
 
 		$closing = $this->add('xavoc\mlm\Model_Closing');
-		$closing->load($closing_id);		
+		$closing->load($closing_id);
 		$field_to_show = [];
 		if($closing['type'] == "WeeklyClosing"){
 			$field_to_show = ['distributor','user','closing_date','previous_carried_amount','leadership_carried_amount','binary_income','introduction_amount','gross_payment','tds','admin_charge','net_payment','carried_amount','account_number','bank_name','bank_ifsc_code','mobile_number','email','address','status'];
@@ -62,8 +63,21 @@ class page_payout extends \xepan\base\Page {
 
 
 		$m->addCondition('closing_id',$closing_id);
+		if($_GET['filter_zero']){
+			$m->addCondition('net_payment','>',0);
+		}
 
 		$g = $this->add('Grid');
+		$filter_zero_btn = $g->addButton('Filter Zero');
+		if($filter_zero)
+			$filter_zero_btn->addClass('btn btn-primary');
+
+		if($filter_zero_btn->isClicked()){
+			$value = 1;
+			if($filter_zero)
+				$value = 0;
+			$this->app->redirect($this->app->url(null,['filter_zero'=>$value]));
+		}
 
 		if(count($field_to_show) > 0)
 			$g->setModel($m,$field_to_show);
