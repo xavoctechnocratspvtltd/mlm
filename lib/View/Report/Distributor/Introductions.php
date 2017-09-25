@@ -16,7 +16,7 @@ class View_Report_Distributor_Introductions extends \View{
 		$this->app->stickyGET('to_date');
 		$this->app->stickyGET('based_on');
 		$this->app->stickyGET('status');
-		
+
 		$this->add('View')->setElement('hr');
 		$this->addClass('main-box');
 	}
@@ -136,7 +136,7 @@ class View_Report_Distributor_Introductions extends \View{
 		$this->add('View')->setElement('hr');
 		$grid = $this->add('xepan\hr\Grid');
 		$grid->setModel($downline,$fields);
-		$grid->addSno('Sr. No.');
+		$grid->addSno('Sr. No.',true);
 		$grid->addPaginator($ipp=100);
 		// reload self view with form values
 		if($form->isSubmitted()){
