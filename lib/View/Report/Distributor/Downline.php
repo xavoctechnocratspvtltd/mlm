@@ -13,6 +13,8 @@ class View_Report_Distributor_Downline extends \View{
 		$this->app->stickyGET('from_date');
 		$this->app->stickyGET('to_date');
 		$this->app->stickyGET('based_on');
+		$this->app->stickyGET('leg');
+		$this->app->stickyGET('rank');
 
 		$this->add('View')->setElement('hr');
 		$this->addClass('main-box');
@@ -21,26 +23,27 @@ class View_Report_Distributor_Downline extends \View{
 	function setModel($model){
 		// add search related form
 		$form = $this->add('Form');
-		$col = $form->add('Columns')->addClass('row');
-		$col1 = $col->addColumn('3')->addClass('col-md-6 col-sm-12 col-lg-6 col-xs-12');
-		$col2 = $col->addColumn('2')->addClass('col-md-2 col-sm-12 col-lg-2 col-xs-12');
-		$col3 = $col->addColumn('2')->addClass('col-md-2 col-sm-12 col-lg-2 col-xs-12');
-		// $col4 = $col->addColumn('2')->addClass('col-md-2 col-sm-12 col-lg-2 col-xs-12');
-		// $col5 = $col->addColumn('2')->addClass('col-md-2 col-sm-12 col-lg-2 col-xs-12');
-		$submit_col = $col->addColumn('1')->addClass('col-lg-1 col-md-1 col-sm-12 col-lg-12');
+		$form->add('xepan\base\Controller_FLC')
+			->makePanelsCoppalsible(true)
+			->layout([
+				'search_distributor~Search Distributor/User/City/State'=>'Filter~c1~4',
+				'leg'=>'c2~1',
+				'rank'=>'c3~2',
+				'from_date'=>'c4~2',
+				'to_date'=>'c5~2',
+				'FormButtons~'=>'c6~1'
+				])
+			;
 
-		$search_field = $col1->addField('search_distributor',null,'Search Distributor/User/City/State');
-		$from_date_field = $col2->addField('DatePicker','from_date');
-		$to_date_field = $col3->addField('DatePicker','to_date');
+		$search_field = $form->addField('search_distributor',null,'Search Distributor/User/City/State');
+		$leg_field = $form->addField('DropDown','leg')->setValueList(['both'=>'Both','left'=>'Left','right'=>'Right']);
+		$rank_field = $form->addField('DropDown','rank');
+		$rank_field->setModel('xavoc/mlm/RePurchaseBonusSlab');
+		$rank_field->setEmptyText('Select By Rank');
 
-		// $status_field = $col4->addField('xepan\base\DropDown','status')->setValueList(['Red'=>'Red','KitSelected'=>'KitSelected','Green'=>'Green','Blocked'=>'Blocked']);
-		// $status_field->setEmptyText('All');
-		// $based_on_field = $col5->addField('xepan\base\DropDown','based_on')->setValueList(['joining'=>'Joining Date','green'=>'Green On Date']);
-		// if($_GET['based_on']){
-		// 	$based_on_field->set($_GET['based_on']);
-		// }
-
-		$submit_col->addSubmit('Go')->setStyle('margin','20px')->addClass('btn btn-primary');
+		$from_date_field = $form->addField('DatePicker','from_date');
+		$to_date_field = $form->addField('DatePicker','to_date');
+		$form->addSubmit('Go')->setStyle('margin','20px')->addClass('btn btn-primary');
 
 		$downline = $this->add('xavoc\mlm\Model_Distributor');
 		$downline->addCondition('path','like',$model['path'].'_%');
@@ -74,6 +77,21 @@ class View_Report_Distributor_Downline extends \View{
 			$search_field->set($_GET['search_distributor']);
 		}
 		
+		
+		if($_GET['leg'] == 'left'){
+			$downline->addCondition('side','A');
+			$leg_field->set('left');
+		}
+		if($_GET['leg'] == 'right'){
+			$downline->addCondition('side','B');
+			$leg_field->set('right');
+		}
+
+		if($_GET['rank']){
+			$downline->addCondition('current_rank_id',$_GET['rank']);
+			$rank_field->set($_GET['rank']);
+		}
+
 		// if($_GET['status']){
 		// 	$status_field->set($_GET['status']);
 		// 	$downline->addCondition('status',$_GET['status']);
@@ -102,8 +120,10 @@ class View_Report_Distributor_Downline extends \View{
 		$downline->getElement('green_on')->caption('Act. Date');
 		$downline->getElement('user')->caption('User ID');
 		$downline->getElement('name')->caption('User Name');
+		$downline->getElement('side')->caption('Leg');
+		// $downline->setOrder('id','desc');
 
-		$fields = ['green_on','user','name','city','state','current_rank','path'];
+		$fields = ['green_on','user','name','city','state','current_rank','path','side'];
 		if($this->report_status == "inactive"){
 			$fields = ['joining','user','name','city','state','path'];
 		}
@@ -112,12 +132,13 @@ class View_Report_Distributor_Downline extends \View{
 		$this->add('View')->setElement('hr');
 		$grid = $this->add('xepan\hr\Grid');
 		$grid->setModel($downline,$fields);
-		$grid->addSno('Sr. No.');
+		$grid->addSno('Sr. No.',true);
 		
-		$grid->addMethod('format_leg',function($g,$f)use($model){
-			$g->current_row[$f]=($g->model['path'])[strlen($model['path'])] == 'A'?'Left':'Right';
-		});
-		$grid->addColumn('leg','leg');
+		// $grid->addMethod('format_leg',function($g,$f)use($model){
+
+			// $g->current_row[$f]=($g->model['path'])[strlen($model['path'])] == 'A'?'Left':'Right';
+		// });
+		// $grid->addColumn('leg','leg');
 		$grid->removeColumn('path');
 
 		$grid->addPaginator($ipp=50);
@@ -128,7 +149,7 @@ class View_Report_Distributor_Downline extends \View{
 					$form->error('to_date','must be equal or greater then from date');
 			}
 
-			$this->js()->reload(['search_distributor'=>trim($form['search_distributor']),'from_date'=>$form['from_date'],'to_date'=>$form['to_date']])->execute();
+			$this->js()->reload(['search_distributor'=>trim($form['search_distributor']),'from_date'=>$form['from_date'],'to_date'=>$form['to_date'],'leg'=>$form['leg'],'rank'=>$form['rank']])->execute();
 		}
 		return parent::setModel($model);
 	}
