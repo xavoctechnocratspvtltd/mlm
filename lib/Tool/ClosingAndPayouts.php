@@ -214,18 +214,21 @@ class Tool_ClosingAndPayouts extends \xepan\cms\View_Tool{
 
 		$this->add('View')->setElement('h4')->set('Paid Payout\'s');
 
-		// current month payout
+		// // current month payout
 		$v = $this->add('View')->addClass('main-box');
 		// $v->add('View')->setElement('h5')
 		// 	->set('Current Month Payout - '.$this->current_month_year);
 
 		$this->payout
-			// ->addCondition('month_year',$this->current_month_year)
-			->addCondition('paid_on','<>',null)
+			->addCondition('net_payment','>',0)
 			;
+		$this->payout->addExpression('payment_status')->set(function($m,$q){
+			return $q->expr('IF([0] IS NULL,"Progress","Paid")',[$m->getElement('paid_on')]);
+		});
+		$this->payout->getElement('date')->caption('Date');
 
 		$grid = $v->add('xepan\base\Grid');
-		$grid->setModel($this->payout,['date','binary_income','introduction_amount','repurchase_bonus','generation_income','loyalty_bonus','leadership_bonus','total_amt','previous_carried_amount','gross_payment','tds','admin_charge','net_payment','payout_type','paid_amount','paid_on']);
+		$grid->setModel($this->payout,['date','gross_payment','tds','admin_charge','net_payment','payout_type','payment_status']);
 		$grid->addPaginator($ipp=25);
 
 		$grid->addFormatter('date','template')->setTemplate('{$date}<br/><small><small>({$payout_type})</small></small>','date');
