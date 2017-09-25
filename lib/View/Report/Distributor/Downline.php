@@ -26,7 +26,7 @@ class View_Report_Distributor_Downline extends \View{
 		$form->add('xepan\base\Controller_FLC')
 			->makePanelsCoppalsible(true)
 			->layout([
-				'search_distributor~Search Distributor/User/City/State'=>'Filter~c1~4',
+				'search_distributor~Search User ID/User Name/City/State'=>'Filter~c1~4',
 				'leg'=>'c2~1',
 				'rank'=>'c3~2',
 				'from_date'=>'c4~2',
@@ -125,7 +125,7 @@ class View_Report_Distributor_Downline extends \View{
 
 		$fields = ['green_on','user','name','city','state','current_rank','path','side'];
 		if($this->report_status == "inactive"){
-			$fields = ['joining','user','name','city','state','path'];
+			$fields = ['joining','user','name','city','state','current_rank','path','side'];
 		}
 
 		$this->add('View')->setElement('h3')->set($name.' ('.$downline->count()->getOne().')');
@@ -135,7 +135,6 @@ class View_Report_Distributor_Downline extends \View{
 		$grid->addSno('Sr. No.',true);
 		
 		// $grid->addMethod('format_leg',function($g,$f)use($model){
-
 			// $g->current_row[$f]=($g->model['path'])[strlen($model['path'])] == 'A'?'Left':'Right';
 		// });
 		// $grid->addColumn('leg','leg');
