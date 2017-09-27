@@ -24,7 +24,7 @@ class Model_Item extends \xepan\commerce\Model_Item {
 		$item_j->addField('dp');
 		$item_j->addField('weight_in_gm');
 		$item_j->addField('tax_percentage');
-
+		$item_j->addField('introduction_income');
 		// // PV
 		// $specification = $this->add('xepan\commerce\Model_Item_Specification');
 		// $specification->addCondition('name','PV');
@@ -129,6 +129,8 @@ class Model_Item extends \xepan\commerce\Model_Item {
 	}
 
 	function beforeSave(){
+		$this['introduction_income'] = $this['introducer_income'];
+		
 		$this->createTax();
 	}
 
