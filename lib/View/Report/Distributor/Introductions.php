@@ -114,11 +114,11 @@ class View_Report_Distributor_Introductions extends \View{
 					]);
 		}
 
-		$fields = ['green_on','user','name','sponsor_id','sponsor','introducer_id','intro_name'];
+		$fields = ['green_on','user','name','sponsor_id','sponsor','introducer_id','intro_name','side'];
 		if($this->report_status == "inactive"){
-			$fields = ['joining','user','name','sponsor_id','sponsor','introducer_id','intro_name'];
+			$fields = ['joining','user','name','sponsor_id','sponsor','introducer_id','intro_name','side'];
 		}elseif($this->report_status == "downline_business"){
-			$fields = ['joining','user','name','month_self_bv','total_month_bv'];
+			$fields = ['joining','user','name','month_self_bv','total_month_bv','side'];
 		}
 
 

@@ -126,63 +126,52 @@ class View_GenologyStandard extends \View{
 		else
 			$kit_item="-";
 
-		$str = "
-				<table  style='width:100%;' width:'100%'>
+		$str = "<table class='tooltipdetail'  style='width:100%;text-align:left;'>
 				  <tr>
-				  	<th class='text-align:center;'>Name: ".$model['name'].' ('.$model['user'].')'."</th>
+				  	<th style='width:30%;'>Name</th>
+				  	<th> : ".$model['name'].' ('.$model['user'].')'."</th>
 				  </tr>
 				  <tr>
-				  	<th class='text-align:center;'>Intro: ".$model['introducer']."</th>
+				  	<th>Reg Date</th>
+				  	<th> : ".date("d M Y", strtotime($model['created_at']))."</th>
 				  </tr>
-				  <tr><td><p style='padding:0px;margin:5px;color:white;'></p></td></tr>
 				  <tr>
-				  	<td>
-				    <table  style='width:100%'>
-				    	<tr>
-				    		<th >Reg. Date<br/>". date("d M Y", strtotime($model['created_at']))."</th>
-				    		<th >Act. Date<br/>".$greened_on_date."</th>
-				    	</tr>
-				    </table>
-				    </td>
+				  	<th>Act Date</th>
+				  	<th> : ".$greened_on_date."</th>
 				  </tr>
-				  <tr><td><p style='padding:0px;margin:5px;color:white;'></p></td></tr>
 				  <tr>
-				  	<td style='text-align:center;'>Package Detail:".$kit_item. "<br/> SV:( ".$model['sv']." ) BV:( ".$model['bv']." ) </td>
+				  	<th>Package</th>
+				  	<th>:".$kit_item."<br/>:SV:(".$model['sv'].") BV:(".$model['bv'].")</th>
 				  </tr>
-				  <tr><td><p style='padding:0px;margin:5px;color:white;'></p></td></tr>
 				  <tr>
-				  	<td>
-				    <table  style='width:100%'>
-				    	<tr>
-				    		<td style='text-align:left;'>Total Left SV<br/>".$model['total_left_sv']."</td>
-				    		<td style='text-align:right;'>Total Right SV<br/>".$model['total_right_sv']."</td>
-				    	</tr>
-				    </table>
-				    </td>
+				  	<th>Intro</th>
+				  	<th>:".$model['introducer']."</th>
 				  </tr>
-				  <tr><td><p style='padding:0px;margin:5px;color:white;'></p></td></tr>
-				  <tr>
-				  	<td>
-				    <table  style='width:100%'>
-				    	<tr>
-				    		<td style='text-align:left;'>Month Self BV<br/>".$model['month_self_bv']."</td>
-				    		<td style='text-align:right;'>Accumulated BV<br/>".$model['total_month_bv']."</td>
-				    	</tr>
-				    </table>
-				    </td>
-				  </tr>
-					<tr><td><p style='padding:0px;margin:5px;color:white;'></p></td></tr>				  
-				  <tr>
-				  	<td>
-				    <table  style='width:100%'>
-				    	<tr>
-				    		<th style='text-align:left;'>Total Team Left<br/>".$model->newInstance()->addCondition('path','like',$model['path'].'A%')->count()->getOne()."</th>
-				    		<th style='text-align:right;'>Total Team Right<br/>".$model->newInstance()->addCondition('path','like',$model['path'].'B%')->count()->getOne()."</th>
-				    	</tr>
-				    </table>
-				    </td>
-				  </tr>
-				</table>";		
+				</table>
+				<br/>
+				<table style='width:100%;text-align:left;' class='tooltipdetail'>
+					<tr>
+			    		<th style='text-align:left;'>Total Team (Left)<br/>".$model->newInstance()->addCondition('path','like',$model['path'].'A%')->count()->getOne()."</th>
+			    		<th style='text-align:right;'>Total Team (Right)<br/>".$model->newInstance()->addCondition('path','like',$model['path'].'B%')->count()->getOne()."</th>
+				    </tr>
+				    <tr>
+				    	<th><br/></th>
+				    	<th><br/></th>
+				    </tr>
+					<tr>
+						<th style='text-align:left !important;width:50%;'>Total SV (Left)<br/>".$model['total_left_sv']."</th>
+				    	<th style='text-align:right !important;width:50%;'>Total SV (Right)<br/>".$model['total_right_sv']."</th>
+					</tr>
+					<tr>
+				    	<th><br/></th>
+				    	<th><br/></th>
+				    </tr>
+				    <tr>
+				    	<th style='text-align:left;'>Month Self BV<br/>".$model['month_self_bv']."</th>
+				    	<th style='text-align:right;'>Accumulated BV<br/>".$model['total_month_bv']."</th>
+				    </tr>
+				</table>
+				";
 		// $str= 
 		// 		$model['name'].
 		// 		"<br/>Jn: ". date("d M Y", strtotime($model['created_at'])). 

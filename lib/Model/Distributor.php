@@ -53,7 +53,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		$dist_j->addField('nominee_name');
 		$dist_j->addField('relation_with_nominee')->enum(['Mother','Father','Wife','Brother','Sister','Other'])->display(array('form' => 'xepan\base\DropDownNormal'));
 		$dist_j->addField('nominee_email')->caption('Nominee email')->display(array('form'=>'xavoc\mlm\Email'));
-		$dist_j->addField('nominee_mobile_number')->caption('Nominee Mobile Number')->display(array('form'=>'xavoc\mlm\MobileNumber'));
+		$dist_j->addField('nominee_mobile_number')->caption('Nominee Mobile Number');//->display(array('form'=>'xavoc\mlm\MobileNumber'));
 		$dist_j->addField('nominee_age')->display(array('form'=>'xavoc\mlm\Range'));
 		$dist_j->addField('aadhar_card_number');
 

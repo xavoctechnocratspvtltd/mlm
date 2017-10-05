@@ -50,7 +50,7 @@ class Tool_Register extends \xavoc\mlm\Tool_Distributor{
 				'aadhar_card_number'=>'c6~4',
 				'nominee_name'=>'NOMINEE DETAILS~c1~4',
 				'relation_with_nominee'=>'c2~4',
-				'nominee_mobile_number~Nominee Mobile Number&nbsp;<i class="fa fa-cog color-red"></i>'=>'c3~4',
+				'nominee_mobile_number~Nominee Mobile Number'=>'c3~4',
 				'd_bank_name~Bank Name'=>'BANK DETAILS~c1~3',
 				'd_account_number~Account Number'=>'c2~3',
 				'd_bank_ifsc_code~Bank IFSC Code'=>'c3~3',
@@ -76,7 +76,7 @@ class Tool_Register extends \xavoc\mlm\Tool_Distributor{
 		$form->getElement('first_name')->setAttr('placeholder','Full Name');
 
 		foreach ($form_field as $key => $name) {
-			if(in_array($name, ['pan_no','d_account_number','d_bank_name','d_bank_ifsc_code','nominee_name','relation_with_nominee','aadhar_card_number','d_account_type'])) continue;
+			if(in_array($name, ['pan_no','d_account_number','d_bank_name','d_bank_ifsc_code','nominee_name','relation_with_nominee','nominee_mobile_number','aadhar_card_number','d_account_type'])) continue;
 			$form->getElement($name)->validate('required');
 		}
 
@@ -121,6 +121,14 @@ class Tool_Register extends \xavoc\mlm\Tool_Distributor{
 		if($form->isSubmitted()){			
 			if($form['password'] !== $form['retype_password'])
 				$form->displayError('retype_password','Password Not Match');
+			if($value = $form['nominee_mobile_number']){
+				if(!preg_match ("/^[\d]{10}$/",$value)) {
+	                $form->error('nominee_mobile_number','Mobile number must be 10 digits');
+	            }
+	            if(!in_array($value[0],array(9,8,7))){
+	            	$form->error('nominee_mobile_number','Must start with 9, 8 or 7');
+				}
+			}
 
 			try{
 				$this->api->db->beginTransaction();
