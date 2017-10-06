@@ -336,7 +336,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 	function monthlyClosing($closing_id,$on_date,$calculate_loyalty=false){
 		if(!$on_date) $on_date = $this->app->now;
 
-		if(date('d', strtotime($on_date)) !== '04'){
+		if(date('d', strtotime($on_date)) !== '06'){
 			throw new \Exception("Monthly closing must be on 01st of month 00:00 After Previous Month Finished", 1);
 		}
 
@@ -516,8 +516,8 @@ class Model_Closing extends \xepan\base\Model_Table {
 			from (select * from mlm_payout) pi 
 			join mlm_distributor d1 on pi.distributor_id=d1.distributor_id
 			join mlm_distributor d2 on d1.introducer_id = d2.distributor_id
-		-- 	join mlm_distributor d3 on d2.introducer_id = d1.distributor_id
-			where d2.introducer_id = d.distributor_id
+		-- 	join mlm_distributor d3 on d2.introducer_id = d3.distributor_id
+			where d3.introducer_id = d.distributor_id
 		)
 
 		from 
@@ -546,10 +546,10 @@ class Model_Closing extends \xepan\base\Model_Table {
 					JOIN mlm_distributor d on p.distributor_id= d.distributor_id
 					SET
 					p.generation_income_$i = 
-						(	
+						(
 						SELECT 
 							IFNULL(sum(repurchase_bonus)*$per/100 ,0)
-						FROM (select * from mlm_payout) pi
+						FROM (select * from mlm_payout WHERE closing_id = $closing_id) pi
 						JOIN mlm_distributor d1 on pi.distributor_id=d1.distributor_id
 						"; 
 						for ($j=2; $j <= $i; $j++) { 
