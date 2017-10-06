@@ -60,101 +60,55 @@ class page_gene extends \Page {
 		else
 			$kit_item="-";
 
-		$str = "
-				<table  style='width:100%;' width:'100%'>
-				  <tr>
-				  	<th class='text-align:center;'>Name: ".$model['name'].' ('.$model['user'].')'."</th>
-				  </tr>
-				  <tr>
-				  	<th class='text-align:center;'>Intro: ".$model['introducer']."</th>
-				  </tr>
-				  <tr><td><p style='padding:0px;margin:5px;color:white;'></p></td></tr>
-				  <tr>
-				  	<td>
-				    <table  style='width:100%'>
-				    	<tr>
-				    		<th >Reg. Date<br/>". date("d M Y", strtotime($model['created_at']))."</th>
-				    		<th >Act. Date<br/>".$greened_on_date."</th>
-				    	</tr>
-				    </table>
-				    </td>
-				  </tr>
-				  <tr><td><p style='padding:0px;margin:5px;color:white;'></p></td></tr>
-				  <tr>
-				  	<td style='text-align:center;'>Package Detail:".$kit_item. "<br/> SV:( ".$model['sv']." ) BV:( ".$model['bv']." ) </td>
-				  </tr>
-				  <tr><td><p style='padding:0px;margin:5px;color:white;'></p></td></tr>
-				  <tr>
-				  	<td>
-				    <table  style='width:100%'>
-				    	<tr>
-				    		<td style='text-align:left;'>Total Left SV<br/>".$model['total_left_sv']."</td>
-				    		<td style='text-align:right;'>Total Right SV<br/>".$model['total_right_sv']."</td>
-				    	</tr>
-				    </table>
-				    </td>
-				  </tr>
-				  <tr><td><p style='padding:0px;margin:5px;color:white;'></p></td></tr>
-				  <tr>
-				  	<td>
-				    <table  style='width:100%'>
-				    	<tr>
-				    		<td style='text-align:left;'>Month Self BV<br/>".$model['month_self_bv']."</td>
-				    		<td style='text-align:right;'>Accumulated BV<br/>".$model['total_month_bv']."</td>
-				    	</tr>
-				    </table>
-				    </td>
-				  </tr>
-					<tr><td><p style='padding:0px;margin:5px;color:white;'></p></td></tr>				  
-				  <tr>
-				  	<td>
-				    <table  style='width:100%'>
-				    	<tr>
-				    		<th style='text-align:left;'>Total Team Left<br/>".$model->newInstance()->addCondition('path','like',$model['path'].'A%')->count()->getOne()."</th>
-				    		<th style='text-align:right;'>Total Team Right<br/>".$model->newInstance()->addCondition('path','like',$model['path'].'B%')->count()->getOne()."</th>
-				    	</tr>
-				    </table>
-				    </td>
-				  </tr>
-				</table>";		
-		// $str= 
-		// 		$model['name'].
-		// 		"<br/>Jn: ". date("d M Y", strtotime($model['created_at'])). 
-		// 		"<br/>Gr: ". $greened_on_date. 
-		// 		"<br/>Kit: ". $kit_item ." SV(".$model['sv'].")"."BV(".$model['bv'].")".
-		// 		"<br/>Intro: ". $model['introducer'] .
-		// 		"<br/><table border='1' width='100%'>
-		// 			<tr>
-		// 				<th> Session </th><th> Left </th><th> Right </th>
-		// 			</tr>
-		// 			<tr>
-		// 				<th>SV</th><td>".$model['day_left_sv']."</td><td>".$model['day_right_sv']."</td>
-		// 			</tr>
-		// 			</table>
-		// 			<div class='atk-box-small'>Gen Business: ".$model['generation_business']."</div>
-		// 			<div class='atk-box-small'>Month Self BV: ".$model['month_self_bv']."</div>
-		// 			<div class='atk-box-small atk-swatch-green'>Session Intros: ".$model['session_intros_amount']." /-</div>
-		// 			<div class='atk-box-small atk-size-mega atk-swatch-green'>Downline</div>
-		// 			<table border='1' width='100%'>
-		// 				<tr>
-		// 					<td>&nbsp;</td>
-		// 					<td>Left</td>
-		// 					<td>Right</td>
-		// 				</tr>
-		// 				<tr>
-		// 					<td>Total</td>
-		// 					<td>". $model->newInstance()->addCondition('path','like',$model['path'].'A%')->count()->getOne() ."</td>
-		// 					<td>". $model->newInstance()->addCondition('path','like',$model['path'].'B%')->count()->getOne() ."</td>
-		// 				</tr>
-		// 				<tr>
-		// 					<td>Green</td>
-		// 					<td>". $model->newInstance()->addCondition('path','like',$model['path'].'A%')->addCondition('greened_on','<>',null)->addCondition('ansestors_updated',true)->count()->getOne() ."</td>
-		// 					<td>". $model->newInstance()->addCondition('path','like',$model['path'].'B%')->addCondition('greened_on','<>',null)->addCondition('ansestors_updated',true)->count()->getOne() ."</td>
-		// 				</tr>
-		// 			</table>
-		// 			";
-		$str= str_replace("'", "\'", $str);
-		$str= str_replace("\n", "", $str);
+		$str = "<table class='tooltipdetail-generation'  style='width:100%;text-align:left;'>
+					<tr>
+				  		<th valign='top' style='width:30%;'>Name</th>
+				  		<th> : ".$model['name'].' ('.$model['user'].')'."</th>
+					</tr>
+					<tr>
+				  		<th valign='top'>Reg Date</th>
+				  		<th> : ".date("d M Y", strtotime($model['created_at']))."</th>
+				  	</tr>
+				  	<tr>
+				  		<th valign='top'>Act Date</th>
+				  		<th> : ".$greened_on_date."</th>
+				  	</tr>
+				  	<tr>
+				  		<th valign='top'>Package</th>
+				  		<th>:".$kit_item."<br/>:SV:(".$model['sv'].") BV:(".$model['bv'].")</th>
+				  	</tr>
+				  	<tr>
+				  		<th valign='top'>Intro</th>
+				  		<th>:".$model['introducer']."</th>
+				  	</tr>
+					</table>
+					<br/>
+					<table style='width:100%;text-align:left;' class='tooltipdetail-generation'>
+						<tr>
+				    		<th valign='top' style='text-align:left;width:50%;'>Total Team (Left)<br/>".$model->newInstance()->addCondition('path','like',$model['path'].'A%')->count()->getOne()."</th>
+				    		<th style='text-align:right;width:50%;'>Total Team (Right)<br/>".$model->newInstance()->addCondition('path','like',$model['path'].'B%')->count()->getOne()."</th>
+					    </tr>
+					    <tr>
+					    	<th><br/></th>
+					    	<th><br/></th>
+					    </tr>
+						<tr>
+							<th valign='top' style='text-align:left !important;width:50%;'>Total SV (Left)<br/>".$model['total_left_sv']."</th>
+					    	<th style='text-align:right !important;width:50%;'>Total SV (Right)<br/>".$model['total_right_sv']."</th>
+						</tr>
+						<tr>
+					    	<th><br/></th>
+					    	<th><br/></th>
+					    </tr>
+					    <tr>
+					    	<th valign='top' style='text-align:left;width:50%;'>Month Self BV<br/>".$model['month_self_bv']."</th>
+					    	<th style='text-align:right;width:50%;'>Accumulated BV<br/>".$model['total_month_bv']."</th>
+					    </tr>
+					</table>
+				  ";
+
+		$str = str_replace( "\'","'", $str);
+		$str = str_replace("\n", "", $str);
 		return $str;
 	}
 
