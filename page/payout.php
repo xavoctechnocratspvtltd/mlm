@@ -87,7 +87,7 @@ class page_payout extends \xepan\base\Page {
 		$g->addOrder()->move('user','after','distributor')->now();
 		$g->removeColumn('closing');
 		$g->addPaginator($ipp=100);
-		$g->addQuickSearch(['name','user','mobile_number']);
+		$g->addQuickSearch(['distributor','user','mobile_number']);
 		$g->add("misc/Export");
 
 		$g->addMethod('format_redgreen',function($g,$f){
