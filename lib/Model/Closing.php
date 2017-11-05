@@ -183,7 +183,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 			throw new \Exception("Weekly closing must be on sunday (0) 00:00 After Saturday Finished. Today is " . date('w', strtotime($on_date)), 1);
 		}
 
-		$this->add('xepan\base\Controller_Backup')->setFileName('B4WClosing'.str_replace(" ", "-",$on_date))->export();
+		// $this->add('xepan\base\Controller_Backup')->setFileName('B4WClosing'.str_replace(" ", "-",$on_date))->export();
 		// copy all distributors in here
 		$q="
 			INSERT INTO mlm_payout
@@ -382,7 +382,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 			throw new \Exception("Monthly closing must be on 01st of month 00:00 After Previous Month Finished", 1);
 		}
 
-		$this->add('xepan\base\Controller_Backup')->setFileName('B4MClosing'.str_replace(" ", "-",$on_date))->export();
+		// $this->add('xepan\base\Controller_Backup')->setFileName('B4MClosing'.str_replace(" ", "-",$on_date))->export();
 
 		// copy all distributors in here
 		$q="
