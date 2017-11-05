@@ -51,7 +51,19 @@ class Model_Closing extends \xepan\base\Model_Table {
 
 	function beforeSave(){
 
-		if(!$this->app->getConfig('enable_closing',false)){
+		$c_m = $this->add('xepan\base\Model_ConfigJsonModel',
+				[
+					'fields'=>[
+								'mark_green_stopped'=>'checkbox',
+								'enable_closing'=>'checkbox',
+								'new_registration_stopped'=>'checkbox',
+							],
+						'config_key'=>'CLOSING_RELATED_CONFIG',
+						'application'=>'mlm'
+				]);
+		$c_m->tryLoadAny();
+
+		if(!$this->app->getConfig('enable_closing',false) && $c_m['enable_closing']){
 			throw new \Exception("Closing is disabled for safty reasons", 1);
 			
 		}
@@ -151,11 +163,27 @@ class Model_Closing extends \xepan\base\Model_Table {
 
 	function weeklyClosing($closing_id,$on_date){
 		if(!$on_date) $on_date = $this->app->now;
+
+		$c_m = $this->add('xepan\base\Model_ConfigJsonModel',
+				[
+					'fields'=>[
+							'mark_green_stopped'=>'checkbox',
+							'enable_closing'=>'checkbox',
+							'new_registration_stopped'=>'checkbox',
+							'weekly_closing_day'=>'DropDown',
+							'monthly_closing_date'=>'DropDown'
+						],
+					'config_key'=>'CLOSING_RELATED_CONFIG',
+					'application'=>'mlm'
+				]);
+		$c_m->tryLoadAny();
+
 		// move data to payout table
-		if(date('w', strtotime($on_date)) !== '1'){
+		if(date('w', strtotime($on_date)) !== $c_m['weekly_closing_day']){
 			throw new \Exception("Weekly closing must be on sunday (0) 00:00 After Saturday Finished. Today is " . date('w', strtotime($on_date)), 1);
 		}
 
+		// $this->add('xepan\base\Controller_Backup')->setFileName('B4WClosing'.str_replace(" ", "-",$on_date))->export();
 		// copy all distributors in here
 		$q="
 			INSERT INTO mlm_payout
@@ -336,9 +364,25 @@ class Model_Closing extends \xepan\base\Model_Table {
 	function monthlyClosing($closing_id,$on_date,$calculate_loyalty=false){
 		if(!$on_date) $on_date = $this->app->now;
 
-		if(date('d', strtotime($on_date)) !== '06'){
+		$c_m = $this->add('xepan\base\Model_ConfigJsonModel',
+			[
+				'fields'=>[
+							'mark_green_stopped'=>'checkbox',
+							'enable_closing'=>'checkbox',
+							'new_registration_stopped'=>'checkbox',
+							'weekly_closing_day'=>'DropDown',
+							'monthly_closing_date'=>'DropDown'
+						],
+					'config_key'=>'CLOSING_RELATED_CONFIG',
+					'application'=>'mlm'
+			]);
+		$c_m->tryLoadAny();
+
+		if(date('d', strtotime($on_date)) !== $m['monthly_closing_date']){
 			throw new \Exception("Monthly closing must be on 01st of month 00:00 After Previous Month Finished", 1);
 		}
+
+		// $this->add('xepan\base\Controller_Backup')->setFileName('B4MClosing'.str_replace(" ", "-",$on_date))->export();
 
 		// copy all distributors in here
 		$q="
