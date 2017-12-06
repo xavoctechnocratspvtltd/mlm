@@ -378,7 +378,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 			]);
 		$c_m->tryLoadAny();
 
-		if(date('d', strtotime($on_date)) !== $m['monthly_closing_date']){
+		if(date('d', strtotime($on_date)) !== $c_m['monthly_closing_date']){
 			throw new \Exception("Monthly closing must be on 01st of month 00:00 After Previous Month Finished", 1);
 		}
 
