@@ -185,7 +185,19 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 			$this->checkDateConditions();
 
-			if($this->app->getConfig('new_registration_stopped',true)){
+			$c_m = $this->add('xepan\base\Model_ConfigJsonModel',
+				[
+					'fields'=>[
+								'mark_green_stopped'=>'checkbox',
+								'enable_closing'=>'checkbox',
+								'new_registration_stopped'=>'checkbox',
+							],
+						'config_key'=>'CLOSING_RELATED_CONFIG',
+						'application'=>'mlm'
+				]);
+			$c_m->tryLoadAny();
+
+			if($this->app->getConfig('new_registration_stopped',true) && $c_m['new_registration_stopped']){
 				throw $this->exception('New registration are stopped due to maintenance','ValidityCheck')->setField('username');
 			}
 			
@@ -376,7 +388,21 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 
 		$this->checkDateConditions();
 
-		if($this->app->getConfig('mark_green_stopped',true)){
+		$c_m = $this->add('xepan\base\Model_ConfigJsonModel',
+				[
+					'fields'=>[
+								'mark_green_stopped'=>'checkbox',
+								'enable_closing'=>'checkbox',
+								'new_registration_stopped'=>'checkbox',
+								'weekly_closing_day'=>'DropDown',
+								'monthly_closing_date'=>'DropDown'
+							],
+						'config_key'=>'CLOSING_RELATED_CONFIG',
+						'application'=>'mlm'
+				]);
+		$c_m->tryLoadAny();
+
+		if($this->app->getConfig('mark_green_stopped',true) AND $c_m['mark_green_stopped']){
 			throw new \Exception("Mark Green is stopped due to maintenance", 1);
 		}
 

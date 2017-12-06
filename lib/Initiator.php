@@ -52,12 +52,12 @@ class Initiator extends \Controller_Addon {
             $m->addItem(['Closings','icon'=>'fa fa-check-square-o'],'xavoc_dm_closings');
         
         $m = $this->app->top_menu->addMenu('Store');
-            $m->addItem(['Pack/Open Joining Kits','icon'=>'fa fa-check-square-o'],'xavoc_dm_store_activity');
-            $m->addItem(['Stock Report','icon'=>'fa fa-check-square-o'],'xavoc_dm_store_activity');
-            $m->addItem(['Stock Admin Report','icon'=>'fa fa-check-square-o'],'xavoc_dm_store_activity');
+            // $m->addItem(['Pack/Open Joining Kits','icon'=>'fa fa-check-square-o'],'xavoc_dm_store_activity');
+            // $m->addItem(['Stock Report','icon'=>'fa fa-check-square-o'],'xavoc_dm_store_activity');
+            // $m->addItem(['Stock Admin Report','icon'=>'fa fa-check-square-o'],'xavoc_dm_store_activity');
             $m->addItem(['Store Activity','icon'=>'fa fa-check-square-o'],'xavoc_dm_store_activity');
-            $m->addItem(['Store Transaction','icon'=>'fa fa-check-square-o'],'xavoc_dm_storetransaction');
-            $m->addItem(['Item Stock Report','icon'=>'fa fa-check-square-o'],'xavoc_dm_itemstock');
+            // $m->addItem(['Store Transaction','icon'=>'fa fa-check-square-o'],'xavoc_dm_storetransaction');
+            // $m->addItem(['Item Stock Report','icon'=>'fa fa-check-square-o'],'xavoc_dm_itemstock');
             
         $m = $this->app->top_menu->addMenu('Report');
             $m->addItem(['Rank Report','icon'=>'fa fa-check-square-o'],'xavoc_dm_distributor_rank');
