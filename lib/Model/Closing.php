@@ -98,7 +98,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 				// cehck if daily is closed before 
 				$closing = $this->add('xavoc\mlm\Model_Closing')
                     ->addCondition('type','DailyClosing')
-                    ->addCondition('on_date',$this->app->today)
+                    ->addCondition('on_date',$this['on_date'])
                     ->tryLoadAny();
                 if(!$closing->loaded()) throw new \Exception("Daily Closing not run before, please run daily closing first", 1);
                 
