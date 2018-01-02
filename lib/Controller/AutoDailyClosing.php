@@ -25,7 +25,8 @@ class Controller_AutoDailyClosing extends \AbstractController {
 				]);
 		$c_s_m->tryLoadAny();
 
-		if($this->app->getConfig('auto_daily_closing',false) AND $c_s_m['auto_daily_closing']){
+		
+		if(!($this->app->getConfig('auto_daily_closing',false) && $c_s_m['auto_daily_closing'])){
 			echo "auto closing off in config, returning";
 			return;
 		}
