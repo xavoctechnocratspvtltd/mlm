@@ -21,7 +21,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 
 		$this->addExpression('status','"All"');
 
-		$this->addField('on_date')->type('datetime')->defaultValue($this->app->now);
+		$this->addField('on_date')->type('datetime')->defaultValue($this->app->today);
 		$this->addField('calculate_loyalty')->type('boolean')->defaultValue(false);
 		$this->addField('type')->enum(['DailyClosing','WeeklyClosing','MonthlyClosing']);
 		$this->hasMany('xavoc\mlm\Payout','closing_id');
