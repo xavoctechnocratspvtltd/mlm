@@ -135,7 +135,7 @@ class Model_Item extends \xepan\commerce\Model_Item {
 	}
 
 	function createTax($igst=true,$gst=true){
-		if(!$this->loaded()) throw new \Exception('item model must loaded');
+		// if(!$this->loaded()) throw new \Exception('item model must loaded');
 		
 		if(!$this['tax_percentage']) return;
 
