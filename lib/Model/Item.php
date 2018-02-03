@@ -11,7 +11,7 @@ class Model_Item extends \xepan\commerce\Model_Item {
 
 		$this->getElement('qty_unit_id')->defaultValue($this->add('xepan\commerce\Model_Unit')->tryLoadAny()->get('id'));
 		$this->getElement('sale_price')->caption('MRP');
-		
+		$this->getElement('maintain_inventory')->defaultValue(1);
 
 		$item_j = $this->join('mlm_item.item_id');
 

@@ -18,7 +18,7 @@ class page_repurchase extends \xepan\base\Page {
 		$crud->setModel($model,['name','sku','hsn_sac','bv','sv','dp','sale_price','tax_percentage']);
 		$crud->grid->addQuickSearch(['name','sku']);
 		$crud->removeAttachment();
-		$crud->grid->addOrder()->move('edit','last')->now();
+		// $crud->grid->addOrder()->move('edit','last')->now();
 		$crud->grid->addSno('Sr. No');
 
 		$crud->grid->removeColumn('hsn_sac');

@@ -17,7 +17,7 @@ class page_franchiseorder extends \xepan\base\Page {
 		$sales_order = $this->add('xavoc\mlm\Model_SalesOrder');
 		$sales_order->addCondition('created_by_id',$franch_ids_array);
 
-		$crud = $this->add('xepan\hr\CRUD');
+		$crud = $this->add('xepan\hr\CRUD',['allow_add'=>false]);
 		$crud->setModel($sales_order
 						// ['first_name','country_id','state_id','','address','city','pin_code','status'],
 						// ['first_name','country','state','','address','city','pin_code','status']

@@ -48,8 +48,9 @@ class Tool_FranchisesVerifyOrder extends \xepan\cms\View_Tool{
 			$order = $p->add('xepan\base\Grid');
 			$order->setModel($o,['name','item_sku','price','quantity','amount_excluding_tax','tax_amount','total_amount']);
 		});
+
 		$grid->addMethod('format_items',function($g,$f){
-			$g->current_row_html[$f] = '<a href="#na" onclick="javascript:'.$g->js()->univ()->frameURL('Order Items '. $g->model['sales_order'], $this->api->url($this->vp->getURL(),array('sales_order_id'=>$g->model->id))).'">View Items ( '. $g->current_row[$f] ." )</a>";
+			$g->current_row_html[$f] = '<a href="'.$this->app->url().'#" onclick="javascript:'.$g->js()->univ()->frameURL('Order Items '. $g->model['sales_order'], $this->api->url($this->vp->getURL(),array('sales_order_id'=>$g->model->id))).'">View Items ( '. $g->current_row[$f] ." )</a>";
 		});
 		
 		$grid->addFormatter('items','items');

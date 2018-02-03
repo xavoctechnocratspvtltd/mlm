@@ -20,7 +20,7 @@ class page_productcategories extends \xepan\base\Page {
 		$crud->grid->addSno('Sr. No');
 
 
-		$crud->grid->addOrder()->move('edit','last')->now();
+		// $crud->grid->addOrder()->move('edit','last')->now();
 		$crud->grid->addFormatter('products','template')->setTemplate('<a href="#" class="product-count">{$products}</a>','products');
 		$crud->grid->addFormatter('cat_image','template')->setTemplate('<img src="{$cat_image}" />','cat_image');
 		$crud->grid->js('click')->_selector('.product-count')->univ()->frameURL('Product list',[$this->app->url('./product_list'),'cat_id'=>$crud->js()->_selectorThis()->closest('tr')->data('id')]);
