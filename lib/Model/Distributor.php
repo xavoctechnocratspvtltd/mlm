@@ -823,7 +823,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 	function placeRepurchaseOrder($contact_id=null){
 		if(!$this->loaded()) throw new \Exception("distributor model must loaded");
 		
-		$master_detail = $this->getQSPMasterDetail();
+		$master_detail = $this->getQSPMasterDetail($status="Submitted",$contact_id);
 
 		$temp_oi = $this->add('xavoc\mlm\Model_TemporaryRepurchaseItem');
 		$temp_oi->addCondition('distributor_id',$this->id);
@@ -832,7 +832,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 			$item_detail = $this->getQSPDetail($oi['item_id'],$oi['quantity'],$contact_id);
 			$item_detail['price'] = $oi['price'];
 			$item_detail['quantity'] = $oi['quantity'];
-
+			
 			$detail_data[] = $item_detail;
 		}
 
