@@ -45,7 +45,8 @@ class Tool_FranchisesDashboard extends \xepan\cms\View_Tool{
 		
 		$today_order = $this->add('xavoc\mlm\Model_SalesOrder');
 		$today_order->addCondition('created_by_id',$this->franchises->id);
-		$today_order->addCondition('created_at',$this->app->today);
+		$today_order->addCondition('created_at','>',$this->app->today);
+		$today_order->addCondition('created_at','<=',$this->app->nextDate($this->app->today));
 		
 		$card = $col2->add('xavoc\mlm\View_Card',
 						[
