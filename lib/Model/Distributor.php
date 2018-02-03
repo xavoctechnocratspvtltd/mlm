@@ -690,7 +690,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 	/*
 	* return array of master detail 
 	*/
-	function getQSPMasterDetail($status="Submitted"){
+	function getQSPMasterDetail($status="Submitted",$created_by_id=null){
 
 		if(!$this->loaded()) $this->Exception("distributor must loaded")
 										->addMoreInfo('at function getQSPMasterDetail');
@@ -705,8 +705,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		$city = $this['billing_city']?:$this['city']?:"not defined";
 		$address = $this['billing_address']?:$this['address']?:"not defined";
 		$pincode = $this['billing_pincode']?:$this['pin_code']?:"not defined";
-
-
+		
 		$master_detail = [
 						'contact_id' => $this->id,
 						'currency_id' => $this['currency_id']?$this['currency_id']:$this->app->epan->default_currency->get('id'),
@@ -733,6 +732,9 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 						'tnc_text'=> $tnc_text,
 						'status' => $status
 					];
+
+		if($created_by_id)
+			$master_detail['created_by_id'] = $created_by_id;
 
 		return $master_detail;
 	}
@@ -787,7 +789,7 @@ class Model_Distributor extends \xepan\commerce\Model_Customer {
 		// $updating_kit = false;
 		// if($this['kit_item_id']) $updating_kit = true;
 
-		$master_detail = $this->getQSPMasterDetail();
+		$master_detail = $this->getQSPMasterDetail('Submitted',$contact_id);
 		$detail_data[] = $this->getQSPDetail($kit_id,$qty=1,$contact_id);
 
 		return $this->add('xepan\commerce\Model_QSP_Master')->createQSP($master_detail,$detail_data,'SalesOrder');
