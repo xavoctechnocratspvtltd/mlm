@@ -75,6 +75,8 @@ class Initiator extends \Controller_Addon {
             $m->addItem(['User','icon'=>'fa fa-user'],$this->app->url('xepan_hr_user',['status'=>'Active']));
             $m->addItem(['Manage Banks','icon'=>'fa fa-user'],$this->app->url('xavoc_dm_banks',['status'=>'Active']));
             $m->addItem(['ACL','icon'=>'fa fa-dashboard'],'xepan_hr_aclmanagement');
+            $m->addItem(['Invoice','icon'=>'fa fa-dashboard'],'xepan_commerce_salesinvoice');
+            $m->addItem(['Invoice Layout Config','icon'=>'fa fa-dashboard'],'xepan_commerce_layouts');
 
 
         $this->addAppFunctions();
