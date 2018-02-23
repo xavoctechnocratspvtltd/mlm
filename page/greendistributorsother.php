@@ -72,6 +72,8 @@ class page_greendistributorsother extends \xepan\base\Page {
 		$grid->removeColumn('attachment_icon');
 		$grid->addSno('Sr.No',true);
 
+		$grid->add('xavoc\mlm\View_Export');
+		
 		if($form->isSubmitted()){
 			$grid->js()->reload(['user'=>$form['user'],'name'=>$form['name'],'mobile'=>$form['mobile'],'city'=>$form['city'],'state'=>$form['state'],'from_date'=>$form['from_date']?:0,'to_date'=>$form['to_date']?:0,'dob'=>$form['dob']?:0])->execute();
 		}	

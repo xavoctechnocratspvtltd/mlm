@@ -62,6 +62,7 @@ class Initiator extends \Controller_Addon {
         $m = $this->app->top_menu->addMenu('Report');
             $m->addItem(['Rank Report','icon'=>'fa fa-check-square-o'],'xavoc_dm_distributor_rank');
             $m->addItem(['TopUp & Repurchase History','icon'=>'fa fa-check-square-o'],'xavoc_dm_report_sale');
+            $m->addItem(['Capping List of Distributor','icon'=>'fa fa-check-square-o'],'xavoc_dm_report_cappdistlist');
 
         $m = $this->app->top_menu->addMenu('Admin');
             $m->addItem(['Recent Distributors News','icon'=>'fa fa-check-square-o'],'xavoc_dm_recentnews');

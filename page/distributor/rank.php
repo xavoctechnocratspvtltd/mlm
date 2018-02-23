@@ -80,7 +80,7 @@ class page_distributor_rank extends \xepan\base\Page {
 		$grid->addPaginator(50);
 
 		$grid->addQuickSearch(['name','user']);
-
+		$grid->add('xavoc\mlm\View_Export');
 	}
 
 

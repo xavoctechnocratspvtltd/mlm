@@ -16,7 +16,6 @@ class page_distributors extends \xepan\base\Page {
 						'Green'=>'success'
 					];
 		
-		
 		$grid = $this->add('xepan\hr\Grid',['status_color'=>$status_color]);
 		$model= $this->add('xavoc\mlm\Model_Distributor_Actions');
 		// $model->getElement('organization')->caption('SUPPLIER FIRM NAME');
@@ -28,6 +27,8 @@ class page_distributors extends \xepan\base\Page {
 		$grid->addPaginator(50);
 		$grid->add('xepan\hr\Controller_ACL',['status_color'=>$status_color]);
 		$grid->removeAttachment();
+
+		$grid->add('xavoc\mlm\View_Export');
 	}
 
 }

@@ -72,5 +72,6 @@ class page_distributor_reddistributors extends \xepan\base\Page {
 			$grid->js()->reload(['user'=>$form['user'],'name'=>$form['name'],'mobile'=>$form['mobile'],'city'=>$form['city'],'state'=>$form['state'],'from_date'=>$form['from_date']?:0,'to_date'=>$form['to_date']?:0])->execute();
 		}
 		
+		$grid->add('misc/Export');
 	}
 }

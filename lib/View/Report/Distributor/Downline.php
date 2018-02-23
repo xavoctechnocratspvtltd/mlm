@@ -21,6 +21,7 @@ class View_Report_Distributor_Downline extends \View{
 	}
 
 	function setModel($model){
+		
 		// add search related form
 		$form = $this->add('Form');
 		$form->add('xepan\base\Controller_FLC')
@@ -141,6 +142,7 @@ class View_Report_Distributor_Downline extends \View{
 		$grid->removeColumn('path');
 
 		$grid->addPaginator($ipp=50);
+		$grid->add('misc/Export');
 		// reload self view with form values
 		if($form->isSubmitted()){
 			if($form['from_date'] && $form['to_date']){
