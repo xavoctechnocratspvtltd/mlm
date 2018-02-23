@@ -151,7 +151,7 @@ class Tool_ClosingAndPayouts extends \xepan\cms\View_Tool{
 
 		$grid->addFormatter('date','template')->setTemplate('{$date}<br/><small><small>({$payout_type})</small></small>','date');
 		$grid->removeColumn('payout_type');
-		$grid->addTotals(['binary_income','introduction_amount','repurchase_bonus','generation_income','loyalty_bonus','leadership_bonus','total_amt','gross_payment','tds','admin_charge','net_payment']);
+		$grid->addTotals(['binary_income','introduction_amount','repurchase_bonus','generation_income','loyalty_bonus','leadership_bonus','total_amt','tds','admin_charge','net_payment']);
 
 		// previous payout
 		$previous_payout = $this->add('xavoc\mlm\Model_Payout');
