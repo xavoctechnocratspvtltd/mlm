@@ -38,6 +38,13 @@ class Model_Closing extends \xepan\base\Model_Table {
 			return $m->refSQL('xavoc\mlm\Payout')->addCondition('net_payment','>',0)->count();
 		});
 
+		$this->addExpression('total_tds')->set(function($m,$q){
+			return $m->refSQL('xavoc\mlm\Payout')->sum('tds');
+		});
+
+		$this->addExpression('total_admin_charge')->set(function($m,$q){
+			return $m->refSQL('xavoc\mlm\Payout')->sum('admin_charge');
+		});
 
 		$this->is([
 				'on_date|unique|required',
