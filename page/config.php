@@ -47,7 +47,11 @@ class page_config extends \xepan\base\Page{
 							'dispatch_mail_subject'=>'Line',
 							'dispatch_mail_content'=>'xepan\base\RichText',
 							'dispatch_sms_content'=>'Text',
-							'rank_update_sms_content'=>'Text'
+							'rank_update_sms_content'=>'Text',
+
+							'franchises_activate_mail_subject'=>'Line',
+							'franchises_activate_mail_content'=>'xepan\base\RichText',
+							'franchises_activate_sms_content'=>'Text'
 
 						],
 					'config_key'=>'DM_WELCOME_CONTENT',
@@ -173,6 +177,18 @@ class page_config extends \xepan\base\Page{
 			$f->save();
 			$f->js()->reload()->univ()->successMessage('Saved Successfully')->execute();
 		}
+
+
+		// franchises
+		$tab = $tab->addTab('Franchises Activate Mail Content');
+		$f = $tab->add('Form');
+		$f->setModel($welcome_model,['franchises_activate_mail_subject','franchises_activate_mail_content','franchises_activate_sms_content']);
+		$f->addSubmit('Update');
+		if($f->isSubmitted()){
+			$f->save();
+			$f->js()->reload()->univ()->successMessage('Saved Successfully')->execute();
+		}
+
 
 	}
 }

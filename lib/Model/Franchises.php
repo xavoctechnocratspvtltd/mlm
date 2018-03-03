@@ -4,18 +4,36 @@ namespace xavoc\mlm;
 
 class Model_Franchises extends \xepan\commerce\Model_Store_Warehouse {
 	public $table_alias =  'mlm_franchise';
-	public $status = ['Active','Deactive'];
+	public $status = ['Active','Inactive'];
 	public $actions = [
 					'Active'=>['view','edit','delete','deactivate','loginCredential'],
-					'Deactive'=>['view','edit','delete','activate']
+					'Inactive'=>['view','edit','delete','activate']
 				];
 	public $acl_type = "mlm_franchise";
 	public $acl=true;
 	function init(){
 		parent::init();
 
-		$this->getElement('status')->defaultValue('Active');
+		$this->getElement('status')->defaultValue('Inactive');
 		$this->getElement('created_by_id')->defaultValue($this->app->auth->model->id);
+		
+		$this->addExpression('email')->set(function($m,$q){
+			return $m->add('xepan\base\Model_Contact_Email')
+					->addCondition('contact_id',$m->getElement('id'))
+					->addCondition('is_active',true)
+					->addCondition('is_valid',true)
+					->setLimit(1)
+					->fieldQuery('value');
+		});
+
+		$this->addExpression('mobile_number')->set(function($m,$q){
+			return $m->add('xepan\base\Model_Contact_Phone')
+					->addCondition('contact_id',$m->getElement('id'))
+					->addCondition('is_active',true)
+					->addCondition('is_valid',true)
+					->setLimit(1)
+					->fieldQuery('value');
+		});
 	}
 
 	function page_loginCredential($page){
@@ -57,11 +75,21 @@ class Model_Franchises extends \xepan\commerce\Model_Store_Warehouse {
 
 	function activate(){
 		$this['status'] = "Active";
-		$this->save();
+		$this->save();		
+		// send sms and email
+		$this->sendActivateContent();
+	}
+
+	function sendActivateContent(){
+		try{
+			$this->add('xavoc\mlm\Controller_Greet')->do($this,'franchises_activate');
+		}catch(\Exception $e){
+			
+		};
 	}
 
 	function deactivate(){
-		$this['status'] = "Deactive";
+		$this['status'] = "Inactive";
 		$this->save();
 	}
 

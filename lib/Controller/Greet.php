@@ -31,7 +31,11 @@ class Controller_Greet extends \AbstractController {
 							'dispatch_mail_subject'=>'Line',
 							'dispatch_mail_content'=>'xepan\base\RichText',
 							'dispatch_sms_content'=>'Text',
-							'rank_update_sms_content'=>'Text'
+							'rank_update_sms_content'=>'Text',
+
+							'franchises_activate_mail_subject'=>'Line',
+							'franchises_activate_mail_content'=>'xepan\base\RichText',
+							'franchises_activate_sms_content'=>'Text',
 						],
 
 					'config_key'=>'DM_WELCOME_CONTENT',
