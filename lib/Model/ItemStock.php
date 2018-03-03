@@ -20,11 +20,11 @@ class Model_ItemStock extends \xepan\commerce\Model_Item_Stock {
 		});
 
 		$this->addExpression('total_in')->set(function($m,$q){
-			return $q->expr('([opening]+[purchase]+[received]+[adjustment_add]+[movement_in]+[issue_submitted]+[sales_return]+[package_created]+[release_from_package])',
+			return $q->expr('([opening]+[purchase]+[adjustment_add]+[movement_in]+[issue_submitted]+[sales_return]+[package_created]+[release_from_package])',
 							[
 								'opening'  				=>  $m->getElement('opening'),
 								'purchase' 				=> 	$m->getElement('purchase'),
-								'received' 				=> 	$m->getElement('received'),
+								// 'received' 				=> 	$m->getElement('received'),
 								'adjustment_add' 		=> 	$m->getElement('adjustment_add'),
 								'movement_in' 			=>	$m->getElement('movement_in'),
 								'issue_submitted'		=> 	$m->getElement('issue_submitted'),

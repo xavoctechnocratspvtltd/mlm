@@ -23,21 +23,39 @@ class View_ItemStock extends \View{
 			$w_field->setEmptyText('Please Select');
 		}
 
-		$stock = $this->add('xavoc\mlm\Model_ItemStock');
-		$grid = $this->add('xepan\base\Grid');
+		$v = $this->add('View');
+		$tab = $v->add('Tabs');
+
+		// item/non package stock
+		$ps = $tab->addTab('Package stock');
+		$stock = $ps->add('xavoc\mlm\Model_ItemStock');
+		$stock->addCondition('is_package',true);
+		$grid = $ps->add('xepan\base\Grid');
 		if($this->warehouse_id){
 			$stock->warehouse_id = $this->warehouse_id;
 		}
 		$stock->addCondition('net_stock','>',0);
-
 		$grid->setModel($stock,['name_with_code','total_in','total_out','net_stock']);
-		// $grid->addQuickSearch(['name_with_code']);
 		$grid->addSno('Sr. No.');
+		$grid->addPaginator($ipp=15);
 
+		// item/non package stock
+		$is = $tab->addTab('Item stock');
+		$stock = $is->add('xavoc\mlm\Model_ItemStock');
+		$stock->addCondition('is_package',false);
+		$grid = $is->add('xepan\base\Grid');
+		if($this->warehouse_id){
+			$stock->warehouse_id = $this->warehouse_id;
+		}
+		$stock->addCondition('net_stock','>',0);
+		$grid->setModel($stock,['name_with_code','total_in','total_out','net_stock']);
+		$grid->addSno('Sr. No.');
+		$grid->addPaginator($ipp=15);
+		
 		if($show_form){
 			$f->addSubmit('submit')->addClass('btn btn-primary')->setStyle('margin-top','10px');
 			if($f->isSubmitted()){
-				$grid->js()->reload(['warehouse_id'=>$f['warehouse']])->execute();
+				$v->js()->reload(['warehouse_id'=>$f['warehouse']])->execute();
 			}
 		}
 
