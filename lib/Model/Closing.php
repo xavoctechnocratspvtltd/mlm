@@ -119,11 +119,49 @@ class Model_Closing extends \xepan\base\Model_Table {
                     ->tryLoadAny();
             	if(!$closing->loaded()) throw new \Exception("Daily Closing not run before, please run daily closing first", 1);
 				$this->monthlyClosing($this->id,$this['on_date'],$this['calculate_loyalty']);
+				$this->informDistributorRankChange($this->id);
 				break;
 			
 			default:
 				
 				break;
+		}
+	}
+
+	function informDistributorRankChange($current_closing_id){
+		if(!$current_closing_id) return;
+
+		$previous_closing = $this->add('xavoc\mlm\Model_Closing_Monthly')
+							->addCondition('id','<',$current_closing_id)
+							->setOrder('id','desc')
+							// ->addCondition('id','<>',$current_closing_id)
+							->setLimit(1)
+							->tryLoadAny()
+							;
+		$previous_id = $previous_closing->id;
+		
+		$payout = $this->add('xavoc\mlm\Model_Payout')
+				->addCondition('closing_id',[$current_closing_id,$previous_id])
+				;
+		$payout->addExpression('email')->set($payout->refSQL('distributor_id')->fieldQuery('email'));
+		$payout->addExpression('mobile_no')->set($payout->refSQL('distributor_id')->fieldQuery('mobile_number'));
+		$payout->setOrder('closing_id','desc');
+
+		$rank_data = [];
+		foreach($payout->getRows() as $data) {
+			
+			if(!isset($rank_data[$data['distributor_id']]) AND $data['closing_id'] == $current_closing_id){
+				$rank_data[$data['distributor_id']] = ['rank'=>$data['rank'],'mobile_no'=>$data['mobile_no'],'email'=>$data['email'],'closing_id'=>$data['closing_id']];
+				continue;
+			}
+			// if dist has same status then unset the value
+			if(isset($rank_data[$data['distributor_id']]) AND $rank_data[$data['distributor_id']]['rank'] == $data['rank'])
+				unset($rank_data[$data['distributor_id']]);
+		}
+		// send sms to distributor
+		foreach ($rank_data as $dist_id => $value) {
+			$dist = $this->add('xavoc\mlm\Model_Distributor');
+			$this->add('xavoc\mlm\Controller_Greet')->do($dist,'rank_update');
 		}
 	}
 

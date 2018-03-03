@@ -46,7 +46,9 @@ class page_config extends \xepan\base\Page{
 							'repurchase_sms_content'=>'Text',
 							'dispatch_mail_subject'=>'Line',
 							'dispatch_mail_content'=>'xepan\base\RichText',
-							'dispatch_sms_content'=>'Text'
+							'dispatch_sms_content'=>'Text',
+							'rank_update_sms_content'=>'Text'
+
 						],
 					'config_key'=>'DM_WELCOME_CONTENT',
 					'application'=>'mlm'
@@ -163,6 +165,14 @@ class page_config extends \xepan\base\Page{
 			$f->js()->reload()->univ()->successMessage('Saved Successfully')->execute();
 		}
 
+		$r_tab = $tab->addTab('Rank Change SMS');
+		$f = $r_tab->add('Form');
+		$f->setModel($welcome_model,['rank_update_sms_content']);
+		$f->addSubmit('Update');
+		if($f->isSubmitted()){
+			$f->save();
+			$f->js()->reload()->univ()->successMessage('Saved Successfully')->execute();
+		}
 
 	}
 }

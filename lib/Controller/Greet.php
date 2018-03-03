@@ -30,8 +30,10 @@ class Controller_Greet extends \AbstractController {
 							'repurchase_sms_content'=>'Text',
 							'dispatch_mail_subject'=>'Line',
 							'dispatch_mail_content'=>'xepan\base\RichText',
-							'dispatch_sms_content'=>'Text'
+							'dispatch_sms_content'=>'Text',
+							'rank_update_sms_content'=>'Text'
 						],
+
 					'config_key'=>'DM_WELCOME_CONTENT',
 					'application'=>'mlm'
 			]);
@@ -84,6 +86,7 @@ class Controller_Greet extends \AbstractController {
 		}
 
 		if($this->app->getConfig('send_sms',false)){
+			
 			$message = $messages_model[$event.'_sms_content'];
 			$temp = $this->add('GiTemplate');
 			$temp->loadTemplateFromString($message);
