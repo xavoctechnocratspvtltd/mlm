@@ -39,7 +39,8 @@ class Tool_FranchisesMenu extends \xepan\cms\View_Tool{
 		$submenu_list = [
 					'franchises_stock'=>[
 								'index.php?page=franchises_stock&report=itemstock'=>'Total Stock',
-								'index.php?page=franchises_stock&report=stocktransaction'=>'Stock Transaction'
+								'index.php?page=franchises_stock&report=stocktransaction'=>'Stock Transaction',
+								'index.php?page=franchises_stock&report=salereport'=>'Sale Report'
 								],
 					'franchises_verifyorder'=>[
 							'index.php?page=franchises_verifyorder&action=verify'=>'Verify Order',

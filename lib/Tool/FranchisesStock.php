@@ -26,6 +26,10 @@ class Tool_FranchisesStock extends \xepan\cms\View_Tool{
 				$this->add('View')->setElement('h4')->set('Stock Transaction');
 				$this->add('xavoc\mlm\View_StoreTransaction',['warehouse'=>$this->franchises->id]);
 			break;
+			case 'salereport':
+				$this->add('View')->setElement('h4')->set('Sales Report');
+				$this->add('xavoc\mlm\View_SalesReport',['from_warehouse_id'=>$this->franchises->id]);
+			break;
 		}
 
 	}
