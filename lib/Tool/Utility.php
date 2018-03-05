@@ -28,7 +28,9 @@ class Tool_Utility extends \xepan\cms\View_Tool{
 			case 'download':
 			$this->add('xavoc\mlm\View_Download');
 			break;
-
+			case 'welcomeletter':
+			$this->add('xavoc\mlm\View_WelcomeLetter');
+			break;
 		}
 	}
 }

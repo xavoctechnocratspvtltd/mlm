@@ -56,7 +56,8 @@ class Tool_DistributorMenu extends \xavoc\mlm\Tool_Distributor{
 								],
 							'utility'=>[
 								'index.php?page=utility&type=gallery'=>'Gallery',
-								'index.php?page=utility&type=download'=>'Download'
+								'index.php?page=utility&type=download'=>'Download',
+								'index.php?page=utility&type=welcomeletter'=>'Welcome Letter'
 								]
 						];
 
