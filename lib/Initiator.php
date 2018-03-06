@@ -161,8 +161,9 @@ class Initiator extends \Controller_Addon {
                 $distributor->repurchase($total_bv,$total_sv);
         });
 
-
+        
         $now = \DateTime::createFromFormat('Y-m-d H:i:s', $this->app->now);
+        
         // $closing_m = $this->add('xavoc\mlm\Model_Closing')
         //                 ->setOrder('id','desc')
         //                 ->tryLoadAny();
@@ -173,8 +174,13 @@ class Initiator extends \Controller_Addon {
             // $cron->setSchedule(new \Cron\Schedule\CrontabSchedule('* * * * *'));
             $cron->setSchedule(new \Cron\Schedule\CrontabSchedule('0 0 * * *'));
             if(!$cron->getSchedule() || $cron->getSchedule()->valid($now)){
+
                 echo "going for daily auto closing </br>";
-                $this->add('xavoc\mlm\Controller_AutoDailyClosing');              
+                try{
+                    $this->add('xavoc\mlm\Controller_AutoDailyClosing');              
+                }catch(\Exception $e){
+                    echo $e->getMessage()."<br/>";
+                }
             }
         // }
         
