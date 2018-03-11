@@ -47,7 +47,7 @@ class Model_Closing extends \xepan\base\Model_Table {
 		});
 
 		$this->is([
-				'on_date|unique|required',
+				'on_date|required',
 				'type|required'
 			]);
 		$this->addHook('beforeSave',$this);

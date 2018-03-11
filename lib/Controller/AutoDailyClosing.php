@@ -31,17 +31,29 @@ class Controller_AutoDailyClosing extends \AbstractController {
 			return;
 		}
 		
-		$closing_m = $this->add('xavoc\mlm\Model_Closing');
-		$closing_m['on_date'] = $this->app->today;
-		$closing_m['type'] = "DailyClosing";
-		$closing_m->save();
-
-		if(date('w', strtotime($this->app->today)) == $c_s_m['weekly_closing_day']){
+		try{
+			// daily 
+			$this->app->db->beginTransaction();
 			$closing_m = $this->add('xavoc\mlm\Model_Closing');
 			$closing_m['on_date'] = $this->app->today;
-			$closing_m['type'] = "WeeklyClosing";
+			$closing_m['type'] = "DailyClosing";
 			$closing_m->save();
-		}
 
+			// weekly
+			if(date('w', strtotime($this->app->today)) == $c_s_m['weekly_closing_day']){
+				$closing_m = $this->add('xavoc\mlm\Model_Closing');
+				$closing_m->addCondition('on_date',$this->app->today);
+				$closing_m->addCondition('type',"WeeklyClosing");
+				$closing_m->tryLoadAny();
+				if(!$closing_m->loaded()){
+					$closing_m->save();
+				}
+			}
+
+			$this->app->db->commit();
+		}catch(\Exception $e){
+			$this->app->db->rollback();
+			echo $e->getMessage();
+		}
 	}
 }		
