@@ -53,7 +53,7 @@ class Controller_AutoDailyClosing extends \AbstractController {
 			$this->app->db->commit();
 		}catch(\Exception $e){
 			$this->app->db->rollback();
-			echo $e->getMessage();
+			throw $e;
 		}
 	}
 }		
