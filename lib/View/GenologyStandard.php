@@ -77,7 +77,7 @@ class View_GenologyStandard extends \View{
 		$output="";
 		$reload_js = $this->js()->reload(array('start_id'=>$model->id));
 		$t=$this->template->cloneRegion('Node');
-		$t->setHTML('username','<a href="'.$this->app->url('.')->absolute().'#xepan" onclick="'.$reload_js->render().'">'.$model['name']."-".$model['user'].'</a>');
+		$t->setHTML('username','<a href="'.($this->app->url('.')->absolute()).'#xepan" onclick="'.$reload_js->render().'">'.$model['name']."-".$model['user'].'</a>');
 		$t->set('class',($model['greened_on'])?'text-success ds-icon-success':($model['kit_item_id']?'text-warning':'text-danger ds-icon-danger'));
 		if($model['greened_on'] !== null)
 			$greened_on_date = date("d M Y", strtotime($model['greened_on']));
