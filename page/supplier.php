@@ -19,7 +19,8 @@ class page_supplier extends \xepan\base\Page {
 				);
 		$crud->grid->addQuickSearch(['name']);
 		$crud->removeAttachment();
-		$crud->grid->addOrder()->move('edit','last')->now();
+		
+		// $crud->grid->addOrder()->move('edit','last')->now();
 		$crud->grid->addSno('Sr. No');
 	}
 
