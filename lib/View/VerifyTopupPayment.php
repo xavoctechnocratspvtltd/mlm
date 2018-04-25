@@ -24,6 +24,7 @@ class View_VerifyTopupPayment extends \View{
 		$item->addExpression('capping_int')->set(function($m,$q){
 			return $q->expr('CAST([0] AS SIGNED)',[$m->getElement('capping')]);
 		});
+		$item->addCondition('status','Published');
 		
 		$last_kit = $this->add('xavoc\mlm\Model_TopupHistory')
 						->addCondition('distributor_id',$distributor->id)
